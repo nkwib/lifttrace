@@ -270,9 +270,16 @@
       if (loadError) showError($_('statistics.load_failed'));
 
       // Heatmap dates + cached full records (the calorie estimator needs
-      // exercises + duration_min, both already in this payload).
+      // exercises + duration_min, both already in this payload). Only as far
+      // back as this page reads them: the range and the one before it (the
+      // change from last period) or the heatmap's 91 days, whichever is
+      // longer. A year of workouts, read on every visit, was over a megabyte
+      // with two years of training. All still reads the latest 365.
       try {
-        const recent = await fetch('/api/workout/recent?limit=365', { credentials: 'include' });
+        // Days back, not a date, so the copy kept for offline is found again
+        // tomorrow (offline-api.js files answers by their address).
+        const back = RANGES[range] ? Math.max(2 * RANGES[range], 90) : null;
+        const recent = await fetch(`/api/workout/recent?limit=365${back ? `&days=${back}` : ''}`, { credentials: 'include' });
         if (recent.ok) {
           // Trained days by the shared rule (src/lib/trained-day.js), the one
           // the Diary's dots and /api/stats/streaks use: a completed working

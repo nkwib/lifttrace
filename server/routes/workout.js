@@ -12,6 +12,7 @@ import { isHistoryUpload, recordsBeforeSave, sendNewRecords } from '../lib/log-w
 import { getActiveProgramCore } from '../lib/mcp/tools/get-active-program.js';
 import { cleanWorkoutRefs, workoutProgramVisible } from '../lib/program-access.js';
 import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/create-keys.js';
+import { shiftDate } from '../../src/lib/trained-day.js';
 import { applyToBody, deleteLoses, refuseDelete, stampMerged, createdTimes, editBringsBack, deletedTimes } from '../lib/newer-wins.js';
 import { syncOf } from '../lib/sync-fields.js';
 import { timesAtDelete } from '../lib/deleted-rows.js';
@@ -25,10 +26,15 @@ router.use(requireAuth);
 router.get('/recent', wrap((req, res) => {
   // Up to 20,000: Trace reads that far back for a long range (aiTools.js).
   const limit = Math.min(Math.max(1, parseInt(req.query.limit) || 30), 20000);
+  // days=N: none from before the last N days (Statistics reads its range,
+  // not a year). Counted from UTC's date, with one day more for a time zone
+  // behind UTC, whose today can still be UTC's yesterday.
+  const days = parseInt(req.query.days);
+  const from = days >= 1 ? shiftDate(new Date().toISOString().slice(0, 10), -Math.min(days, 36500) - 1) : '0000-00-00';
   const userId = uid(req);
   const rows = userId != null
-    ? db.prepare('SELECT * FROM workout_log WHERE user_id = ? AND deleted_at IS NULL ORDER BY date DESC LIMIT ?').all(userId, limit)
-    : db.prepare('SELECT * FROM workout_log WHERE user_id IS NULL AND deleted_at IS NULL ORDER BY date DESC LIMIT ?').all(limit);
+    ? db.prepare('SELECT * FROM workout_log WHERE user_id = ? AND deleted_at IS NULL AND date >= ? ORDER BY date DESC LIMIT ?').all(userId, from, limit)
+    : db.prepare('SELECT * FROM workout_log WHERE user_id IS NULL AND deleted_at IS NULL AND date >= ? ORDER BY date DESC LIMIT ?').all(from, limit);
   for (const r of rows) r.exercises = JSON.parse(r.exercises || '[]');
   res.json(rows);
 }));
