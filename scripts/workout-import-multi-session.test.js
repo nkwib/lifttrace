@@ -218,6 +218,17 @@ test('native importer: wired to planImport, session_seq, in-place replace', () =
   assert.match(src, /name = \? AND deleted_at IS NULL ORDER BY session_seq, id/);
 });
 
+test('native importer: commit is one dbExec transaction, seq allocated in memory', () => {
+  const src = readFileSync(new URL('../src/lib/api-native.js', import.meta.url), 'utf8');
+  assert.match(src, /import \{[^}]*\bdbExec\b[^}]*\} from '\.\/db-native\.js'/);
+  const block = src.slice(src.indexOf("if (id === 'commit')"), src.indexOf('Unknown workout-import endpoint'));
+  assert.ok(!block.includes('await dbRun('), 'no per-row writes');
+  assert.equal(block.match(/await dbExec\(/g).length, 1);
+  assert.match(block, /if \(stmts\.length\) await dbExec\(stmts\)/);
+  assert.match(block, /nextSeq\.set\(w\.date, seq \+ 1\)/);
+  assert.ok(block.indexOf('await dbExec(') < block.indexOf('return { imported'));
+});
+
 test('planImport pairs two same-key sessions 1:1', () => {
   const ws = [{ date: '2026-09-01', name: 'Push' }, { date: '2026-09-01', name: 'Push' }];
   const key = '2026-09-01\u0000Push';

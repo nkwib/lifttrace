@@ -13,6 +13,7 @@
 
 import { uniqueByActivity } from './cardio-templates.js';
 import {
+  dbExec,
   dbQuery,
   dbRun,
   enqueueSync,
@@ -2005,6 +2006,9 @@ async function handle(method, path, body, query) {
     if (id === 'commit') {
       const dupeMode = String(body.get('onDuplicate') || '') === 'replace' ? 'replace' : 'skip';
       let imported = 0, skipped = 0, replaced = 0;
+      // All writes go in one transaction (dbExec) so a failure leaves nothing behind.
+      const stmts = [];
+      const nextSeq = new Map();
       // Pairs by (date, name) like server/routes/workout-import.js; existing
       // rows are read once, so rows inserted below never count as matches.
       const plan = planImport(workouts, await loadExistingImport(workouts));
@@ -2023,27 +2027,33 @@ async function handle(method, path, body, query) {
         });
         if (existing) {
           // In place: keeps the row id (coach feedback, links) and its seq.
-          await dbRun(
-            `UPDATE workout_log SET notes = ?, duration_min = ?, exercises = ?, completed = 1, updated_at = ?, sync_state = 'pending'
+          stmts.push({
+            statement: `UPDATE workout_log SET notes = ?, duration_min = ?, exercises = ?, completed = 1, updated_at = ?, sync_state = 'pending'
              WHERE id = ? AND user_id = ? AND deleted_at IS NULL`,
-            [w.notes || null, w.duration_min || null, JSON.stringify(exerciseRows), _now(), existing.id, ME]
-          );
+            values: [w.notes || null, w.duration_min || null, JSON.stringify(exerciseRows), _now(), existing.id, ME],
+          });
           replaced++;
           continue;
         }
-        // Fresh per insert (two file sessions can share a date); counts deleted rows too.
-        const seq = (await dbQuery(
-          `SELECT COALESCE(MAX(session_seq), -1) + 1 AS n FROM workout_log WHERE user_id = ? AND date = ?`,
-          [ME, w.date]
-        ))[0]?.n ?? 0;
-        await dbRun(
-          `INSERT INTO workout_log (user_id, date, name, notes, duration_min, exercises, completed, session_seq, created_at, updated_at, sync_state)
+        // Base seq read once per date (counts deleted rows too), then bumped per insert
+        // so two file sessions sharing a date get max+1, max+2.
+        if (!nextSeq.has(w.date)) {
+          nextSeq.set(w.date, (await dbQuery(
+            `SELECT COALESCE(MAX(session_seq), -1) + 1 AS n FROM workout_log WHERE user_id = ? AND date = ?`,
+            [ME, w.date]
+          ))[0]?.n ?? 0);
+        }
+        const seq = nextSeq.get(w.date);
+        nextSeq.set(w.date, seq + 1);
+        stmts.push({
+          statement: `INSERT INTO workout_log (user_id, date, name, notes, duration_min, exercises, completed, session_seq, created_at, updated_at, sync_state)
            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, 'pending')`,
-          [ME, w.date, name, w.notes || null, w.duration_min || null,
-           JSON.stringify(exerciseRows), seq, _now(), _now()]
-        );
+          values: [ME, w.date, name, w.notes || null, w.duration_min || null,
+           JSON.stringify(exerciseRows), seq, _now(), _now()],
+        });
         imported++;
       }
+      if (stmts.length) await dbExec(stmts);
       return { imported, skipped, replaced };
     }
 
