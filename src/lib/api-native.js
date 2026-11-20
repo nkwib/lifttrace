@@ -1089,17 +1089,27 @@ const BodyStats = {
   },
   async put(date, body) {
     const stats = body?.stats ?? body ?? {};
-    const existing = await BodyStats.get(date);
-    if (existing) {
+    // Loaded on use, like the workout merge, to stay out of the startup chunk.
+    const { mergeStatsObject } = await import('./workout-merge.js');
+    // Raw row, deleted or not: UNIQUE(user_id, date) makes an INSERT over a
+    // soft-deleted day fail. Known gap: no field_times / newer-wins / 410
+    // as the server has; a revived day just starts from {}.
+    const rows = await dbQuery(`SELECT * FROM body_stats_log WHERE user_id = ? AND date = ?`, [ME, date]);
+    const row = rows[0];
+    const revive = !!row?.deleted_at;
+    const merged = mergeStatsObject(row && !revive ? _parseJson(row.stats, {}) : {}, stats);
+    // As the server: an edit that brings back no measurement leaves the day deleted.
+    if (revive && !Object.keys(merged).length) return null;
+    if (row) {
       await dbRun(
-        `UPDATE body_stats_log SET stats = ?, updated_at = ?, sync_state = 'pending' WHERE user_id = ? AND date = ?`,
-        [_stringify({ ...existing.stats, ...stats }), _now(), ME, date]
+        `UPDATE body_stats_log SET stats = ?, updated_at = ?, deleted_at = NULL, sync_state = 'pending' WHERE user_id = ? AND date = ?`,
+        [_stringify(merged), _now(), ME, date]
       );
     } else {
       await dbRun(
         `INSERT INTO body_stats_log (id, user_id, date, stats, updated_at, sync_state)
          VALUES (?, ?, ?, ?, ?, 'pending')`,
-        [_newId(), ME, date, _stringify(stats), _now()]
+        [_newId(), ME, date, _stringify(merged), _now()]
       );
     }
     return BodyStats.get(date);
@@ -1764,7 +1774,7 @@ async function handle(method, path, body, query) {
   // Server wraps GET /:date and PUT /:date in { stats: ... }; range returns
   // a bare array. BodyStats.svelte reads data.stats off the wrapper.
   if (r === 'body-stats') {
-    if (id === 'range' && m === 'GET') return BodyStats.range(query?.from, query?.to);
+    if (id === 'range' && m === 'GET') return BodyStats.range(query?.start ?? query?.from, query?.end ?? query?.to);
     if (id              && m === 'GET') return { stats: await BodyStats.get(id) };
     if (id              && m === 'PUT') return { stats: await BodyStats.put(id, body || {}) };
   }
