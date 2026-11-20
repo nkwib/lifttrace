@@ -1,6 +1,6 @@
 <script>
   import { activateOnKey } from '../lib/a11y.js';
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, tick } from 'svelte';
   import { wideContent } from '../lib/wide.js';
   import { fmtSetDuration, parseDuration, distanceUnitOf } from '../lib/workout.js';
   import { weightUnit } from '../stores/settings.js';
@@ -8,7 +8,7 @@
   import { _ } from 'svelte-i18n';
   import { LtApi } from '../lib/api.js';
   import { onSyncChanges, newestRead } from '../lib/sync-refresh.js';
-  import { duplicateProgram as duplicate } from '../lib/program-actions.js';
+  import { duplicateProgram as duplicate, moveTemplate } from '../lib/program-actions.js';
   import { exportProgram } from '../lib/programShare.js';
   import { showSuccess, showError } from '../stores/toast.js';
   import { confirmDialog } from '../stores/confirmDialog.js';
@@ -215,19 +215,36 @@
     e.preventDefault();
     const from = draggedTplIdx;
     draggedTplIdx = -1; dragOverTplIdx = -1;
-    if (from < 0 || from === i || !program?.templates) return;
-    const tpls = [...program.templates];
-    const [moved] = tpls.splice(from, 1);
-    tpls.splice(i, 0, moved);
+    await commitTemplateMove(from, i);
+  }
+  // Shared by drag-drop and the up/down buttons (touch has no HTML5 drag).
+  async function commitTemplateMove(from, to) {
+    if (reordering || othersProgram || !program?.templates) return false;
+    const tpls = moveTemplate(program.templates, from, to);
+    if (tpls === program.templates) return false;
     // Optimistic local update so the UI feels responsive
     program.templates = tpls;
     reordering = true;
     try {
       await LtApi.reorderTemplates(params.id, tpls.map(t => t.id));
+      return true;
     } catch(e) {
       showError(e.message);
       await load();
+      return false;
     } finally { reordering = false; }
+  }
+  async function moveTplBy(e, idx, delta, dir) {
+    e.stopPropagation();
+    const id = program?.templates?.[idx]?.id;
+    if (!(await commitTemplateMove(idx, idx + delta))) return;
+    // Keep focus on the moved day's button so repeated taps move the same day.
+    // At an end the pressed button is disabled, so fall back to the opposite one.
+    await tick();
+    const ni = idx + delta;
+    const last = (program?.templates?.length || 0) - 1;
+    const d = ni === 0 ? 'down' : ni === last ? 'up' : dir;
+    document.querySelector(`[data-tpl-move="${id}-${d}"]`)?.focus();
   }
 
   /** Build a non-colliding "(Copy)" name for a duplicate.
@@ -432,6 +449,16 @@
                   </div>
                   <div class="tpl-right">
                     {#if !othersProgram}
+                    <button type="button" class="btn-icon-sm tpl-move" data-tpl-move="{t.id}-up" disabled={reordering || idx === 0}
+                            aria-label={$_('program_detail.move_day_up', { values: { name: t.name } })} title={$_('program_detail.move_up')}
+                            on:click={e => moveTplBy(e, idx, -1, 'up')} on:keydown|stopPropagation>
+                      <span class="material-symbols-rounded">keyboard_arrow_up</span>
+                    </button>
+                    <button type="button" class="btn-icon-sm tpl-move" data-tpl-move="{t.id}-down" disabled={reordering || idx === program.templates.length - 1}
+                            aria-label={$_('program_detail.move_day_down', { values: { name: t.name } })} title={$_('program_detail.move_down')}
+                            on:click={e => moveTplBy(e, idx, 1, 'down')} on:keydown|stopPropagation>
+                      <span class="material-symbols-rounded">keyboard_arrow_down</span>
+                    </button>
                     <button class="btn-icon-sm" on:click={e => deleteTemplate(e, t.id)} title={$_('common.delete')}>
                       <span class="material-symbols-rounded">close</span>
                     </button>
@@ -702,6 +729,9 @@
   .tpl-right { display: flex; align-items: center; gap: 4px; }
   .btn-icon-sm { background: none; border: none; cursor: pointer; color: var(--text-3); padding: 4px; display: flex; border-radius: var(--radius-xs); }
   .btn-icon-sm:hover { color: var(--danger); }
+  .btn-icon-sm.tpl-move { min-width: 40px; min-height: 40px; align-items: center; justify-content: center; }
+  .btn-icon-sm.tpl-move:hover:not(:disabled) { color: var(--text-1); }
+  .btn-icon-sm.tpl-move:disabled { opacity: 0.3; cursor: default; }
   .tpl-arrow { color: var(--text-3); font-size: 20px; }
 
   .empty-templates { text-align: center; padding: 32px; color: var(--text-3); }

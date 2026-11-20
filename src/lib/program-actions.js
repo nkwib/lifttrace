@@ -18,6 +18,17 @@ export function nextCopyName(sourceName, existingNames) {
   return `${base} (Copy ${n})`;
 }
 
+/** New array with list[from] moved to `to`; the same array if the move is a no-op or out of range. */
+export function moveTemplate(list, from, to) {
+  if (!Array.isArray(list)) return list;
+  const ok = i => Number.isInteger(i) && i >= 0 && i < list.length;
+  if (!ok(from) || !ok(to) || from === to) return list;
+  const out = [...list];
+  const [m] = out.splice(from, 1);
+  out.splice(to, 0, m);
+  return out;
+}
+
 /**
  * Copy a program and every workout in it. `program` needs its templates
  * loaded; the caller fetches them, because the list page already has them

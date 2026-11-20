@@ -11,6 +11,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **Undo after removing a whole superset.** Same toast as for a set or exercise, shown when "confirm exercise removal" is off.
 
+### Added
+
+- **Reorder program days on phones.** Each day in a program has up/down buttons, since drag-and-drop only worked with a mouse.
+
 ### Fixed
 
 - **Workout pill no longer shows a frozen ".00".** The floating timer pill now shows m:ss without the centisecond suffix.
