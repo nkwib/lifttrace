@@ -28,6 +28,7 @@ COPY src/lib/exercise-sources/ /src/lib/exercise-sources/
 COPY src/lib/trained-day.js /src/lib/trained-day.js
 COPY src/lib/cardio-input.js /src/lib/cardio-input.js
 COPY src/lib/week-start.js /src/lib/week-start.js
+COPY src/lib/import-match.js /src/lib/import-match.js
 COPY src/lib/workout-merge.js /src/lib/workout-merge.js
 COPY --from=build /app/dist ./dist
 # Also ship the root package.json so the server can read APP_VERSION

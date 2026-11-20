@@ -70,7 +70,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { planImport, importKeys, importKey } from '../server/lib/import-match.js';
+import { planImport, importKeys, importKey } from '../src/lib/import-match.js';
 
 const wk = (date, name) => ({ date, name, exercises: [] });
 
@@ -206,7 +206,7 @@ import { readFileSync } from 'node:fs';
 
 test('native importer: wired to planImport, session_seq, in-place replace', () => {
   const src = readFileSync(new URL('../src/lib/api-native.js', import.meta.url), 'utf8');
-  assert.match(src, /import \{[^}]*planImport[^}]*\} from '\.\.\/\.\.\/server\/lib\/import-match\.js'/);
+  assert.match(src, /import \{[^}]*planImport[^}]*\} from '\.\/import-match\.js'/);
   const start = src.indexOf("if (id === 'preview')");
   const end = src.indexOf('Unknown workout-import endpoint');
   assert.ok(start > 0 && end > start);

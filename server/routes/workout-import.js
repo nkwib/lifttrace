@@ -9,7 +9,7 @@ import { parseFitnotes }  from '../lib/workout-import/fitnotes.js';
 import { parseJefit }     from '../lib/workout-import/jefit.js';
 import { parseGarminFit } from '../lib/workout-import/garmin-fit.js';
 import { matchExercise }  from '../lib/workout-import/common.js';
-import { importKeys, importKey, planImport } from '../lib/import-match.js';
+import { importKeys, importKey, planImport } from '../../src/lib/import-match.js';
 import { readTimes } from '../lib/field-sync.js';
 
 const router = Router();

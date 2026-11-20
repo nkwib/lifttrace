@@ -26,7 +26,7 @@ import { normalizeMuscle } from './muscle-groups.js';
 import { getServerUrl } from './platform.js';
 import { checkedCardioDate, normalizeCardioInput } from './cardio-input.js';
 import { newTempId } from './offline-edits.js';
-import { planImport, importKeys, importKey } from '../../server/lib/import-match.js';
+import { planImport, importKeys, importKey } from './import-match.js';
 import { weekStart, normalizeWeekStart } from './week-start.js';
 import { trainedDates, currentStreak, longestStreak, trainedDaysByWeek, weekdayCounts, hasWorkingSet, cleanExcuse, isCalendarDate } from './trained-day.js';
 
