@@ -608,6 +608,20 @@ export function ftInToCm(ft, inches) {
  * Compute age in years from a YYYY-MM-DD date-of-birth string. Returns
  * null if the input is missing or unparseable.
  */
+/**
+ * Profile fields estimateWorkoutCalories needs but cannot find, as
+ * ['weight', 'height', 'dob']. Same falsy test as the estimator (sex is
+ * optional). Empty array means the estimate can run.
+ */
+export function missingCalorieProfileFields(profile) {
+  const { weight_kg, height_cm, age } = profile || {};
+  const out = [];
+  if (!weight_kg) out.push('weight');
+  if (!height_cm) out.push('height');
+  if (!age) out.push('dob');
+  return out;
+}
+
 export function ageFromDob(dob) {
   if (!dob) return null;
   const d = new Date(dob + 'T12:00:00');

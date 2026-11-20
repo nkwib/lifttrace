@@ -8,8 +8,12 @@
     exerciseReorderMethod, confirmExerciseRemoval, restTimerEnabled,
     restDuration, restAutoStart, restAlert, restAlertVibrate, restAlertTone,
     bodyStatsVisible, autoGenerateWarmups, trackRpe, effortScale, showPlateSplit, restAlertToneId,
-    caloriesBurnedEnabled, restAlertOutput,
+    caloriesBurnedEnabled, restAlertOutput, heightCm, currentWeightKg,
   } from '../../stores/settings.js';
+  import { push } from 'svelte-spa-router';
+  import { currentUser } from '../../stores/auth.js';
+  import { DB } from '../../lib/db.js';
+  import { ageFromDob, missingCalorieProfileFields } from '../../lib/workout.js';
   import { isNative } from '../../lib/platform.js';
   import { REST_TONES } from '../../lib/restTones.js';
   import { LtApi } from '../../lib/api.js';
@@ -20,6 +24,21 @@
 
   // Set videos (issue #57): nothing expires on its own, so the only honest
   // thing to do is show what they cost and make the clear-out one action.
+  // Same sources as WorkoutSummary / Statistics, so the row matches what the
+  // estimate actually sees. Reactive: updates when returning from Profile.
+  $: missingCalorie = $caloriesBurnedEnabled
+    ? missingCalorieProfileFields({
+        weight_kg: $currentWeightKg,
+        height_cm: $heightCm,
+        age: ageFromDob($currentUser?.birthday || DB.getSetting('dob', null)),
+      })
+    : [];
+  $: missingCalorieNames = missingCalorie
+    .map((k) => k === 'weight' ? $_('settings_workout.goals.calorie_missing_weight')
+      : k === 'height' ? $_('settings_workout.goals.calorie_missing_height')
+      : $_('settings_workout.goals.calorie_missing_dob'))
+    .join(', ');
+
   let clipUsage = null;
   let clearing = false;
   $: if (expanded && visible && clipUsage === null) loadClipUsage();
@@ -137,6 +156,14 @@
           </div>
           <Toggle bind:checked={$caloriesBurnedEnabled} />
         </div>
+        {#if missingCalorie.length}
+          <div class="setting-row">
+            <div class="setting-label-group">
+              <span class="setting-hint calorie-missing">{$_('settings_workout.goals.calorie_missing', { values: { fields: missingCalorieNames } })}</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" on:click={() => push('/profile')}>{$_('settings_workout.goals.calorie_missing_action')}</button>
+          </div>
+        {/if}
       </div>
 
       <p class="sub-label">{$_('settings_workout.sections.logging')}</p>
@@ -369,6 +396,7 @@
 {/if}
 
 <style>
+  .calorie-missing { color: var(--warning-text); }
   /* Clear-out buttons sit side by side and wrap on a narrow phone. */
   .clip-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
   .tone-list { display: flex; flex-direction: column; gap: 4px; }
