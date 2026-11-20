@@ -9,6 +9,7 @@
   import { currentDate } from '../../stores/workout.js';
   import { uploadAndAttachPhoto } from '../../lib/progress-photo-upload.js';
   import { onSyncChanges, newestRead } from '../../lib/sync-refresh.js';
+  import { adoptLoggedWeight } from '../../lib/profile-weight.js';
 
   export let open = false;
 
@@ -117,6 +118,8 @@
         body: JSON.stringify({ stats }),
       });
       if (!res.ok) throw new Error($_('diary_extra.body_stats_save_failed'));
+      // Only a weight typed in this sheet, not one merely loaded from the day.
+      if (touched.has('weight')) await adoptLoggedWeight($currentDate, stats.weight, $weightUnit);
       showSuccess($_('diary_extra.body_stats_saved'));
       // Notify the desktop rail widget so it can reload its summary
       // view without a page nav.

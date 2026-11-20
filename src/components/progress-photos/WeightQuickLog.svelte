@@ -20,6 +20,7 @@
   import { _ } from 'svelte-i18n';
   import { weightUnit } from '../../stores/settings.js';
   import { showError } from '../../stores/toast.js';
+  import { adoptLoggedWeight } from '../../lib/profile-weight.js';
 
   /** @type {string} YYYY-MM-DD */
   export let date;
@@ -57,6 +58,7 @@
         body: JSON.stringify({ stats: { ...existing, weight: val } }),
       });
       if (!res.ok) throw new Error($_('progress.weight.save_failed'));
+      await adoptLoggedWeight(date, val, $weightUnit);
 
       dispatch('saved', { date, weight: val });
       // The app's existing "body stats changed" signal, so the diary widget

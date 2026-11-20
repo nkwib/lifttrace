@@ -20,6 +20,7 @@
   import { bodyStatsVisible, weightUnit } from '../../stores/settings.js';
   import { currentDate } from '../../stores/workout.js';
   import { showError } from '../../stores/toast.js';
+  import { adoptLoggedWeight } from '../../lib/profile-weight.js';
 
   export let onOpen = () => {};
 
@@ -104,6 +105,7 @@
         body: JSON.stringify({ stats: next }),
       });
       if (!res.ok) throw new Error('Save failed');
+      await adoptLoggedWeight($currentDate, val, $weightUnit);
       stats = next;
       editing = false;
     } catch (e) {
