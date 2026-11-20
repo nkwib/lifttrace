@@ -5,7 +5,8 @@
   import { placeAnchoredMenu } from '../../lib/fold-core.js';
   import { createEventDispatcher } from 'svelte';
   import { _ } from 'svelte-i18n';
-  import { trackRpe } from '../../stores/settings.js';
+  import { trackRpe, effortScale } from '../../stores/settings.js';
+  import { RIR_VALUES, rirToRpe, rpeToRir, rirLabel, setScale, effortChip, effortLevel, withEffort } from '../../lib/effort-scale.js';
   import { haptic as _haptic } from '../../lib/haptics.js';
   import { portal } from '../../lib/portal.js';
   import { replaceOnType } from '../../lib/replaceOnType.js';
@@ -123,7 +124,12 @@
   let rpeOpen = false;
   let rpeTriggerEl;
   let rpePickerPos = { edge: 'top:0px;', left: 0 };
+  const RIR_HINT = ['exercise_card.rir_level_0', 'exercise_card.rir_level_1', 'exercise_card.rir_level_2', 'exercise_card.rir_level_3', 'exercise_card.rir_level_4', 'exercise_card.rir_level_5'];
   const RPE_VALUES = [6, 7, 7.5, 8, 8.5, 9, 9.5, 10];
+  // The picker follows the setting; the chip follows the set's own scale.
+  $: pickerScale = $effortScale === 'rir' ? 'rir' : 'rpe';
+  $: chipText = effortChip(set);
+  $: chipLevel = setScale(set) === 'rir' ? effortLevel(set.rpe) : null;
   // Open-lock (350ms) prevents a stray backdrop dismissal from silently
   // closing the picker before a slightly-slipped tap on an option button
   // registers. Same pattern used in ActionSheet.svelte and TemplateSpecRow.
@@ -139,8 +145,9 @@
     rpeLockTimer = setTimeout(() => { rpeLocked = false; }, 350);
   }
   function closeRpeIfUnlocked() { if (!rpeLocked) rpeOpen = false; }
-  function pickRpe(v) { update('rpe', v); rpeOpen = false; }
-  function clearRpe() { update('rpe', null); rpeOpen = false; }
+  function pickRpe(v) { dispatch('update', withEffort(set, 'rpe', v)); rpeOpen = false; }
+  function pickRir(n) { dispatch('update', withEffort(set, 'rir', n)); rpeOpen = false; }
+  function clearRpe() { dispatch('update', withEffort(set, 'rpe', null)); rpeOpen = false; }
 
   // Set-number picker (asymmetric supersets — addon sets, etc.).
   // The displayed number is `set.number` when explicitly set, otherwise the
@@ -554,20 +561,28 @@
 
   {#if $trackRpe && !showAsWarmup}
     <div class="rpe-wrap">
-      <button class="rpe-chip tap" class:set={set.rpe != null}
+      <button class="rpe-chip tap {chipLevel ? 'lvl-' + chipLevel : ''}" class:set={set.rpe != null}
         bind:this={rpeTriggerEl}
         on:click={() => rpeOpen ? (rpeOpen = false) : openRpePicker()}
-        title={$_('exercise_card.rpe_title')}>
-        {set.rpe != null ? `@${set.rpe}` : 'RPE'}
+        title={setScale(set) === 'rir' && set.rpe != null ? $_('exercise_card.rir_chip_title', { values: { n: rirLabel(rpeToRir(set.rpe)) } }) : $_(pickerScale === 'rir' ? 'exercise_card.rir_title' : 'exercise_card.rpe_title')}>
+        {chipText ?? (pickerScale === 'rir' ? 'RIR' : 'RPE')}
       </button>
       {#if rpeOpen}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div use:portal class="rpe-backdrop" on:click={closeRpeIfUnlocked} use:closeOnBack={() => rpeOpen = false}></div>
         <div use:portal class="rpe-picker" style="{rpePickerPos.edge} left:{rpePickerPos.left}px">
-          {#each RPE_VALUES as v}
-            <button class="rpe-opt" class:active={set.rpe === v} on:click|stopPropagation={() => pickRpe(v)}>@{v}</button>
-          {/each}
+          {#if pickerScale === 'rir'}
+            {#each RIR_VALUES as n}
+              <button class="rpe-opt lvl-{effortLevel(rirToRpe(n))}" class:active={setScale(set) === 'rir' && set.rpe != null && rpeToRir(set.rpe) === n}
+                title={$_(RIR_HINT[n])}
+                on:click|stopPropagation={() => pickRir(n)}>{rirLabel(n)}</button>
+            {/each}
+          {:else}
+            {#each RPE_VALUES as v}
+              <button class="rpe-opt" class:active={set.rpe === v} on:click|stopPropagation={() => pickRpe(v)}>@{v}</button>
+            {/each}
+          {/if}
           {#if set.rpe != null}
             <button class="rpe-opt clear" on:click|stopPropagation={clearRpe}>{$_('exercise_card.clear')}</button>
           {/if}
@@ -948,5 +963,11 @@
   }
   .rpe-opt:hover { background: var(--surface-3); }
   .rpe-opt.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .rpe-chip.set.lvl-easy, .rpe-opt.lvl-easy { --lvl: var(--success, #3fb950); }
+  .rpe-chip.set.lvl-moderate, .rpe-opt.lvl-moderate { --lvl: var(--warning, #d29922); }
+  .rpe-chip.set.lvl-hard, .rpe-opt.lvl-hard { --lvl: #e8833a; }
+  .rpe-chip.set.lvl-max, .rpe-opt.lvl-max { --lvl: var(--danger, #f85149); }
+  .rpe-chip.set[class*='lvl-'] { color: var(--lvl); border-color: var(--lvl); background: transparent; }
+  .rpe-opt[class*='lvl-'] { border-left: 3px solid var(--lvl); }
   .rpe-opt.clear { grid-column: span 4; color: var(--danger); background: transparent; border: 1px dashed var(--border); margin-top: 2px; }
 </style>

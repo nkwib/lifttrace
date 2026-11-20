@@ -359,11 +359,11 @@ history.
 
 **Effort:** 1 week, mostly the Strength mode and the routine preview.
 
-### [ ] 10. RIR alongside RPE
+### [x] 10. RIR alongside RPE
 
-**Note:** ROADMAP.md used to claim this was done at v0.9.4-beta.13. It is not: the
-code stores `set.rpe` only, and there is no RIR scale in the source or in `en.json`.
-ROADMAP.md now says so (refreshed for #150).
+**Done:** `src/lib/effort-scale.js`, setting `effortScale`, `set.rpe_scale: 'rir'`.
+RIR 0-4 is rpe 10-6, 5+ is rpe 5. Half RPEs are never written from the RIR picker and
+show as RPE. Template rows, SmartLog, stats, CSV and MCP stay RPE.
 
 **Design:** a per-user choice of scale (RPE 1-10 or RIR 0-5+), with each set storing
 the scale it was logged with so old data keeps its meaning. Color code the chip by

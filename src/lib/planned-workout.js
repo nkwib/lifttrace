@@ -379,7 +379,8 @@ export function logIntoSets(sets, sent, added, { at = null } = {}) {
     delete set.reps_l;
     delete set.reps_r;
   }
-  if (given(sent.rpe)) set.rpe = sent.rpe;
+  // An RPE sent here is RPE: a RIR scale left on the set would misread it.
+  if (given(sent.rpe)) { set.rpe = sent.rpe; delete set.rpe_scale; }
   if (at) set.completedAt = at;
   if (set.weight == null) set.weight = 0;
   if (set.reps == null) set.reps = 0;

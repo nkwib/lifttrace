@@ -7,7 +7,7 @@
     showCompletionSummary, autoCollapseCompleted, autoNameWorkouts,
     exerciseReorderMethod, confirmExerciseRemoval, restTimerEnabled,
     restDuration, restAutoStart, restAlert, restAlertVibrate, restAlertTone,
-    bodyStatsVisible, autoGenerateWarmups, trackRpe, restAlertToneId,
+    bodyStatsVisible, autoGenerateWarmups, trackRpe, effortScale, restAlertToneId,
     caloriesBurnedEnabled, restAlertOutput,
   } from '../../stores/settings.js';
   import { isNative } from '../../lib/platform.js';
@@ -201,6 +201,18 @@
           </div>
           <Toggle bind:checked={$trackRpe} />
         </div>
+        {#if $trackRpe}
+          <div class="setting-row">
+            <div class="setting-label-group">
+              <span class="setting-label">{$_('settings_workout.logging.effort_scale')}</span>
+              <span class="setting-hint">{$_('settings_workout.logging.effort_scale_desc')}</span>
+            </div>
+            <select class="form-select-sm" bind:value={$effortScale}>
+              <option value="rpe">{$_('settings_workout.logging.effort_rpe')}</option>
+              <option value="rir">{$_('settings_workout.logging.effort_rir')}</option>
+            </select>
+          </div>
+        {/if}
       </div>
 
       <p class="sub-label">{$_('settings_workout.sections.rest_timer')}</p>

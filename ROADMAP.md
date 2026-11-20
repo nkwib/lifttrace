@@ -67,10 +67,10 @@ players, sheets and dialogs. Each is a clickable `<div>` without keyboard reach.
 Bar → 50% → 70% → 85% ramp; manual button + opt-in `autoGenerate` on template load; `warmup` field propagated through all stats math so warm-ups don't inflate volume totals. On dev, warm-up steps only ever climb and stay under the working weight.
 
 ### ~~RPE per set~~ *(done, v0.9.4-beta.13)*
-Opt-in chip + picker on SetRow, stored as `set.rpe`. RIR is not done (this line used to say it was); see "RIR alongside RPE" below.
+Opt-in chip + picker on SetRow, stored as `set.rpe`. RIR is a per-user alternative, see below.
 
-### RIR alongside RPE
-Not started. A per-user choice of RPE or RIR, each set storing the scale it was logged with. Design in the training-depth plan, item 10.
+### ~~RIR alongside RPE~~ *(done)*
+Settings > Workout > Effort scale. `set.rpe` stays canonical (RIR n is rpe 10-n, 5+ is rpe 5); a set logged as RIR also stores `rpe_scale: 'rir'` and always shows by its own scale. Stats, CSV, MCP and REST stay RPE and do not expose `rpe_scale`; a REST/MCP write of `rpe` drops it.
 
 ### ~~Rest timer rebuild~~ *(done, v0.9.4-beta.5→9)*
 Persistent store, absolute `endTime`, countdown beeps at 3/2/1/0 with vibration, background Service Worker notification.

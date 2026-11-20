@@ -750,6 +750,14 @@
     "mark_complete":         "Mark complete",
     "mark_incomplete":       "Mark incomplete",
     "rpe_title":             "Rate of Perceived Exertion",
+    "rir_title":             "Reps in Reserve",
+    "rir_chip_title":        "Reps in reserve: {n}",
+    "rir_level_0": "RIR 0: nothing left, a max effort set",
+    "rir_level_1": "RIR 1: one more rep in the tank",
+    "rir_level_2": "RIR 2: two more reps in the tank",
+    "rir_level_3": "RIR 3: three more reps in the tank",
+    "rir_level_4": "RIR 4: four more reps in the tank",
+    "rir_level_5": "RIR 5+: five or more reps left, an easy set",
     "clear":                 "Clear",
     "remove_set":            "Remove set"
   },
@@ -2517,7 +2525,11 @@
       "warmups":               "Auto-Generate Warm-Up Sets",
       "warmups_desc":          "When a template loads with target weights, prepend bar / 50% / 70% / 85% warm-ups. You can always add or remove them per-exercise.",
       "rpe":                   "Track RPE per Set",
-      "rpe_desc":              "Log Rate of Perceived Exertion (6–10 scale) on each completed set. Useful for autoregulated programs."
+      "rpe_desc":              "Log Rate of Perceived Exertion (6–10 scale) on each completed set. Useful for autoregulated programs.",
+      "effort_scale":          "Effort scale",
+      "effort_scale_desc":     "Log effort as RPE or as reps in reserve (RIR). Sets you already logged keep the scale they were logged with.",
+      "effort_rpe":            "RPE (6–10)",
+      "effort_rir":            "RIR (0–5+)"
     },
     "rest": {
       "enabled":           "Rest Timer",
