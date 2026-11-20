@@ -1,4 +1,5 @@
 <script>
+  import { activateOnKey } from '../lib/a11y.js';
   import { onMount, onDestroy } from 'svelte';
   import { wideContent } from '../lib/wide.js';
   import { fmtSetDuration, parseDuration, distanceUnitOf } from '../lib/workout.js';
@@ -415,10 +416,10 @@
                 on:drop={e => onTplDrop(e, idx)}
                 on:dragend={onTplDragEnd}
               >
-                <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
                 <div class="template-card"
                      class:selected-for-preview={_wideMode && _previewTemplateId === t.id}
                      on:click={() => _tapTemplate(t)}
+                     on:keydown={e => activateOnKey(e, () => _tapTemplate(t))}
                      role="button"
                      tabindex="0">
                   <div class="tpl-left">
@@ -676,6 +677,7 @@
     flex-shrink: 0;
   }
   .tpl-drag:hover .tpl-drag-handle { opacity: 0.9; }
+  .template-card:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .template-card {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px;

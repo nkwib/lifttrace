@@ -1,4 +1,5 @@
 <script>
+  import { activateOnKey } from '../lib/a11y.js';
   import { closeOnBack } from '../lib/back-stack.js';
   import { wideContent } from '../lib/wide.js';
   import { onMount, onDestroy } from 'svelte';
@@ -915,9 +916,9 @@
         <p class="result-label">{$_('radio.songs')}</p>
         {#each searchResults.songs as song}
           {@const track = sub.songToTrack(song)}
-          <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
           <div class="track-row" class:now-playing={isNowPlaying(song.id)}
             on:click={() => playTrack(track, [track], 0)}
+            on:keydown={e => activateOnKey(e, () => playTrack(track, [track], 0))}
             on:pointerdown={_recordPointer} on:contextmenu={e => showCtx(e, track)}
             role="button" tabindex="0">
             {#if isNowPlaying(song.id)}<span class="now-eq" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -978,9 +979,9 @@
         </div>
       </div>
       {#each albumTracks as track, i}
-        <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
         <div class="track-row" class:now-playing={isNowPlaying(track.id)}
           on:click={() => playTrack(track, albumTracks, i)}
+          on:keydown={e => activateOnKey(e, () => playTrack(track, albumTracks, i))}
           on:pointerdown={_recordPointer} on:contextmenu={e => showCtx(e, track)}
           role="button" tabindex="0">
           {#if isNowPlaying(track.id)}<span class="now-eq" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -1024,9 +1025,9 @@
         </button>
       </div>
       {#each playlistTracks as track, i}
-        <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
         <div class="track-row" class:now-playing={isNowPlaying(track.id)}
           on:click={() => playTrack(track, playlistTracks, i)}
+          on:keydown={e => activateOnKey(e, () => playTrack(track, playlistTracks, i))}
           on:pointerdown={_recordPointer} on:contextmenu={e => showCtx(e, track)}
           role="button" tabindex="0">
           {#if isNowPlaying(track.id)}<span class="now-eq" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -1146,8 +1147,7 @@
       {#if starredArtists.length > 0}
         <p class="result-label">{$_('radio.artists')}</p>
         {#each starredArtists as artist (artist.id)}
-          <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-          <div class="artist-row" on:click={() => openArtist(artist)} role="button" tabindex="0">
+          <div class="artist-row" on:click={() => openArtist(artist)} on:keydown={e => activateOnKey(e, () => openArtist(artist))} role="button" tabindex="0">
             <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent)">person</span>
             <span class="artist-name">{artist.name}</span>
             <button class="star-btn" on:click|stopPropagation={() => toggleStar('artist', artist)} title={$_('radio.unstar')}>
@@ -1160,9 +1160,9 @@
         <p class="result-label">{$_('radio.songs')}</p>
         {#each starredSongs as song (song.id)}
           {@const track = sub.songToTrack(song)}
-          <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
           <div class="track-row" class:now-playing={isNowPlaying(song.id)}
             on:click={() => playTrack(track, starredSongs.map(s => sub.songToTrack(s)), starredSongs.findIndex(s => s.id === song.id))}
+            on:keydown={e => activateOnKey(e, () => playTrack(track, starredSongs.map(s => sub.songToTrack(s)), starredSongs.findIndex(s => s.id === song.id)))}
             on:pointerdown={_recordPointer} on:contextmenu={e => showCtx(e, track)}
             role="button" tabindex="0">
             {#if isNowPlaying(song.id)}<span class="now-eq" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -1204,12 +1204,11 @@
 
       {#if stationsSubTab === 'my'}
         {#each groupedStations as [groupName, stations] (groupName)}
-          <!-- svelte-ignore a11y-no-static-element-interactions -->
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div class="station-group-header"
             class:drag-over-group={dragOverGroup === (groupName || '')}
             class:collapsed={isGroupCollapsed(groupName)}
             on:click={() => toggleGroupCollapse(groupName)}
+            on:keydown={e => activateOnKey(e, () => toggleGroupCollapse(groupName))}
             on:dragover={e => onGroupDragOver(e, groupName || '')}
             on:drop={e => onGroupDrop(e, groupName || '')}
             role="button" tabindex="0"
@@ -1664,6 +1663,7 @@
     user-select: none;
     transition: background var(--dur-fast);
   }
+  .station-group-header:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .station-group-header:hover { background: var(--surface-2); color: var(--text-2); }
   .station-group-header:first-of-type { margin-top: 8px; }
   .group-chev { font-size: 18px; transition: transform var(--dur-fast); }
@@ -1917,6 +1917,7 @@
     transition: background var(--dur-fast);
   }
   .track-row:hover { background: var(--surface-2); }
+  .track-row:focus-visible, .artist-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .track-art {
     width: 44px; height: 44px; border-radius: var(--radius-sm);
     object-fit: cover; background: var(--surface-2); flex-shrink: 0;

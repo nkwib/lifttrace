@@ -401,18 +401,16 @@
     {/if}
     <!-- Avatar -->
     <div class="avatar-section">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div class="avatar-wrap" on:click={pickAvatar}>
+      <button type="button" class="avatar-wrap" on:click={pickAvatar} aria-label={$_('profile.change_avatar')}>
         {#if avatarUrl}
-          <img class="avatar-img" src={resolveAssetUrl(avatarUrl)} alt="Avatar" />
+          <img class="avatar-img" src={resolveAssetUrl(avatarUrl)} alt="" />
         {:else}
           <span class="avatar-initial">{getInitial()}</span>
         {/if}
         <div class="avatar-overlay">
           <span class="material-symbols-rounded" style="font-size:24px">photo_camera</span>
         </div>
-      </div>
+      </button>
       <input bind:this={fileInput} type="file" accept="image/*" style="display:none" on:change={handleAvatarFile} />
       <span class="avatar-name">{nickname || fullName || $currentUser?.username}</span>
     </div>
@@ -693,7 +691,9 @@
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     display: flex; align-items: center; justify-content: center;
     position: relative; cursor: pointer; overflow: hidden;
+    border: 0; padding: 0; font: inherit; color: inherit;
   }
+  .avatar-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .avatar-img { width: 100%; height: 100%; object-fit: cover; }
   .avatar-initial { font-size: 36px; font-weight: 800; color: var(--accent-text, #fff); }
   .avatar-overlay {
@@ -703,7 +703,7 @@
     color: #fff; opacity: 0;
     transition: opacity var(--dur-fast);
   }
-  .avatar-wrap:hover .avatar-overlay { opacity: 1; }
+  .avatar-wrap:hover .avatar-overlay, .avatar-wrap:focus-visible .avatar-overlay { opacity: 1; }
   .avatar-name { font-size: 16px; font-weight: 600; color: var(--text-1); }
 
   .section-label {

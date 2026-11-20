@@ -1,4 +1,5 @@
 <script>
+  import { activateOnKey } from '../../lib/a11y.js';
   import { _ } from 'svelte-i18n';
   import { closeOnBack } from '../../lib/back-stack.js';
   import { fly } from 'svelte/transition';
@@ -181,9 +182,9 @@
       {#if $showQueue && $queue.length > 0}
         <div class="fp-queue-list">
           {#each $queue as track, i (track.id + '-' + i)}
-            <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
             <div class="fp-queue-row" class:fp-queue-active={i === $queueIndex}
-              on:click={() => { queueIndex.set(i); playTrack(track); }} role="button" tabindex="0">
+              on:click={() => { queueIndex.set(i); playTrack(track); }}
+              on:keydown={e => activateOnKey(e, () => { queueIndex.set(i); playTrack(track); })} role="button" tabindex="0">
               <span class="fp-queue-play">
                 {#if i === $queueIndex}
                   <span class="material-symbols-rounded" style="font-size:16px;color:var(--accent)">equalizer</span>
@@ -391,6 +392,7 @@
   .fp-queue-toggle:hover { color: var(--text-1); }
 
   .fp-queue-list { width: 100%; max-height: 240px; overflow-y: auto; }
+  .fp-queue-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .fp-queue-row {
     display: flex; align-items: center; gap: 10px;
     padding: 8px 4px;

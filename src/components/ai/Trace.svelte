@@ -7,6 +7,7 @@
   import { fly, fade } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { _ } from 'svelte-i18n';
+  import { activateOnKey } from '../../lib/a11y.js';
   import { portal } from '../../lib/portal.js';
   import { callAI, callAIProxy, AI_DEFAULT_MODELS } from '../../lib/aiChat.js';
   import { TOOLS, runTool, forgetToolReads } from '../../lib/aiTools.js';
@@ -841,7 +842,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
       on:pointerdown={startDrag}
       data-no-pull-sync
       on:click={handleFabClick}
-      on:keydown={e => e.key === 'Enter' && handleFabClick()}
+      on:keydown={e => activateOnKey(e, handleFabClick)}
       role="button"
       tabindex="0"
       aria-label={$_('trace.fab_label')}

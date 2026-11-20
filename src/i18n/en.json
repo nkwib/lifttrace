@@ -469,6 +469,7 @@
     }
   },
   "profile": {
+    "change_avatar": "Change profile picture",
     "title":                 "Profile",
     "personal_info":         "Personal Info",
     "security":              "Security",
