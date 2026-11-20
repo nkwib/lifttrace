@@ -364,6 +364,8 @@
   "trace": {
     "send": "Send",
     "stop": "Stop",
+    "error_prefix": "Sorry, I couldn't respond: {reason}",
+    "retry": "Retry",
     "fab_label":          "Open Trace (hold to voice-log a workout)",
     "fab_tooltip":        "Tap to chat · hold to voice-log",
     "ask_placeholder":    "Ask me anything…",
@@ -860,7 +862,9 @@
     "ai_coach":              "AI Lifting Coach",
     "tools_unsupported":     "This model can't use tools: it can answer, but it can't log workouts or look up your data. Pick a model with tool support in Settings.",
     "tools_unsupported_server": "This model can't use tools: it can answer, but it can't log workouts or look up your data. Your admin can set a model with tool support.",
-    "tools_unsupported_routed": "The model that answered can't use tools, so nothing was logged or looked up."
+    "tools_unsupported_routed": "The model that answered can't use tools, so nothing was logged or looked up.",
+    "no_api_key": "No API key configured. Add one in Settings → AI Assistant.",
+    "not_signed_in": "Not signed in. Sign in again to use AI features."
   },
   "exercises_page": {
     "filtered_total": "Filtered / total",

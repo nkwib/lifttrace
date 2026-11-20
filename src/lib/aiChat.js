@@ -41,6 +41,15 @@ function _inLanguage(e) {
   } catch { /* i18n not ready: the English line */ }
   return e;
 }
+// A fixed message in the app's language, the English line when i18n isn't ready.
+function _say(key, english) {
+  try {
+    const t = get(_);
+    const said = typeof t === 'function' ? t(key) : null;
+    if (said && said !== key) return said;
+  } catch { /* i18n not ready */ }
+  return english;
+}
 const _stoppedShort = (why) => _inLanguage(stoppedShortError(why));
 
 // How long one request to a provider (or the proxy) may take, answer read
@@ -197,7 +206,7 @@ export async function callAI({ provider, apiKey, model, messages, systemPrompt, 
   // Local endpoints (Ollama default) don't need an API key; cloud ones do.
   // Other providers still require a key.
   if (!apiKey && provider !== 'oai-compat') {
-    throw new Error('No API key configured. Add one in Settings → AI Assistant.');
+    throw new Error(_say('trace_ai.no_api_key', 'No API key configured. Add one in Settings → AI Assistant.'));
   }
   const cb = { onToolCall, onToolResult, onToolsUnsupported, signal };
   switch (provider) {
@@ -277,7 +286,7 @@ export async function callAIProxy({ messages, systemPrompt, tools, onToolCall, o
     });
     _throwIfAborted(signal);
     if (!res.ok) {
-      if (res.status === 401) throw new Error('Not signed in. Sign in again to use AI features.');
+      if (res.status === 401) throw new Error(_say('trace_ai.not_signed_in', 'Not signed in. Sign in again to use AI features.'));
       throw _inLanguage(Object.assign(new Error(data.error || `AI proxy error ${res.status}`), { code: data.code }));
     }
 

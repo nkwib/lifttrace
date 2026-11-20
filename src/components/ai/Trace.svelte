@@ -605,10 +605,6 @@
 
   async function send() {
     if ((!input.trim() && pendingImages.length === 0) || sending) return;
-    const myEpoch = epoch;
-    const ctl = new AbortController();
-    sendCtl = ctl;
-    const stale = () => myEpoch !== epoch;
     const text = input.trim();
     input = '';
 
@@ -622,14 +618,33 @@
       content = text;
     }
 
-    const userMsg = { role: 'user', content, time: new Date().toISOString() };
-    messages = [...messages, userMsg];
     pendingImages = [];
+    await respondTo({ role: 'user', content, time: new Date().toISOString() }, true);
+  }
+
+  // Retry a failed send: the same message (image attachments included),
+  // not saved again, the server kept the first copy. The failed turn and
+  // its error note leave the conversation so it reads as one try.
+  async function retry(note) {
+    if (sending || !note.retryMsg) return;
+    messages = messages.filter(m => m !== note && m !== note.retryMsg);
+    await respondTo(note.retryMsg, false);
+  }
+
+  // Only the latest error note offers Retry.
+  $: lastErrorNote = [...messages].reverse().find(m => m.role === 'note' && m.kind === 'error') || null;
+
+  async function respondTo(userMsg, persist) {
+    const myEpoch = epoch;
+    const ctl = new AbortController();
+    sendCtl = ctl;
+    const stale = () => myEpoch !== epoch;
+    messages = [...messages, userMsg];
     sending = true;
     await tick();
     scrollBottom();
 
-    fetch('/api/ai/history', {
+    if (persist) fetch('/api/ai/history', {
       method: 'POST', credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userMsg),
@@ -750,7 +765,8 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
       // to say. The user's message stays in the history, which then ends on a
       // user turn; the next request sends two in a row, as for any failed one.
       if (stale() || ctl.signal.aborted) return;
-      messages = [...messages, { role: 'assistant', content: `Sorry, I couldn't respond: ${e.message}`, time: new Date().toISOString() }];
+      // A note for the person: never sent to the model, never saved.
+      messages = [...messages, { role: 'note', kind: 'error', content: $_('trace.error_prefix', { values: { reason: e.message } }), retryMsg: userMsg }];
     } finally {
       // Only this send's own state: after Clear, a newer send may be running.
       if (!stale()) {
@@ -930,6 +946,9 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
               <div class="lb-note" role="status">
                 <span class="material-symbols-rounded">info</span>
                 <span>{msg.content}</span>
+                {#if msg.kind === 'error' && msg === lastErrorNote && msg.retryMsg}
+                  <button class="lb-note-retry" disabled={sending} on:click={() => retry(msg)}>{$_('trace.retry')}</button>
+                {/if}
               </div>
             {:else}
             <div class="lb-msg" class:user={msg.role === 'user'}>
@@ -1351,6 +1370,12 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
     border-radius: var(--radius-md);
     font-size: 13px; line-height: 1.4; color: var(--text-2);
   }
+  .lb-note-retry {
+    margin-left: auto; flex-shrink: 0;
+    background: none; border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 2px 10px; font-size: 12px; color: var(--accent); cursor: pointer;
+  }
+  .lb-note-retry:disabled { opacity: 0.5; cursor: default; }
   .lb-note .material-symbols-rounded { font-size: 18px; color: var(--accent); flex-shrink: 0; }
   .lb-plan-apply {
     align-self: flex-start;
