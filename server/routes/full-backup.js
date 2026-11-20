@@ -206,6 +206,18 @@ export function pruneOldBackups(retention) {
   return toDelete;
 }
 
+// Push the admin about a failed scheduled backup. Never throws, so the caller's
+// original error is what propagates. `push` is injectable for tests.
+export async function notifyBackupFailed(adminId, err, push) {
+  try {
+    const msg = String(err?.message || err || 'unknown').slice(0, 200);
+    const send = push || (await import('../lib/push-notify.js')).pushNotifyDefaultOn;
+    await send(adminId, 'notifBackupFailed', '🛟 Backup failed', `Scheduled backup error: ${msg}`, 7);
+  } catch (pe) {
+    logger.warn?.(`[backup] failure push not sent: ${pe.message}`);
+  }
+}
+
 export async function runScheduledBackup() {
   const cfg = getScheduleConfig();
   try {
@@ -221,17 +233,10 @@ export async function runScheduledBackup() {
     _setCfg('backup_last_auto_error', e.message || String(e));
     _setCfg('backup_last_auto_error_at', new Date().toISOString());
     logger.warn?.(`[backup] scheduled backup failed: ${e.message}`);
-    try {
-      if (!firstOfStreak) throw new Error('streak');
+    if (firstOfStreak) {
       const adminRow = db.prepare("SELECT id FROM users WHERE role = 'admin' ORDER BY id LIMIT 1").get();
-      if (adminRow) {
-        const { pushNotify } = await import('../lib/push-notify.js');
-        await pushNotify(adminRow.id, 'notifBackupFailed',
-          '🛟 LiftTrace backup failed',
-          `Scheduled backup error: ${e.message || 'unknown'}`,
-          7);
-      }
-    } catch {}
+      if (adminRow) await notifyBackupFailed(adminRow.id, e);
+    }
     throw e;
   }
 }

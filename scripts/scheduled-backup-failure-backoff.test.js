@@ -36,3 +36,19 @@ test('wiring: a saved schedule change clears the backoff but keeps the error tex
   assert.ok(clear > body.indexOf('ENV_LOCKED'), 'not on the env-locked path');
   assert.doesNotMatch(body, /'backup_last_auto_error', ''/);
 });
+
+test('notifyBackupFailed passes (userId, key, title, message, priority) to push', async () => {
+  const hm = fb.match(/export async function notifyBackupFailed[\s\S]*?\n}\n/);
+  const warns = [];
+  const { notifyBackupFailed } = new Function('logger', `${hm[0].replace(/export /g, '')}; return { notifyBackupFailed };`)({ warn: (m) => warns.push(m) });
+  const calls = [];
+  await notifyBackupFailed(3, new Error('disk full'), async (...a) => { calls.push(a); });
+  assert.deepEqual(calls[0].slice(0, 3), [3, 'notifBackupFailed', '🛟 Backup failed']);
+  assert.match(calls[0][3], /disk full/);
+  assert.equal(calls[0][4], 7);
+  calls.length = 0;
+  await notifyBackupFailed(3, 'x'.repeat(500), async (...a) => { calls.push(a); });
+  assert.ok(calls[0][3].length < 260);
+  await notifyBackupFailed(3, new Error('e'), async () => { throw new Error('boom'); });
+  assert.equal(warns.length, 1);
+});
