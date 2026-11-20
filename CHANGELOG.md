@@ -27,6 +27,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- **Trace training summary counts empty weeks.** `weekly_avg` and the weekly series now include weeks with no training, matching Statistics (series capped at the last 104 weeks). Statistics also fills weeks by the Sunday or Monday week start.
 - **CSV exports expand alternating exercises and use your local date.** The library lookup called a method that did not exist, so alternating exercises were never split into L and R rows. The all-workouts filename date no longer shifts to the UTC day.
 - **Android Local mode imports same-day sessions like the server.** A file with two sessions on one date no longer loses one, and Replace updates the matching session in place instead of deleting and re-adding it. The duplicate count in the preview is per session.
 - **More of the app is translatable.** Toasts, tooltips and labels in the menu button, Programs, Exercises, the workout timer bar, the exercise info sheet and the per-hand "ea" in a set row now come from the language files.

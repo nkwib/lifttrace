@@ -20,6 +20,8 @@ import { currentDate, currentSessionId, showWorkout, loadWorkoutSessions, settle
 import { foldText } from './search-text.js';
 import { OFFLINE_HEADER } from './offline-edits.js';
 import { DB } from './db.js';
+import { fillWeeks } from './statsFormat.js';
+import { normalizeWeekStart } from './week-start.js';
 import { planWeekQuery } from './plan-week-query.js';
 
 // ── Small helpers ──────────────────────────────────────────────────────────
@@ -1240,8 +1242,14 @@ async function _getStatsOverview({ range } = {}) {
     _get('/api/excused-days').catch(() => []),
   ]);
 
+  // Empty weeks between the first and last data week count, as on Statistics
+  // (same fillWeeks arguments). Series keep the last 104 weeks.
+  let startsOn = 'monday';
+  try { startsOn = normalizeWeekStart(DB.getSetting('weekStartsOn', 'monday')); } catch { /* default */ }
+  const freqFilled = fillWeeks(frequency, from, to, { count: 0 }, 520, startsOn);
+  const volFilled = fillWeeks(volume, from, to, { volume: 0 }, 520, startsOn);
   const workouts_in_range = frequency.reduce((a, w) => a + (w.count || 0), 0);
-  const weeks = Math.max(1, frequency.length || Math.ceil(days ? days / 7 : 1));
+  const weeks = Math.max(1, freqFilled.length || Math.ceil(days ? days / 7 : 1));
   const weekly_avg = Math.round((workouts_in_range / weeks) * 10) / 10;
 
   // Muscle balance — normalize to percentages + imbalance vs mean.
@@ -1278,8 +1286,8 @@ async function _getStatsOverview({ range } = {}) {
     streak_current: streaks.currentStreak ?? 0,
     streak_best:    streaks.longestStreak ?? 0,
     weekly_avg,
-    weekly_volume:    volume.map(v => ({ week: v.week, volume: Math.round(v.volume) })),
-    weekly_frequency: frequency,
+    weekly_volume:    volFilled.slice(-104).map(v => ({ week: v.week, volume: Math.round(v.volume) })),
+    weekly_frequency: freqFilled.slice(-104),
     muscle_group_balance,
     top_prs_in_range,
   };
