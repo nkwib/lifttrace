@@ -15,6 +15,7 @@ import { effectiveTimeZone, nextBackupAt, backupFileStamp, newestFirst } from '.
 // Makes the two-step sign-in tables a backup reads and restores (nutritrace#222).
 import { logAfterRestore as logTwoStepAfterRestore } from '../lib/two-step.js';
 import { keepSessionVersions } from '../lib/session-version.js';
+import { checkBackupArchive, openBackupZip, ZIP_MAX_UNCOMPRESSED_BYTES } from '../lib/backup-validate.js';
 import { sealStoredSecrets } from '../lib/secret-settings.js';
 
 const router = express.Router();
@@ -218,8 +219,6 @@ const upload = multer({
 //   * Path normalization rejects any entry that resolves outside UPLOADS_DIR.
 //   * Hard caps on entry count + total uncompressed size prevent a tiny
 //     malicious ZIP from filling the disk on restore.
-const ZIP_MAX_ENTRIES = 50_000;
-const ZIP_MAX_UNCOMPRESSED_BYTES = 5 * 1024 * 1024 * 1024; // 5 GB
 function _safeZipExtractPath(rel, baseDir) {
   // Strip any drive letter / leading slashes / backslashes / "../" segments.
   const cleaned = String(rel || '')
@@ -246,7 +245,7 @@ function requireAdmin(req, res, next) {
 }
 
 function restoreFromZip(zip) {
-  const data = JSON.parse(zip.readAsText('database.json'));
+  const data = checkBackupArchive(zip); // before anything is wiped
   // Signed-out sessions stay signed out (lib/session-version.js).
   keepSessionVersions(() => db.transaction(() => {
     // What devices may hold of the tables that say a row is gone only with
@@ -505,9 +504,6 @@ function restoreFromZip(zip) {
   // Restore images — guarded against zip-slip + zip-bomb
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
   const allEntries = zip.getEntries();
-  if (allEntries.length > ZIP_MAX_ENTRIES) {
-    throw new Error(`Backup rejected: too many entries (${allEntries.length} > ${ZIP_MAX_ENTRIES}).`);
-  }
   let totalBytes = 0;
   for (const entry of allEntries) {
     if (!entry.entryName.startsWith('images/') || entry.isDirectory) continue;
@@ -741,14 +737,14 @@ router.post('/:name/restore', requireAdmin, (req, res) => {
   if (!filename) return res.status(400).json({ error: 'Invalid backup name' });
   const filePath = path.join(BACKUPS_DIR, filename);
   if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'Not found' });
-  try { restoreFromZip(new AdmZip(filePath)); res.json({ ok: true }); }
-  catch (err) { res.status(500).json({ error: err.message }); }
+  try { restoreFromZip(openBackupZip(filePath)); res.json({ ok: true }); }
+  catch (err) { res.status(err.status || 500).json({ error: err.message }); }
 });
 
 router.post('/upload-restore', requireAdmin, upload.single('backup'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  try { restoreFromZip(new AdmZip(req.file.path)); res.json({ ok: true }); }
-  catch (err) { res.status(500).json({ error: err.message }); }
+  try { restoreFromZip(openBackupZip(req.file.path)); res.json({ ok: true }); }
+  catch (err) { res.status(err.status || 500).json({ error: err.message }); }
   finally { try { fs.unlinkSync(req.file.path); } catch {} }
 });
 
