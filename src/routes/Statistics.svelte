@@ -375,16 +375,25 @@ import { onMount, onDestroy } from 'svelte';
     } catch { if (seq === _rangeSeq) { bodyWeights = []; bodyRows = []; } }
   }
 
+  // Only the newest progress load may write data, toast, or clear the spinner.
+  // The seq bumps before the no-exercise early return so clearing the
+  // selection also invalidates an in-flight request.
+  let _progressSeq = 0;
   async function loadProgress() {
-    if (!selectedExerciseId) { progressData = []; return; }
+    const seq = ++_progressSeq;
+    if (!selectedExerciseId) { progressData = []; progressLoading = false; return; }
     progressLoading = true;
     try {
-      progressData = await LtApi.getProgress(selectedExerciseId, startDate, endDate);
+      const rows = await LtApi.getProgress(selectedExerciseId, startDate, endDate);
+      if (seq !== _progressSeq) return;
+      progressData = rows;
     } catch(e) {
+      if (seq !== _progressSeq) return;
       showError(e.message);
       progressData = [];
+    } finally {
+      if (seq === _progressSeq) progressLoading = false;
     }
-    progressLoading = false;
   }
 
   $: selectedExerciseId, range, metric === 'progress' && loadProgress();
