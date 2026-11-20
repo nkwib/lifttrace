@@ -39,7 +39,7 @@ test('Sign Out Everywhere is in Profile, asks first, sends the CSRF token, and k
   assert.match(fn, /fetch\('\/api\/auth\/sign-out-everywhere'/);
   assert.match(fn, /await adoptSession\(data\.session\);/);
   assert.match(profile, /\{#if !_isLocal && \$userMgmtActive\}\s*<div class="card">\s*<button class="security-row" on:click=\{signOutEverywhere\}/);
-  const settings = read('../src/routes/Settings.svelte');
+  const settings = read('../src/lib/settings-search.js');
   assert.match(settings, /profile:\s*\[[^\]]*'sign out everywhere'/, 'Settings search finds it');
   const en = JSON.parse(read('../src/i18n/en.json'));
   for (const k of ['sign_out_everywhere', 'sign_out_everywhere_hint', 'sign_out_everywhere_title', 'sign_out_everywhere_message', 'signed_out_everywhere']) assert.ok(en.profile[k], k);

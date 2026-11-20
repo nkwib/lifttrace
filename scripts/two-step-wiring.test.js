@@ -78,7 +78,7 @@ test('every password sign-in screen shows the second step', () => {
 test('the Profile card is for server accounts only, and Settings search finds it', () => {
   const profile = read('../src/routes/Profile.svelte');
   assert.match(profile, /\{#if !_isLocal\}\s*<TwoStepSettings \/>/);
-  const settings = read('../src/routes/Settings.svelte');
+  const settings = read('../src/lib/settings-search.js');
   assert.match(settings, /profile:\s*\[[^\]]*'two-step sign-in'[^\]]*'2fa'[^\]]*'authenticator'/);
   assert.match(settings, /users:\s*\[[^\]]*'require two-step'[^\]]*'reset two-step'/);
 });

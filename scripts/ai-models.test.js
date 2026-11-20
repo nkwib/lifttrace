@@ -165,7 +165,7 @@ test("the server's proxy: a model an admin set before this change reaches the ve
 });
 
 test('Settings search finds the Trace section by the new model names', () => {
-  const settings = readFileSync(new URL('../src/routes/Settings.svelte', import.meta.url), 'utf8');
+  const settings = readFileSync(new URL('../src/lib/settings-search.js', import.meta.url), 'utf8');
   const ai = settings.match(/^\s*trace:\s*\[([^\]]*)\]/m)[1];
   for (const kw of ['fable', 'luna', 'sol', 'terra', 'flash']) assert.match(ai, new RegExp(`'${kw}'`), kw);
 });

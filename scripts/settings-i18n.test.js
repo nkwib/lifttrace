@@ -83,7 +83,7 @@ test('the Settings messages are valid ICU, and the new ones have no long dashes'
 });
 
 test('Settings search still finds Weekly Cardio Minutes', () => {
-  const settings = read('../src/routes/Settings.svelte');
+  const settings = read('../src/lib/settings-search.js');
   const workout = settings.match(/^\s*workout:\s*\[([^\]]*)\]/m)[1];
   for (const kw of ['cardio minutes', 'weekly cardio']) assert.match(workout, new RegExp(`'${kw}'`), kw);
 });
