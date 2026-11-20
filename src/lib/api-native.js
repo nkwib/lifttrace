@@ -738,6 +738,23 @@ const Programs = {
     // server's start as start_date (sync.js _applySoloActive): starting it
     // here starts it now, so that start goes (issue #121). A coach's start
     // date stays. SQLite reads the row as it was in every SET expression.
+    //
+    // Already the active program (with a start of its own): nothing restarts,
+    // as on the server (lib/solo-program.js activateSolo). Only a pinned week
+    // goes, as there. Read before the deactivate below, which would hide it.
+    const cur = (await dbQuery(
+      `SELECT active, assigned_at FROM program_assignments WHERE program_id = ? AND assigned_to = ?`,
+      [id, ME]
+    ))[0];
+    if (cur && cur.active === 1 && cur.assigned_at != null) {
+      await dbRun(
+        `UPDATE program_assignments
+            SET week_cursor = NULL, week_cursor_session_base = NULL, week_cursor_pinned_at = NULL
+          WHERE program_id = ? AND assigned_to = ? AND week_cursor IS NOT NULL`,
+        [id, ME]
+      );
+      return { ok: true };
+    }
     await dbRun(`UPDATE program_assignments SET active = 0 WHERE assigned_to = ?`, [ME]);
     await dbRun(
       `INSERT INTO program_assignments (id, program_id, assigned_to, active, assigned_at)

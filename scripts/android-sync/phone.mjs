@@ -153,6 +153,32 @@ const scenarios = {
     out.oneWeek = (await api.getPrograms()).find(x => x.id === one.id).weeks_active;
     return out;
   },
+  // Activating the program already followed does not restart it (the server
+  // does not either); switching away and back does. A row from a server
+  // without accounts (assigned_at null) still starts now.
+  async activateNoRestart() {
+    const { dbRun } = await import('../../src/lib/db-native.js');
+    process.env.LT_SERVER = '';
+    const a = await api.createProgram({ name: 'A', duration_weeks: 4 });
+    const b = await api.createProgram({ name: 'B', duration_weeks: 4 });
+    const row = id => q(`SELECT active, assigned_at, start_date, week_cursor FROM program_assignments WHERE program_id = ?`, [id]).then(r => r[0]);
+    const OLD = '2026-01-01T00:00:00.000Z';
+    await api.setActiveProgram(a.id);
+    await dbRun(`UPDATE program_assignments SET assigned_at = ? WHERE program_id = ?`, [OLD, a.id]);
+    await api.setProgramWeekCursor(a.id, 2);
+    const out = { pinned: (await row(a.id)).week_cursor };
+    await api.setActiveProgram(a.id);
+    out.same = await row(a.id);
+    await api.setActiveProgram(b.id);
+    await api.setActiveProgram(a.id);
+    out.back = await row(a.id);
+    out.bAfter = (await row(b.id)).active;
+    // A row a server without accounts sent: active, no assigned_at, its start.
+    await dbRun(`UPDATE program_assignments SET assigned_at = NULL, start_date = '2026-01-02' WHERE program_id = ?`, [a.id]);
+    await api.setActiveProgram(a.id);
+    out.solo = await row(a.id);
+    return out;
+  },
   // Connected: the plan comes from the server, an excuse made offline
   // pauses it at once on the phone, and the server says the same once it
   // goes up.

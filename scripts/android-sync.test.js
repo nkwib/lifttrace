@@ -972,6 +972,19 @@ test("excused days pause a calendar program on the phone's own (#121): the share
   assert.equal(out.oneWeek, 2, "a one-week program's card: 7 calendar days, Week 2");
 });
 
+test('Local mode: activating the program already followed does not restart it; away and back does', { skip, timeout: SCENARIO_MS }, async () => {
+  const { out } = await scenario('activateNoRestart', { accounts: false });
+  assert.equal(out.pinned, 2);
+  // As the server without accounts: the start stays, a pinned week goes.
+  assert.deepEqual(out.same, { active: 1, assigned_at: '2026-01-01T00:00:00.000Z', start_date: null, week_cursor: null });
+  assert.equal(out.back.active, 1);
+  assert.notEqual(out.back.assigned_at, '2026-01-01T00:00:00.000Z', 'switching away and back starts it again');
+  assert.equal(out.bAfter, 0);
+  assert.equal(out.solo.active, 1);
+  assert.notEqual(out.solo.assigned_at, null, "a server's row with no start of its own starts now");
+  assert.equal(out.solo.start_date, null, "and the server's start goes (#121)");
+});
+
 test('excused days pause a calendar program on a connected phone at once, offline, and the server agrees (#121)', { skip, timeout: SCENARIO_MS }, async () => {
   const { out } = await scenario('programPauseConnected');
   assert.deepEqual(out.before, [1, 0, 1, 0]);
