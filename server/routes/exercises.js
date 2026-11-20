@@ -190,7 +190,8 @@ function _cleanSetType(v) {
 
 // POST /api/exercises — create custom exercise
 router.post('/', wrap((req, res) => {
-  const { name, category, primary_muscles, secondary_muscles, equipment, instructions, tips, video_url, load_type, set_type } = req.body;
+  const { category, primary_muscles, secondary_muscles, equipment, instructions, tips, video_url, load_type, set_type } = req.body;
+  const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
   // A picture chosen with no connection arrives embedded in the row; it
   // becomes a file here, so everything downstream sees an ordinary path.
   const img_url = localizeDataUrl(req.body?.img_url);
@@ -246,7 +247,9 @@ router.put('/:id', wrap((req, res) => {
     ...syncOf('exercises'),
     current: f => (JSON_FIELDS.has(f) ? JSON.parse(existing[f] || '[]') : existing[f]),
   });
-  const { name, primary_muscles, secondary_muscles, equipment, load_type, set_type } = body;
+  const { primary_muscles, secondary_muscles, equipment, load_type, set_type } = body;
+  // Trimmed; blank keeps the current name.
+  const name = typeof body.name === 'string' ? body.name.trim() : '';
   // Omitted keeps the stored value; an explicit null (or '') clears it, as in Local mode.
   const next = (f, v = body[f]) => (v === undefined ? existing[f] : (v || null));
   // A picture chosen with no connection arrives embedded in the row; it

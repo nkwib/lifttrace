@@ -93,3 +93,16 @@ export function capGroups(grouped, limit, keepId = null) {
   }
   return out;
 }
+
+// Another exercise already named like `name` (case, accents, spacing folded),
+// or null. `excludeId` is the exercise being edited.
+export function findDuplicateName(exercises, name, excludeId = null) {
+  const fold = (v) => foldText(String(v ?? '').trim()).replace(/\s+/g, ' ');
+  const n = fold(name);
+  if (!n) return null;
+  for (const ex of exercises || []) {
+    if (excludeId != null && ex.id === excludeId) continue;
+    if (fold(ex.name) === n) return ex;
+  }
+  return null;
+}

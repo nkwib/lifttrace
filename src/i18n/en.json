@@ -1485,7 +1485,10 @@
     "tips_ph":                "Common mistakes, breathing, progression notes…",
     "cancel":                 "Cancel",
     "tracked_by":             "Tracked By",
-    "set_type_unset":         "Unset"
+    "set_type_unset":         "Unset",
+    "duplicate_title":        "Name already used",
+    "duplicate_msg":          "An exercise named \"{name}\" already exists. Save anyway?",
+    "duplicate_confirm":      "Save anyway"
   },
   "diary_extra": {
     "toast": {

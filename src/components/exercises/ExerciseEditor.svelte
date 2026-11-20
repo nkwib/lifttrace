@@ -7,6 +7,9 @@
   import { showSuccess, showError } from '../../stores/toast.js';
   import { CATEGORIES, EQUIPMENT, MUSCLES } from '../../lib/workout.js';
   import { customEquipment } from '../../stores/settings.js';
+  import { confirmDialog } from '../../stores/confirmDialog.js';
+  import { foldText } from '../../lib/search-text.js';
+  import { findDuplicateName } from '../../lib/exercise-list.js';
 
   // Combined picker list = built-in buckets + user-defined kit.
   $: equipmentOptions = [...EQUIPMENT, ...(Array.isArray($customEquipment) ? $customEquipment : []).filter(e => !EQUIPMENT.includes(e))];
@@ -95,6 +98,19 @@
     if (!name.trim()) { showError($_('common.errors.name_required')); return; }
     if (saving) return;
     saving = true;
+    // Warn (never block) on a name another exercise already has. Only when
+    // creating or renaming; a failed lookup skips the check.
+    try {
+      if (!exercise || foldText(name.trim()) !== foldText(exercise.name || '')) {
+        const dup = findDuplicateName(await LtApi.getExercises(), name, exercise?.id ?? null);
+        if (dup && !(await confirmDialog({
+          title: $_('exercise_editor.duplicate_title'),
+          message: $_('exercise_editor.duplicate_msg', { values: { name: name.trim() } }),
+          confirmText: $_('exercise_editor.duplicate_confirm'),
+          cancelText: $_('exercise_editor.cancel'),
+        }))) { saving = false; return; }
+      }
+    } catch { /* lookup failed: save anyway */ }
     const payload = {
       name: name.trim(),
       category: category || null,

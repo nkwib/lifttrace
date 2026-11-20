@@ -337,6 +337,10 @@ const Exercises = {
     return _exerciseFromRow(rows[0]);
   },
   async create(body) {
+    // Same as the server: a trimmed name, and always the caller's own custom
+    // exercise (route dispatch only; importers insert through other paths).
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    if (!name) throw new Error('Name required');
     const newId = _newId();
     const r = await dbRun(
       `INSERT INTO exercises
@@ -345,7 +349,7 @@ const Exercises = {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
       [
         newId,
-        body.name,
+        name,
         body.category || null,
         _stringify(body.primary_muscles || []),
         _stringify(body.secondary_muscles || []),
@@ -357,8 +361,8 @@ const Exercises = {
         body.video_url || null,
         _cleanLoadType(body.load_type),
         _cleanSetType(body.set_type),
-        body.source || 'custom',
-        body.is_global ? 1 : 0,
+        'custom',
+        0,
         _owner(),
         _now(),
         _now(),
@@ -367,12 +371,19 @@ const Exercises = {
     return Exercises.get(newId ?? r.lastId);
   },
   async update(id, body) {
+    // As the server: not found, or a shared library row, is refused.
+    const [existing] = await dbQuery(`SELECT is_global FROM exercises WHERE id = ? AND deleted_at IS NULL`, [id]);
+    if (!existing) throw new Error('Exercise not found');
+    if (Number(existing.is_global) !== 0) throw new Error('Library exercises are shared, so they cannot be edited.');
     const sets = [];
     const args = [];
-    const cols = ['name', 'category', 'instructions', 'tips', 'img_url', 'gif_url', 'video_url'];
+    const cols = ['category', 'instructions', 'tips', 'img_url', 'gif_url', 'video_url'];
     for (const c of cols) {
       if (body[c] !== undefined) { sets.push(`${c} = ?`); args.push(body[c]); }
     }
+    // Trimmed; blank keeps the current name (server: `name || existing.name`).
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    if (name) { sets.push(`name = ?`); args.push(name); }
     if (body.primary_muscles !== undefined)   { sets.push(`primary_muscles = ?`);   args.push(_stringify(body.primary_muscles)); }
     if (body.secondary_muscles !== undefined) { sets.push(`secondary_muscles = ?`); args.push(_stringify(body.secondary_muscles)); }
     if (body.equipment !== undefined)         { sets.push(`equipment = ?`);         args.push(_stringify(body.equipment)); }
