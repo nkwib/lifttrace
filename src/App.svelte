@@ -529,13 +529,16 @@
 
     // Native: schedule local notifications via Capacitor (until the
     // WorkManager bridge in Phase 10 takes over). Also re-runs on settings
-    // change so toggling reminders off cancels them immediately.
-    try {
-      const { scheduleNativeReminders, rescheduleRemindersSoon } = await import('./lib/notifications.js');
-      await scheduleNativeReminders();
+    // change so toggling reminders off cancels them immediately. Not awaited:
+    // the pass asks the plugin and the API, and the sign-in check below
+    // shouldn't wait on it (scheduleNativeReminders runs one pass at a time).
+    import('./lib/notifications.js').then(({ scheduleNativeReminders, rescheduleRemindersSoon }) => {
+      scheduleNativeReminders();
       // Which days they fire on follows your training (reminder-plan.js):
-      // set again when it changes here, by a sync, from the watch, and each
-      // time the app comes back (a new day: the resume listeners above).
+      // set again when it changes here, by a sync that brought workouts or
+      // excused days (rescheduleRemindersSoon reads the event), from the
+      // watch, and each time the app comes back (a new day: the resume
+      // listeners above).
       for (const ev of ['lt:training-changed', 'lt:sync-complete', 'lt:watch-saved']) window.addEventListener(ev, rescheduleRemindersSoon);
       window.addEventListener('wl:setting', e => {
         const k = e.detail?.key || '';
@@ -545,7 +548,7 @@
         // Track Cardio decides whether a cardio day counts as trained.
         else if (k === 'cardioEnabled') rescheduleRemindersSoon();
       });
-    } catch {}
+    }).catch(() => {});
 
     // Capacitor deep-link handler — for OIDC SSO callback. Server callback
     // route redirects to lifttrace://oidc-callback/?token=<jwt> after a
