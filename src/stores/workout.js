@@ -156,6 +156,10 @@ function _tsMs(v) {
   return Number.isFinite(ms) ? ms : 0;
 }
 
+// Bumped by every non-preferFresher loadWorkout: only the latest one may
+// touch the stores. Separate from _epoch, which other actions bump too.
+let _loadSeq = 0;
+
 export async function loadWorkout(dateStr, { preferFresher = false, sessionId } = {}) {
   // See the _epoch declaration below saveWorkout (issue #86): bumping it
   // stops a save still pending for whatever date/session the user is
@@ -165,7 +169,8 @@ export async function loadWorkout(dateStr, { preferFresher = false, sessionId } 
   // call is for the SAME date the user is already on, not a real
   // navigation, and bumping the epoch there would invalidate any edit
   // the user is actively mid-debounce on.
-  if (!preferFresher) _epoch++;
+  if (!preferFresher) { _epoch++; _loadSeq++; }
+  const mySeq = _loadSeq;
   // A background refresh started before a tab switch, a new workout or a
   // date change is dropped when it lands: it would put back the workout
   // that was open when it started.
@@ -188,6 +193,7 @@ export async function loadWorkout(dateStr, { preferFresher = false, sessionId } 
     if (keepId != null && (!w || w.deleted_at || (w.id !== keepId && !(keepId < 0)))) {
       data = await LtApi.getWorkout(dateStr);
     }
+    if (mySeq !== _loadSeq) return;
     if (preferFresher && (startEpoch !== _epoch || get(currentSessionId) !== startOpen)) {
       // The tab list still catches up: this was its refresh after the sync.
       if (dateStr === get(currentDate)) loadWorkoutSessions(dateStr).catch(() => {});
@@ -239,6 +245,8 @@ export async function loadWorkout(dateStr, { preferFresher = false, sessionId } 
     currentSessionId.set(data.workout?.id ?? null);
     _setSnapshot(dateStr, data.workout?.id ?? null, data.workout);
   } catch {
+    // Superseded by a newer load or a date change: that one owns the stores.
+    if (mySeq !== _loadSeq || dateStr !== get(currentDate)) return;
     if (!preferFresher) {
       todayLog.set(null);
       currentSessionId.set(null);
@@ -247,6 +255,7 @@ export async function loadWorkout(dateStr, { preferFresher = false, sessionId } 
   }
   // Best-effort, non-blocking — a session-switcher UI wants this, but a
   // failure here shouldn't stop the main diary from rendering.
+  if (mySeq !== _loadSeq || dateStr !== get(currentDate)) return;
   loadWorkoutSessions(dateStr).catch(() => {});
   // Pull prescription in parallel (fire-and-forget, fails silently on single-user mode)
   try {
