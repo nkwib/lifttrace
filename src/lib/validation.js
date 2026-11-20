@@ -31,3 +31,17 @@ export function passwordStrength(pw) {
   const labels = ['Too weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
   return { score, label: labels[score] };
 }
+
+export const HEIGHT_CM_RANGE = [50, 250];
+export const WEIGHT_KG_RANGE = [20, 250];
+
+/**
+ * Profile body measurements. Inputs are already normalised: cm (number|null,
+ * null = cleared), weightKg (number|null, null = untouched). Returns
+ * 'height' | 'weight' for the first out-of-range field, else null.
+ */
+export function validateBody({ cm, weightKg } = {}) {
+  if (cm != null && !(cm >= HEIGHT_CM_RANGE[0] && cm <= HEIGHT_CM_RANGE[1])) return 'height';
+  if (weightKg != null && !(weightKg >= WEIGHT_KG_RANGE[0] && weightKg <= WEIGHT_KG_RANGE[1])) return 'weight';
+  return null;
+}

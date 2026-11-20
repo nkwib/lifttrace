@@ -14,7 +14,7 @@
   import { currentUser, userMgmtActive, logout as logoutAuth } from '../stores/auth.js';
   import { showSuccess, showError } from '../stores/toast.js';
   import { LtApi } from '../lib/api.js';
-  import { validatePassword, passwordStrength } from '../lib/validation.js';
+  import { validatePassword, passwordStrength, validateBody } from '../lib/validation.js';
   import { localDateStr, DB } from '../lib/db.js';
   import { resolveAssetUrl, isNative, getServerUrl, getAuthToken, apiUrl } from '../lib/platform.js';
   import Toggle from '../components/settings/Toggle.svelte';
@@ -284,13 +284,21 @@
       const finalCm = _isMetricHeight
         ? (heightCmInput ? Number(heightCmInput) : null)
         : ((heightFt || heightIn) ? ftInToCm(heightFt, heightIn) : null);
-      $heightCmStore = finalCm || null;
-      // Current weight — convert to kg before saving.
-      // Skipped when untouched so a 0.1-rounded display never overwrites kg.
+      // Current weight: converted to kg. Skipped when untouched so a
+      // 0.1-rounded display never overwrites kg (or blocks on legacy values).
+      let newWeightKg = null;
       if (weightInput && weightInput !== initialWeightInput) {
         const v = Number(weightInput);
-        if (v > 0) $currentWeightKg = displayToKg(v, $weightUnit);
+        if (v > 0) newWeightKg = displayToKg(v, $weightUnit);
       }
+      // Validate before any store write so a rejection never half-saves.
+      const bad = validateBody({ cm: finalCm, weightKg: newWeightKg });
+      if (bad) {
+        showError($_(bad === 'height' ? 'profile.height_range' : 'profile.weight_range'));
+        return;
+      }
+      $heightCmStore = finalCm || null;
+      if (newWeightKg != null) $currentWeightKg = newWeightKg;
 
       if (_isLocal) {
         // Write each field to its corresponding setting, then refresh
@@ -299,7 +307,7 @@
         DB.setSetting('localUserNickname', nickname.trim()  || '');
         DB.setSetting('dob',               birthday         || '');
         DB.setSetting('gender',            gender           || '');
-        if (avatarUrl) DB.setSetting('localUserAvatar', avatarUrl);
+        DB.setSetting('localUserAvatar',   avatarUrl        || '');
         try { await loadAuthState(); } catch {}
         showSuccess($_('profile.saved'));
         push('/settings');
@@ -412,6 +420,11 @@
         </div>
       </button>
       <input bind:this={fileInput} type="file" accept="image/*" style="display:none" on:change={handleAvatarFile} />
+      {#if avatarUrl}
+        <button type="button" class="btn btn-ghost avatar-remove" on:click={() => { avatarUrl = ''; }}>
+          {$_('profile.remove_avatar')}
+        </button>
+      {/if}
       <span class="avatar-name">{nickname || fullName || $currentUser?.username}</span>
     </div>
 
@@ -469,7 +482,7 @@
         <label class="form-label">{$_('wizard.profile.weight')}</label>
         <div class="height-row">
           <input class="form-input" type="number" inputmode="decimal"
-            step="0.1" min="20" max="500"
+            step="0.1" min={$weightUnit === 'kg' ? 20 : 45} max={$weightUnit === 'kg' ? 250 : 551}
             placeholder={$weightUnit === 'kg' ? 'kg' : 'lbs'}
             bind:value={weightInput} />
           <span class="height-unit">{$weightUnit === 'kg' ? 'kg' : 'lbs'}</span>

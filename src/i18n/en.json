@@ -476,6 +476,9 @@
   },
   "profile": {
     "change_avatar": "Change profile picture",
+    "remove_avatar": "Remove photo",
+    "height_range": "Height must be between 50 and 250 cm.",
+    "weight_range": "Weight must be between 20 and 250 kg (45 to 551 lb).",
     "title":                 "Profile",
     "personal_info":         "Personal Info",
     "security":              "Security",
