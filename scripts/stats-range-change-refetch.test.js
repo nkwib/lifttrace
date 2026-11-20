@@ -28,7 +28,7 @@ test('base loader fetches recent workouts once, range loader never', () => {
 });
 
 test('range change triggers only the range loader', () => {
-  assert.match(page, /\$: range, \$cardioEnabled, loadRangeData\(\);/);
+  assert.match(page, /\$: range, \$cardioEnabled, \$weekStartsOn, loadRangeData\(\);/);
   assert.match(page, /\$: \$cardioEnabled, loadBaseData\(\);/);
   assert.doesNotMatch(page, /\$: range, loadData\(\)/);
 });
