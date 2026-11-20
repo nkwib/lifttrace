@@ -14,11 +14,14 @@
  */
 
 import { isNative, getServerUrl, getAuthToken } from './platform.js';
-import { LtApiNative } from './api-native.js';
 import { installOffline, offlineFetch } from './offline-api.js';
 import { newClientKey } from './offline-edits.js';
 import { isInterceptable, ownOrigins } from './api-route.js';
 import { accountGen, copyMoving } from './account-gen.js';
+
+// api-native pulls the whole local data layer; load it on first local use.
+let _nat;
+const _native = () => (_nat ||= import('./api-native.js').then(m => m.LtApiNative, e => { _nat = null; throw e; }));
 
 const _basePath = (typeof window !== 'undefined' && window.__LT_CONFIG__ && window.__LT_CONFIG__.basePath) || '';
 
@@ -338,7 +341,7 @@ async function _queueWrite(url, init, method, gen = accountGen()) {
     try {
       const u = new URL(url, 'http://localhost');
       const query = Object.fromEntries(u.searchParams.entries());
-      local = await LtApiNative.handle(method, path, body, query);
+      local = await (await _native()).handle(method, path, body, query);
     } catch {}
     if (local && typeof local === 'object' && !Array.isArray(local)) {
       // A workout that exists only on the device so far gets a device-side
@@ -449,6 +452,10 @@ async function _dispatchLocal(url, init) {
     }
   }
 
+  let LtApiNative;
+  try { LtApiNative = await _native(); } catch (e) {
+    return _jsonResponse(500, { error: e.message || 'Local handler failed' });
+  }
   try {
     const result = await LtApiNative.handle(method, path, body, query);
     // Distinguish handler-returns-null (preserve as JSON null — UI uses

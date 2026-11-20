@@ -7,7 +7,7 @@
   import { _ } from 'svelte-i18n';
   import { currentUser, userMgmtActive, logout } from '../../stores/auth.js';
   import { APP_VERSION } from '../../lib/version.js';
-  import { syncState } from '../../lib/sync.js';
+  import { syncState } from '../../lib/sync-state.js';
   import { resolveAssetUrl, iconUrl, isNative, getNativeMode } from '../../lib/platform.js';
   import { radioEnabled, radioUrl, radioStationsEnabled } from '../../stores/settings.js';
   import { updateAvailable } from '../../lib/updates.js';

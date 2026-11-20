@@ -27,31 +27,9 @@ import { isTempId, createdId, describeOp, writeOp, newTempId } from './offline-e
 import { localDataIsThisAccount } from './local-account.js';
 import { accountGen, nextAccountGen, copyMoving } from './account-gen.js';
 import { pullKinds } from './sync-refresh.js';
+import { syncState } from './sync-state.js';
 
-/**
- * Live sync state, mirrored into the Settings UI for the "Last synced X ago"
- * label + spinner. Also lets the rest of the app react to sync activity
- * (e.g. show a transient banner during a manual fullSync).
- */
-export const syncState = writable({
-  syncing:  false,
-  phase:    '',           // 'pushing' | 'pulling' | ''
-  progress: '',           // human-readable status line
-  lastSync: null,         // ISO timestamp of the most recent successful pull
-  error:    null,
-  online:   true,
-  // Queued changes the server refused when they were replayed, as
-  // { what, reason }, for App.svelte to tell the person once.
-  refused:  [],
-  // Structured classification of the current connection problem
-  // (kind: 'no_network' | 'server_error' | 'server_unreachable'). Feeds
-  // the smart connection banner in App.svelte via
-  // lib/connection-message.js. `showErrorBanner` gates the full banner
-  // vs the compact hamburger cloud badge — automatic probes update the
-  // badge; manual retries / user-initiated syncs opt into the banner.
-  connectionIssue: null,
-  showErrorBanner: false,
-});
+export { syncState, forgetRefused } from './sync-state.js';
 
 // ── Server-reachability probe ────────────────────────────────────────────
 // Mirrors NT sync.js. Distinguishes "no network" (airplane / OS offline)
@@ -2498,11 +2476,6 @@ export function describeQueued(payload) {
 function _noteRefused(list) {
   if (!list.length) return;
   syncState.update(s => ({ ...s, refused: [...(s.refused || []), ...list] }));
-}
-
-/** Clear the refusals once they've been shown. */
-export function forgetRefused() {
-  syncState.update(s => ({ ...s, refused: [] }));
 }
 
 /** True when the server says it has no user accounts (single-user mode).

@@ -29,7 +29,7 @@
   $: if ($language) locale.set($language);
   import { currentUser, userMgmtActive, setupRequired, loadAuthState, launchState } from './stores/auth.js';
   import { needsNativeSetup, isNative, getNativeMode, getServerUrl, apiUrl, getAuthToken } from './lib/platform.js';
-  import { syncState, forgetRefused } from './lib/sync.js';
+  import { syncState, forgetRefused } from './lib/sync-state.js';
   import { accountGate, ensureLocalAccount, accountReadyFor } from './lib/local-account.js';
   import { get as getStore } from 'svelte/store';
   import { offlineState } from './lib/offline-api.js';

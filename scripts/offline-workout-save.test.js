@@ -16,7 +16,7 @@ const store = read('../src/stores/workout.js');
 const sync = read('../src/lib/sync.js');
 
 test('an offline write answers with what the local write returned, not a bare "queued"', () => {
-  assert.match(apiFetch, /local = await LtApiNative\.handle\(method, path, body, query\);/);
+  assert.match(apiFetch, /local = await \(await _native\(\)\)\.handle\(method, path, body, query\);/);
   assert.match(apiFetch, /return _jsonResponse\(200, \{ \.\.\.local, queued: true, offline: true \}\);/);
 });
 
