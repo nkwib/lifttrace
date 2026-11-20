@@ -55,7 +55,7 @@ test('MCP delete_workout soft-deletes a live workout so sync sees it', () => {
 
 test('import duplicate checks ignore deleted workouts', () => {
   const src = read('../server/routes/workout-import.js');
-  for (const q of src.match(/'SELECT[^']*FROM workout_log WHERE user_id = \? AND date = \? AND name = \?[^']*'/g)) {
+  for (const q of src.match(/'SELECT[^']*FROM workout_log WHERE user_id (?:=|IS) \? AND date = \? AND name = \?[^']*'/g)) {
     assert.match(q, /deleted_at IS NULL/, q);
   }
 });

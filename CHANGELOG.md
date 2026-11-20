@@ -7,6 +7,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Reorder program days on phones.** Each day in a program has up/down buttons, since drag-and-drop only worked with a mouse.
+- **Workout editor asks before discarding edits.** Back arrow and Android back confirm when there are unsaved changes. Closing the tab warns on the web; other web navigation is not intercepted.
+- **Duplicate a workout day.** A copy button on each day card in a program makes "Day (Copy)" with the same exercises, placed right after the original.
+- **Calorie toggle says what is missing.** Settings > Workout > Show Calorie Estimate lists the Profile fields (weight, height, date of birth) still needed, with a button to Profile. Sex is optional, and the hint now says so.
+- **Undo toast no longer covers the workout pill.** It now sits above the timer and keep-awake buttons.
+- **Weekly summary email can be turned off separately.** Settings > Notifications has an "Email the summary" toggle under Weekly Summary (on by default, so nothing changes until you switch it off). Push is unaffected.
+- **Exercise search matches muscles.** The library and the exercise picker find "triceps" or "lats" by primary and secondary muscle, not only by name. Several words must all match.
+- **Duplicate exercise names get a warning.** Saving a custom exercise named like an existing one (any case, accents) asks first. Blank names are rejected on the server and in Local mode, names are trimmed, and Local mode no longer edits library exercises.
+- **Deleting a custom exercise tells you how many workouts logged it.** The confirm dialog shows the count; their history stays under the name.
+- **Keyboard access for Radio rows, program days and the avatar.** Enter or Space plays a track, opens an artist, expands a station group, jumps in the queue and opens a program day. The profile picture is a real button, and the Trace button also answers to Space.
+- **Full player seek and volume work from the keyboard.** Both bars are sliders: arrows, Home and End, with labels and values for screen readers. Seek is disabled on live streams.
+- **Diary progression chip respects rep ranges.** With a target like 8-12 the "Try X" chip now needs every working set at the top of the range (it used to trigger at 8), ignores warm-ups, and its tooltip says why. It shows less often for ranges, by design. Increments depend on the equipment (see Fixed).
+- **Plate split under barbell exercises.** Settings > Workout > Show plate split (off by default) shows the plates per side for the next set, with the bar taken from the equipment (20 kg / 45 lb, EZ 10 / 25, trap 25 / 55; nothing for Smith). Display only, the logged weight stays the total.
+- **Weekly bar charts read on phones.** With many weeks (6M, 1Y, All) labels show every few bars, and tapping a bar shows its week and value under the chart.
+- **Activity heatmap shaded by effort.** Statistics shades each trained day in four steps by time trained (sets when there are no durations), with a Less / More legend and the minutes or sets in the tooltip.
+- **OpenAPI spec for the public API.** `server/openapi.yaml` describes every `/api/v1` route, with scopes and the write flag, for Postman, codegen and Home Assistant. Also served at `/api/v1/openapi.yaml` without a token while the API is enabled.
+- **RIR as an alternative to RPE.** Settings > Workout > Effort scale (with Track RPE on) switches the set picker to reps in reserve (0 to 5+), with a colour per level. Each set keeps the scale it was logged with, so changing the setting leaves old sets alone. Stats and exports keep RPE (RIR n is RPE 10 - n).
+- **Week starts on Sunday or Monday.** A setting under Settings > Units (Monday by default) moves weekly volume, workout frequency, cardio minutes, the weekly goal ring and the weekday chart, on the server and in Local mode. Past weeks are re-bucketed on read, so charts and goal history shift by a day for Sunday starters. The weekly summary and the Diary week strip are rolling seven day windows and are unchanged. Also applies on the web server without user accounts.
+- **Undo after removing a set or an exercise.** A toast with Undo stays for a few seconds and puts it back where it was. Removing an exercise offers it only when "confirm exercise removal" is off.
+- **A collapsed exercise card shows its best set.** After the set count, e.g. `4/4 sets · 225×5`: heaviest for reps, longest for holds, farthest for distance, most for calories. Warm-ups and sets not done are ignored.
+- **1RM calculator in Gym Tools.** A new 1RM tab estimates your one-rep max from a weight and 1 to 12 reps (Epley), with a 50 to 100% table rounded to your plate step (2.5 kg / 5 lb).
+- **Export all workouts as one CSV.** Settings > Backup has a new Export all workouts row: one file, one row per set, oldest first, same columns as the single-workout export. Works on the Android app in Local mode too.
+- **Share a routine as a file.** A program's menu has Share as file, which saves its workouts as a `.lifttrace-program.json` (no ids, history or assignments). Import program on the Programs page reads one as a new inactive program, named with (Copy) if the name is taken. Exercises are matched by name; ones you don't have are added to your library.
+
 ### Changed
 
 - **Undo after removing a whole superset.** Same toast as for a set or exercise, shown when "confirm exercise removal" is off.
@@ -14,10 +40,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Settings search.** "No settings match" no longer shows over matching results. Several words all have to match, in any order, and section names in your language are searched. Added terms: week start, RPE, RIR, plates, warm-up, superset, heatmap.
 - **Failed settings saves tell you.** If the server refuses a setting change (an error, not offline or signed out), a toast says so, at most once every 30 seconds.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
-
-### Added
-
-- **Reorder program days on phones.** Each day in a program has up/down buttons, since drag-and-drop only worked with a mouse.
+- **Keep-Awake follows the workout, not the page, and is on by default.** The screen stays on from your first logged set on today's workout until you finish it or leave the Diary, then is released. Stored choices are unchanged; new installs and anyone who never touched it now get it on.
 
 ### Fixed
 
@@ -44,38 +67,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Progress timeline stays put after saving a weight.** The photo timeline no longer blanks with a spinner and jumps scroll; only the weights refresh.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 - **Body Stats sheet no longer drops typed values.** Closing it by backdrop, X, back or the timeline link now asks before discarding unsaved measurements, and its labels are translatable.
-
-### Added
-
-- **Workout editor asks before discarding edits.** Back arrow and Android back confirm when there are unsaved changes. Closing the tab warns on the web; other web navigation is not intercepted.
-- **Duplicate a workout day.** A copy button on each day card in a program makes "Day (Copy)" with the same exercises, placed right after the original.
-- **Calorie toggle says what is missing.** Settings > Workout > Show Calorie Estimate lists the Profile fields (weight, height, date of birth) still needed, with a button to Profile. Sex is optional, and the hint now says so.
-- **Undo toast no longer covers the workout pill.** It now sits above the timer and keep-awake buttons.
-- **Weekly summary email can be turned off separately.** Settings > Notifications has an "Email the summary" toggle under Weekly Summary (on by default, so nothing changes until you switch it off). Push is unaffected.
-- **Exercise search matches muscles.** The library and the exercise picker find "triceps" or "lats" by primary and secondary muscle, not only by name. Several words must all match.
-- **Duplicate exercise names get a warning.** Saving a custom exercise named like an existing one (any case, accents) asks first. Blank names are rejected on the server and in Local mode, names are trimmed, and Local mode no longer edits library exercises.
-- **Deleting a custom exercise tells you how many workouts logged it.** The confirm dialog shows the count; their history stays under the name.
-- **Keyboard access for Radio rows, program days and the avatar.** Enter or Space plays a track, opens an artist, expands a station group, jumps in the queue and opens a program day. The profile picture is a real button, and the Trace button also answers to Space.
-- **Full player seek and volume work from the keyboard.** Both bars are sliders: arrows, Home and End, with labels and values for screen readers. Seek is disabled on live streams.
-- **Diary progression chip respects rep ranges.** With a target like 8-12 the "Try X" chip now needs every working set at the top of the range (it used to trigger at 8), ignores warm-ups, and its tooltip says why. It shows less often for ranges, by design. Increments depend on the equipment (see Fixed).
-- **Plate split under barbell exercises.** Settings > Workout > Show plate split (off by default) shows the plates per side for the next set, with the bar taken from the equipment (20 kg / 45 lb, EZ 10 / 25, trap 25 / 55; nothing for Smith). Display only, the logged weight stays the total.
-- **Weekly bar charts read on phones.** With many weeks (6M, 1Y, All) labels show every few bars, and tapping a bar shows its week and value under the chart.
-- **Activity heatmap shaded by effort.** Statistics shades each trained day in four steps by time trained (sets when there are no durations), with a Less / More legend and the minutes or sets in the tooltip.
-- **OpenAPI spec for the public API.** `server/openapi.yaml` describes every `/api/v1` route, with scopes and the write flag, for Postman, codegen and Home Assistant. Also served at `/api/v1/openapi.yaml` without a token while the API is enabled.
-- **RIR as an alternative to RPE.** Settings > Workout > Effort scale (with Track RPE on) switches the set picker to reps in reserve (0 to 5+), with a colour per level. Each set keeps the scale it was logged with, so changing the setting leaves old sets alone. Stats and exports keep RPE (RIR n is RPE 10 - n).
-- **Week starts on Sunday or Monday.** A setting under Settings > Units (Monday by default) moves weekly volume, workout frequency, cardio minutes, the weekly goal ring and the weekday chart, on the server and in Local mode. Past weeks are re-bucketed on read, so charts and goal history shift by a day for Sunday starters. The weekly summary and the Diary week strip are rolling seven day windows and are unchanged. Also applies on the web server without user accounts.
-- **Undo after removing a set or an exercise.** A toast with Undo stays for a few seconds and puts it back where it was. Removing an exercise offers it only when "confirm exercise removal" is off.
-- **A collapsed exercise card shows its best set.** After the set count, e.g. `4/4 sets · 225×5`: heaviest for reps, longest for holds, farthest for distance, most for calories. Warm-ups and sets not done are ignored.
-- **1RM calculator in Gym Tools.** A new 1RM tab estimates your one-rep max from a weight and 1 to 12 reps (Epley), with a 50 to 100% table rounded to your plate step (2.5 kg / 5 lb).
-- **Export all workouts as one CSV.** Settings > Backup has a new Export all workouts row: one file, one row per set, oldest first, same columns as the single-workout export. Works on the Android app in Local mode too.
-- **Share a routine as a file.** A program's menu has Share as file, which saves its workouts as a `.lifttrace-program.json` (no ids, history or assignments). Import program on the Programs page reads one as a new inactive program, named with (Copy) if the name is taken. Exercises are matched by name; ones you don't have are added to your library.
-
-### Changed
-
-- **Keep-Awake follows the workout, not the page, and is on by default.** The screen stays on from your first logged set on today's workout until you finish it or leave the Diary, then is released. Stored choices are unchanged; new installs and anyone who never touched it now get it on.
-
-### Fixed
-
 - **Undo toast no longer covers the workout pill.** It now sits above the timer and keep-awake buttons.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 - **Trace training summary counts empty weeks.** `weekly_avg` and the weekly series now include weeks with no training, matching Statistics (series capped at the last 104 weeks).
