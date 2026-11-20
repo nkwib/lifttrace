@@ -1,0 +1,830 @@
+openapi: 3.0.3
+info:
+  title: LiftTrace public API
+  version: 1.0.0
+  description: |
+    Versioned REST API for scripts and automations. Prose reference:
+    docs/public-api.md. Off unless the server sets PUBLIC_API_ENABLED=1; while
+    disabled every route, including this file, answers 404. Write routes also
+    need PUBLIC_API_WRITE_ENABLED=1 (404 otherwise). Responses are the bare
+    JSON data object; schemas here are deliberately loose.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: read
+    description: Requires a token with mcp:read.
+  - name: write
+    description: Requires a token with mcp:write and PUBLIC_API_WRITE_ENABLED=1 on the server.
+paths:
+  /cardio:
+    get:
+      summary: Cardio sessions in a date range
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: start
+          in: query
+          required: false
+          description: Inclusive start date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Inclusive end date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: activity
+          in: query
+          required: false
+          description: Case-insensitive substring of the activity name.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+    post:
+      summary: Log one cardio session
+      tags: [write]
+      x-required-scope: mcp:write
+      security:
+        - bearerAuth: [mcp:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardioInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '404':
+          description: Public API writes are not enabled on this server.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /body-stats:
+    get:
+      summary: Body stats for every logged date in a range
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: start
+          in: query
+          required: false
+          description: Inclusive start date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Inclusive end date, YYYY-MM-DD.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /body-stats/photos:
+    get:
+      summary: Progress photos in a date range
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: start
+          in: query
+          required: false
+          description: Inclusive start date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Inclusive end date, YYYY-MM-DD.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+    post:
+      summary: Attach an already-hosted image as a progress photo
+      tags: [write]
+      x-required-scope: mcp:write
+      security:
+        - bearerAuth: [mcp:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhotoInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '404':
+          description: Public API writes are not enabled on this server.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /body-stats/photos/{id}/file:
+    get:
+      summary: Image bytes of a progress photo
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Photo id.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The image.
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '409':
+          description: Photo was attached by external URL and has no local file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /body-stats/{date}:
+    get:
+      summary: Body stats for one date
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: date
+          in: path
+          required: true
+          description: Date, YYYY-MM-DD.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+    put:
+      summary: Merge body stats into a date
+      tags: [write]
+      x-required-scope: mcp:write
+      security:
+        - bearerAuth: [mcp:write]
+      parameters:
+        - name: date
+          in: path
+          required: true
+          description: Date, YYYY-MM-DD.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BodyStatInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '404':
+          description: Public API writes are not enabled on this server.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /exercises:
+    get:
+      summary: Search the exercise catalog
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: query
+          in: query
+          required: false
+          description: Exercise name search text.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum items to return.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /exercises/{name}/progress:
+    get:
+      summary: Per-session progress for one exercise
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: Exercise name, matched case-insensitively by substring.
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: false
+          description: Inclusive start date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Inclusive end date, YYYY-MM-DD.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /excused-days:
+    get:
+      summary: Excused days with reasons
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: start
+          in: query
+          required: false
+          description: Inclusive start date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Inclusive end date, YYYY-MM-DD.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /programs:
+    get:
+      summary: List programs
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /programs/active:
+    get:
+      summary: The active program
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /records:
+    get:
+      summary: Personal records per exercise
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: exercise_name
+          in: query
+          required: false
+          description: Case-insensitive substring filter.
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: false
+          description: Inclusive start date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Inclusive end date, YYYY-MM-DD.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /workouts:
+    get:
+      summary: Sessions in a range, full detail
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: start
+          in: query
+          required: false
+          description: Inclusive start date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Inclusive end date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum items to return.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /workouts/recent:
+    get:
+      summary: Recent workouts, summary
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Maximum items to return.
+          schema:
+            type: integer
+        - name: start
+          in: query
+          required: false
+          description: Inclusive start date, YYYY-MM-DD.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Inclusive end date, YYYY-MM-DD.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /workouts/{date}:
+    get:
+      summary: One day's workout
+      tags: [read]
+      x-required-scope: mcp:read
+      security:
+        - bearerAuth: [mcp:read]
+      parameters:
+        - name: date
+          in: path
+          required: true
+          description: Date, YYYY-MM-DD.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /workouts/{date}/sets:
+    post:
+      summary: Log one set
+      tags: [write]
+      x-required-scope: mcp:write
+      security:
+        - bearerAuth: [mcp:write]
+      parameters:
+        - name: date
+          in: path
+          required: true
+          description: Date, YYYY-MM-DD.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '404':
+          description: Public API writes are not enabled on this server.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+  /workouts/{date}/start:
+    post:
+      summary: Start a program workout day
+      tags: [write]
+      x-required-scope: mcp:write
+      security:
+        - bearerAuth: [mcp:write]
+      parameters:
+        - name: date
+          in: path
+          required: true
+          description: Date, YYYY-MM-DD.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token.
+        '403':
+          description: Token lacks the required scope.
+        '404':
+          description: Public API writes are not enabled on this server.
+        '429':
+          description: Per-token rate limit exceeded (see Retry-After).
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Personal access token (lt_pat_...) from Settings, API Tokens.
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        code:
+          type: string
+          description: Present for some refusals, e.g. cardio_disabled.
+    CardioInput:
+      type: object
+      required: [activity, duration_min]
+      properties:
+        activity: {type: string, maxLength: 100}
+        duration_min: {type: integer, minimum: 1, maximum: 1440}
+        distance: {type: number}
+        distance_unit: {type: string}
+        avg_hr: {type: integer}
+        notes: {type: string}
+        date: {type: string}
+        external_id: {type: string}
+    PhotoInput:
+      type: object
+      required: [url]
+      properties:
+        url: {type: string}
+        date: {type: string}
+    BodyStatInput:
+      type: object
+      properties:
+        weight: {type: number}
+        weight_unit: {type: string, enum: [kg, lb]}
+        bodyFat: {type: number}
+        waist: {type: number}
+        hips: {type: number}
+        neck: {type: number}
+        chest: {type: number}
+        biceps: {type: number}
+        thighs: {type: number}
+        calves: {type: number}
+    SetInput:
+      type: object
+      required: [exercise_id]
+      description: Give reps, or duration_sec, distance_m or calories instead.
+      properties:
+        exercise_id: {type: integer}
+        reps: {type: integer}
+        weight: {type: number}
+        rpe: {type: number}
+        warmup: {type: boolean}
+        completed: {type: boolean}
+        workout_id: {type: integer}
+        duration_sec: {type: integer}
+        distance_m: {type: number}
+        calories: {type: number}
+    StartInput:
+      type: object
+      properties:
+        template_id: {type: integer}

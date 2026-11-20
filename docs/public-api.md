@@ -44,6 +44,13 @@ instead of the message, which may change: `cardio_disabled` when cardio is
 off for the account (see [Cardio](#cardio)). A missing or invalid token returns `401`;
 a token lacking the required scope returns `403`.
 
+## OpenAPI spec
+
+An OpenAPI 3.0 description of every route is at
+[`server/openapi.yaml`](../server/openapi.yaml), also served at
+`/api/v1/openapi.yaml` (no token needed, 404 while `PUBLIC_API_ENABLED` is
+off). Point Postman or a code generator at it.
+
 ## Endpoints
 
 ### Read (require `mcp:read`)

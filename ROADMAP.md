@@ -269,7 +269,7 @@ LiftTrace posts each completed workout's estimated calories into NutriTrace's wo
 v1.4.0 has 15 tools (11 read, 3 write, 1 delete), including the date-range reads `get_workouts` and `get_body_stats` ([#93](https://github.com/TraceApps/lifttrace/pull/93)). Dev has 19: `get_cardio` and `log_cardio` ([#134](https://github.com/TraceApps/lifttrace/issues/134)), `start_program_workout` ([#140](https://github.com/TraceApps/lifttrace/issues/140)) and `get_excused_days` ([#121](https://github.com/TraceApps/lifttrace/issues/121)). Not done from the original sketch: `edit_set` and `create_custom_exercise`.
 
 ### ~~Public REST API~~ *(done, v1.3.0, [#77](https://github.com/TraceApps/lifttrace/issues/77))*
-A versioned API at `/api/v1`, off by default (`PUBLIC_API_ENABLED`). Reference in [`docs/public-api.md`](docs/public-api.md). An OpenAPI spec for it is item 13 of the training-depth plan.
+A versioned API at `/api/v1`, off by default (`PUBLIC_API_ENABLED`). Reference in [`docs/public-api.md`](docs/public-api.md). An OpenAPI spec is at [`server/openapi.yaml`](server/openapi.yaml), served at `/api/v1/openapi.yaml`.
 
 ### ~~Outgoing webhooks~~ *(done, v1.3.0, [#79](https://github.com/TraceApps/lifttrace/issues/79))*
 Signed POSTs on events: `workout.completed`, `pr.set`, `body_stat.logged`, `progress_photo.logged`, `program.advanced`, plus `cardio.logged` on dev. Reference in [`docs/webhooks.md`](docs/webhooks.md).

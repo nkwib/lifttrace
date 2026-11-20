@@ -431,7 +431,7 @@ clean one page PDF through the browser's own print dialog. No new dependency.
 
 **Effort:** 2 days.
 
-### [ ] 13. OpenAPI spec for `/api/v1`
+### [x] 13. OpenAPI spec for `/api/v1`
 
 `docs/public-api.md` documents the REST API in prose. A checked-in `openapi.yaml`
 generated from the route definitions makes it consumable by tooling and gives us a

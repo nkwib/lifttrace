@@ -34,6 +34,9 @@
  * worth a PUBLIC_API_DESTROY_ENABLED flag for a capability nobody has
  * asked for on this surface yet.
  */
+import { readFileSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { Router } from 'express';
 import { bearerAuth, requireScope } from '../middleware/bearer-auth.js';
 import { wrap } from '../logger.js';
@@ -75,6 +78,21 @@ router.use((req, res, next) => {
   if (!ENABLED) return res.status(404).json({ error: 'Public API not enabled on this server' });
   next();
 });
+
+// The OpenAPI description is public (it documents routes, holds no data), so
+// it sits after the enabled gate but before bearer auth. router.use, not
+// router.get, so it stays outside the per-route requireScope wiring test.
+// Read once at startup; missing file answers 404 instead of throwing.
+let openApiSpec = null;
+try {
+  openApiSpec = readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'openapi.yaml'), 'utf8');
+} catch { /* served as 404 below */ }
+router.use('/openapi.yaml', (req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  if (openApiSpec === null) return res.status(404).json({ error: 'OpenAPI spec not available' });
+  res.type('application/yaml').send(openApiSpec);
+});
+
 router.use(bearerAuth);
 
 // A write route also needs the server-side flag on, independent of the
