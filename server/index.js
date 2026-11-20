@@ -49,6 +49,7 @@ import apiTokensRoutes   from './routes/api-tokens.js';
 import setMediaRoutes    from './routes/set-media.js';
 import mcpRoutes         from './routes/mcp.js';
 import { privateFieldsOut } from './lib/private-fields.js';
+import { gzipJson } from './lib/gzip-json.js';
 import publicApiRoutes   from './routes/public-api.js';
 import webhooksRoutes    from './routes/webhooks.js';
 import { logger }        from './logger.js';
@@ -223,6 +224,9 @@ router.use('/uploads', express.static(uploadsPath, {
 
 // No-cache API responses
 router.use('/api', (req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
+// Large JSON answers gzipped (lib/gzip-json.js). Before privateFieldsOut, so
+// its res.json, which strips the private fields, hands on to this one.
+router.use('/api', gzipJson);
 // No answer carries when each field of a row changed (lib/private-fields.js).
 router.use('/api', privateFieldsOut);
 

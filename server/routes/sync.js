@@ -34,9 +34,9 @@
  * semantics, different table list.
  */
 import { Router } from 'express';
-import zlib from 'node:zlib';
 import db from '../db.js';
 import { wrap } from '../logger.js';
+import { sendJson } from '../lib/gzip-json.js';
 import { requireAuth, userMgmtActive } from '../middleware/auth.js';
 import { logger } from '../logger.js';
 import { attachAssignedPrograms } from '../lib/assigned-programs.js';
@@ -434,21 +434,12 @@ router.get('/pull', wrap((req, res) => {
 
 // A full pull of a long history is several hundred kilobytes of JSON that
 // shrinks about twentyfold; on a phone's slow link that was the difference
-// between finishing and timing out on every try. Compressed when the client
-// takes it (Android's HTTP stack asks for gzip and unpacks it itself).
+// between finishing and timing out on every try. Gzipped when the client
+// takes it (lib/gzip-json.js).
 function sendMaybeGzipped(req, res, payload) {
   // When each field changed (field_times) stays here: it's how two edits of
   // a row are settled, and means nothing to an app.
-  const body = JSON.stringify(payload, (k, v) => (k === 'field_times' ? undefined : v));
-  if (body.length < 2048 || !/\bgzip\b/.test(String(req.headers['accept-encoding'] || ''))) {
-    res.type('application/json').send(body);
-    return;
-  }
-  zlib.gzip(body, (err, gz) => {
-    if (err) { res.type('application/json').send(body); return; }
-    res.set({ 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'gzip', Vary: 'Accept-Encoding' });
-    res.send(gz);
-  });
+  sendJson(req, res, JSON.stringify(payload, (k, v) => (k === 'field_times' ? undefined : v)));
 }
 
 // ── POST /push ───────────────────────────────────────────────────────────
