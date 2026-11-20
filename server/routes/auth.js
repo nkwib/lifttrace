@@ -243,21 +243,34 @@ router.post('/login', rateLimitLogin, wrap((req, res) => {
 
 router.post('/logout', (req, res) => { res.clearCookie('lt_token'); res.json({ ok: true }); });
 
+// Usernames are stored trimmed and lowercase; null when blank or not a string.
+const _normUsername = (u) => (typeof u === 'string' && u.trim() ? u.trim().toLowerCase() : null);
+const _usernameTaken = (u) => !!db.prepare('SELECT 1 FROM users WHERE username = ?').get(u);
+const _isUsernameConflict = (e) => e?.code === 'SQLITE_CONSTRAINT_UNIQUE' && /users\.username/.test(e.message || '');
+
 router.post('/register', wrap((req, res) => {
   const isFirst = !userMgmtActive();
   if (!isFirst && (!req.user || req.user.role !== 'admin'))
     return res.status(403).json({ error: 'Admin only' });
-  const { username, password, full_name, nickname, birthday, gender, role, email } = req.body;
+  const { password, full_name, nickname, birthday, gender, role, email } = req.body;
+  const username = _normUsername(req.body.username);
   if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
   { const pwErr = validatePassword(password, [username, email, full_name].filter(Boolean)); if (pwErr) return res.status(400).json({ error: pwErr }); }
   const assignedRole = isFirst ? 'admin' : (role || 'member');
   // A coach chosen on the form (never implied by who created the account).
   const coachId = isFirst ? null : _chosenCoach(req.body?.coach_id, assignedRole);
   if (coachId === false) return res.status(400).json({ error: 'That person can\'t coach.' });
+  if (_usernameTaken(username)) return res.status(409).json({ error: 'Username already taken' });
   const hash = bcrypt.hashSync(password, BCRYPT_COST);
-  const result = db.prepare(
-    `INSERT INTO users (username, password_hash, full_name, nickname, birthday, gender, role, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(username.trim().toLowerCase(), hash, full_name || null, nickname || null, birthday || null, gender || null, assignedRole, email ? email.trim().toLowerCase() : null);
+  let result;
+  try {
+    result = db.prepare(
+      `INSERT INTO users (username, password_hash, full_name, nickname, birthday, gender, role, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(username, hash, full_name || null, nickname || null, birthday || null, gender || null, assignedRole, email ? email.trim().toLowerCase() : null);
+  } catch (e) {
+    if (_isUsernameConflict(e)) return res.status(409).json({ error: 'Username already taken' });
+    throw e;
+  }
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(result.lastInsertRowid);
   // Whoever creates a member used to become their trainer. Now an account
   // gets a coaching request only when a coach was chosen for it, from that
@@ -608,16 +621,28 @@ router.delete('/invites/:token', requireAuth, requireAdmin, wrap((req, res) => {
 }));
 
 router.post('/accept-invite', wrap((req, res) => {
-  const { token, username, password, full_name } = req.body;
+  const { token, password, full_name } = req.body;
+  const username = _normUsername(req.body.username);
   if (!token || !username || !password) return res.status(400).json({ error: 'Token, username and password required' });
   { const pwErr = validatePassword(password); if (pwErr) return res.status(400).json({ error: pwErr }); }
   const invite = db.prepare('SELECT * FROM invite_tokens WHERE token = ?').get(token);
   if (!invite || invite.used) return res.status(400).json({ error: 'Invalid or already used invite link' });
   if (new Date(invite.expires_at) < new Date()) return res.status(400).json({ error: 'Invite link has expired' });
+  if (_usernameTaken(username)) return res.status(409).json({ error: 'Username already taken' });
   const hash = bcrypt.hashSync(password, BCRYPT_COST);
-  const result = db.prepare('INSERT INTO users (username, password_hash, full_name, role, email) VALUES (?, ?, ?, ?, ?)')
-    .run(username.trim().toLowerCase(), hash, full_name || null, invite.role, invite.email || null);
-  db.prepare('UPDATE invite_tokens SET used = 1 WHERE token = ?').run(token);
+  let result;
+  try {
+    // One transaction: a failed insert leaves the invite usable.
+    result = db.transaction(() => {
+      const r = db.prepare('INSERT INTO users (username, password_hash, full_name, role, email) VALUES (?, ?, ?, ?, ?)')
+        .run(username, hash, full_name || null, invite.role, invite.email || null);
+      db.prepare('UPDATE invite_tokens SET used = 1 WHERE token = ?').run(token);
+      return r;
+    })();
+  } catch (e) {
+    if (_isUsernameConflict(e)) return res.status(409).json({ error: 'Username already taken' });
+    throw e;
+  }
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(result.lastInsertRowid);
   // A member invited by a trainer or admin used to get the inviter as their
   // trainer. Now only a coach chosen on the invite asks, and their request

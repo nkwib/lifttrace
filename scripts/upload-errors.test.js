@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const src = readFileSync(new URL('../server/routes/upload.js', import.meta.url), 'utf8');
-const index = readFileSync(new URL('../server/index.js', import.meta.url), 'utf8');
+const index = readFileSync(new URL('../server/lib/error-handler.js', import.meta.url), 'utf8');
 
 test('the error handler turns err.status into the response code', () => {
   assert.match(index, /res\.status\(err\.status \|\| 500\)/);

@@ -52,6 +52,7 @@ import { privateFieldsOut } from './lib/private-fields.js';
 import publicApiRoutes   from './routes/public-api.js';
 import webhooksRoutes    from './routes/webhooks.js';
 import { logger }        from './logger.js';
+import { errorHandler }  from './lib/error-handler.js';
 import { authenticate }  from './middleware/auth.js';
 import { isPrivateUploadPath, UPLOAD_RESPONSE_HEADERS } from './lib/upload-paths.js';
 import { seedSmtpFromEnv } from './email.js';
@@ -328,12 +329,7 @@ router.get('/{*splat}', (req, res) => {
 app.use(BASE_URL || '/', router);
 
 // Global error handler
-app.use((err, req, res, next) => {
-  logger.error(`${req.method} ${req.path} — ${err.stack || err.message}`);
-  if (!res.headersSent) {
-    res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
-  }
-});
+app.use(errorHandler);
 
 process.on('unhandledRejection', (reason) => {
   logger.error('Unhandled promise rejection:', reason instanceof Error ? reason.stack : reason);
