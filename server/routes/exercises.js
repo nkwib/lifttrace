@@ -4,7 +4,7 @@ import db from '../db.js';
 import { wrap } from '../logger.js';
 import { requireAuth, uid, userMgmtActive } from '../middleware/auth.js';
 import { SOURCES } from '../exercise-sources/index.js';
-import { canChangeExercise } from '../lib/exercise-owner.js';
+import { canChangeExercise, canReadExercise } from '../lib/exercise-owner.js';
 import { foldText } from '../lib/search-text.js';
 import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/create-keys.js';
 import { applyToBody, deleteLoses, refuseDelete, createdTimes } from '../lib/newer-wins.js';
@@ -117,13 +117,15 @@ router.get('/usage', wrap((req, res) => {
 // /:id: Express matches in registration order, so from below it this path is
 // read as an exercise id and answered with a 404.
 router.get('/media-urls', wrap((req, res) => {
+  const userId = uid(req);
   const rows = db.prepare(
     // Live rows only — no point pre-caching media for exercises the user
     // has cleared from their library (#49).
     `SELECT gif_url, img_url, video_url FROM exercises
      WHERE deleted_at IS NULL
-       AND (gif_url IS NOT NULL OR img_url IS NOT NULL OR video_url IS NOT NULL)`
-  ).all();
+       AND (gif_url IS NOT NULL OR img_url IS NOT NULL OR video_url IS NOT NULL)
+       ${userId != null ? 'AND (is_global = 1 OR created_by = ?)' : ''}`
+  ).all(...(userId != null ? [userId] : []));
   const set = new Set();
   for (const r of rows) {
     if (r.gif_url)   set.add(r.gif_url);
@@ -140,7 +142,7 @@ router.get('/media-urls', wrap((req, res) => {
 // want to hide soft-deleted rows filter at their own layer.
 router.get('/:id', wrap((req, res) => {
   const row = db.prepare('SELECT * FROM exercises WHERE id = ?').get(parseInt(req.params.id));
-  if (!row) return res.status(404).json({ error: 'Exercise not found' });
+  if (!row || !canReadExercise(row, uid(req))) return res.status(404).json({ error: 'Exercise not found' });
   row.primary_muscles   = JSON.parse(row.primary_muscles || '[]');
   row.secondary_muscles = JSON.parse(row.secondary_muscles || '[]');
   row.equipment         = JSON.parse(row.equipment || '[]');

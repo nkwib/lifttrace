@@ -22,3 +22,15 @@ export function canChangeExercise(row, userId) {
   const me = userId == null ? null : Number(userId);
   return owner === me;
 }
+
+/**
+ * May this request read this exercise row? Library rows and its own custom
+ * ones, the same scope the list and the sync pull use. With user management
+ * off (userId null) everything is readable. Soft-deleted rows stay readable
+ * to their owner (a Records row for a cleared exercise still opens).
+ */
+export function canReadExercise(row, userId) {
+  if (!row) return false;
+  if (userId == null || Number(row.is_global) === 1) return true;
+  return row.created_by != null && Number(row.created_by) === Number(userId);
+}
