@@ -210,3 +210,18 @@ test('the records tool warns that a ranged best is not an all-time PR', () => {
   const description = server.tools.get('get_records').definition.description;
   assert.match(description, /not the user's all-time personal records/i);
 });
+
+test('list_recent_workouts orders same-day sessions by session_seq desc and reports it', async () => {
+  const ins = db.prepare(
+    `INSERT INTO workout_log (user_id, date, name, exercises, completed, session_seq)
+     VALUES (?, '2018-05-05', ?, '[]', 1, ?)`
+  );
+  ins.run(userId, 'First', 0);
+  ins.run(userId, 'Second', 1);
+  const range = { start: '2018-05-05', end: '2018-05-05' };
+  const all = json(await server.call('list_recent_workouts', range));
+  assert.deepEqual(all.workouts.map(w => [w.name, w.session_seq]), [['Second', 1], ['First', 0]]);
+  const one = json(await server.call('list_recent_workouts', { ...range, limit: 1 }));
+  assert.equal(one.workouts[0].name, 'Second');
+  assert.equal(one.workouts[0].session_seq, 1);
+});

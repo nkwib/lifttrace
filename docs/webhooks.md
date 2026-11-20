@@ -167,8 +167,10 @@ Each request carries:
 ```
 X-LiftTrace-Signature: sha256=<hex hmac-sha256 of the exact raw request body, using your webhook's secret>
 X-LiftTrace-Event: workout.completed
-X-LiftTrace-Delivery: <a uuid unique to this specific delivery attempt>
+X-LiftTrace-Delivery: <a uuid, the same on every retry of one delivery>
 ```
+
+Use the delivery uuid to dedupe: a retry of the same delivery repeats it.
 
 Recompute the HMAC over the raw body bytes you received (not a
 re-serialized copy) and compare it to the signature header. Example in
