@@ -96,7 +96,7 @@ export function toolResult(payload) {
 export const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export function isCalendarDate(value) {
-  if (!DATE_RE.test(value)) return false;
+  if (typeof value !== 'string' || !DATE_RE.test(value)) return false;
   const year = Number(value.slice(0, 4));
   const month = Number(value.slice(5, 7));
   const day = Number(value.slice(8, 10));
@@ -106,6 +106,11 @@ export function isCalendarDate(value) {
     31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
   ];
   return day >= 1 && day <= daysInMonth[month - 1];
+}
+
+/** Throw unless `value` is a real YYYY-MM-DD calendar date (strings only). */
+export function assertDate(value, label = 'date') {
+  if (!isCalendarDate(value)) throw new Error(`Invalid ${label} '${String(value)}'; expected YYYY-MM-DD.`);
 }
 
 export function validateDateRange(start, end) {

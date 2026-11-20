@@ -84,3 +84,28 @@ test('resolveDateRange falls back to a window only when neither bound is given',
   assert.match(both.start, /^\d{4}-\d{2}-\d{2}$/);
   assert.ok(both.start < both.end, 'the window reaches back, it is not a single day');
 });
+
+import { isCalendarDate, assertDate } from '../server/lib/mcp/_util.js';
+import { getWorkoutCore } from '../server/lib/mcp/tools/get-workout.js';
+import { logSetCore } from '../server/lib/mcp/tools/log-set.js';
+import { listProgressPhotosCore } from '../server/lib/mcp/tools/list-progress-photos.js';
+
+test('isCalendarDate rejects impossible dates and non-strings', () => {
+  for (const v of ['2026-02-30', '2026-02-29', '2026-13-01', '2026-00-10', ['2026-01-01'], 20260101, null]) {
+    assert.equal(isCalendarDate(v), false, String(v));
+  }
+  assert.equal(isCalendarDate('2024-02-29'), true);
+});
+
+test('assertDate throws a readable error for bad input', () => {
+  assert.throws(() => assertDate('2026-02-30'), /Invalid date '2026-02-30'/);
+  assert.throws(() => assertDate(['2026-01-01'], 'start'), /Invalid start/);
+  assert.doesNotThrow(() => assertDate('2024-02-29'));
+});
+
+test('cores reject impossible dates before touching the db', () => {
+  assert.throws(() => getWorkoutCore(1, { date: '2026-02-31' }), /Invalid date/);
+  assert.throws(() => getWorkoutCore(1, { date: ['2026-01-01'] }), /Invalid date/);
+  assert.throws(() => logSetCore(1, { date: '2026-02-30' }), /Invalid date/);
+  assert.throws(() => listProgressPhotosCore(1, { start: '2026-99-99' }), /Invalid start/);
+});

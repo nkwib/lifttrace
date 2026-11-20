@@ -6,7 +6,7 @@
  */
 import { z } from 'zod';
 import db from '../../../db.js';
-import { DATE_RE, daysAgoLocal, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, daysAgoLocal, todayLocal, toolResult, toolError } from '../_util.js';
 import { isLocalPhotoUrl } from '../../body-stat-media.js';
 
 const DEFAULT_DAYS = 365;
@@ -25,8 +25,8 @@ const DEFAULT_DAYS = 365;
 export function listProgressPhotosCore(userId, { start, end } = {}) {
   const from = start || daysAgoLocal(DEFAULT_DAYS);
   const to = end || todayLocal();
-  if (!DATE_RE.test(from)) throw new Error(`Invalid start '${from}'; expected YYYY-MM-DD.`);
-  if (!DATE_RE.test(to)) throw new Error(`Invalid end '${to}'; expected YYYY-MM-DD.`);
+  assertDate(from, 'start');
+  assertDate(to, 'end');
 
   const rows = userId == null
     ? db.prepare(

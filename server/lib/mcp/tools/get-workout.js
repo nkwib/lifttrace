@@ -12,7 +12,7 @@
  */
 import { z } from 'zod';
 import db from '../../../db.js';
-import { DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
 import { holdSides, sideReps, setReps } from '../../volume.js';
 
 const sidesOf = (s) => {
@@ -32,7 +32,7 @@ const repSidesOf = (s) => (sideReps(s.reps_l, s.reps_r) != null
  */
 export function getWorkoutCore(userId, { date } = {}) {
   const day = date || todayLocal();
-  if (!DATE_RE.test(day)) throw new Error(`Invalid date '${day}'; expected YYYY-MM-DD.`);
+  assertDate(day);
 
   const row = db.prepare(
     'SELECT * FROM workout_log WHERE date = ? AND user_id = ? AND deleted_at IS NULL ORDER BY session_seq ASC, id ASC LIMIT 1'

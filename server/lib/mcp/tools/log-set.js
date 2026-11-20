@@ -23,7 +23,7 @@ import { randomUUID } from 'crypto';
 import db from '../../../db.js';
 import { mutateWorkoutDay } from '../_workout-write.js';
 import { recordsBeforeSave, sendNewRecords } from '../../log-webhooks.js';
-import { DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
 import { logIntoSets } from '../../planned-workout.js';
 import { sideHoldSec } from '../../volume.js';
 import { toId } from '../../program-access.js';
@@ -90,7 +90,7 @@ export function logSetCore(userId, { exercise_id: exerciseIdSent, reps: repsSent
   const warmup = normalizeFlag('warmup', warmupSent);
   const completed = normalizeFlag('completed', completedSent);
   const day = date || todayLocal();
-  if (!DATE_RE.test(day)) throw new Error(`Invalid date '${day}'; expected YYYY-MM-DD.`);
+  assertDate(day);
   const workoutId = workout_id == null || workout_id === '' ? null : toId(workout_id);
   if (workout_id != null && workout_id !== '' && workoutId == null) {
     throw new Error('workout_id must be a workout id, as start_program_workout returns it.');

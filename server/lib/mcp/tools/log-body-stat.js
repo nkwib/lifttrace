@@ -18,7 +18,7 @@ import { revivedDay } from '../../body-stats-day.js';
 import { BODY_STAT_KEYS } from '../../workout-merge.js';
 import { stampTimes } from '../../field-sync.js';
 import { sendBodyStatLogged } from '../../log-webhooks.js';
-import { DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
 
 const LB_PER_KG = 0.45359237;
 
@@ -45,7 +45,7 @@ const STAT_RANGES = {
 export function logBodyStatCore(userId, args = {}) {
   const { weight_unit, date, ...rawStats } = args;
   const day = date || todayLocal();
-  if (!DATE_RE.test(day)) throw new Error(`Invalid date '${day}'; expected YYYY-MM-DD.`);
+  assertDate(day);
 
   if (weight_unit != null && weight_unit !== 'kg' && weight_unit !== 'lb') {
     throw new Error(`Invalid weight_unit '${weight_unit}'; expected 'kg' or 'lb'.`);

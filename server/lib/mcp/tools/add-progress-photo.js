@@ -11,7 +11,7 @@
  */
 import { z } from 'zod';
 import db from '../../../db.js';
-import { DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
 import { dispatchWebhookEvent } from '../../webhooks.js';
 import { isLocalPhotoUrl, PHOTO_DIR } from '../../body-stat-media.js';
 
@@ -29,7 +29,7 @@ import { isLocalPhotoUrl, PHOTO_DIR } from '../../body-stat-media.js';
  */
 export function addProgressPhotoCore(userId, { date, url } = {}) {
   const day = date || todayLocal();
-  if (!DATE_RE.test(day)) throw new Error(`Invalid date '${day}'; expected YYYY-MM-DD.`);
+  assertDate(day);
 
   const clean = String(url || '').trim();
   if (!clean) throw new Error('url required');
