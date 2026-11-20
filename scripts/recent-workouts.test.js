@@ -20,7 +20,7 @@ const stats = read('../src/routes/Statistics.svelte');
 const diary = read('../src/routes/Diary.svelte');
 
 test('Statistics leaves out a workout with no exercises before counting days', () => {
-  const at = stats.indexOf("fetch('/api/workout/recent?limit=365'");
+  const at = stats.indexOf('fetch(`/api/workout/recent?limit=365');
   const block = stats.slice(at, stats.indexOf('workoutDates = trainedDates', at) + 60);
   assert.match(block, /const logs = \(await recent\.json\(\)\)\.filter\(l => exercisesOf\(l\)\.length > 0\);/);
   assert.ok(block.indexOf('.filter(') < block.indexOf('workoutDates = trainedDates'), 'filtered before the heatmap and streak dots read it');
