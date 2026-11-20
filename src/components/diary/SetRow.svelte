@@ -965,11 +965,11 @@
   }
   .rpe-opt:hover { background: var(--surface-3); }
   .rpe-opt.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
-  .rpe-chip.set.lvl-easy, .rpe-opt.lvl-easy { --lvl: var(--success, #3fb950); }
-  .rpe-chip.set.lvl-moderate, .rpe-opt.lvl-moderate { --lvl: var(--warning, #d29922); }
-  .rpe-chip.set.lvl-hard, .rpe-opt.lvl-hard { --lvl: #e8833a; }
-  .rpe-chip.set.lvl-max, .rpe-opt.lvl-max { --lvl: var(--danger, #f85149); }
-  .rpe-chip.set[class*='lvl-'] { color: var(--lvl); border-color: var(--lvl); background: transparent; }
+  .rpe-chip.set.lvl-easy, .rpe-opt.lvl-easy { --lvl: var(--success, #3fb950); --lvl-text: var(--success-text); }
+  .rpe-chip.set.lvl-moderate, .rpe-opt.lvl-moderate { --lvl: var(--warning, #d29922); --lvl-text: var(--warning-text); }
+  .rpe-chip.set.lvl-hard, .rpe-opt.lvl-hard { --lvl: #e8833a; --lvl-text: var(--hard-text); }
+  .rpe-chip.set.lvl-max, .rpe-opt.lvl-max { --lvl: var(--danger, #f85149); --lvl-text: var(--danger-text); }
+  .rpe-chip.set[class*='lvl-'] { color: var(--lvl-text); border-color: var(--lvl); background: transparent; }
   .rpe-opt[class*='lvl-'] { border-left: 3px solid var(--lvl); }
   .rpe-opt.clear { grid-column: span 4; color: var(--danger); background: transparent; border: 1px dashed var(--border); margin-top: 2px; }
 </style>

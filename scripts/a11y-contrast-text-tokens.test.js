@@ -57,7 +57,7 @@ for (const [name, t] of [['dark', dark], ['light', light]]) {
   });
 
   test(`${name}: status text tokens reach 4.5:1`, () => {
-    for (const tok of ['success-text', 'warning-text']) {
+    for (const tok of ['success-text', 'warning-text', 'danger-text', 'hard-text']) {
       assert.ok(worst(tok) >= 4.5, `${name} ${tok} ${worst(tok).toFixed(2)}`);
     }
   });
@@ -80,4 +80,13 @@ test('text color never uses the raw status fills', () => {
   };
   walk(join(root, 'src'));
   assert.deepEqual(bad, []);
+});
+
+test('RIR/RPE chip text uses --lvl-text, not raw --lvl', () => {
+  const src = readFileSync(join(root, 'src/components/diary/SetRow.svelte'), 'utf8');
+  assert.match(src, /\.rpe-chip\.set\[class\*='lvl-'\]\s*\{\s*color:\s*var\(--lvl-text\)/);
+  assert.doesNotMatch(src, /(^|[^-\w])color:\s*var\(--lvl\)/m);
+  for (const lvl of ['easy', 'moderate', 'hard', 'max']) {
+    assert.match(src, new RegExp(`\\.lvl-${lvl}[^{]*\\{[^}]*--lvl-text:\\s*var\\(--(success|warning|hard|danger)-text\\)`));
+  }
 });

@@ -33,6 +33,8 @@
   --success-text:  #4FFFB0;
   --warning-text:  #FFB547;
   --danger:        #FF5C5C;
+  --danger-text:   #FF5C5C;
+  --hard-text:     #E8833A;
   --info:          #4FC3F7;
 
   /* Lift-specific semantic colors */
@@ -81,6 +83,8 @@
   --success-text:  #00704A;
   --warning-text:  #7A5000;
   --danger:        #D93025;
+  --danger-text:   #C5221F;
+  --hard-text:     #9A4A00;
   --info:          #0277BD;
 
   --lift-sets:     #8E24AA;
