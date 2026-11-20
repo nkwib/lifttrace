@@ -80,8 +80,12 @@ router.delete('/', wrap((req, res) => {
 // Clear all workout data for the current user (keeps exercises, settings, account)
 router.delete('/clear-data', wrap((req, res) => {
   const userId = uid(req);
-  db.prepare('DELETE FROM workout_log WHERE user_id = ?').run(userId);
-  db.prepare('DELETE FROM body_stats_log WHERE user_id = ?').run(userId);
+  // `IS ?` so single-user mode (no accounts, NULL owner) clears too; with a
+  // user id it is `=`. Cardio and the workout tombstones are the user's too.
+  db.prepare('DELETE FROM workout_log WHERE user_id IS ?').run(userId);
+  db.prepare('DELETE FROM body_stats_log WHERE user_id IS ?').run(userId);
+  db.prepare('DELETE FROM cardio_log WHERE user_id IS ?').run(userId);
+  db.prepare('DELETE FROM workout_tombstones WHERE user_id IS ?').run(userId);
   // Excused days are the diary's too (issue #121). Without accounts they're
   // the NULL owner's, which `= ?` never matches.
   db.prepare('DELETE FROM excused_days WHERE user_id IS ?').run(userId);
@@ -89,14 +93,18 @@ router.delete('/clear-data', wrap((req, res) => {
   // helper rather than a plain row delete, or the images are orphaned.
   deleteMediaForUser(userId);
   deleteSetMediaForUser(userId);
-  db.prepare('DELETE FROM ai_chat_history WHERE user_id = ?').run(userId);
-  // Delete user-created programs and their templates
-  const userPrograms = db.prepare('SELECT id FROM programs WHERE created_by = ?').all(userId);
-  for (const p of userPrograms) {
-    db.prepare('DELETE FROM workout_templates WHERE program_id = ?').run(p.id);
+  db.prepare('DELETE FROM ai_chat_history WHERE user_id IS ?').run(userId);
+  // Programs only with accounts: seed programs have created_by NULL, so
+  // single-user mode (NULL owner) can't tell them from the user's own and
+  // they stay.
+  if (userId != null) {
+    const userPrograms = db.prepare('SELECT id FROM programs WHERE created_by = ?').all(userId);
+    for (const p of userPrograms) {
+      db.prepare('DELETE FROM workout_templates WHERE program_id = ?').run(p.id);
+    }
+    db.prepare('DELETE FROM programs WHERE created_by = ?').run(userId);
+    db.prepare('DELETE FROM program_assignments WHERE assigned_to = ?').run(userId);
   }
-  db.prepare('DELETE FROM programs WHERE created_by = ?').run(userId);
-  db.prepare('DELETE FROM program_assignments WHERE assigned_to = ?').run(userId);
   res.json({ ok: true });
 }));
 
