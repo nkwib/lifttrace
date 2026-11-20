@@ -159,24 +159,11 @@ async function _processUser(userId) {
       if (!logged && !getExcusedDay(userId, day)) {
         // Get active program template name
         let templateName = '';
-        // An account's next day by the program's order; a failure or no
-        // answer degrades to the generic message.
-        if (userId) {
-          try { templateName = nextProgramDay(userId, day)?.name || ''; }
-          catch (e) { logger.debug(`[scheduler] next program day error: ${e.message}`); }
-        }
-        const activeRow = userId
-          ? db.prepare('SELECT program_id FROM program_assignments WHERE assigned_to = ? AND active = 1').get(userId)
-          : db.prepare("SELECT value FROM app_config WHERE key = 'active_program'").get();
-        if (!userId && activeRow) {
-          const progId = activeRow.program_id || activeRow.value;
-          // Not a day deleted elsewhere, nor one of a program deleted elsewhere.
-          const template = db.prepare(
-            `SELECT t.name FROM workout_templates t JOIN programs p ON p.id = t.program_id
-              WHERE t.program_id = ? AND t.deleted_at IS NULL AND p.deleted_at IS NULL ORDER BY t.order_index LIMIT 1`
-          ).get(progId);
-          if (template) templateName = template.name;
-        }
+        // The next day by the program's order (an account's, or the one
+        // followed without accounts); a failure or no answer degrades to
+        // the generic message.
+        try { templateName = nextProgramDay(userId, day)?.name || ''; }
+        catch (e) { logger.debug(`[scheduler] next program day error: ${e.message}`); }
         const msg = templateName
           ? `Time to train! Today's workout: ${templateName}`
           : "Time to train! Open LiftTrace and get after it.";

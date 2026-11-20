@@ -23,6 +23,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Statistics 1Y and All calories and period deltas.** They read only the newest 365 sessions, so a busy lifter's prior-year comparison and All calories were too low. Those ranges now load more history, and hide the figure when it still can't be complete.
 - **Bad picture or OIDC form says why.** An unreadable or oversized embedded picture, or an incomplete OIDC provider form, now answers 400 with the reason instead of "Internal server error".
 - **Workout import works without accounts.** Duplicates are detected on preview, skip and replace no longer re-add everything, and same-day imports get distinct session order.
+- **Workout reminder names the next day without accounts.** Single-user mode reminders always named the program's first day; they now follow the program's order like accounts do.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added
