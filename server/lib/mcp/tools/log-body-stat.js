@@ -47,7 +47,21 @@ export function logBodyStatCore(userId, args = {}) {
   const day = date || todayLocal();
   if (!DATE_RE.test(day)) throw new Error(`Invalid date '${day}'; expected YYYY-MM-DD.`);
 
-  const stats = { ...rawStats };
+  if (weight_unit != null && weight_unit !== 'kg' && weight_unit !== 'lb') {
+    throw new Error(`Invalid weight_unit '${weight_unit}'; expected 'kg' or 'lb'.`);
+  }
+  // Allowlist, then numeric check: null clears a stat, undefined is absent.
+  const stats = {};
+  for (const [k, v] of Object.entries(rawStats)) {
+    if (v === undefined) continue;
+    if (!BODY_STAT_KEYS.has(k)) {
+      throw new Error(`Unknown stat '${k}'; valid keys: ${[...BODY_STAT_KEYS].join(', ')}.`);
+    }
+    if (v === null) { stats[k] = null; continue; }
+    const n = typeof v === 'number' || (typeof v === 'string' && v.trim() !== '') ? Number(v) : NaN;
+    if (!Number.isFinite(n)) throw new Error(`${k} must be a number.`);
+    stats[k] = n;
+  }
   if (stats.weight != null && weight_unit === 'lb') {
     stats.weight = Math.round(stats.weight * LB_PER_KG * 100) / 100;
   }

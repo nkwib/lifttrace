@@ -359,11 +359,10 @@ test('log_body_stat brings a deleted day back with only what it logged', { skip 
   assert.deepEqual((await pulled(d)).stats, { weight: 79 });
 });
 
-test('log_body_stat and REST v1 with nothing to measure leave a deleted day deleted', { skip }, async () => {
+test('REST v1 with nothing to measure is refused and leaves a deleted day deleted', { skip }, async () => {
   const { d } = await deletedDay();
   const r = await call('PUT', `/api/v1/body-stats/${d}`, { foo: 1 }, {}, apiToken);
-  assert.equal(r.status, 200, JSON.stringify(r.data));
-  assert.deepEqual(r.data.stats, {});
+  assert.equal(r.status, 400, JSON.stringify(r.data));
   const row = await pulled(d);
   assert.ok(row.deleted_at);
   assert.deepEqual(row.stats, { weight: 80, waist: 90 });
@@ -493,4 +492,23 @@ test('only measurements are stamped: a key such as deleted_at or _base in a save
     assert.ok(!('foo' in times));
     assert.ok(Number.isFinite(Date.parse(times.weight)) && Number.isFinite(Date.parse(times.waist)) && Number.isFinite(Date.parse(times.hips)));
   } finally { db.close(); }
+});
+
+test('REST v1 PUT /body-stats/:date refuses unknown keys, units and non-numbers', { skip }, async () => {
+  const d = DAY();
+  const put = (b) => call('PUT', `/api/v1/body-stats/${d}`, b, {}, apiToken);
+  let r = await put({ weight: 'abc' });
+  assert.equal(r.status, 400, JSON.stringify(r.data));
+  assert.equal((await put({ weight: '' })).status, 400);
+  assert.equal((await put({ weight: true })).status, 400);
+  r = await put({ body_fat: 18 });
+  assert.equal(r.status, 400);
+  assert.match(JSON.stringify(r.data), /body_fat.*bodyFat/);
+  assert.equal((await put({ weight: 180, weight_unit: 'lbs' })).status, 400);
+  r = await put({ weight: '80.5', bodyFat: 18 });
+  assert.equal(r.status, 200, JSON.stringify(r.data));
+  assert.deepEqual(r.data.stats, { weight: 80.5, bodyFat: 18 });
+  r = await put({ weight: 180, weight_unit: 'lb' });
+  assert.equal(r.status, 200);
+  assert.equal(r.data.stats.weight, 81.65);
 });
