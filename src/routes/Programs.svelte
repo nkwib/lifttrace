@@ -69,6 +69,21 @@
 
   let importInput;
   let importing = false;
+  // Coded lib errors are translated; uncoded ones (partial import, server) keep their own text.
+  function importErrorText(err) {
+    const keys = {
+      too_large: 'programs.share_err.too_large',
+      invalid_json: 'programs.share_err.invalid_json',
+      not_program: 'programs.share_err.not_program',
+      newer_version: 'programs.share_err.newer_version',
+      no_name: 'programs.share_err.no_name',
+      no_workouts: 'programs.share_err.no_workouts',
+      too_many_workouts: 'programs.share_err.too_many_workouts',
+      too_many_exercises: 'programs.share_err.too_many_exercises',
+    };
+    const key = keys[err?.code];
+    return key ? $_(key) : (err?.message || '');
+  }
   async function onImportFile(e) {
     const f = e.target?.files?.[0];
     if (importInput) importInput.value = '';
@@ -80,7 +95,7 @@
         ? $_('programs.import_created', { values: { name: program.name, count: created.length } })
         : $_('programs.import_done', { values: { name: program.name } }));
       await load();
-    } catch(err) { showError($_('programs.import_failed', { values: { error: err.message || '' } })); }
+    } catch(err) { showError($_('programs.import_failed', { values: { error: importErrorText(err) } })); }
     importing = false;
   }
 

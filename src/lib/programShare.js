@@ -159,21 +159,21 @@ export function buildProgramShare(program) {
 export function parseProgramShare(raw) {
   let obj = raw;
   if (typeof raw === 'string') {
-    if (raw.length > LIMITS.fileBytes) throw new Error('File is too large');
-    try { obj = JSON.parse(raw); } catch { throw new Error('File is not valid JSON'); }
+    if (raw.length > LIMITS.fileBytes) throw new ProgramShareError('too_large', 'File is too large');
+    try { obj = JSON.parse(raw); } catch { throw new ProgramShareError('invalid_json', 'File is not valid JSON'); }
   }
-  if (!isObj(obj) || obj.format !== PROGRAM_FORMAT) throw new Error('File is not a LiftTrace program');
-  if (typeof obj.version !== 'number' || !(obj.version >= 1)) throw new Error('File is not a LiftTrace program');
-  if (obj.version > PROGRAM_VERSION) throw new Error('File was made by a newer version of LiftTrace');
+  if (!isObj(obj) || obj.format !== PROGRAM_FORMAT) throw new ProgramShareError('not_program', 'File is not a LiftTrace program');
+  if (typeof obj.version !== 'number' || !(obj.version >= 1)) throw new ProgramShareError('not_program', 'File is not a LiftTrace program');
+  if (obj.version > PROGRAM_VERSION) throw new ProgramShareError('newer_version', 'File was made by a newer version of LiftTrace');
   const p = obj.program;
-  if (!isObj(p)) throw new Error('File is not a LiftTrace program');
+  if (!isObj(p)) throw new ProgramShareError('not_program', 'File is not a LiftTrace program');
   const name = str(p.name, LIMITS.name)?.trim();
-  if (!name) throw new Error('Program has no name');
-  if (!Array.isArray(p.templates)) throw new Error('Program has no workouts');
-  if (p.templates.length > LIMITS.templates) throw new Error('Program has too many workouts');
+  if (!name) throw new ProgramShareError('no_name', 'Program has no name');
+  if (!Array.isArray(p.templates)) throw new ProgramShareError('no_workouts', 'Program has no workouts');
+  if (p.templates.length > LIMITS.templates) throw new ProgramShareError('too_many_workouts', 'Program has too many workouts');
   for (const t of p.templates) {
     if (isObj(t) && Array.isArray(t.exercises) && t.exercises.length > LIMITS.exercises) {
-      throw new Error('A workout has too many exercises');
+      throw new ProgramShareError('too_many_exercises', 'A workout has too many exercises');
     }
   }
   return {
@@ -187,14 +187,19 @@ export function parseProgramShare(raw) {
   };
 }
 
+/** Import validation error: stable `code` for i18n, English `message` as fallback. */
+export class ProgramShareError extends Error {
+  constructor(code, message) { super(message); this.name = 'ProgramShareError'; this.code = code; }
+}
+
 /** Read a File from a picker, parse + validate. */
 export async function readSharedProgramFile(file) {
-  if (file.size > LIMITS.fileBytes) throw new Error('File is too large');
+  if (file.size > LIMITS.fileBytes) throw new ProgramShareError('too_large', 'File is too large');
   return parseProgramShare(await file.text());
 }
 
 /** Download on the PWA, write to the device and open the Share sheet on Android. */
-export async function exportProgram(program) {
+export async function exportProgram(program, { title = 'LiftTrace program', dialogTitle = 'Share program' } = {}) {
   const { json, filename } = buildProgramShare(program);
   if (isNative) {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem');
@@ -205,7 +210,7 @@ export async function exportProgram(program) {
       path: `${dir}/${filename}`, data: json, directory: Directory.Cache, encoding: Encoding.UTF8,
     });
     try {
-      await Share.share({ title: 'LiftTrace program', text: program?.name || filename, url: writeRes?.uri, dialogTitle: 'Share program' });
+      await Share.share({ title, text: program?.name || filename, url: writeRes?.uri, dialogTitle });
     } catch { /* dismissed; the file is still on device */ }
     return;
   }

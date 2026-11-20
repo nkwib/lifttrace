@@ -244,7 +244,7 @@
   }
 
   async function shareProgramFile() {
-    try { await exportProgram(program); }
+    try { await exportProgram(program, { title: $_('program_detail.share_title'), dialogTitle: $_('program_detail.share_dialog_title') }); }
     catch(e) { showError($_('program_detail.share_failed', { values: { error: e.message || '' } })); }
   }
 

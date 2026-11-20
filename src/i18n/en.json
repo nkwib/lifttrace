@@ -1166,6 +1166,16 @@
     "import_done":           "Imported \"{name}\"",
     "import_created":        "Imported \"{name}\". Added {count} new exercises to your library.",
     "import_failed":         "Import failed: {error}",
+    "share_err": {
+      "too_large": "File is too large",
+      "invalid_json": "File is not valid JSON",
+      "not_program": "File is not a LiftTrace program",
+      "newer_version": "File was made by a newer version of LiftTrace",
+      "no_name": "Program has no name",
+      "no_workouts": "Program has no workouts",
+      "too_many_workouts": "Program has too many workouts",
+      "too_many_exercises": "A workout has too many exercises"
+    },
     "delete_title":          "Delete program?",
     "delete_message":        "Deletes the program and all of its workouts. This cannot be undone.",
     "delete_confirm":        "Delete",
@@ -1415,6 +1425,8 @@
     "select_workout": "Select a workout",
     "share_file":            "Share as file",
     "share_failed":          "Could not share: {error}",
+    "share_title":           "LiftTrace program",
+    "share_dialog_title":    "Share program",
     "toast": {
       "renamed": "Program renamed",
       "settings_saved":      "Program settings saved",
