@@ -1544,7 +1544,14 @@
     "add_menu_title":          "Add",
     "add_exercise_action":     "Add Exercise",
     "body_stats_saved":        "Body stats saved",
-    "body_stats_save_failed":  "Save failed"
+    "body_stats_save_failed":  "Save failed",
+    "body_stats_title":        "Body Stats",
+    "body_stats_body_fat":     "Body Fat",
+    "body_stats_none_enabled": "No measurements enabled. Go to Settings → Workout to choose which stats to track.",
+    "body_stats_discard_title":   "Discard changes?",
+    "body_stats_discard_message": "Values you typed have not been saved.",
+    "body_stats_discard_confirm": "Discard",
+    "body_stats_keep_editing":    "Keep editing"
   },
   "native_setup": {
     "toast": {

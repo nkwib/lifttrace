@@ -39,6 +39,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Today's weigh-in updates the profile weight.** Logging body weight for today (Body Stats, widget, progress photo prompt) now feeds the weight used for calorie burn. Past dates are unchanged.
 - **Progress timeline stays put after saving a weight.** The photo timeline no longer blanks with a spinner and jumps scroll; only the weights refresh.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
+- **Body Stats sheet no longer drops typed values.** Closing it by backdrop, X, back or the timeline link now asks before discarding unsaved measurements, and its labels are translatable.
 
 ### Added
 

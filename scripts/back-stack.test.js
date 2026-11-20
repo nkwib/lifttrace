@@ -150,7 +150,8 @@ test('the shared components and hand-built sheets are registered', () => {
   assert.match(read('../src/components/ui/Sheet.svelte'), /class="sheet-backdrop" on:click=\{onBackdropClick\} use:closeOnBack=\{close\}/);
   assert.match(read('../src/components/ui/Dialog.svelte'), /class="dialog-backdrop"[^>]*use:closeOnBack=/);
   assert.match(read('../src/components/ui/ActionSheet.svelte'), /class="as-backdrop"[^>]*use:closeOnBack=/);
-  for (const f of ['../src/components/diary/BodyStats.svelte', '../src/components/diary/GymTools.svelte', '../src/components/diary/WorkoutSummary.svelte']) {
+  assert.match(read('../src/components/diary/BodyStats.svelte'), /class="sheet-backdrop" on:click=\{\(\) => close\(\)\} use:closeOnBack=\{\(\) => close\(\)\}/, 'BodyStats (guarded close)');
+  for (const f of ['../src/components/diary/GymTools.svelte', '../src/components/diary/WorkoutSummary.svelte']) {
     assert.match(read(f), /class="sheet-backdrop" on:click=\{\(\) => open = false\} use:closeOnBack=\{\(\) => open = false\}/, f);
   }
   const setRow = read('../src/components/diary/SetRow.svelte');

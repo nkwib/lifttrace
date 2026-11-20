@@ -5,6 +5,7 @@
   import { _ } from 'svelte-i18n';
   import { portal } from '../../lib/portal.js';
   import { bodyStatsVisible, weightUnit, dateFormat } from '../../stores/settings.js';
+  import { confirmDialog } from '../../stores/confirmDialog.js';
   import { showSuccess, showError } from '../../stores/toast.js';
   import { currentDate } from '../../stores/workout.js';
   import { uploadAndAttachPhoto } from '../../lib/progress-photo-upload.js';
@@ -34,20 +35,20 @@
     }
   }
 
-  // Title case for the label, unit comes from getUnit() so each label
-  // renders as e.g. "Weight (lbs)" or "Body Fat (%)". The previous
-  // "Body Fat %" label combined with the appended unit produced the
-  // doubled "Body Fat % (%)" caption seen in the sheet.
+  // Labels carry no unit: getUnit() appends it, e.g. "Weight (lbs)" or
+  // "Body Fat (%)". body_stats_body_fat is distinct from
+  // settings_workout.body_stats.body_fat ("Body Fat %") to avoid the
+  // doubled "Body Fat % (%)" caption.
   const ALL_STATS = [
-    { id: 'weight',  label: 'Weight' },
-    { id: 'bodyFat', label: 'Body Fat' },
-    { id: 'neck',    label: 'Neck' },
-    { id: 'chest',   label: 'Chest' },
-    { id: 'waist',   label: 'Waist' },
-    { id: 'hips',    label: 'Hips' },
-    { id: 'biceps',  label: 'Biceps' },
-    { id: 'thighs',  label: 'Thighs' },
-    { id: 'calves',  label: 'Calves' },
+    { id: 'weight',  labelKey: 'settings_workout.body_stats.weight' },
+    { id: 'bodyFat', labelKey: 'diary_extra.body_stats_body_fat' },
+    { id: 'neck',    labelKey: 'settings_workout.body_stats.neck' },
+    { id: 'chest',   labelKey: 'settings_workout.body_stats.chest' },
+    { id: 'waist',   labelKey: 'settings_workout.body_stats.waist' },
+    { id: 'hips',    labelKey: 'settings_workout.body_stats.hips' },
+    { id: 'biceps',  labelKey: 'settings_workout.body_stats.biceps' },
+    { id: 'thighs',  labelKey: 'settings_workout.body_stats.thighs' },
+    { id: 'calves',  labelKey: 'settings_workout.body_stats.calves' },
   ];
 
   $: lengthUnit = $weightUnit === 'kg' ? 'cm' : 'in';
@@ -109,6 +110,29 @@
   // fills the fields you haven't typed in.
   onMount(() => onSyncChanges(() => { if (open) loadStats({ quiet: true }); }, ['bodyStats']));
 
+  // Close from backdrop, X or back. Typed-in values ask first; save success
+  // sets open = false directly and clears touched, so it never prompts.
+  let closing = false;
+  async function close(after) {
+    if (closing || saving) return;
+    if (touched.size > 0) {
+      closing = true;
+      let ok = false;
+      try {
+        ok = await confirmDialog({
+          title: $_('diary_extra.body_stats_discard_title'),
+          message: $_('diary_extra.body_stats_discard_message'),
+          confirmText: $_('diary_extra.body_stats_discard_confirm'),
+          cancelText: $_('diary_extra.body_stats_keep_editing'),
+          dangerous: true,
+        });
+      } finally { closing = false; }
+      if (!ok || !open) return;
+    }
+    open = false;
+    if (typeof after === 'function') after();
+  }
+
   async function save() {
     saving = true;
     try {
@@ -126,6 +150,7 @@
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('lt:body-stats-saved'));
       }
+      touched.clear();
       open = false;
     } catch(e) {
       showError(e.message);
@@ -137,13 +162,13 @@
 {#if open}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div use:portal class="sheet-backdrop" on:click={() => open = false} use:closeOnBack={() => open = false}>
+  <div use:portal class="sheet-backdrop" on:click={() => close()} use:closeOnBack={() => close()}>
     <div class="bs-sheet" on:click|stopPropagation on:keydown={() => {}}>
       <div class="sheet-handle"></div>
       <div class="sheet-header-row">
-        <h3 class="sheet-title">Body Stats</h3>
+        <h3 class="sheet-title">{$_('diary_extra.body_stats_title')}</h3>
         <span class="sheet-date">{_fmtDate($currentDate)}</span>
-        <button class="sheet-close" on:click={() => open = false} aria-label="Close" title="Close">
+        <button class="sheet-close" on:click={() => close()} aria-label={$_('common.close')} title={$_('common.close')}>
           <span class="material-symbols-rounded">close</span>
         </button>
       </div>
@@ -151,7 +176,7 @@
         <div class="bs-grid">
           {#each visibleStats as stat (stat.id)}
             <div>
-              <label class="form-label">{stat.label} <span class="unit">({getUnit(stat.id)})</span></label>
+              <label class="form-label">{$_(stat.labelKey)} <span class="unit">({getUnit(stat.id)})</span></label>
               <input class="input" type="number" step="0.1" min="0"
                 bind:value={stats[stat.id]} on:input={() => touched.add(stat.id)} placeholder="—" />
             </div>
@@ -159,7 +184,7 @@
         </div>
 
         {#if visibleStats.length === 0}
-          <p class="bs-empty">No measurements enabled. Go to Settings → Workout to choose which stats to track.</p>
+          <p class="bs-empty">{$_('diary_extra.body_stats_none_enabled')}</p>
         {/if}
 
         <!-- Progress photo for this same date. The full timeline and the
@@ -170,7 +195,7 @@
             <span class="material-symbols-rounded">add_a_photo</span>
             {photoUploading ? $_('progress.adding') : $_('progress.add_photo')}
           </button>
-          <button class="bs-photo-link" on:click={() => { open = false; push('/progress'); }}>
+          <button class="bs-photo-link" on:click={() => close(() => push('/progress'))}>
             {$_('progress.view_timeline')}
           </button>
         </div>
@@ -178,7 +203,7 @@
       </div>
       <div class="bs-sheet-footer">
         <button class="btn btn-primary w-full" on:click={save} disabled={saving}>
-          {saving ? 'Saving…' : 'Save'}
+          {saving ? $_('common.saving') : $_('common.save')}
         </button>
       </div>
     </div>
