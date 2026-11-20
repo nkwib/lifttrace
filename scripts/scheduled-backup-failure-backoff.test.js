@@ -26,3 +26,13 @@ test('wiring: error_at recorded, cleared, gated, partial zip removed', () => {
   assert.match(fb, /fs\.rmSync\(destPath, \{ force: true \}\)/);
   assert.match(sch, /scheduledBackupRetryAllowed\(\)/);
 });
+
+test('wiring: a saved schedule change clears the backoff but keeps the error text', () => {
+  const body = fb.match(/export function setScheduleConfig[\s\S]*?\n}\n/)[0];
+  const clear = body.indexOf("writes.push(['backup_last_auto_error_at', ''])");
+  assert.ok(clear > 0);
+  assert.ok(clear > body.indexOf('must be 1-99'), 'after validation');
+  assert.ok(clear < body.indexOf('db.transaction'), 'inside the same write batch');
+  assert.ok(clear > body.indexOf('ENV_LOCKED'), 'not on the env-locked path');
+  assert.doesNotMatch(body, /'backup_last_auto_error', ''/);
+});

@@ -134,6 +134,10 @@ export function setScheduleConfig({ schedule, time, retention, timeZone }) {
   }
   // When it was set, for a first run that comes at its time (backup-schedule.js).
   if (schedule != null || time != null || timeZone !== undefined) writes.push(['backup_schedule_set_at', new Date().toISOString()]);
+  // A saved change lifts the failure backoff so the fixed config retries at its next due
+  // time (set_at resets, so no instant backup). Text stays for the UI. The next failure
+  // counts as first of a streak and pushes once more.
+  if (writes.length && _cfg('backup_last_auto_error_at')) writes.push(['backup_last_auto_error_at', '']);
   db.transaction(() => { for (const [k, v] of writes) _setCfg(k, v); })();
   return getScheduleConfig();
 }
