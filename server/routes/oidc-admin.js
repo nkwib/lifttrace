@@ -26,19 +26,21 @@ router.use(requireAuth, requireAdmin);
 const ALLOWED_AUTH_METHODS = new Set(['client_secret_post', 'client_secret_basic', 'none']);
 const ALLOWED_RESPONSE_TYPES = new Set(['code']);
 
-function _coerceProvider(body, existing) {
+const badForm = (message) => Object.assign(new Error(message), { status: 400 });
+
+export function _coerceProvider(body, existing) {
   const get = (k, def) => body[k] !== undefined ? body[k] : (existing ? existing[k] : def);
 
   const issuer_url = String(get('issuer_url', '')).trim();
   const client_id  = String(get('client_id',  '')).trim();
   if (!issuer_url || !client_id) {
-    throw new Error('issuer_url and client_id are required');
+    throw badForm('issuer_url and client_id are required');
   }
 
   const redirectUris = Array.isArray(body.redirect_uris)
     ? body.redirect_uris.map(s => String(s || '').trim()).filter(Boolean)
     : (existing ? JSON.parse(existing.redirect_uris || '[]') : []);
-  if (!redirectUris.length) throw new Error('At least one redirect_uri is required');
+  if (!redirectUris.length) throw badForm('At least one redirect_uri is required');
 
   const responseTypes = Array.isArray(body.response_types)
     ? body.response_types.map(s => String(s).trim()).filter(t => ALLOWED_RESPONSE_TYPES.has(t))

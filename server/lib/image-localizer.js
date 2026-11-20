@@ -18,6 +18,7 @@ import { logger } from '../logger.js';
 
 const DATA_URL = /^data:image\/(jpeg|jpg|png|webp|gif|avif);base64,/i;
 const MAX_EMBEDDED_BYTES = 12 * 1024 * 1024;
+const badPicture = (message) => Object.assign(new Error(message), { status: 400 });
 const UPLOADS_DIR = () => process.env.UPLOADS_PATH || './uploads';
 
 /**
@@ -33,9 +34,8 @@ export function localizeDataUrl(value, { subdir = '' } = {}) {
   const [head, b64] = value.split(',', 2);
   const ext = head.match(/^data:image\/([a-z]+);/i)?.[1].toLowerCase().replace('jpeg', 'jpg') || 'jpg';
   const bytes = Buffer.from(b64, 'base64');
-  if (!bytes.length || bytes.length > MAX_EMBEDDED_BYTES) {
-    throw new Error('That picture is too large.');
-  }
+  if (!bytes.length) throw badPicture('That picture could not be read.');
+  if (bytes.length > MAX_EMBEDDED_BYTES) throw badPicture('That picture is too large.');
   const dir = subdir ? path.join(UPLOADS_DIR(), subdir) : UPLOADS_DIR();
   fs.mkdirSync(dir, { recursive: true });
   const filename = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}.${ext}`;
@@ -48,7 +48,8 @@ export function localizeDataUrl(value, { subdir = '' } = {}) {
   } catch (e) {
     try { fs.unlinkSync(filePath); } catch {}
     logger.warn(`[image-localizer] Refusing an embedded image: ${e.message}`);
-    throw e;
+    // A fresh error: upload.js shares assertAllowedMedia and maps its own.
+    throw badPicture(e.message);
   }
   return `/uploads/${subdir ? `${subdir}/` : ''}${filename}`;
 }
