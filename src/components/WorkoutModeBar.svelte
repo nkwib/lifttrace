@@ -10,7 +10,7 @@
   $: running = $timerState && !$timerState.paused;
   $: paused = $timerState && $timerState.paused;
   $: visible = active || $wantScreenOn;
-  $: display = active ? formatTimerMs($timerSec * 1000) : '';
+  $: display = active ? formatTimerMs($timerSec * 1000, { centi: false }) :'';
 
   // Publish pill height (46px) plus an 8px gap to :root so the Toast clears it.
   function _setHeightVar(on) {
