@@ -1386,6 +1386,8 @@ const Stats = {
       .filter(Stats._hasCompletedSet)
       .filter(w => (!from || w.date >= from) && (!to || w.date <= to))
       .sort((a, b) => a.date.localeCompare(b.date));
+    const lib = await Stats._library();
+    const libLoadType = lib.get(Number(exerciseId))?.load_type;
     const out = [];
     for (const w of rows) {
       const ex = (w.exercises || []).find(e => Number(e.exercise_id) === Number(exerciseId));
@@ -1404,14 +1406,15 @@ const Stats = {
       const maxDuration = timedSets.length ? Math.max(...timedSets.map(s => Number(s.duration_sec) || 0)) : 0;
       const maxDistance = distanceSets.length ? Math.max(...distanceSets.map(s => Number(s.distance_m) || 0)) : 0;
       const maxCalories = calorieSets.length ? Math.max(...calorieSets.map(s => Number(s.calories) || 0)) : 0;
-      const totalVolume = repSets.reduce((sum, s) => sum + (Number(s.weight) || 0) * (Number(s.reps) || 0), 0);
+      const lt = resolveLoadType(ex, libLoadType);
+      const totalVolume = repSets.reduce((sum, s) => sum + setVolume(s, lt), 0);
       const rpeValues = completed
         .map(s => parseFloat(s.rpe))
         .filter(n => Number.isFinite(n) && n > 0);
       const avgRpe = rpeValues.length
         ? Math.round((rpeValues.reduce((a, b) => a + b, 0) / rpeValues.length) * 10) / 10
         : null;
-      out.push({ date: w.date, maxWeight, maxDuration, maxDistance, maxCalories, totalVolume, sets: completed.length, avgRpe });
+      out.push({ date: w.date, workout_id: w.id, maxWeight, maxDuration, maxDistance, maxCalories, totalVolume, sets: completed.length, avgRpe });
     }
     return out;
   },

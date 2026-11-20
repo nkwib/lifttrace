@@ -85,3 +85,25 @@ test('a workout day is any day with a ticked set, warm-ups included, on both sid
   assert.match(stats, /_hasCompletedSet\(w\) \{\s*\n\s*return \(w\.exercises \|\| \[\]\)\.some\(ex => \(ex\.sets \|\| \[\]\)\.some\(s => s\?\.completed\)\);/);
   assert.match(read('../server/routes/stats.js'), /function hasCompletedSet\(exercises\) \{\s*\n\s*return exercises\.some\(ex => \(ex\.sets \|\| \[\]\)\.some\(s => s\.completed\)\);/);
 });
+
+test('phone exercise progress volume goes through setVolume with the resolved load type', () => {
+  const body = stats.slice(stats.indexOf('async progressFor('), stats.indexOf('async muscleGroupVolume('));
+  assert.match(body, /setVolume\(/);
+  assert.match(body, /resolveLoadType\(/);
+  assert.match(body, /workout_id:\s*w\.id/);
+  assert.doesNotMatch(body, /\(Number\(s\.weight\) \|\| 0\) \* \(Number\(s\.reps\) \|\| 0\)/);
+});
+
+test('setVolume agrees between the phone and server copies', async () => {
+  const c = await import('../src/lib/workout.js');
+  const sv = await import('../server/lib/volume.js');
+  const sets = [
+    { weight: 20, reps: 10 }, { weight: 0, reps: 10 },
+    { weight: 20, reps: 10, reps_l: 8, reps_r: 9 }, { weight: 20, reps: 10, reps_l: 0, reps_r: 0 },
+  ];
+  for (const lt of ['bilateral', 'paired', 'unilateral']) for (const s of sets) {
+    assert.equal(c.setVolume(s, lt), sv.setVolume(s, lt), `${lt} ${JSON.stringify(s)}`);
+  }
+  assert.equal(c.setVolume(sets[0], 'paired'), 400);
+  assert.equal(c.setVolume(sets[2], 'unilateral'), 340);
+});
