@@ -6,6 +6,7 @@
   import { LtApi } from '../lib/api.js';
   import { onSyncChanges, newestRead } from '../lib/sync-refresh.js';
   import { mergeTemplate, isEditorDirty } from '../lib/editor-merge.js';
+  import { moveBlock, canMove } from '../lib/editor-order.js';
   import { currentUser, userMgmtActive } from '../stores/auth.js';
   import { diffTombstones } from '../lib/workout-uuid.js';
   import { showSuccess, showError } from '../stores/toast.js';
@@ -176,17 +177,13 @@
 
   // ── Core mutations ─────────────────────────────────────────────────
   function moveUp(idx) {
-    if (idx <= 0) return;
-    const arr = [...exercises];
-    [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
-    commit(arr);
+    if (!canMove(exercises, idx, -1)) return;
+    commit(moveBlock(exercises, idx, -1));
   }
 
   function moveDown(idx) {
-    if (idx >= exercises.length - 1) return;
-    const arr = [...exercises];
-    [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
-    commit(arr);
+    if (!canMove(exercises, idx, 1)) return;
+    commit(moveBlock(exercises, idx, 1));
   }
 
   function removeExercise(idx) {
@@ -365,8 +362,8 @@
     asTitle = ex.exercise_name;
 
     const actions = [];
-    if (idx > 0) actions.push({ label: $_('workout_editor.actions.move_up'), icon: 'keyboard_double_arrow_up', value: 'move_up' });
-    if (idx < exercises.length - 1) actions.push({ label: $_('workout_editor.actions.move_down'), icon: 'keyboard_double_arrow_down', value: 'move_down' });
+    if (canMove(exercises, idx, -1)) actions.push({ label: $_('workout_editor.actions.move_up'), icon: 'keyboard_double_arrow_up', value: 'move_up' });
+    if (canMove(exercises, idx, 1)) actions.push({ label: $_('workout_editor.actions.move_down'), icon: 'keyboard_double_arrow_down', value: 'move_down' });
 
     actions.push({ label: $_('workout_editor.actions.replace'), icon: 'swap_horiz', value: 'replace' });
 
@@ -957,12 +954,12 @@
                     <div class="ex-content">
                       <div class="ex-header">
                         <div class="reorder-btns">
-                          {#if idx > 0}
+                          {#if canMove(exercises, idx, -1)}
                             <button class="btn-icon-xs" on:click|stopPropagation={() => moveUp(idx)} title={$_('workout_editor.move_up')}>
                               <span class="material-symbols-rounded">keyboard_double_arrow_up</span>
                             </button>
                           {/if}
-                          {#if idx < exercises.length - 1}
+                          {#if canMove(exercises, idx, 1)}
                             <button class="btn-icon-xs" on:click|stopPropagation={() => moveDown(idx)} title={$_('workout_editor.move_down')}>
                               <span class="material-symbols-rounded">keyboard_double_arrow_down</span>
                             </button>
@@ -1082,12 +1079,12 @@
             >
               <div class="ex-header">
                 <div class="reorder-btns">
-                  {#if idx > 0}
+                  {#if canMove(exercises, idx, -1)}
                     <button class="btn-icon-xs" on:click|stopPropagation={() => moveUp(idx)} title={$_('workout_editor.move_up')}>
                       <span class="material-symbols-rounded">keyboard_double_arrow_up</span>
                     </button>
                   {/if}
-                  {#if idx < exercises.length - 1}
+                  {#if canMove(exercises, idx, 1)}
                     <button class="btn-icon-xs" on:click|stopPropagation={() => moveDown(idx)} title={$_('workout_editor.move_down')}>
                       <span class="material-symbols-rounded">keyboard_double_arrow_down</span>
                     </button>
