@@ -7,6 +7,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **The app starts faster.** It loaded the code of every page before showing the Diary. Now only the Diary's comes first, half the size, and each other page's when you first open it. The installed app keeps them all for offline use as before.
+
 ### Fixed
 
 - **Back leaves the Android app instead of walking through every tab** (from [cooktrace#99](https://github.com/TraceApps/cooktrace/issues/99), thanks @sreich). Each tab you opened was added to the back history, so back went through all of them, and then did nothing. Now back goes one step inside a tab, from any other tab to the Diary, and from the Diary the app goes to the background, as other Android apps do; a workout in progress is kept. Pages left open in a tab you switched away from no longer come back. The installed web app works the same way; a browser tab keeps the browser's usual history.

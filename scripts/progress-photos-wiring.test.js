@@ -163,7 +163,7 @@ test('the read core filters to photos and hides soft-deleted rows', () => {
 });
 
 test('Progress is a real route but deliberately not a nav tab', () => {
-  assert.match(appSvelte, /import Progress\s+from '\.\/routes\/Progress\.svelte'/);
+  assert.match(appSvelte, /const Progress\s+= lazy\(\(\) => import\('\.\/routes\/Progress\.svelte'\)\)/);
   assert.match(appSvelte, /'\/progress':\s*Progress,/);
   // Occasional-use content: reached from Statistics and the Body Stats
   // sheet, so it should not be taking a primary nav slot. Checked against
