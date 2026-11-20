@@ -23,6 +23,7 @@ import { isTimedSet, isRepSet, setKind, exerciseVolume, setVolume, resolveLoadTy
 import { musclesOf } from './muscle-load.js';
 import { normalizeMuscle } from './muscle-groups.js';
 import { getServerUrl } from './platform.js';
+import { checkedCardioDate, normalizeCardioInput } from './cardio-input.js';
 import { newTempId } from './offline-edits.js';
 import { planImport, importKeys, importKey } from '../../server/lib/import-match.js';
 import { trainedDates, currentStreak, longestStreak, trainedDaysByWeek, weekdayCounts, hasWorkingSet, cleanExcuse, isCalendarDate } from './trained-day.js';
@@ -912,6 +913,7 @@ const Workout = {
     return out;
   },
   async upsert(date, body) {
+    if (!isCalendarDate(date)) throw new Error('date must be a calendar date, YYYY-MM-DD');
     const exercises = body.exercises || [];
 
     // Resolve the target row (issue #76): new_session:true always creates
@@ -1048,6 +1050,7 @@ const Workout = {
   // now since a session-aware UI needs to be able to remove one session
   // without a server.
   async del(date, explicitId) {
+    if (!isCalendarDate(date)) throw new Error('date must be a calendar date, YYYY-MM-DD');
     const existing = await Workout._resolve(date, explicitId ?? null);
     if (!existing) return { ok: true, deleted: false };
     await dbRun(`DELETE FROM workout_log WHERE id = ?`, [existing.id]);
@@ -1088,6 +1091,7 @@ const BodyStats = {
     return _bodyStatsFromRow(rows[0]) || null;
   },
   async put(date, body) {
+    if (!isCalendarDate(date)) throw new Error('date must be a calendar date, YYYY-MM-DD');
     const stats = body?.stats ?? body ?? {};
     // Loaded on use, like the workout merge, to stay out of the startup chunk.
     const { mergeStatsObject } = await import('./workout-merge.js');
@@ -1191,21 +1195,12 @@ const Cardio = {
     return dbQuery(`SELECT * FROM cardio_log WHERE user_id = ? AND is_template = 1 ORDER BY updated_at DESC, id DESC`, [ME]);
   },
   async create(body) {
-    if (!body?.date) throw new Error('date required');
-    const activity = String(body.activity || '').trim();
-    if (!activity) throw new Error('activity required');
-    const dm = Math.floor(Number(body.duration_min));
-    if (!Number.isFinite(dm) || dm <= 0) throw new Error('duration_min must be a positive integer');
-    const dist = body.distance == null || body.distance === '' ? null : Number(body.distance);
-    const hr = body.avg_hr == null || body.avg_hr === '' ? null : Math.floor(Number(body.avg_hr));
-    const unit = (body.distance_unit === 'mi' || body.distance_unit === 'km') ? body.distance_unit : 'km';
-    const notes = body.notes ? String(body.notes).trim() : null;
-    const isTpl = body.is_template ? 1 : 0;
+    const { date, activity, duration_min: dm, distance: dist, distance_unit: unit, avg_hr: hr, notes, is_template: isTpl } = normalizeCardioInput(body || {});
     const newId = _newId();
     const r = await dbRun(
       `INSERT INTO cardio_log (id, user_id, date, activity, duration_min, distance, distance_unit, avg_hr, notes, is_template, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [newId, ME, body.date, activity, dm, Number.isFinite(dist) ? dist : null, unit, Number.isFinite(hr) ? hr : null, notes, isTpl, _now(), _now()]
+      [newId, ME, date, activity, dm, dist, unit, hr, notes, isTpl, _now(), _now()]
     );
     const rows = await dbQuery(`SELECT * FROM cardio_log WHERE id = ?`, [newId ?? r.lastId]);
     return rows[0];
@@ -1222,10 +1217,13 @@ const Cardio = {
     const unit = (body.distance_unit === 'mi' || body.distance_unit === 'km') ? body.distance_unit : existing.distance_unit;
     const notes = body.notes === '' ? null : (body.notes != null ? String(body.notes).trim() : existing.notes);
     const isTpl = body.is_template === undefined ? (existing.is_template || 0) : (body.is_template ? 1 : 0);
+    // Like PUT /api/cardio/:id: a sent date is checked, a stored legacy
+    // stamp is trimmed to its day.
+    const date = body.date != null ? checkedCardioDate(body.date) : String(existing.date).slice(0, 10);
     await dbRun(
       `UPDATE cardio_log SET date = ?, activity = ?, duration_min = ?, distance = ?, distance_unit = ?, avg_hr = ?, notes = ?, is_template = ?, updated_at = ?
        WHERE id = ?`,
-      [body.date != null ? body.date : existing.date, activity, dm, dist, unit, hr, notes, isTpl, _now(), id]
+      [date, activity, dm, dist, unit, hr, notes, isTpl, _now(), id]
     );
     const rows = await dbQuery(`SELECT * FROM cardio_log WHERE id = ?`, [id]);
     return rows[0];

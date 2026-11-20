@@ -26,6 +26,7 @@ COPY src/lib/exercise-sources/ /src/lib/exercise-sources/
 # The trained-day rule (issue #121) is one file the app and the server both
 # use; the server imports it the same way.
 COPY src/lib/trained-day.js /src/lib/trained-day.js
+COPY src/lib/cardio-input.js /src/lib/cardio-input.js
 COPY src/lib/workout-merge.js /src/lib/workout-merge.js
 COPY --from=build /app/dist ./dist
 # Also ship the root package.json so the server can read APP_VERSION
