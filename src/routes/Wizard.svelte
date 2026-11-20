@@ -1,5 +1,6 @@
 <script>
   import { closeOnBack } from '../lib/back-stack.js';
+  import { trapFocus } from '../lib/focus-trap.js';
   import Toggle from '../components/settings/Toggle.svelte';
   import { onMount } from 'svelte';
   import { KG_PER_LB } from '../lib/workout.js';
@@ -646,7 +647,8 @@
 {#if skipModal}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div class="skip-modal-backdrop" on:click|self={() => skipModal = false} use:closeOnBack={() => skipModal = false}>
+  <div class="skip-modal-backdrop" on:click|self={() => skipModal = false} use:closeOnBack={() => skipModal = false}
+    use:trapFocus={{ onEscape: () => skipModal = false }}>
     <div class="skip-modal" on:click|stopPropagation>
       <h3 class="skip-modal-title">{$_('wizard.skip_modal.title')}</h3>
       <p class="skip-modal-desc">{$_('wizard.skip_modal.desc')}</p>

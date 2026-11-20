@@ -40,3 +40,21 @@ test('ActionSheet panel is a labelled modal dialog', () => {
 test('Escape handled by an inner control is left alone', () => {
   assert.match(read('../src/lib/focus-trap.js'), /defaultPrevented/);
 });
+
+test('remaining dismissable layers trap focus and share one close fn for Escape and back', () => {
+  const files = {
+    'components/ui/TimePicker.svelte': /use:closeOnBack=\{\(\) => open = false\}\s+use:trapFocus=\{\{ onEscape: \(\) => open = false \}\}/,
+    'routes/Wizard.svelte': /use:closeOnBack=\{\(\) => skipModal = false\}\s+use:trapFocus=\{\{ onEscape: \(\) => skipModal = false \}\}/,
+    'routes/Settings.svelte': /use:closeOnBack=\{\(\) => \{ twoStepChallengeOpen = null; \}\}\s+use:trapFocus=\{\{ onEscape: \(\) => \{ twoStepChallengeOpen = null; \} \}\}/,
+    'components/settings/SettingsEmail.svelte': /use:closeOnBack=\{closeTestDialog\}\s+use:trapFocus=\{\{ onEscape: closeTestDialog \}\}/,
+    'components/radio/FullPlayer.svelte': /use:portal use:trapFocus=\{\{ onEscape: \(\) => open = false, initial: '\.fp-panel' \}\}/,
+  };
+  for (const [f, re] of Object.entries(files)) {
+    const s = read(`../src/${f}`);
+    assert.match(s, /import \{ trapFocus \} from '[./]+\/lib\/focus-trap\.js'/, f);
+    assert.match(s, re, f);
+  }
+  assert.match(read('../src/components/radio/FullPlayer.svelte'), /class="fp-panel" tabindex="-1"/);
+  assert.doesNotMatch(read('../src/components/ui/TimePicker.svelte'), /on:keydown=\{\(\) => \{\}\}/);
+  assert.doesNotMatch(read('../src/components/settings/SettingsEmail.svelte'), /e\.key === 'Escape'/);
+});

@@ -5,6 +5,7 @@
   import { fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { portal } from '../../lib/portal.js';
+  import { trapFocus } from '../../lib/focus-trap.js';
   import {
     currentTrack, isPlaying, progress, currentTime, duration,
     volume, shuffle, repeat, queue, queueIndex, showQueue, isBuffering,
@@ -118,12 +119,12 @@
 </script>
 
 {#if open}
-  <div use:portal>
+  <div use:portal use:trapFocus={{ onEscape: () => open = false, initial: '.fp-panel' }}>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="fp-backdrop" on:click={() => open = false} use:closeOnBack={() => open = false}
       transition:fly={{ y: 0, duration: 200 }}></div>
-    <div class="fp-panel" transition:fly={{ y: 600, duration: 320, easing: cubicOut }}
+    <div class="fp-panel" tabindex="-1" transition:fly={{ y: 600, duration: 320, easing: cubicOut }}
          style:--fp-tint={backdropColor || 'transparent'}>
       <!-- Cover-art-derived gradient backdrop. Sits behind everything;
            fades in once the dominant color is extracted. -->
@@ -249,6 +250,7 @@
     z-index: 500;
   }
   .fp-panel {
+    outline: none;
     position: fixed;
     bottom: 0; left: 0; right: 0;
     background: var(--surface-1);

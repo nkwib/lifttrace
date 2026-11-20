@@ -21,6 +21,7 @@
   import { createEventDispatcher } from 'svelte';
   import { _ } from 'svelte-i18n';
   import { portal } from '../../lib/portal.js';
+  import { trapFocus } from '../../lib/focus-trap.js';
   import { timeFormat } from '../../stores/settings.js';
 
   export let value = '12:00';
@@ -93,8 +94,8 @@
 
 {#if open}
   <div use:portal class="tp-backdrop" role="dialog" aria-modal="true" use:closeOnBack={() => open = false}
-    on:click|self={() => open = false} on:keydown={() => {}}>
-    <div class="tp-sheet" on:click|stopPropagation on:keydown={() => {}}>
+    use:trapFocus={{ onEscape: () => open = false }} on:click|self={() => open = false}>
+    <div class="tp-sheet" on:click|stopPropagation>
       <div class="tp-handle"></div>
 
       <div class="tp-preview">

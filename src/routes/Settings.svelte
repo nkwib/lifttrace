@@ -7,6 +7,7 @@
 
 <script>
   import { closeOnBack } from '../lib/back-stack.js';
+  import { trapFocus } from '../lib/focus-trap.js';
   import { onMount, tick, afterUpdate, onDestroy } from 'svelte';
   import { fold } from '../lib/fold.js';
   import { slide, fade } from 'svelte/transition';
@@ -1736,7 +1737,8 @@
 </div>
 
 {#if twoStepChallengeOpen}
-  <div class="merge-overlay" use:portal transition:fade={{ duration: 150 }} use:closeOnBack={() => { twoStepChallengeOpen = null; }}>
+  <div class="merge-overlay" use:portal transition:fade={{ duration: 150 }} use:closeOnBack={() => { twoStepChallengeOpen = null; }}
+    use:trapFocus={{ onEscape: () => { twoStepChallengeOpen = null; } }}>
     <div class="merge-dialog">
       <TwoStepChallenge challenge={twoStepChallengeOpen} serverUrl={twoStepChallengeOpen.url} account={serverUsername.trim()}
         on:done={twoStepDone} on:restart={twoStepRestart} />

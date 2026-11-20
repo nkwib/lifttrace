@@ -1,5 +1,6 @@
 <script>
   import { closeOnBack } from '../../lib/back-stack.js';
+  import { trapFocus } from '../../lib/focus-trap.js';
   import { slide } from 'svelte/transition';
   import { tick } from 'svelte';
   import { _ } from 'svelte-i18n';
@@ -282,7 +283,7 @@
 
 {#if showTestDialog}
   <div class="test-dialog-overlay" on:click={closeTestDialog} use:closeOnBack={closeTestDialog}
-    on:keydown={(e) => e.key === 'Escape' && closeTestDialog()}>
+    use:trapFocus={{ onEscape: closeTestDialog }}>
     <div class="test-dialog" role="dialog" aria-labelledby="test-dialog-title"
       on:click|stopPropagation>
       <h3 id="test-dialog-title">{$_('settings_email.send_test_email')}</h3>
