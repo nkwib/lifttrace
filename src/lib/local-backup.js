@@ -27,7 +27,7 @@
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { isNative } from './platform.js';
-import { dbQuery, dbRun, getDb } from './db-native.js';
+import { dbQuery, dbExec } from './db-native.js';
 
 const BACKUP_DIR  = 'lifttrace-backups';
 const UPLOADS_DIR = 'lifttrace-uploads';
@@ -44,6 +44,7 @@ const TABLES = [
   'program_assignments',
   'workout_log',
   'body_stats_log',
+  'cardio_log',
   // Excused days (issue #121). A backup from before them has none, and a
   // restore replaces everything, so it restores none.
   'excused_days',
@@ -160,25 +161,37 @@ export async function importBackup(jsonOrText) {
   if (!data || data.app !== 'lifttrace' || !data.tables) {
     throw new Error('Not a LiftTrace backup file');
   }
-  // Wipe existing DB rows, then re-insert. Schema is preserved
-  // (no DROP TABLE).
-  for (const t of TABLES) {
-    try { await dbRun(`DELETE FROM ${t}`, []); } catch {}
+  if (typeof data.tables !== 'object' || Array.isArray(data.tables)) {
+    throw new Error('Not a LiftTrace backup file');
   }
-  for (const t of TABLES) {
-    const rows = data.tables[t] || [];
-    for (const row of rows) {
-      const cols = Object.keys(row);
-      const placeholders = cols.map(() => '?').join(', ');
+  // Validate everything before touching the DB. A table absent from the
+  // file is left alone (older backups predate cardio_log etc.); a present
+  // but malformed one aborts the restore.
+  const present = TABLES.filter(t => data.tables[t] !== undefined && data.tables[t] !== null);
+  for (const t of present) {
+    if (!Array.isArray(data.tables[t])) throw new Error(`Backup table "${t}" is not a list`);
+  }
+  // Column names come from the file: keep only real columns of the table.
+  const stmts = [];
+  const counts = {};
+  for (const t of [...present].reverse()) stmts.push({ statement: `DELETE FROM ${t}`, values: [] });
+  for (const t of present) {
+    const real = new Set((await dbQuery(`PRAGMA table_info(${t})`, [])).map(c => c.name));
+    counts[t] = 0;
+    for (const row of data.tables[t]) {
+      if (!row || typeof row !== 'object') continue;
+      const cols = Object.keys(row).filter(c => real.has(c));
+      if (!cols.length) continue;
       const vals = cols.map(c => row[c] == null ? null : (typeof row[c] === 'object' ? JSON.stringify(row[c]) : row[c]));
-      try {
-        await dbRun(
-          `INSERT OR REPLACE INTO ${t} (${cols.join(', ')}) VALUES (${placeholders})`,
-          vals
-        );
-      } catch {}
+      stmts.push({
+        statement: `INSERT OR REPLACE INTO ${t} (${cols.map(c => `"${c}"`).join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`,
+        values: vals,
+      });
+      counts[t]++;
     }
   }
+  // One transaction: any failure rolls back and throws, old data intact.
+  if (stmts.length) await dbExec(stmts);
   // v2+: write uploads back so custom-exercise / avatar images round-trip.
   let restoredUploads = 0;
   const uploads = data.uploads;
@@ -200,7 +213,7 @@ export async function importBackup(jsonOrText) {
       } catch {}
     }
   }
-  return { ok: true, tables: TABLES.length, uploads: restoredUploads };
+  return { ok: true, tables: present.length, rows: counts, uploads: restoredUploads };
 }
 
 export async function listLocalBackups() {
