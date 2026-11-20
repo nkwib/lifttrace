@@ -125,3 +125,22 @@ test('wiring: both writers call the normalizer', () => {
   assert.match(src, /async function _logWorkout[\s\S]*?normalizeSetValues\([\s\S]*?async function _logSet/);
   assert.match(src, /async function _logSet[\s\S]*?normalizeSetValues\(/);
 });
+
+test('log_set schema: only workout_id required, reps names every set kind', async () => {
+  const { TOOLS } = await import('../src/lib/aiTools.js');
+  const t = TOOLS.find((d) => d.name === 'log_set');
+  assert.deepEqual(t.parameters.required, ['workout_id']);
+  const reps = t.parameters.properties.reps.description;
+  for (const k of ['duration_sec', 'duration_l_sec+duration_r_sec', 'distance_m', 'calories']) assert.ok(reps.includes(k), k);
+});
+
+test('log_set works without weight for a rep set and an amount set', async () => {
+  let puts = stubApi();
+  let r = await logSet({ reps: 8 });
+  assert.equal(r.error, undefined, JSON.stringify(r));
+  assert.deepEqual([puts[0].exercises[0].sets[0].weight, puts[0].exercises[0].sets[0].reps], [0, 8]);
+  puts = stubApi();
+  r = await logSet({ duration_sec: 60 });
+  assert.equal(r.error, undefined, JSON.stringify(r));
+  assert.equal(puts[0].exercises[0].sets[0].duration_sec, 60);
+});
