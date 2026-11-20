@@ -7,6 +7,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Undo after removing a set or an exercise.** A toast with Undo stays for a few seconds and puts it back where it was. Removing an exercise offers it only when "confirm exercise removal" is off.
+
 ### Fixed
 
 - **Clear All Data works on a server without accounts, and clears cardio too.** With no accounts it did nothing to workouts, body stats or chat history. Cardio sessions and deleted-workout records are now cleared as well. Built-in programs stay.

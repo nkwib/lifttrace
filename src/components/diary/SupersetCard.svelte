@@ -107,6 +107,7 @@
     {autoCollapse}
     on:update={e => dispatch('update', { idx: startIdx, exercise: e.detail })}
     on:remove={() => dispatch('remove', { idx: startIdx })}
+    on:removed
   />
 {:else}
   <div class="superset-card" class:all-done={allDone} data-progress={progress}>
@@ -149,6 +150,7 @@
                 prSetIndices={prFlagsByIdx[startIdx + i]}
                 on:update={e => dispatch('update', { idx: startIdx + i, exercise: e.detail })}
                 on:remove={() => dispatch('remove', { idx: startIdx + i })}
+                on:removed
                 on:menu={() => dispatch('menu', { idx: startIdx + i })}
                 on:info={() => dispatch('info', { idx: startIdx + i })}
                 on:moveUp={() => dispatch('moveWithinSuperset', { supersetId, fromIdx: i, toIdx: i - 1 })}

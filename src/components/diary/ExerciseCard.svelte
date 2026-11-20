@@ -388,6 +388,8 @@
   }
 
   function removeSet(setIdx) {
+    const removed = sets[setIdx];
+    dispatch('removed', { set: removed, idx: setIdx, exerciseIdx: idx, exerciseUuid: exercise.uuid || null });
     dispatch('update', { ...exercise, sets: sets.filter((_, i) => i !== setIdx) });
   }
 

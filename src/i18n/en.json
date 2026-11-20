@@ -77,6 +77,7 @@
     "save":         "Save",
     "saving":       "Saving…",
     "cancel":       "Cancel",
+    "undo":         "Undo",
     "delete":       "Delete",
     "back":         "Back",
     "edit":         "Edit",
@@ -241,7 +242,9 @@
       "superset_created":      "Superset created",
       "superset_removed":      "Superset removed",
       "added_to_superset":     "Added to superset",
-      "removed_from_superset": "Removed from superset"
+      "removed_from_superset": "Removed from superset",
+      "set_removed":           "Set removed",
+      "exercise_removed":      "Exercise removed"
     },
     "errors": {
       "no_workout_yesterday": "No workout found yesterday",

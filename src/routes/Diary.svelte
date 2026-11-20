@@ -21,6 +21,7 @@
   import BodyStats from '../components/diary/BodyStats.svelte';
   import GymTools from '../components/diary/GymTools.svelte';
   import { showSuccess, showError, showToast } from '../stores/toast.js';
+  import { reinsertSet, reinsertExercise } from '../lib/undoRemove.js';
   import { localDateStr } from '../lib/db.js';
   import { trainedDates, excusedOnly, hasWorkingSet } from '../lib/trained-day.js';
   import { LtApi } from '../lib/api.js';
@@ -1935,8 +1936,48 @@
         dangerous: true,
       })) return;
     }
+    const removed = exercises[idx];
+    const date = $currentDate;
+    const logId = $todayLog?.id;
     const updated = exercises.filter((_, i) => i !== idx);
-    await saveWorkout($currentDate, { ...($todayLog || {}), exercises: updated });
+    await saveWorkout(date, { ...($todayLog || {}), exercises: updated });
+    // With the confirm dialog on, the user already confirmed: no undo.
+    if (!$confirmExerciseRemoval && removed) {
+      let undone = false;
+      showToast($_('diary.toast.exercise_removed'), 6000, 'default', {
+        label: $_('common.undo'),
+        onClick: async () => {
+          // Same day but another session tab is a different log.
+          if ($currentDate !== date || !$todayLog || $todayLog.id !== logId || undone) return;
+          undone = true;
+          const cur = $todayLog.exercises || [];
+          await saveWorkout(date, { ...$todayLog, exercises: reinsertExercise(cur, removed, idx) });
+        },
+      });
+    }
+  }
+
+  // Undo for a removed set. Reads the current log at click time (never a
+  // stale snapshot) and aborts if the day or the exercise changed.
+  function onSetRemoved(e) {
+    const { set, idx: setIdx, exerciseIdx, exerciseUuid } = e.detail || {};
+    if (!set) return;
+    const date = $currentDate;
+    const logId = $todayLog?.id;
+    let undone = false;
+    showToast($_('diary.toast.set_removed'), 6000, 'default', {
+      label: $_('common.undo'),
+      onClick: async () => {
+        if ($currentDate !== date || !$todayLog || $todayLog.id !== logId || undone) return;
+        undone = true;
+        const cur = $todayLog.exercises || [];
+        const at = exerciseUuid ? cur.findIndex(x => x.uuid === exerciseUuid) : exerciseIdx;
+        const ex = cur[at];
+        if (!ex) return;
+        const next = cur.map((x, i) => i === at ? { ...x, sets: reinsertSet(x.sets, set, setIdx) } : x);
+        await saveWorkout(date, { ...$todayLog, exercises: next });
+      },
+    });
   }
 
   /** Move whatever block this exercise belongs to past the next block.
@@ -2955,6 +2996,7 @@
               {replySavedFlash}
               on:update={e => updateExercise(e.detail.idx, e.detail.exercise)}
               on:remove={e => removeExercise(e.detail.idx)}
+              on:removed={onSetRemoved}
               on:removeSuperset={e => removeSuperset(e.detail)}
               on:addToSuperset={e => openSupersetPicker(e.detail)}
               {mediaBySet}
@@ -2976,6 +3018,7 @@
               prSetIndices={prFlagsByIdx[group.startIdx]}
               on:update={e => updateExercise(group.startIdx, e.detail)}
               on:remove={() => removeExercise(group.startIdx)}
+              on:removed={onSetRemoved}
               on:moveUp={() => moveExercise(group.startIdx, -1)}
               on:moveDown={() => moveExercise(group.startIdx, 1)}
               {mediaBySet}
