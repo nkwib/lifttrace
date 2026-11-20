@@ -15,6 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **Undo toast no longer covers the workout pill.** It now sits above the timer and keep-awake buttons.
 - **Weekly summary email can be turned off separately.** Settings > Notifications has an "Email the summary" toggle under Weekly Summary (on by default, so nothing changes until you switch it off). Push is unaffected.
+- **Exercise search matches muscles.** The library and the exercise picker find "triceps" or "lats" by primary and secondary muscle, not only by name. Several words must all match.
 - **Weekly bar charts read on phones.** With many weeks (6M, 1Y, All) labels show every few bars, and tapping a bar shows its week and value under the chart.
 - **Activity heatmap shaded by effort.** Statistics shades each trained day in four steps by time trained (sets when there are no durations), with a Less / More legend and the minutes or sets in the tooltip.
 - **OpenAPI spec for the public API.** `server/openapi.yaml` describes every `/api/v1` route, with scopes and the write flag, for Postman, codegen and Home Assistant. Also served at `/api/v1/openapi.yaml` without a token while the API is enabled.

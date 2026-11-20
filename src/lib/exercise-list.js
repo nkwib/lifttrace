@@ -1,25 +1,35 @@
 // Pure filter / sort / group / cap helpers for the Exercises page.
 import { foldText } from './search-text.js';
 
-// Folded names memoized per `exercises` array identity: typing re-filters
-// without re-folding every name per keystroke. Reassigning the array
-// (reload, import, save) rebuilds the map.
+// Folded haystack (name + primary/secondary muscles) memoized per `exercises`
+// array identity: typing re-filters without re-folding per keystroke.
+// Reassigning the array (reload, import, save) rebuilds the map.
 const _foldCache = new WeakMap();
-function foldedNames(exercises) {
+function haystack(ex) {
+  const parts = [ex.name];
+  for (const k of ['primary_muscles', 'secondary_muscles']) {
+    if (Array.isArray(ex[k])) parts.push(...ex[k]);
+  }
+  return foldText(parts.join(' '));
+}
+function foldedHaystacks(exercises) {
   let m = _foldCache.get(exercises);
   if (!m) {
     m = new Map();
-    for (const ex of exercises) m.set(ex, foldText(ex.name));
+    for (const ex of exercises) m.set(ex, haystack(ex));
     _foldCache.set(exercises, m);
   }
   return m;
 }
 
-// `q` is the already-folded query ('' = no search).
+// `q` is the already-folded query ('' = no search). Whitespace-separated
+// tokens must all appear in the name or muscles.
 export function matchesSearch(exercises, ex, q) {
-  if (!q) return true;
-  const n = foldedNames(exercises).get(ex);
-  return (n === undefined ? foldText(ex.name) : n).includes(q);
+  const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
+  if (!tokens.length) return true;
+  let h = foldedHaystacks(exercises).get(ex);
+  if (h === undefined) h = haystack(ex);
+  return tokens.every(t => h.includes(t));
 }
 
 export function filterExercises(exercises, { q = '', category = '', eqMatch = null } = {}) {

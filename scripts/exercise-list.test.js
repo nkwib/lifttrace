@@ -43,3 +43,26 @@ test('Exercises.svelte wiring', () => {
   assert.doesNotMatch(s, /exs\.sort\(/);
   assert.match(s, /show_more/);
 });
+
+test('search matches muscles, multi-token, tolerant of bad muscle data', () => {
+  const list = [
+    { id: 1, name: 'Skullcrusher', category: 'arms', primary_muscles: ['triceps'], secondary_muscles: ['Épaules'] },
+    { id: 2, name: 'Pulldown', category: 'back', primary_muscles: ['lats'], secondary_muscles: ['biceps'] },
+    { id: 3, name: 'Odd', category: 'back', primary_muscles: '["triceps"]', secondary_muscles: null },
+    { id: 4, name: 'Bare', category: 'back' },
+  ];
+  const ids = q => filterExercises(list, { q: foldText(q) }).map(e => e.id);
+  assert.deepEqual(ids('triceps'), [1]);
+  assert.deepEqual(ids('LATS'), [2]);
+  assert.deepEqual(ids('epaules'), [1]);
+  assert.deepEqual(ids('skull triceps'), [1]);
+  assert.deepEqual(ids('skull lats'), []);
+  assert.deepEqual(ids('   '), [1, 2, 3, 4]);
+  assert.deepEqual(ids(''), [1, 2, 3, 4]);
+});
+
+test('ExercisePicker shares matchesSearch', () => {
+  const s = readFileSync(new URL('../src/components/exercises/ExercisePicker.svelte', import.meta.url), 'utf8');
+  assert.match(s, /matchesSearch\(exercises, ex, _q\)/);
+  assert.match(s, /foldText\(search/);
+});
