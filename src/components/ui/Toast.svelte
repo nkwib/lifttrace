@@ -26,7 +26,8 @@
 <style>
   .toast-container {
     position: fixed;
-    bottom: calc(var(--nav-h) + var(--safe-bottom) + 12px);
+    /* Above the mini player and the rest and hold bars, not behind them. */
+    bottom: calc(var(--nav-bar-h, var(--nav-h)) + var(--safe-bottom) + var(--bottom-overlays, 0px) + 12px);
     left: 50%;
     transform: translateX(-50%);
     display: flex;

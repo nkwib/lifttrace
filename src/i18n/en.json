@@ -777,6 +777,8 @@
     "next":           "Next: {name}",
     "add":            "+{s}s",
     "add_title":      "Add {s} seconds",
+    "sub":            "-{s}s",
+    "sub_title":      "Remove {s} seconds",
     "skip":           "Skip Rest",
     "pause":          "Pause",
     "resume":         "Resume",

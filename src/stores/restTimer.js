@@ -3,7 +3,7 @@ import { _ } from 'svelte-i18n';
 import { restAlert, restAlertVibrate, restAlertTone, restAlertToneId, restAlertOutput, restPerExercise, weightUnit } from './settings.js';
 import { getTone } from '../lib/restTones.js';
 import { isNative } from '../lib/platform.js';
-import { restLeftMs, pausedRest, resumedRest, extendedRest, restFromWire, REST_ADD_SEC } from '../lib/rest-state.js';
+import { restLeftMs, pausedRest, resumedRest, extendedRest, shrunkRest, restFromWire, REST_ADD_SEC } from '../lib/rest-state.js';
 import { restNoticeText } from '../lib/rest-next.js';
 // CLAUDE.md note (LiftTrace + NutriTrace): LocalNotifications MUST be a static
 // import. Dynamic `await import('@capacitor/local-notifications')` silently
@@ -768,7 +768,8 @@ function _ensureNotifyPermission() {
 export function addRestTime(extraSec = REST_ADD_SEC) {
   const state = get(restTimer);
   if (!state) return;
-  const next = extendedRest(state, extraSec);
+  const next = extraSec < 0 ? shrunkRest(state, -extraSec) : extendedRest(state, extraSec);
+  if (next === state) return;
   restTimer.set(next);
   _persist(next);
   _tellWatch(next);

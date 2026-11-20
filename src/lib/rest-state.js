@@ -57,6 +57,23 @@ export function extendedRest(state, sec = REST_ADD_SEC, now = Date.now()) {
   return { ...state, total, endTime: (Number(state.endTime) || now) + add * 1000 };
 }
 
+/**
+ * Less rest. What is left never drops below one second (shortening is not
+ * ending: Skip does that), and the total comes down by what was actually
+ * taken off, never below what is left, so the bar's progress stays sane.
+ */
+export function shrunkRest(state, sec = REST_ADD_SEC, now = Date.now()) {
+  if (!state) return state;
+  const want = Math.max(0, Number(sec) || 0) * 1000;
+  const left = restLeftMs(state, now);
+  const removed = Math.min(want, Math.max(0, left - 1000));
+  if (removed <= 0) return state;
+  const newLeft = left - removed;
+  const total = Math.max(newLeft / 1000, (Number(state.total) || 0) - removed / 1000);
+  if (state.paused) return { ...state, total, leftMs: newLeft };
+  return { ...state, total, endTime: now + newLeft };
+}
+
 /** m:ss, as the rest bar and the notification write the time left (whole seconds). */
 export function restClock(ms) {
   const s = Math.max(0, Math.floor((Number(ms) || 0) / 1000));

@@ -12,6 +12,8 @@
   $: displayMin = Math.floor(Math.max(remaining, 0) / 60);
   $: displaySec = Math.floor(Math.max(remaining, 0) % 60);
   $: progress   = state && state.total > 0 ? Math.min(1, 1 - remaining / state.total) : 0;
+  $: clock = `${displayMin}:${String(displaySec).padStart(2, '0')}`;
+  $: restLabel = paused ? $_('rest_bar.paused_left', { values: { time: clock } }) : `${$_('rest_bar.title')} ${clock}`;
   $: nearDone   = !paused && remaining <= 5;
 
   // Publish the bar height to :root so WorkoutModeBar can stack above it.
@@ -24,7 +26,7 @@
 
 {#if active}
   <div class="rest-sticky" class:near-done={nearDone} class:paused
-    transition:fly={{ y: 40, duration: 240, easing: cubicOut }}>
+    transition:fly={{ y: 40, duration: 240, easing: cubicOut }} role="timer" aria-live="off">
     <div class="rest-progress" style="width:{progress * 100}%"></div>
     <div class="rest-content">
       <div class="rest-label-col">
@@ -32,9 +34,10 @@
         {#if state.exerciseName}<span class="rest-exercise">{$_('rest_bar.next', { values: { name: state.exerciseName } })}</span>{/if}
       </div>
       <div class="rest-time-col">
-        <span class="rest-time">{displayMin}:{String(displaySec).padStart(2, '0')}</span>
+        <span class="rest-time" aria-label={restLabel}>{clock}</span>
       </div>
       <div class="rest-actions">
+        <button class="rest-btn sub tap" disabled={remaining <= REST_ADD_SEC} on:click={() => addRestTime(-REST_ADD_SEC)} title={$_('rest_bar.sub_title', { values: { s: REST_ADD_SEC } })}>{$_('rest_bar.sub', { values: { s: REST_ADD_SEC } })}</button>
         <button class="rest-btn tap" on:click={() => addRestTime(REST_ADD_SEC)} title={$_('rest_bar.add_title', { values: { s: REST_ADD_SEC } })}>{$_('rest_bar.add', { values: { s: REST_ADD_SEC } })}</button>
         <button class="rest-btn icon tap" on:click={() => (paused ? resumeRest() : pauseRest())}
           title={paused ? $_('rest_bar.resume') : $_('rest_bar.pause')}
@@ -96,6 +99,8 @@
   }
   .rest-btn:hover { background: rgba(255,255,255,0.14); }
   .rest-btn.icon { padding: 5px 8px; }
+  .rest-btn.sub { padding: 5px 8px; }
+  .rest-btn:disabled { opacity: 0.4; cursor: default; }
   /* Touch tap areas (.tap, styles/buttons.css): 44px tall inside the 68px
      bar, and across each takes half the 4px gap on both sides; the icon
      buttons are drawn 40px wide on a touch screen to reach 44. */
