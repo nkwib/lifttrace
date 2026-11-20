@@ -10,7 +10,7 @@ import { sendCoachFeedback, isEmailConfigured } from '../email.js';
 import { guardClient, activePairing, requireCoachRole, requestClient, endPairing, person, notifyPrescription } from '../lib/coaching.js';
 import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/create-keys.js';
 import { trainedDateSet } from '../lib/trained-days.js';
-import { currentStreak, shiftDate } from '../../src/lib/trained-day.js';
+import { currentStreak, shiftDate, isCalendarDate } from '../../src/lib/trained-day.js';
 import { getExcusedDay, listExcusedDays } from '../lib/excused-days.js';
 import { getActiveProgramCore } from '../lib/mcp/tools/get-active-program.js';
 import { userToday } from '../lib/user-zone.js';
@@ -367,7 +367,9 @@ router.post('/members/:id/prescriptions', wrap((req, res) => {
   if (before && before.trainer_id === req.user.id && before.member_id === memberId) return res.json(parsePrescription(before));
   // The same key for another client: not a repeat of this create.
   if (before) return res.status(409).json({ error: 'client_key already used' });
-  const { date, name, exercises, notes } = req.body || {};
+  const { name, exercises, notes } = req.body || {};
+  const date = req.body?.date == null || req.body.date === '' ? null : req.body.date;
+  if (date !== null && !isCalendarDate(date)) return res.status(400).json({ error: 'date must be a calendar date, YYYY-MM-DD' });
   const template_id = req.body?.template_id == null || req.body.template_id === '' ? null : toId(req.body.template_id);
   if (req.body?.template_id != null && req.body.template_id !== '' && !template_id) {
     return res.status(400).json({ error: 'Invalid template_id' });
@@ -387,7 +389,7 @@ router.post('/members/:id/prescriptions', wrap((req, res) => {
      VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')`
   ).run(
     req.user.id, memberId,
-    date || null,
+    date,
     template_id || null,
     name || null,
     exercises ? JSON.stringify(exercises) : null,
@@ -438,8 +440,12 @@ router.put('/prescriptions/:id', wrap((req, res) => {
   const body = req.body || {};
   // null vs undefined matters: undefined leaves the field alone, null
   // clears it (e.g. promote/demote the date).
+  // A bad date is refused before anything is touched; stored ones stay.
+  if (body.date !== undefined && body.date !== null && body.date !== '' && !isCalendarDate(body.date)) {
+    return res.status(400).json({ error: 'date must be a calendar date, YYYY-MM-DD' });
+  }
   const next = {
-    date:        body.date         === undefined ? row.date         : body.date,
+    date:        body.date         === undefined ? row.date         : (body.date === '' ? null : body.date),
     template_id: body.template_id  === undefined ? row.template_id
                : (body.template_id == null || body.template_id === '') ? null : toId(body.template_id),
     name:        body.name         === undefined ? row.name         : body.name,
@@ -461,7 +467,7 @@ router.put('/prescriptions/:id', wrap((req, res) => {
   // changed — a missed-day flag that fires for the old date shouldn't
   // linger when the trainer reschedules. Cheap to just clear; the
   // scheduler will re-evaluate the new date on its next tick.
-  if (next.date !== row.date) {
+  if ((next.date || null) !== (row.date || null)) {
     db.prepare(`DELETE FROM coach_activity WHERE prescription_id = ?`).run(id);
   }
   // A different workout, or one the client declined given again: it asks
