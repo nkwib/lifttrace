@@ -29,6 +29,11 @@ export const EXCUSE_NOTE_MAX = 500;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/** YYYY-MM-DD shape only. Delete uses this on purpose: legacy rows saved with an impossible date must stay removable. */
+export function isDateShape(s) {
+  return typeof s === 'string' && DATE_RE.test(s);
+}
+
 /** A real calendar date written YYYY-MM-DD (not 2026-02-30). */
 export function isCalendarDate(s) {
   if (typeof s !== 'string' || !DATE_RE.test(s)) return false;

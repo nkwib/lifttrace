@@ -28,12 +28,19 @@ test('server cardio-log re-exports the shared helpers', () => {
 });
 
 test('Local mode write handlers guard the date before touching the db', () => {
-  for (const [obj, sig] of [['Workout', 'async upsert('], ['Workout', 'async del('], ['BodyStats', 'async put(']]) {
+  for (const [obj, sig] of [['Workout', 'async upsert('], ['BodyStats', 'async put(']]) {
     const body = method(obj, sig);
     const g = body.indexOf('isCalendarDate(date)');
     assert.ok(g > 0, `${obj}.${sig} guards`);
     assert.ok(g < (body.search(/db(Query|Run)|\._resolve|\.get\(/) >>> 0 || Infinity), `${obj}.${sig} guards first`);
   }
+});
+
+test('Local Workout.del guards the date shape only, so legacy bad-date rows can be deleted', () => {
+  const body = method('Workout', 'async del(');
+  assert.match(body, /isDateShape\(date\)/);
+  assert.doesNotMatch(body, /isCalendarDate/);
+  assert.ok(body.indexOf('isDateShape(date)') < body.indexOf('._resolve'));
 });
 
 test('Local Cardio.create and update share the server validation', () => {

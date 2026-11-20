@@ -15,7 +15,7 @@ import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/cr
 import { applyToBody, deleteLoses, refuseDelete, stampMerged, createdTimes, editBringsBack, deletedTimes } from '../lib/newer-wins.js';
 import { syncOf } from '../lib/sync-fields.js';
 import { timesAtDelete } from '../lib/deleted-rows.js';
-import { isCalendarDate } from '../../src/lib/trained-day.js';
+import { isCalendarDate, isDateShape } from '../../src/lib/trained-day.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -443,7 +443,9 @@ router.put('/:date', wrap((req, res) => {
 // from an accidentally-empty payload.
 router.delete('/:date', wrap((req, res) => {
   const { date } = req.params;
-  if (!isCalendarDate(date)) return res.status(400).json({ error: 'date must be a calendar date, YYYY-MM-DD' });
+  // Shape only, deliberately: rows saved with an impossible date (2026-02-31)
+  // before the PUT guard existed must stay deletable. Do not re-tighten.
+  if (!isDateShape(date)) return res.status(400).json({ error: 'date must be YYYY-MM-DD' });
   const userId = uid(req);
   const explicitId = req.query.id != null ? parseInt(req.query.id) : null;
   // Without an id, delete the first LIVE session: the first row overall can

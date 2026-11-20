@@ -28,7 +28,7 @@ import { checkedCardioDate, normalizeCardioInput } from './cardio-input.js';
 import { newTempId } from './offline-edits.js';
 import { planImport, importKeys, importKey } from './import-match.js';
 import { weekStart, normalizeWeekStart } from './week-start.js';
-import { trainedDates, currentStreak, longestStreak, trainedDaysByWeek, weekdayCounts, hasWorkingSet, cleanExcuse, isCalendarDate } from './trained-day.js';
+import { trainedDates, currentStreak, longestStreak, trainedDaysByWeek, weekdayCounts, hasWorkingSet, cleanExcuse, isCalendarDate, isDateShape } from './trained-day.js';
 
 const ME = 1; // single-user id in standalone mode
 
@@ -1072,7 +1072,8 @@ const Workout = {
   // now since a session-aware UI needs to be able to remove one session
   // without a server.
   async del(date, explicitId) {
-    if (!isCalendarDate(date)) throw new Error('date must be a calendar date, YYYY-MM-DD');
+    // Shape only, deliberately: legacy impossible-date rows must stay deletable.
+    if (!isDateShape(date)) throw new Error('date must be YYYY-MM-DD');
     const existing = await Workout._resolve(date, explicitId ?? null);
     if (!existing) return { ok: true, deleted: false };
     await dbRun(`DELETE FROM workout_log WHERE id = ?`, [existing.id]);

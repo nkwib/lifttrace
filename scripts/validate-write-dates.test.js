@@ -87,12 +87,30 @@ test('workout PUT and DELETE refuse a bad date and write nothing', { skip }, asy
     const r = await call('PUT', `/api/workout/${d}`, { exercises: [{ name: 'Squat', sets: [] }] });
     assert.equal(r.status, 400, d);
     assert.match(r.data.error, /calendar date/);
-    assert.equal((await call('DELETE', `/api/workout/${d}`)).status, 400, d);
   }
+  // DELETE is shape-only: garbage 400s, an impossible but well-formed date is a no-op 200.
+  assert.equal((await call('DELETE', '/api/workout/undefined')).status, 400);
+  const miss = await call('DELETE', '/api/workout/2026-13-99');
+  assert.equal(miss.status, 200);
+  assert.equal(miss.data.deleted, false);
   assert.equal(count('workout_log'), 0);
   const good = await call('PUT', '/api/workout/2026-02-28', { exercises: [{ name: 'Squat', sets: [] }] });
   assert.equal(good.status, 200);
   assert.equal(count('workout_log'), 1);
+});
+
+test('workout DELETE removes a legacy impossible-date row while PUT still 400s', { skip }, async () => {
+  const d = rawDb();
+  d.prepare("INSERT INTO workout_log (user_id, date, exercises) VALUES (?, '2026-02-31', '[]')").run(userId);
+  d.close();
+  assert.equal((await call('PUT', '/api/workout/2026-02-31', { exercises: [] })).status, 400);
+  const r = await call('DELETE', '/api/workout/2026-02-31');
+  assert.equal(r.status, 200);
+  assert.equal(r.data.deleted, true);
+  const d2 = rawDb();
+  const row = d2.prepare("SELECT deleted_at FROM workout_log WHERE date = '2026-02-31'").get();
+  d2.close();
+  assert.ok(!row || row.deleted_at, 'row gone or tombstoned');
 });
 
 test('body-stats PUT refuses a bad date and writes nothing', { skip }, async () => {
