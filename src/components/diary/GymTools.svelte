@@ -1,6 +1,7 @@
 <script>
   import { closeOnBack } from '../../lib/back-stack.js';
   import { _ } from 'svelte-i18n';
+  import { KG_PER_LB } from '../../lib/workout.js';
   import { portal } from '../../lib/portal.js';
   import { weightUnit } from '../../stores/settings.js';
 
@@ -49,8 +50,8 @@
 
   $: convertResult = (() => {
     const val = parseFloat(convertInput) || 0;
-    if (convertDir === 'lbs_to_kg') return Math.round(val / 2.20462 * 100) / 100;
-    return Math.round(val * 2.20462 * 100) / 100;
+    if (convertDir === 'lbs_to_kg') return Math.round(val * KG_PER_LB * 100) / 100;
+    return Math.round(val / KG_PER_LB * 100) / 100;
   })();
 
   // The unit being converted from, for the input label.

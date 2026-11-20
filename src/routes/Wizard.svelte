@@ -2,6 +2,7 @@
   import { closeOnBack } from '../lib/back-stack.js';
   import Toggle from '../components/settings/Toggle.svelte';
   import { onMount } from 'svelte';
+  import { KG_PER_LB } from '../lib/workout.js';
   import { push } from 'svelte-spa-router';
   import { fade, slide } from 'svelte/transition';
   import { _ } from 'svelte-i18n';
@@ -234,7 +235,7 @@
       ? (bpHeightCm ? Number(bpHeightCm) : null)
       : ((bpHeightFt || bpHeightIn) ? _ftInToCm(bpHeightFt, bpHeightIn) : null);
     const weightKg = (bpWeight && Number(bpWeight) > 0)
-      ? (isMetric ? Number(bpWeight) : Number(bpWeight) * 0.45359237)
+      ? (isMetric ? Number(bpWeight) : Number(bpWeight) * KG_PER_LB)
       : null;
 
     const batch = {
@@ -259,7 +260,7 @@
       ...(bpGender ? { gender: bpGender } : {}),
       ...(bpDob    ? { dob: bpDob } : {}),
       ...(finalCm  ? { heightCm: finalCm } : {}),
-      ...(weightKg ? { currentWeightKg: Math.round(weightKg * 10) / 10 } : {}),
+      ...(weightKg ? { currentWeightKg: Math.round(weightKg * 100) / 100 } : {}),
       // Local-mode personalization
       ...(_isNativeLocal && localName.trim() ? { localUserName: localName.trim() } : {}),
     };

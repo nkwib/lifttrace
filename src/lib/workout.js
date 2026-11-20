@@ -539,10 +539,23 @@ export function estimateWorkoutCalories(workout, profile) {
  * Convert a body weight value from the user's preferred unit to kg.
  * Used by the calorie estimator and any other formula that needs SI input.
  */
+export const KG_PER_LB = 0.45359237;
+
 export function toKg(weight, unit) {
   if (weight == null) return null;
   if (unit === 'kg') return weight;
-  return weight * 0.45359237;
+  return weight * KG_PER_LB;
+}
+
+/** kg -> value shown in `unit`, rounded to 0.1. */
+export function kgToDisplay(kg, unit) {
+  const v = unit === 'kg' ? kg : kg / KG_PER_LB;
+  return Math.round(v * 10) / 10;
+}
+
+/** Typed value in `unit` -> kg rounded to 0.01 (lossless for 0.1 lb display). */
+export function displayToKg(value, unit) {
+  return Math.round(toKg(value, unit) * 100) / 100;
 }
 
 /**

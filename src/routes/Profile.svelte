@@ -54,7 +54,7 @@
     }
   }
   import { heightCm as heightCmStore, currentWeightKg, heightUnit, weightUnit } from '../stores/settings.js';
-  import { cmToFtIn, ftInToCm, toKg } from '../lib/workout.js';
+  import { cmToFtIn, ftInToCm, kgToDisplay, displayToKg } from '../lib/workout.js';
 
   // "Local" editor mode = no server-backed user account exists. Covers two
   // cases: (a) Capacitor standalone with no server URL, and (b) PWA / server
@@ -116,12 +116,23 @@
   let heightCmInput = '';
   let heightFt = '';
   let heightIn = '';
+  // Unit switched while open: re-derive the field from kg and reset baseline.
+  $: if (initialWeightUnit && $weightUnit !== initialWeightUnit) {
+    initialWeightUnit = $weightUnit;
+    if (weightInput === initialWeightInput) {
+      weightInput = $currentWeightKg ? String(kgToDisplay($currentWeightKg, $weightUnit)) : '';
+    }
+    initialWeightInput = weightInput;
+  }
   $: _isMetricHeight = $heightUnit === 'cm' || $weightUnit === 'kg';
 
   // Current weight — stored as currentWeightKg (kg) regardless of display
   // unit. The input shows the value in the user's chosen weightUnit and
   // converts on save.
   let weightInput = '';
+  // Baseline captured on load; weight is only written when the field changed.
+  let initialWeightInput = '';
+  let initialWeightUnit = null;
 
   // Password change
   let currentPassword = '';
@@ -232,9 +243,10 @@
     }
     const kg = $currentWeightKg;
     if (kg) {
-      const display = $weightUnit === 'kg' ? kg : kg * 2.2046226218;
-      weightInput = String(Math.round(display * 10) / 10);
+      weightInput = String(kgToDisplay(kg, $weightUnit));
     }
+    initialWeightInput = weightInput;
+    initialWeightUnit = $weightUnit;
     if (!_isLocal) loadOidc();
   });
 
@@ -269,9 +281,10 @@
         : ((heightFt || heightIn) ? ftInToCm(heightFt, heightIn) : null);
       $heightCmStore = finalCm || null;
       // Current weight — convert to kg before saving.
-      if (weightInput) {
+      // Skipped when untouched so a 0.1-rounded display never overwrites kg.
+      if (weightInput && weightInput !== initialWeightInput) {
         const v = Number(weightInput);
-        if (v > 0) $currentWeightKg = Math.round(toKg(v, $weightUnit) * 10) / 10;
+        if (v > 0) $currentWeightKg = displayToKg(v, $weightUnit);
       }
 
       if (_isLocal) {
