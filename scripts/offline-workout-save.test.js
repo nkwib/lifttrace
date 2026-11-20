@@ -23,7 +23,7 @@ test('an offline write answers with what the local write returned, not a bare "q
 test('a save reply without a workout never blanks the Diary', () => {
   assert.doesNotMatch(store, /todayLog\.set\(saved\.workout\);\s*\n\s*currentSessionId\.set\(saved\.workout\?\.id \?\? null\);\s*\n\s*_setSnapshot/);
   assert.match(store, /toSaveEpoch === _epoch && saved\?\.workout\) \{\s*\n\s*todayLog\.set\(saved\.workout\);/);
-  assert.equal((store.match(/&& saved\?\.workout\) \{/g) || []).length, 2, 'the debounced save and the lifecycle flush');
+  assert.equal((store.match(/&& saved\?\.workout\) \{/g) || []).length, 1, 'one send path, for the debounced save and the lifecycle flush (_send)');
   assert.match(store, /const workout = saved\?\.workout \|\| stamped;/, 'start new session');
 });
 

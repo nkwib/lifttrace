@@ -224,7 +224,7 @@ export async function loadWorkout(dateStr, { preferFresher = false, sessionId } 
       // Only while one is actually waiting or on its way (both always end):
       // a save the server refused stays recorded, and must not shut out
       // every refresh after it.
-      if ((_armed && _latestDate === dateStr) || _inFlight) {
+      if ((_armed && _latestDate === dateStr) || _inFlight || _queued) {
         loadWorkoutSessions(dateStr).catch(() => {});
         return;
       }
@@ -362,7 +362,7 @@ const _pendingSave = (dateStr) => !!_latestEntry && _latestDate === dateStr && _
 export async function settlePendingSave(dateStr) {
   if (_armed && _pendingSave(dateStr)) await flushWorkoutSave(dateStr);
   // Already on its way: waited for, not sent a second time.
-  else if (_inFlight && _latestDate === dateStr) await _inFlight.catch(() => {});
+  else if ((_queued || _inFlight) && _latestDate === dateStr) await (_queued || _inFlight).catch(() => {});
 }
 
 /** Permanently delete one session (issue #76). sessionId is optional —
@@ -601,36 +601,76 @@ export function saveWorkout(dateStr, entry) {
     _saveTimer = setTimeout(async () => {
       _armed = null;
       if (account !== _accountEpoch) { resolve(stamped); return; }
-      const toSave = _latestEntry;
-      const toSaveEpoch = _latestEntryEpoch;
       try {
-        const sending = _mergeAndSave(dateStr, toSave);
-        _inFlight = sending;
-        const saved = await sending.finally(() => { if (_inFlight === sending) _inFlight = null; });
-        // Only sync from server if no newer edits are queued, and the
-        // user hasn't since switched to a different session/date.
-        // A reply without the saved workout keeps what is on screen rather
-        // than blanking the Diary (issue #102).
-        if (_latestEntry === toSave && toSaveEpoch === _epoch && saved?.workout) {
-          todayLog.set(saved.workout);
-          // Resolves currentSessionId once a brand-new day's first save
-          // gets its id assigned (issue #76) — a no-op for every
-          // subsequent save on an already-known session.
-          currentSessionId.set(saved.workout?.id ?? null);
-          // Keeps the tab strip's own names/checkmarks current — without
-          // this, completing or renaming a session wouldn't show up on
-          // its tab until a full page reload.
-          loadWorkoutSessions(dateStr).catch(() => {});
-          // Clear so lifecycle-driven flushes (App.pause / visibilitychange /
-          // pagehide) don't re-fire the same already-saved entry. A genuine
-          // subsequent edit re-populates via a new `saveWorkout` call.
-          _latestEntry = null;
-          _latestDate  = null;
-        }
-        resolve(saved?.workout ?? toSave);
+        const saved = await _saveLatest();
+        resolve(saved?.workout ?? stamped);
       } catch (e) { reject(e); }
     }, 350);
   });
+}
+
+// The last save started: the entry it sent and its answer.
+let _sent = null;
+// A save waiting for the one on its way, shared by every timer that fires
+// meanwhile: it sends whatever is latest once that one is back.
+let _queued = null;
+
+/** Save the latest entry, one save at a time. Two on their way at once could
+ *  reach the server in the other order, and the older put back what the
+ *  newer changed (a set ticked, then unticked). */
+function _saveLatest() {
+  if (!_inFlight) return _sendLatest();
+  return (_queued ||= (async () => {
+    while (_inFlight) await _inFlight.catch(() => {});
+    _queued = null;
+    return _sendLatest();
+  })());
+}
+
+function _sendLatest() {
+  const toSave = _latestEntry;
+  // Already sent (a flush, or the save just waited for) and not refused: its
+  // answer is this one's. Nothing waiting (saved, or the account changed): the
+  // last save's answer, if any.
+  if (_sent && !_sent.failed && (!toSave || _sent.entry === toSave)) return _sent.promise;
+  if (!toSave || !_latestDate) return null;
+  return _send(_latestDate, toSave, _latestEntryEpoch);
+}
+
+/** Send `toSave` now and show the answer, unless a newer edit or another
+ *  workout/date has replaced it on screen since. */
+function _send(dateStr, toSave, toSaveEpoch) {
+  const sent = { entry: toSave, failed: false, promise: null };
+  sent.promise = (async () => {
+    const saved = await _mergeAndSave(dateStr, toSave);
+    // Only sync from server if no newer edits are queued, and the
+    // user hasn't since switched to a different session/date.
+    // A reply without the saved workout keeps what is on screen rather
+    // than blanking the Diary (issue #102).
+    if (_latestEntry === toSave && toSaveEpoch === _epoch && saved?.workout) {
+      todayLog.set(saved.workout);
+      // Resolves currentSessionId once a brand-new day's first save
+      // gets its id assigned (issue #76) — a no-op for every
+      // subsequent save on an already-known session.
+      currentSessionId.set(saved.workout?.id ?? null);
+      // Keeps the tab strip's own names/checkmarks current — without
+      // this, completing or renaming a session wouldn't show up on
+      // its tab until a full page reload.
+      loadWorkoutSessions(dateStr).catch(() => {});
+      // Clear so lifecycle-driven flushes (App.pause / visibilitychange /
+      // pagehide) don't re-fire the same already-saved entry. A genuine
+      // subsequent edit re-populates via a new `saveWorkout` call.
+      _latestEntry = null;
+      _latestDate  = null;
+    }
+    return saved;
+  })();
+  sent.promise.catch(() => { sent.failed = true; });
+  _sent = sent;
+  const tracked = sent.promise.finally(() => { if (_inFlight === tracked) _inFlight = null; });
+  tracked.catch(() => {});
+  _inFlight = tracked;
+  return sent.promise;
 }
 
 /** Force-flush any pending save immediately (for navigation away, App.pause,
@@ -644,20 +684,12 @@ export async function flushWorkoutSave(dateStr) {
   const armed = _armed;
   _armed = null;
   const toSave = _latestEntry;
-  const toSaveEpoch = _latestEntryEpoch; // see the _epoch declaration above (issue #86)
   let saved = null;
-  try {
-    saved = await _mergeAndSave(date, toSave);
-    if (_latestEntry === toSave && toSaveEpoch === _epoch && saved?.workout) {
-      todayLog.set(saved.workout);
-      currentSessionId.set(saved.workout?.id ?? null);
-      loadWorkoutSessions(date).catch(() => {});
-      // Clear so re-firing lifecycle handlers can't re-save the same
-      // already-flushed entry. See saveWorkout for the full rationale.
-      _latestEntry = null;
-      _latestDate  = null;
-    }
-  } catch {}
+  // Sent now, not after a save on its way: the app may be about to go. A
+  // timer save waiting behind that one then finds this entry sent.
+  // Its result is applied (and the entry cleared) as a timer save's is; see
+  // the _epoch declaration above (issue #86).
+  try { saved = await _send(date, toSave, _latestEntryEpoch); } catch {}
   armed?.resolve(saved?.workout ?? toSave);
 }
 
@@ -668,6 +700,7 @@ export function resetWorkoutState() {
   _epoch++;
   _latestEntry = null;
   _latestDate = null;
+  _sent = null;
   _snapshotByDate.clear();
   _editsByKey.clear();
   todayLog.set(null);
