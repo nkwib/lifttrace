@@ -200,3 +200,29 @@ test('route: replace updates in place, keeping ids, seq and coach feedback', { s
   const db2 = rawDb();
   try { assert.equal(db2.prepare('SELECT COUNT(*) n FROM coach_feedback WHERE workout_id = ?').get(before[0].id).n, 1); } finally { db2.close(); }
 });
+
+// Android Local mode importer parity (api-native.js)
+import { readFileSync } from 'node:fs';
+
+test('native importer: wired to planImport, session_seq, in-place replace', () => {
+  const src = readFileSync(new URL('../src/lib/api-native.js', import.meta.url), 'utf8');
+  assert.match(src, /import \{[^}]*planImport[^}]*\} from '\.\.\/\.\.\/server\/lib\/import-match\.js'/);
+  const start = src.indexOf("if (id === 'preview')");
+  const end = src.indexOf('Unknown workout-import endpoint');
+  assert.ok(start > 0 && end > start);
+  const block = src.slice(start, end);
+  assert.ok(!block.includes('date IN ('), 'no date-only dedupe');
+  assert.ok(!block.includes('SET deleted_at'), 'replace is in place');
+  assert.match(block, /SET notes = \?, duration_min = \?, exercises = \?, completed = 1, updated_at = \?, sync_state = 'pending'/);
+  assert.match(block, /COALESCE\(MAX\(session_seq\), -1\) \+ 1/);
+  assert.match(src, /name = \? AND deleted_at IS NULL ORDER BY session_seq, id/);
+});
+
+test('planImport pairs two same-key sessions 1:1', () => {
+  const ws = [{ date: '2026-09-01', name: 'Push' }, { date: '2026-09-01', name: 'Push' }];
+  const key = '2026-09-01\u0000Push';
+  const plan = planImport(ws, new Map([[key, [{ id: 1 }, { id: 2 }]]]));
+  assert.deepEqual(plan.map(p => p.existing.id), [1, 2]);
+  const one = planImport(ws, new Map([[key, [{ id: 1 }]]]));
+  assert.equal(one[1].existing, null);
+});

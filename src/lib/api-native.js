@@ -24,6 +24,7 @@ import { musclesOf } from './muscle-load.js';
 import { normalizeMuscle } from './muscle-groups.js';
 import { getServerUrl } from './platform.js';
 import { newTempId } from './offline-edits.js';
+import { planImport, importKeys, importKey } from '../../server/lib/import-match.js';
 import { trainedDates, currentStreak, longestStreak, trainedDaysByWeek, weekdayCounts, hasWorkingSet, cleanExcuse, isCalendarDate } from './trained-day.js';
 
 const ME = 1; // single-user id in standalone mode
@@ -1947,13 +1948,7 @@ async function handle(method, path, body, query) {
           else unmatched.set(ex.sourceName, (unmatched.get(ex.sourceName) || 0) + 1);
         }
       }
-      const dates = workouts.map(w => w.date);
-      const dateSet = new Set(dates);
-      const existingRows = await dbQuery(
-        `SELECT date FROM workout_log WHERE user_id = ? AND deleted_at IS NULL AND date IN (${dates.map(() => '?').join(',') || "''"})`,
-        [ME, ...dates]
-      );
-      const dupeDates = new Set(existingRows.map(r => r.date).filter(d => dateSet.has(d)));
+      const plan = planImport(workouts, await loadExistingImport(workouts));
       return {
         workouts: workouts.length,
         sets: totalSets,
@@ -1963,7 +1958,7 @@ async function handle(method, path, body, query) {
           .sort((a, b) => b[1] - a[1])
           .slice(0, 40)
           .map(([name, count]) => ({ name, count })),
-        duplicateDates: dupeDates.size,
+        duplicateDates: plan.filter(p => p.existing).length,
         dateRange: { from: workouts[0].date, to: workouts[workouts.length - 1].date },
       };
     }
@@ -1972,19 +1967,11 @@ async function handle(method, path, body, query) {
     if (id === 'commit') {
       const dupeMode = String(body.get('onDuplicate') || '') === 'replace' ? 'replace' : 'skip';
       let imported = 0, skipped = 0, replaced = 0;
-      for (const w of workouts) {
-        const existing = (await dbQuery(
-          `SELECT id FROM workout_log WHERE user_id = ? AND date = ? AND deleted_at IS NULL`,
-          [ME, w.date]
-        ))[0];
-        if (existing) {
-          if (dupeMode === 'skip') { skipped++; continue; }
-          await dbRun(
-            `UPDATE workout_log SET deleted_at = ?, sync_state = 'pending' WHERE id = ?`,
-            [_now(), existing.id]
-          );
-          replaced++;
-        }
+      // Pairs by (date, name) like server/routes/workout-import.js; existing
+      // rows are read once, so rows inserted below never count as matches.
+      const plan = planImport(workouts, await loadExistingImport(workouts));
+      for (const { w, name, existing } of plan) {
+        if (existing && dupeMode === 'skip') { skipped++; continue; }
         const exerciseRows = w.exercises.map(ex => {
           const match = matchExercise(ex.sourceName, library);
           return {
@@ -1996,11 +1983,26 @@ async function handle(method, path, body, query) {
             ...(ex.set_type ? { set_type: ex.set_type } : {}),
           };
         });
+        if (existing) {
+          // In place: keeps the row id (coach feedback, links) and its seq.
+          await dbRun(
+            `UPDATE workout_log SET notes = ?, duration_min = ?, exercises = ?, completed = 1, updated_at = ?, sync_state = 'pending'
+             WHERE id = ? AND user_id = ? AND deleted_at IS NULL`,
+            [w.notes || null, w.duration_min || null, JSON.stringify(exerciseRows), _now(), existing.id, ME]
+          );
+          replaced++;
+          continue;
+        }
+        // Fresh per insert (two file sessions can share a date); counts deleted rows too.
+        const seq = (await dbQuery(
+          `SELECT COALESCE(MAX(session_seq), -1) + 1 AS n FROM workout_log WHERE user_id = ? AND date = ?`,
+          [ME, w.date]
+        ))[0]?.n ?? 0;
         await dbRun(
-          `INSERT INTO workout_log (user_id, date, name, notes, duration_min, exercises, completed, created_at, updated_at, sync_state)
-           VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, 'pending')`,
-          [ME, w.date, w.name || 'Imported', w.notes || null, w.duration_min || null,
-           JSON.stringify(exerciseRows), _now(), _now()]
+          `INSERT INTO workout_log (user_id, date, name, notes, duration_min, exercises, completed, session_seq, created_at, updated_at, sync_state)
+           VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, 'pending')`,
+          [ME, w.date, name, w.notes || null, w.duration_min || null,
+           JSON.stringify(exerciseRows), seq, _now(), _now()]
         );
         imported++;
       }
@@ -2011,6 +2013,18 @@ async function handle(method, path, body, query) {
   }
 
   throw new _Unsupported(`No standalone handler for ${m} ${path}`);
+}
+
+// Live rows per (date, name) key of the file, in session_seq, id order.
+async function loadExistingImport(workouts) {
+  const byKey = new Map();
+  for (const [date, name] of importKeys(workouts)) {
+    byKey.set(importKey(date, name), await dbQuery(
+      `SELECT id, session_seq FROM workout_log WHERE user_id = ? AND date = ? AND name = ? AND deleted_at IS NULL ORDER BY session_seq, id`,
+      [ME, date, name]
+    ));
+  }
+  return byKey;
 }
 
 export const LtApiNative = { handle, _Unsupported };
