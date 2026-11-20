@@ -43,7 +43,7 @@ test('none, warm-ups and uncompleted ignored', () => {
 test('wiring', () => {
   const src = readFileSync(new URL('../src/components/diary/ExerciseCard.svelte', import.meta.url), 'utf8');
   assert.match(src, /!expanded \? bestSet\(exercise, workingSets\)/);
-  assert.match(src, /\{completedCount\}\/\{workingSets\.length\} sets\{#if bestLabel\} · \{bestLabel\}/);
+  assert.match(src, /\{completedCount\}\/\{workingSets\.length\} sets\{#if bestLabel\}\{' · '\}\{bestLabel\}/);
   assert.match(src, /BW×/);
   assert.match(src, /\.ex-meta \{[^}]*text-overflow: ellipsis/);
 });

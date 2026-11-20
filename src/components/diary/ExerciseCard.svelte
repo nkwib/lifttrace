@@ -432,7 +432,7 @@
         </button>
       </div>
       <div class="ex-meta-row">
-        <span class="ex-meta">{completedCount}/{workingSets.length} sets{#if bestLabel} · {bestLabel}{/if}</span>
+        <span class="ex-meta">{completedCount}/{workingSets.length} sets{#if bestLabel}{' · '}{bestLabel}{/if}</span>
         {#if exerciseMedia.length}
           <button type="button" class="ex-clip" on:click|stopPropagation={() => dispatch('openMedia', exerciseMedia[0])}
             title="Watch this set" aria-label="Watch this set">
