@@ -1203,12 +1203,14 @@ async function _getCardio({ date_from, date_to, activity } = {}) {
   };
 }
 
-// Track Cardio (Settings > Workout) as this device has it: the value the
-// Diary shows the Cardio card by, read from this device's settings so it
-// holds offline and in the Android app with no server.
+// Week start (Settings), as this device has it.
 function _weekStartVal() {
   try { return normalizeWeekStart(DB.getSetting('weekStartsOn', 'monday')); } catch { return 'monday'; }
 }
+
+// Track Cardio (Settings > Workout) as this device has it: the value the
+// Diary shows the Cardio card by, read from this device's settings so it
+// holds offline and in the Android app with no server.
 function _cardioOn() {
   try { return !!DB.getSetting('cardioEnabled', false); } catch { return false; }
 }
@@ -1267,8 +1269,7 @@ async function _getStatsOverview({ range } = {}) {
 
   // Empty weeks between the first and last data week count, as on Statistics
   // (same fillWeeks arguments). Series keep the last 104 weeks.
-  let startsOn = 'monday';
-  try { startsOn = normalizeWeekStart(DB.getSetting('weekStartsOn', 'monday')); } catch { /* default */ }
+  const startsOn = _weekStartVal();
   const freqFilled = fillWeeks(frequency, from, to, { count: 0 }, 520, startsOn);
   const volFilled = fillWeeks(volume, from, to, { volume: 0 }, 520, startsOn);
   const workouts_in_range = frequency.reduce((a, w) => a + (w.count || 0), 0);
