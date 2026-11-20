@@ -17,7 +17,7 @@
   import { currentUser } from '../stores/auth.js';
   import { DB } from '../lib/db.js';
   import { estimateWorkoutCalories, ageFromDob, isRepSet, fmtSetDuration, fmtDistance, fmtCalories, fromMeters, distanceUnitOf } from '../lib/workout.js';
-  import { fmtVol, fmtWeekLabel, hasRecord, recordDate } from '../lib/statsFormat.js';
+  import { fmtVol, fmtWeekLabel, fillWeeks, hasRecord, recordDate } from '../lib/statsFormat.js';
   import { localDateStr } from '../lib/db.js';
   import { trainedDates, weeklyGoal, weekStartOf, shiftDate, hasWorkingSet, exercisesOf, excusedOnly } from '../lib/trained-day.js';
   import { excusedMap } from '../lib/excused-view.js';
@@ -90,8 +90,12 @@
 
   // ── Shared data (loaded on mount, refreshed on range change) ─────────
   let streaks = { currentStreak: 0, longestStreak: 0, totalWorkouts: 0 };
-  let volume = [];
-  let frequency = [];
+  let volumeRaw = [];
+  let frequencyRaw = [];
+  // Weekly rows with the empty weeks filled in (statsFormat.fillWeeks): charts,
+  // averages and the Weeks card count a layoff. Emptiness checks use the raw rows.
+  $: volume = fillWeeks(volumeRaw, startDate, endDate, { volume: 0 });
+  $: frequency = fillWeeks(frequencyRaw, startDate, endDate, { count: 0 });
   let records = [];
   let muscleGroups = [];
   let muscleLoad = {};   // { [slug]: effectiveSets } for the body map
@@ -256,8 +260,8 @@
       const [v, f, r, s, mg, mes, wd, cw, cs] = results.map(x => (x.status === 'fulfilled' ? x.value : undefined));
       const failed = results.filter(x => x.status === 'rejected');
       failed.forEach(x => console.error(x.reason));
-      if (v !== undefined) volume = v;
-      if (f !== undefined) frequency = f;
+      if (v !== undefined) volumeRaw = v;
+      if (f !== undefined) frequencyRaw = f;
       // Rows with no record in them (a bodyweight rep exercise) are left out.
       if (r !== undefined) records = (r || []).filter(hasRecord);
       if (s !== undefined) streaks = s;
@@ -377,7 +381,7 @@
   // workout count to the same-length window immediately before. Returns
   // null when the user has nothing in the prior window to compare.
   $: periodDeltas = (() => {
-    if (!recentWorkouts.length || !volume.length) return null;
+    if (!recentWorkouts.length || !volumeRaw.length) return null;
     const rangeDays = RANGES[range];
     if (!rangeDays) return null;  // 'All' has no prior period
     const priorEnd = new Date(startDate + 'T12:00:00');
@@ -1130,7 +1134,7 @@
           </div>
         {/if}
 
-        {#if volume.length === 0}
+        {#if volumeRaw.length === 0}
           <div class="empty-state">
             <span class="material-symbols-rounded">fitness_center</span>
             <p>{$_('statistics.no_volume_range')}</p>
