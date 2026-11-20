@@ -7,6 +7,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Pages load faster on a phone.** The server now compresses what it sends (gzip or Brotli): the app's code and styles about a quarter of the size, and the larger lists, such as the exercise library or a year of workouts, far smaller. Behind a proxy that already compresses, nothing changes.
+
 ### Fixed
 
 - **Back leaves the Android app instead of walking through every tab** (from [cooktrace#99](https://github.com/TraceApps/cooktrace/issues/99), thanks @sreich). Each tab you opened was added to the back history, so back went through all of them, and then did nothing. Now back goes one step inside a tab, from any other tab to the Diary, and from the Diary the app goes to the background, as other Android apps do; a workout in progress is kept. Pages left open in a tab you switched away from no longer come back. The installed web app works the same way; a browser tab keeps the browser's usual history.
