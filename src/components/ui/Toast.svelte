@@ -26,8 +26,10 @@
 <style>
   .toast-container {
     position: fixed;
-    /* Above the mini player and the rest and hold bars, not behind them. */
-    bottom: calc(var(--nav-bar-h, var(--nav-h)) + var(--safe-bottom) + var(--bottom-overlays, 0px) + 12px);
+    /* Above the mini player, the rest and hold bars and the workout pill
+       (--wm-h, kept out of --bottom-overlays so page layouts do not shift). */
+    bottom: calc(var(--nav-bar-h, var(--nav-h)) + var(--safe-bottom) + var(--bottom-overlays, 0px) + var(--wm-h, 0px) + 12px);
+    transition: bottom 0.26s cubic-bezier(0.22, 1, 0.36, 1);
     left: 50%;
     transform: translateX(-50%);
     display: flex;

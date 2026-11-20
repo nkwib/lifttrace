@@ -3,6 +3,7 @@
   import { _ } from 'svelte-i18n';
   import { timerState, timerMs, formatTimerMs, pauseTimer, resumeTimer, resetTimer } from '../stores/workoutTimer.js';
   import { wantScreenOn, screenOn, toggleWakeLock } from '../stores/wakeLock.js';
+  import { onDestroy } from 'svelte';
   import { miniPlayerVisible } from '../stores/player.js';
 
   $: active = !!$timerState;              // running OR paused
@@ -10,6 +11,14 @@
   $: paused = $timerState && $timerState.paused;
   $: visible = active || $wantScreenOn;
   $: display = active ? formatTimerMs($timerMs) : '';
+
+  // Publish pill height (46px) plus an 8px gap to :root so the Toast clears it.
+  function _setHeightVar(on) {
+    if (typeof document === 'undefined') return;
+    document.documentElement.style.setProperty('--wm-h', on ? '54px' : '0px');
+  }
+  $: _setHeightVar(visible);
+  onDestroy(() => _setHeightVar(false));
 
   function goToDiary() { push('/'); }
   function toggle() { paused ? resumeTimer() : pauseTimer(); }
