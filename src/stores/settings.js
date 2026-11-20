@@ -28,7 +28,7 @@ const SERVER_SETTINGS = new Set([
   'ntInstanceUrl', 'ntInstanceToken', 'ntFederationEnabled', 'ntConnectionVerified',
   'screenKeepAwake', 'goalCelebrations', 'autoFillLastWeights', 'showCompletionSummary', 'favoriteExercises', 'customEquipment',
   'exerciseReorderMethod', 'autoCollapseCompleted', 'autoNameWorkouts', 'confirmExerciseRemoval',
-  'autoGenerateWarmups', 'trackRpe', 'effortScale',
+  'autoGenerateWarmups', 'trackRpe', 'effortScale', 'showPlateSplit',
   'radioStations',
   'restTimerEnabled', 'restDuration', 'restAutoStart', 'restAlert',
   'restAlertVibrate', 'restAlertTone', 'restAlertToneId', 'restAlertOutput', 'restPerExercise',
@@ -270,6 +270,7 @@ export const autoNameWorkouts = createSettingStore('autoNameWorkouts', true);
 export const confirmExerciseRemoval = createSettingStore('confirmExerciseRemoval', true);
 export const autoGenerateWarmups    = createSettingStore('autoGenerateWarmups', false);
 export const trackRpe               = createSettingStore('trackRpe', false);
+export const showPlateSplit         = createSettingStore('showPlateSplit', false);
 export const effortScale            = createSettingStore('effortScale', 'rpe'); // 'rpe' | 'rir'
 
 // Radio stations (user-managed list of streaming URLs): [{id, name, url, genre}]

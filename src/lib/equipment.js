@@ -52,3 +52,20 @@ export function sortByBucket(a, b) {
   if (bi === -1) return -1;
   return ai - bi;
 }
+
+/**
+ * Bar weight implied by a raw equipment string (or name), for the plate
+ * split. null when no split should show: Smith (bar varies by gym) and
+ * anything that is not a barbell. Checked on the raw string, not the bucket,
+ * since the Barbell bucket lumps EZ, trap and Smith together.
+ */
+export function barWeightForEquipment(raw, unit) {
+  const s = Array.isArray(raw) ? raw.join(' ') : String(raw || '');
+  if (!s.trim()) return null;
+  const kg = unit === 'kg';
+  if (/(^|\W)smith(\W|$)/i.test(s)) return null;
+  if (/(^|\W)(e-?z.?(curl.?)?bar|sz.?bar)(\W|$)/i.test(s)) return kg ? 10 : 25;
+  if (/(^|\W)(trap.?bar|hex.?bar)(\W|$)/i.test(s)) return kg ? 25 : 55;
+  if (/(^|\W)(barbell|olympic|deadlift.?bar|squat.?bar)(\W|$)/i.test(s)) return kg ? 20 : 45;
+  return null;
+}

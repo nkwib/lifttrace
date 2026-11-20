@@ -7,7 +7,7 @@
     showCompletionSummary, autoCollapseCompleted, autoNameWorkouts,
     exerciseReorderMethod, confirmExerciseRemoval, restTimerEnabled,
     restDuration, restAutoStart, restAlert, restAlertVibrate, restAlertTone,
-    bodyStatsVisible, autoGenerateWarmups, trackRpe, effortScale, restAlertToneId,
+    bodyStatsVisible, autoGenerateWarmups, trackRpe, effortScale, showPlateSplit, restAlertToneId,
     caloriesBurnedEnabled, restAlertOutput,
   } from '../../stores/settings.js';
   import { isNative } from '../../lib/platform.js';
@@ -200,6 +200,13 @@
             <span class="setting-hint">{$_('settings_workout.logging.rpe_desc')}</span>
           </div>
           <Toggle bind:checked={$trackRpe} />
+        </div>
+        <div class="setting-row">
+          <div class="setting-label-group">
+            <span class="setting-label">{$_('settings_workout.logging.plate_split')}</span>
+            <span class="setting-hint">{$_('settings_workout.logging.plate_split_desc')}</span>
+          </div>
+          <Toggle bind:checked={$showPlateSplit} />
         </div>
         {#if $trackRpe}
           <div class="setting-row">

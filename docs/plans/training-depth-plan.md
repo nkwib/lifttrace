@@ -102,7 +102,9 @@ valid and read as bodyweight.
 
 **Effort:** 3 to 4 days, most of it the volume and 1RM paths plus their tests.
 
-### [ ] 4. Per-exercise bar weight with inline plate math
+### [~] 4. Per-exercise bar weight with inline plate math (partial)
+
+**Partial:** shipped the inline split under the exercise's next working set (Settings > Workout > Show plate split, off by default), with the bar derived from the raw equipment string (`barWeightForEquipment`, Smith shows nothing) and `src/lib/plates.js` shared with Gym Tools. The library `bar_weight` column, per-instance override and a user bar override are deferred.
 
 **Today:** `GymTools.svelte` has a plate calculator with a global bar weight
 (20 kg / 45 lb), reached as a separate tool. You do the lookup, then go back to the

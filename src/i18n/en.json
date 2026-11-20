@@ -1841,6 +1841,9 @@
   },
   "gym_tools": {
     "plates":          "Plates",
+    "split_line":      "Bar {bar} {unit}: {plates} per side",
+    "split_line_rem":  "Bar {bar} {unit}: {plates} per side ({rem} {unit} left over)",
+    "split_bar_only":  "Bar only ({bar} {unit})",
     "convert":         "Convert",
     "target_weight":   "Target weight",
     "weight_ph_lb":    "e.g. 225",
@@ -2558,6 +2561,8 @@
       "warmups_desc":          "When a template loads with target weights, prepend bar / 50% / 70% / 85% warm-ups. You can always add or remove them per-exercise.",
       "rpe":                   "Track RPE per Set",
       "rpe_desc":              "Log Rate of Perceived Exertion (6–10 scale) on each completed set. Useful for autoregulated programs.",
+      "plate_split":           "Show plate split",
+      "plate_split_desc":      "Under a barbell, EZ-bar or trap-bar exercise, show the plates per side for the next set. The bar follows the equipment (20 kg / 45 lb, EZ 10 / 25, trap 25 / 55). Display only.",
       "effort_scale":          "Effort scale",
       "effort_scale_desc":     "Log effort as RPE or as reps in reserve (RIR). Sets you already logged keep the scale they were logged with.",
       "effort_rpe":            "RPE (6–10)",

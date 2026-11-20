@@ -6,11 +6,13 @@
   import { onSyncChanges, newestRead } from '../../lib/sync-refresh.js';
   import { getCollapseState, setCollapsed } from '../../lib/cardCollapse.js';
   import { generateWarmupSets, volumeDelta, resolveLoadType, resolveSetType, setKind, fmtSetLabel, rowShape, distanceUnitOf, fmtSetDuration, holdSides, parseDuration, lastCompletedSession, setReps, bestSet, repsLabel } from '../../lib/workout.js';
-  import { exerciseLoadTypes, exerciseSetTypes, exerciseDistanceUnits, trackRpe } from '../../stores/settings.js';
+  import { exerciseLoadTypes, exerciseSetTypes, exerciseDistanceUnits, trackRpe, showPlateSplit } from '../../stores/settings.js';
   import { holdTimer, holdResult, startHold, stopHold, consumeHoldResult, holdMatches } from '../../stores/holdTimer.js';
   import { applyHold } from '../../lib/holdPhase.js';
   import { nextTarget } from '../../lib/progression.js';
   import LoadTypeMenu from '../ui/LoadTypeMenu.svelte';
+  import { platesPerSide, formatPerSide } from '../../lib/plates.js';
+  import { barWeightForEquipment } from '../../lib/equipment.js';
 
   export let exercise;
   export let idx;
@@ -288,6 +290,47 @@
     return -1;
   })();
 
+  // Inline plate split (display only; the logged weight stays the total).
+  // The workout exercise carries no equipment, so the library row is read
+  // once per exercise id, only while the setting is on. Without a library
+  // row the name stands in ("EZ Bar Curl").
+  const _equipById = new Map();
+  let libEquipment = null;
+  let _equipFor = null;
+  $: if ($showPlateSplit && exercise.exercise_id && exercise.exercise_id !== _equipFor) {
+    _equipFor = exercise.exercise_id;
+    loadEquipment(exercise.exercise_id);
+  }
+  async function loadEquipment(id) {
+    libEquipment = _equipById.has(id) ? _equipById.get(id) : null;
+    if (_equipById.has(id)) return;
+    try {
+      const row = await LtApi.getExercise(id);
+      const eq = Array.isArray(row?.equipment) ? row.equipment : [];
+      _equipById.set(id, eq);
+      if (_equipFor === id) libEquipment = eq;
+    } catch { /* no split without equipment */ }
+  }
+  $: plateBar = !$showPlateSplit ? null
+    : barWeightForEquipment(
+        exercise.exercise_id
+          ? (libEquipment === null ? '' : (libEquipment.length ? libEquipment : (exercise.exercise_name || exercise.name)))
+          : (exercise.exercise_name || exercise.name),
+        unit === 'kg' ? 'kg' : 'lbs');
+  // The next working set, or the last one when all are done.
+  $: plateSet = nextSetIdx >= 0 ? sets[nextSetIdx] : [...sets].reverse().find(st => !st.warmup);
+  $: plateLine = (() => {
+    if (plateBar == null || notReps || loadType === 'paired' || !plateSet) return '';
+    const total = parseFloat(plateSet.weight) || 0;
+    if (total < plateBar) return '';
+    if (total === plateBar) return $_('gym_tools.split_bar_only', { values: { bar: plateBar, unit } });
+    const { perSide, remainder } = platesPerSide(total, plateBar, unit === 'kg' ? 'kg' : 'lbs');
+    const plates = formatPerSide(perSide);
+    return remainder > 0.01
+      ? $_('gym_tools.split_line_rem', { values: { bar: plateBar, unit, plates: plates || '0', rem: remainder } })
+      : $_('gym_tools.split_line', { values: { bar: plateBar, unit, plates } });
+  })();
+
   // Warm-up handling
   $: hasWarmups    = sets.some(s => s.warmup);
   $: firstWorking  = sets.find(s => !s.warmup);
@@ -514,6 +557,8 @@
           on:remove={() => removeSet(setIdx)}
         />
       {/each}
+
+      {#if plateLine}<div class="plate-split" title={plateLine}>{plateLine}</div>{/if}
 
       <div class="add-set-actions">
         <button class="add-set-btn tap" on:click={addSet}>
@@ -783,4 +828,5 @@
   .ex-info:has(.ex-clip) .load-chip { --tap-h: 34px; --tap-dy: -8px; }
   .btn-icon-sm:hover { color: var(--accent); background: var(--surface-2); }
   .btn-icon-sm .material-symbols-rounded { font-size: 20px; }
+  .plate-split { padding: 2px 14px 0; font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>

@@ -4,6 +4,7 @@
   import { KG_PER_LB } from '../../lib/workout.js';
   import { portal } from '../../lib/portal.js';
   import { weightUnit } from '../../stores/settings.js';
+  import { platesPerSide, defaultBar } from '../../lib/plates.js';
   import OneRmCalc from './OneRmCalc.svelte';
 
   export let open = false;
@@ -18,32 +19,12 @@
   let tab = 'plates'; // 'plates' | 'convert' | 'onerm'
 
   // ── Plate Calculator ────────────────────────────────────────
-  $: barWeight = $weightUnit === 'kg' ? 20 : 45;
-  $: plates = $weightUnit === 'kg'
-    ? [25, 20, 15, 10, 5, 2.5, 1.25]
-    : [45, 35, 25, 10, 5, 2.5];
+  $: barWeight = defaultBar($weightUnit);
   let targetWeight = '';
 
-  $: perSide = (() => {
-    const total = parseFloat(targetWeight) || 0;
-    const remaining = (total - barWeight) / 2;
-    if (remaining <= 0) return [];
-    let left = remaining;
-    const result = [];
-    for (const plate of plates) {
-      while (left >= plate - 0.001) {
-        result.push(plate);
-        left -= plate;
-      }
-    }
-    return result;
-  })();
-
-  $: remainder = (() => {
-    const total = parseFloat(targetWeight) || 0;
-    const used = perSide.reduce((s, p) => s + p, 0) * 2 + barWeight;
-    return Math.round((total - used) * 100) / 100;
-  })();
+  $: split = platesPerSide(parseFloat(targetWeight) || 0, barWeight, $weightUnit);
+  $: perSide = split.perSide;
+  $: remainder = split.remainder;
 
   // ── Unit Converter ──────────────────────────────────────────
   let convertInput = '';
