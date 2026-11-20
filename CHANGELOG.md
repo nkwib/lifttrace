@@ -16,6 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **The app starts faster.** It loaded the code of every page before showing the Diary. Now only the Diary's comes first, half the size, and each other page's when you first open it. The installed app keeps them all for offline use as before.
 - **The Android app does less in the background.** It set its training reminders again after every sync, every 30 seconds while open, even when nothing changed. Now only when a sync brings workouts or excused days, when you train, and when you come back to the app; and opening the app no longer waits for them. A cardio session logged on the web moves your reminders the next time you open the app.
 - **Logging a set asks the server one thing less.** After each save the Diary read the day's whole list of workouts again just to update the tabs above it; the save's own answer already has what they show.
+- **The Diary opens faster.** For its calendar dots, week strip and streak it read every workout of the past year in full, over a megabyte with two years of training, on each visit. It now reads one line per workout, whether it was a training day: about 20 KB.
 
 ### Fixed
 
