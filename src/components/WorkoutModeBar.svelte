@@ -1,5 +1,6 @@
 <script>
   import { push } from 'svelte-spa-router';
+  import { _ } from 'svelte-i18n';
   import { timerState, timerMs, formatTimerMs, pauseTimer, resumeTimer, resetTimer } from '../stores/workoutTimer.js';
   import { wantScreenOn, screenOn, toggleWakeLock } from '../stores/wakeLock.js';
   import { miniPlayerVisible } from '../stores/player.js';
@@ -25,21 +26,21 @@
   <div class="wm-bar" class:above-miniplayer={$miniPlayerVisible}>
     {#if active}
       <button class="wm-toggle" class:paused on:click={toggle}
-        title={paused ? 'Resume timer' : 'Pause timer'}
-        aria-label={paused ? 'Resume timer' : 'Pause timer'}>
+        title={paused ? $_('workout_mode_bar.resume_timer') : $_('workout_mode_bar.pause_timer')}
+        aria-label={paused ? $_('workout_mode_bar.resume_timer') : $_('workout_mode_bar.pause_timer')}>
         <span class="material-symbols-rounded">{paused ? 'play_arrow' : 'pause'}</span>
       </button>
-      <button class="wm-timer" class:paused on:click={goToDiary} title="Open diary">
+      <button class="wm-timer" class:paused on:click={goToDiary} title={$_('workout_mode_bar.open_diary')}>
         {#if running}<span class="wm-dot"></span>{/if}
         <span class="wm-time">{display}</span>
       </button>
-      <button class="wm-reset" on:click={dismiss} title="Dismiss timer (saved duration kept)" aria-label="Dismiss timer">
+      <button class="wm-reset" on:click={dismiss} title={$_('workout_mode_bar.dismiss_title')} aria-label={$_('workout_mode_bar.dismiss')}>
         <span class="material-symbols-rounded">close</span>
       </button>
     {/if}
     <button class="wm-wake" class:on={$screenOn} on:click={toggleWakeLock}
-      title={$screenOn ? 'Screen keep-awake on — tap to disable' : 'Screen keep-awake off — tap to enable'}
-      aria-label="Toggle screen keep-awake">
+      title={$screenOn ? $_('workout_mode_bar.wake_on') : $_('workout_mode_bar.wake_off')}
+      aria-label={$_('workout_mode_bar.wake_toggle')}>
       <span class="material-symbols-rounded">
         {$screenOn ? 'stay_current_portrait' : 'screen_lock_portrait'}
       </span>

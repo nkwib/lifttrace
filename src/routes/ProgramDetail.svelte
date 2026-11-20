@@ -271,7 +271,7 @@
     try {
       const updated = await LtApi.updateProgram(params.id, { name: next });
       program = updated?.id ? { ...program, ...updated } : { ...program, name: next };
-      showSuccess('Program renamed');
+      showSuccess($_('program_detail.toast.renamed'));
     } catch(e) {
       showError(e.message || 'Rename failed');
     }
@@ -327,14 +327,14 @@
         on:keydown={onNameKey}
         disabled={savingName}
         maxlength="120"
-        aria-label="Program name"
+        aria-label={$_('program_detail.program_name')}
       />
     {:else}
       <h1>{program?.name || 'Program'}</h1>
     {/if}
     <div class="header-actions">
       {#if programMenuActions.length}
-        <button class="btn-icon" on:click={() => programMenuOpen = true} title="Program actions" aria-label="Program actions" aria-haspopup="menu">
+        <button class="btn-icon" on:click={() => programMenuOpen = true} title={$_('program_detail.program_actions')} aria-label={$_('program_detail.program_actions')} aria-haspopup="menu">
           <span class="material-symbols-rounded">more_vert</span>
         </button>
       {/if}
@@ -362,7 +362,7 @@
           </span>
         {/if}
         {#if program.is_active}
-          <button class="active-badge" on:click={deactivate} title="Tap to Deactivate">
+          <button class="active-badge" on:click={deactivate} title={$_('program_detail.tap_to_deactivate')}>
             <span class="material-symbols-rounded" style="font-size:14px">check_circle</span>
             Active
           </button>
@@ -422,7 +422,7 @@
                      role="button"
                      tabindex="0">
                   <div class="tpl-left">
-                    {#if !othersProgram}<span class="material-symbols-rounded tpl-drag-handle" title="Drag to reorder">drag_indicator</span>{/if}
+                    {#if !othersProgram}<span class="material-symbols-rounded tpl-drag-handle" title={$_('program_detail.drag_to_reorder')}>drag_indicator</span>{/if}
                     <span class="tpl-num">{idx + 1}</span>
                     <div class="tpl-info">
                       <span class="tpl-name">{t.name}</span>
@@ -431,7 +431,7 @@
                   </div>
                   <div class="tpl-right">
                     {#if !othersProgram}
-                    <button class="btn-icon-sm" on:click={e => deleteTemplate(e, t.id)} title="Delete">
+                    <button class="btn-icon-sm" on:click={e => deleteTemplate(e, t.id)} title={$_('common.delete')}>
                       <span class="material-symbols-rounded">close</span>
                     </button>
                     {/if}
@@ -489,7 +489,7 @@
           {:else}
             <div class="ptp-empty">
               <span class="material-symbols-rounded ptp-empty-icon">list_alt</span>
-              <p class="ptp-empty-title">Select a workout</p>
+              <p class="ptp-empty-title">{$_('program_detail.select_workout')}</p>
               <p class="ptp-empty-desc">Tap any workout on the left to see its exercises here.</p>
             </div>
           {/if}

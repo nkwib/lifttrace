@@ -386,10 +386,10 @@
   <div class="ex-sticky-top">
     <header class="page-header" class:banner-gradient={$bannerStyle === 'gradient'} class:banner-animated={$bannerStyle === 'animated'}>
       <h1>{$_('routes.exercises.title')}</h1>
-      <span class="exercise-count" title="Filtered / total">
+      <span class="exercise-count" title={$_('exercises_page.filtered_total')}>
         {filtered.length}{#if filtered.length !== exercises.length}{' '}<span class="exercise-count-total">/ {exercises.length}</span>{/if}
       </span>
-      <button class="create-btn" on:click={() => addMenuOpen = true} aria-label="Add exercise" title="Add exercise" disabled={importBusy}>
+      <button class="create-btn" on:click={() => addMenuOpen = true} aria-label={$_('exercises_page.add_exercise')} title={$_('exercises_page.add_exercise')} disabled={importBusy}>
         <span class="material-symbols-rounded">{importBusy ? 'hourglass_top' : 'add'}</span>
       </button>
     </header>
@@ -398,18 +398,18 @@
 
     <ActionSheet
       bind:open={addMenuOpen}
-      title="Add exercise"
+      title={$_('exercises_page.add_exercise')}
       actions={[
-        { label: 'Create new',       icon: 'add',          value: 'create' },
-        { label: 'Import from file', icon: 'upload_file',  value: 'file'   },
-        { label: 'Import from URL',  icon: 'link',         value: 'url'    },
+        { label: $_('exercises_page.create_new'),       icon: 'add',          value: 'create' },
+        { label: $_('exercises_page.import_file'), icon: 'upload_file',  value: 'file'   },
+        { label: $_('exercises_page.import_url'), icon: 'link',         value: 'url'    },
       ]}
       on:select={onAddMenuPick}
     />
 
     <Dialog
       bind:open={urlPromptOpen}
-      title="Import exercise from URL"
+      title={$_('exercises_page.import_url_title')}
       message="Paste a link to a LiftTrace exercise JSON file (raw.githubusercontent.com or github.com/blob URLs both work)."
       confirmText="Import"
       on:confirm={onUrlConfirm}
@@ -426,7 +426,7 @@
   <div class="filter-bar">
     <div class="search-bar">
       <span class="material-symbols-rounded search-icon">search</span>
-      <input class="search-input" type="text" placeholder="Search exercises..." bind:value={search} />
+      <input class="search-input" type="text" placeholder={$_('exercises_page.search_placeholder')} bind:value={search} />
     </div>
 
     <!-- Category chips + sort + display density (issue #74) share one
@@ -437,7 +437,7 @@
          being split across two rows. -->
     <div class="category-row">
       <div class="category-chips">
-        <button class="chip" class:active={!selectedCategory} on:click={() => selectedCategory = ''}>All</button>
+        <button class="chip" class:active={!selectedCategory} on:click={() => selectedCategory = ''}>{$_('exercises_page.all')}</button>
         {#each CATEGORIES.filter(c => categoryCounts[c.id]) as cat}
           <button class="chip" class:active={selectedCategory === cat.id} on:click={() => selectedCategory = cat.id}>
             <span class="material-symbols-rounded chip-icon">{cat.icon}</span>
@@ -449,8 +449,8 @@
       <div class="sort-menu-wrap" use:clickOutside={() => sortMenuOpen = false}>
         <button class="sort-icon-btn" class:active={sortMode !== 'alpha'}
                 on:click|stopPropagation={() => sortMenuOpen = !sortMenuOpen}
-                title="Sort"
-                aria-label="Sort exercises"
+                title={$_('exercises_page.sort')}
+                aria-label={$_('exercises_page.sort_exercises')}
                 aria-haspopup="menu"
                 aria-expanded={sortMenuOpen}>
           <span class="material-symbols-rounded">sort</span>
@@ -472,7 +472,7 @@
       </div>
 
       {#if _wideMode}
-        <div class="density-toggle" role="group" aria-label="Display density">
+        <div class="density-toggle" role="group" aria-label={$_('exercises_page.display_density')}>
           <button
             class="density-btn"
             class:active={$exerciseBrowserDensity === 'compact'}
@@ -550,7 +550,7 @@
             {#each exs as ex (ex.id)}
               {@const u = usage[ex.id]}
               <div class="exercise-row" class:selected-for-detail={_wideMode && _detailSelected?.id === ex.id}>
-                <button class="fav-btn" on:click|stopPropagation={() => toggleFavorite(ex.id)} title={isFav(ex.id) ? 'Remove from Favorites' : 'Add to Favorites'}>
+                <button class="fav-btn" on:click|stopPropagation={() => toggleFavorite(ex.id)} title={isFav(ex.id) ? $_('exercises_page.remove_favorite') : $_('exercises_page.add_favorite')}>
                   <span class="material-symbols-rounded" class:fav-active={isFav(ex.id)}>{isFav(ex.id) ? 'star' : 'star_outline'}</span>
                 </button>
                 <button class="ex-row-main" on:click={() => _openExercise(ex)}>
@@ -568,7 +568,7 @@
                     <div class="ex-name-row">
                       <span class="ex-name">{ex.name}</span>
                       {#if ex.source === 'custom' && !ex.is_global}
-                        <span class="custom-chip" title="Custom exercise you created">{$_('exercises_page.custom')}</span>
+                        <span class="custom-chip" title={$_('exercises_page.custom_hint')}>{$_('exercises_page.custom')}</span>
                       {/if}
                     </div>
                     <span class="ex-meta">
@@ -604,12 +604,12 @@
         <div class="edp-head">
           <h3 class="edp-title">{_detailSelected.name}</h3>
           <button class="edp-close" on:click={() => { _detailSelected = null; _detailHistory = []; }}
-                  aria-label="Close preview" title="Close preview">
+                  aria-label={$_('exercises_page.close_preview')} title={$_('exercises_page.close_preview')}>
             <span class="material-symbols-rounded">close</span>
           </button>
         </div>
         {#if _detailLoading}
-          <div class="loading">Loading…</div>
+          <div class="loading">{$_('common.loading')}</div>
         {:else}
           <!-- ExerciseInfo renders several siblings, so it needs a wrapper to
                be the one scrolling region. The card's heading and Full Details

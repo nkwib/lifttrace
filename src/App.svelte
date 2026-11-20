@@ -648,7 +648,7 @@
                 showError(decodeURIComponent(errMsg));
               } else if (linked) {
                 const { showSuccess } = await import('./stores/toast.js');
-                showSuccess('Linked');
+                showSuccess($_('app.linked'));
                 await loadAuthState();
               } else if (connecting && token) {
                 signin.ssoConnectResult.set({ url: connecting.url, token, idTokenHint, providerId });
@@ -672,7 +672,7 @@
                 // A shortcut waiting under the sign-in screen opens next.
                 const { isShortcutHash } = await import('./lib/app-shortcut.js');
                 const shortcutWaiting = isShortcutHash(window.location.hash);
-                showSuccess('Signed in');
+                showSuccess($_('app.signed_in'));
                 await loadAuthState();
                 // Re-evaluate the NativeSetup gate. Without this the user
                 // completes OIDC from NativeSetup, gets a valid token, and
@@ -902,7 +902,7 @@
     <button
       class="hamburger tap"
       on:click={() => sidebarOpen = !sidebarOpen}
-      aria-label="Open menu"
+      aria-label={$_('app.open_menu')}
     >
       <span class="material-symbols-rounded">menu</span>
       {#if (_syncModeActive && !_serverReachable) || _webOffline || _webFailing}

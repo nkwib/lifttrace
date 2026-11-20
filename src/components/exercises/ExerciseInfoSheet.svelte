@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { _ } from 'svelte-i18n';
   import { LtApi } from '../../lib/api.js';
   import { weightUnit } from '../../stores/settings.js';
   import { isRepSet } from '../../lib/workout.js';
@@ -81,30 +82,30 @@
   }
 </script>
 
-<Sheet bind:open title={loaded?.name || 'Exercise'} height="full">
+<Sheet bind:open title={loaded?.name || $_('exercise_info.fallback_title')} height="full">
   <div class="info-sheet-body">
     {#if loading}
-      <div class="loading">Loading…</div>
+      <div class="loading">{$_('common.loading')}</div>
     {:else if loaded}
       <ExerciseInfo exercise={loaded} {pr} {history} />
       {#if showAddButton}
         <button class="btn btn-primary add-btn" on:click={onAdd}>
           <span class="material-symbols-rounded">add_circle</span>
-          Add this exercise
+          {$_('exercise_info.add_this')}
         </button>
       {/if}
     {:else if notFound && exerciseName}
       <div class="not-linked">
         <span class="material-symbols-rounded not-linked-icon">link_off</span>
-        <div class="not-linked-title">"{exerciseName}" isn't in your library</div>
-        <div class="not-linked-hint">This workout was imported with a free-text name. Link it to a library exercise to enable history, PR tracking and stats.</div>
+        <div class="not-linked-title">{$_('exercise_info.not_in_library', { values: { name: exerciseName } })}</div>
+        <div class="not-linked-hint">{$_('exercise_info.free_text_hint')}</div>
         <button class="btn btn-primary replace-btn" on:click={() => { dispatch('replace'); open = false; }}>
           <span class="material-symbols-rounded">swap_horiz</span>
-          Replace with library exercise
+          {$_('exercise_info.replace_with_library')}
         </button>
       </div>
     {:else}
-      <div class="loading">Couldn't load exercise details.</div>
+      <div class="loading">{$_('exercise_info.load_failed')}</div>
     {/if}
   </div>
 </Sheet>

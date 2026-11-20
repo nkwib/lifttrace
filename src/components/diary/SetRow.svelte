@@ -362,7 +362,7 @@
     <button class="step-btn tap" on:click={() => bumpWeight(step)} aria-label={$_('exercise_card.increase_weight')} tabindex="-1">+</button>
     <!-- Per hand: "lbs ea". In the narrowest field the unit goes and "ea"
          stays, since a weight per hand is not the same number. -->
-    <span class="set-unit" class:each={loadType === 'paired'}>{#if loadType === 'paired'}<span class="unit-word">{unit}</span> ea{:else}{weightHint}{/if}</span>
+    <span class="set-unit" class:each={loadType === 'paired'}>{#if loadType === 'paired'}<span class="unit-word">{unit}</span> {$_('exercise_card.per_hand_suffix')}{:else}{weightHint}{/if}</span>
   </div>
 
   {#if isSplit}

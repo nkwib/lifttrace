@@ -1,4 +1,19 @@
 {
+  "workout_mode_bar": {
+    "resume_timer": "Resume timer",
+    "pause_timer": "Pause timer",
+    "open_diary": "Open diary",
+    "dismiss_title": "Dismiss timer (saved duration kept)",
+    "dismiss": "Dismiss timer",
+    "wake_on": "Screen keep-awake on, tap to disable",
+    "wake_off": "Screen keep-awake off, tap to enable",
+    "wake_toggle": "Toggle screen keep-awake"
+  },
+  "app": {
+    "linked": "Linked",
+    "signed_in": "Signed in",
+    "open_menu": "Open menu"
+  },
   "trace_reply": {
     "stopped_length": "The reply was cut off before the end, so it wasn't used. Try again, or ask for less at once.",
     "stopped_thinking": "The model gave its reasoning but no answer. Try again, or turn its reasoning down.",
@@ -704,6 +719,7 @@
     "duration": "Time"
   },
   "exercise_card": {
+    "per_hand_suffix": "ea",
     "load_type":             "Load Type",
     "remember_for_exercise": "Remember for this exercise",
     "weight":                "Weight",
@@ -837,6 +853,21 @@
     "tools_unsupported_routed": "The model that answered can't use tools, so nothing was logged or looked up."
   },
   "exercises_page": {
+    "filtered_total": "Filtered / total",
+    "add_exercise": "Add exercise",
+    "create_new": "Create new",
+    "import_file": "Import from file",
+    "import_url": "Import from URL",
+    "import_url_title": "Import exercise from URL",
+    "search_placeholder": "Search exercises...",
+    "all": "All",
+    "sort": "Sort",
+    "sort_exercises": "Sort exercises",
+    "display_density": "Display density",
+    "remove_favorite": "Remove from Favorites",
+    "add_favorite": "Add to Favorites",
+    "custom_hint": "Custom exercise you created",
+    "close_preview": "Close preview",
     "loading": "Loading exercises…",
     "load_failed": "Couldn't load the exercise library.",
     "refresh_failed": "Couldn't refresh the exercise list.",
@@ -888,6 +919,12 @@
     "back":                  "Back"
   },
   "exercise_info": {
+    "fallback_title": "Exercise",
+    "add_this": "Add this exercise",
+    "not_in_library": "\"{name}\" isn't in your library",
+    "free_text_hint": "This workout was imported with a free-text name. Link it to a library exercise to enable history, PR tracking and stats.",
+    "replace_with_library": "Replace with library exercise",
+    "load_failed": "Couldn't load exercise details.",
     "primary_muscles":       "Primary Muscles",
     "secondary_muscles":     "Secondary Muscles",
     "how_to_perform":        "How to Perform",
@@ -1343,9 +1380,15 @@
     }
   },
   "program_detail": {
+    "program_name": "Program name",
+    "program_actions": "Program actions",
+    "tap_to_deactivate": "Tap to Deactivate",
+    "drag_to_reorder": "Drag to reorder",
+    "select_workout": "Select a workout",
     "share_file":            "Share as file",
     "share_failed":          "Could not share: {error}",
     "toast": {
+      "renamed": "Program renamed",
       "settings_saved":      "Program settings saved",
       "assigned_to":         "Assigned to {name}",
       "set_active":          "Program set as active",

@@ -131,7 +131,7 @@ test('signed out, the shortcut waits under the sign-in screen and opens after it
   assert.equal((login.match(/const shortcutWaiting = isShortcutHash\(window\.location\.hash\);/g) || []).length, 2);
   assert.equal((login.match(/if \(!shortcutWaiting\) push\('\/'\);/g) || []).length, 2);
   const app = read('../src/App.svelte');
-  assert.match(app, /const shortcutWaiting = isShortcutHash\(window\.location\.hash\);\s*showSuccess\('Signed in'\);\s*await loadAuthState\(\);/);
+  assert.match(app, /const shortcutWaiting = isShortcutHash\(window\.location\.hash\);\s*showSuccess\(\$_\('app\.signed_in'\)\);\s*await loadAuthState\(\);/);
   assert.match(app, /if \(!shortcutWaiting\) window\.location\.hash = '#\/';/);
 });
 
