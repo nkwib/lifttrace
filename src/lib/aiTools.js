@@ -23,6 +23,7 @@ import { OFFLINE_HEADER } from './offline-edits.js';
 import { DB } from './db.js';
 import { fillWeeks } from './statsFormat.js';
 import { normalizeWeekStart } from './week-start.js';
+import { BODY_STAT_KEYS } from './workout-merge.js';
 import { planWeekQuery } from './plan-week-query.js';
 
 // ── Small helpers ──────────────────────────────────────────────────────────
@@ -336,11 +337,11 @@ export const TOOLS = [
   {
     name: 'get_body_stats',
     description:
-      "Get body stats over time, weight, body_fat, or any tracked measurement. Returns time series + summary (first, last, min, max, absolute + percent change) when a single stat is queried.",
+      "Get body stats over time: weight, bodyFat, neck, chest, waist, hips, biceps, thighs, calves. Returns time series + summary (first, last, min, max, absolute + percent change) when a single stat is queried.",
     parameters: {
       type: 'object',
       properties: {
-        stat:      { type: 'string', description: "Optional single-stat filter (e.g. 'weight', 'body_fat', 'chest')." },
+        stat:      { type: 'string', description: "Optional single-stat filter (e.g. 'weight', 'bodyFat', 'chest')." },
         date_from: { type: 'string', description: 'Inclusive YYYY-MM-DD. Omit unless the user named a date or period; defaults to 90 days ago.' },
         date_to:   { type: 'string', description: 'Inclusive YYYY-MM-DD. Omit unless the user named a date or period; defaults to today.' },
       },
@@ -512,16 +513,14 @@ export const TOOLS = [
   {
     name: 'log_body_stat',
     description:
-      "Record a body-stat measurement (weight, body_fat, chest, waist, etc.) for a given date. Merges with any existing stats for that date. Use for 'weighed in at 182 today' / 'body-fat is 15%'.",
+      "Record a body-stat measurement (weight, bodyFat, neck, chest, waist, hips, biceps, thighs, calves) for a given date. Weight and lengths are in the user's own units. Merges with any existing stats for that date. Use for 'weighed in at 182 today' / 'body-fat is 15%'.",
     parameters: {
       type: 'object',
       properties: {
-        stat:  { type: 'string',  description: "Stat name, 'weight', 'body_fat', or any custom measurement." },
-        value: { type: 'number',  description: 'Numeric value.' },
-        unit:  { type: 'string',  description: "Optional unit override. Defaults: 'kg' for weight, '%' for body_fat." },
+        stat:  { type: 'string',  enum: [...BODY_STAT_KEYS], description: "Which stat. bodyFat is a percent." },
+        value: { type: 'number',  description: "Plain number in the user's units (no unit conversion)." },
         date:  { type: 'string',  description: 'YYYY-MM-DD. Defaults to today.' },
         date_confirmed: { type: 'boolean', description: 'Only after the user confirmed a date more than 60 days from today.' },
-        note:  { type: 'string',  description: 'Optional free-text note attached to the entry.' },
       },
       required: ['stat', 'value'],
     },
@@ -1045,19 +1044,20 @@ async function _getPrs({ exercise_name, date_from, date_to, limit, offset } = {}
 async function _getBodyStats({ stat, date_from, date_to } = {}) {
   const from = date_from || _daysAgo(90);
   const to   = date_to   || _today();
+  const wantKey = stat ? (_normStat(stat) || String(stat)) : null;
   const rows = await _get(`/api/body-stats/range?start=${from}&end=${to}`);
-  // rows[i].stats is an object like { weight: 82, body_fat: 15 }. Flatten
+  // rows[i].stats is an object like { weight: 82, bodyFat: 15 }. Flatten
   // to { date, stat, value } tuples.
   const series = [];
   for (const row of rows) {
     const stats = row.stats || {};
     for (const key of Object.keys(stats)) {
-      if (stat && key !== stat) continue;
+      if (wantKey && key !== wantKey) continue;
       const v = stats[key];
       if (v == null || v === '') continue;
+      // Legacy rows hold {value, unit}; the app stores a plain number.
       const value = typeof v === 'object' ? v.value : v;
-      const unit  = typeof v === 'object' ? v.unit  : _defaultUnit(key);
-      series.push({ date: row.date, stat: key, value: Number(value), unit });
+      series.push({ date: row.date, stat: key, value: Number(value), unit: _defaultUnit(key) });
     }
   }
   series.sort((a, b) => a.date.localeCompare(b.date));
@@ -1076,11 +1076,30 @@ async function _getBodyStats({ stat, date_from, date_to } = {}) {
   return { series };
 }
 
-function _defaultUnit(stat) {
-  if (stat === 'weight') return 'kg';
-  if (stat === 'body_fat' || stat === 'bodyfat') return '%';
+// Model-friendly names to the app's stored keys: case, spaces, '_' and '-'
+// ignored, plus singular forms. null when it is not a body stat.
+const _STAT_ALIASES = { bodyfat: 'bodyFat', thigh: 'thighs', calf: 'calves', bicep: 'biceps', hip: 'hips' };
+function _normStat(stat) {
+  const k = String(stat ?? '').toLowerCase().replace(/[\s_-]+/g, '');
+  if (_STAT_ALIASES[k]) return _STAT_ALIASES[k];
+  for (const key of BODY_STAT_KEYS) if (key.toLowerCase() === k) return key;
   return null;
 }
+
+// What the Diary shows next to the number: weight in the user's unit,
+// lengths cm for kg users else in (BodyStats.svelte), bodyFat %.
+function _defaultUnit(stat) {
+  const key = _normStat(stat);
+  if (key === 'bodyFat') return '%';
+  let wu = 'lbs';
+  try { wu = DB.getSetting('weightUnit', 'lbs') || 'lbs'; } catch { /* no storage: default */ }
+  if (key === 'weight') return wu;
+  return key ? (wu === 'kg' ? 'cm' : 'in') : null;
+}
+
+// Loose sanity bounds in the user's own unit, so lb and in users pass.
+const _STAT_MAX = { weight: 1100, bodyFat: 100 };
+const _LENGTH_MAX = 500;
 
 /**
  * Progress-photo metadata. Deliberately returns no image content and no
@@ -1529,22 +1548,23 @@ async function _logSet({ workout_id, exercise_id, exercise_name, weight, reps, d
   };
 }
 
-async function _logBodyStat({ stat, value, unit, date, note }) {
-  if (!stat) throw new Error('stat is required');
-  if (value == null || Number.isNaN(Number(value))) throw new Error('value must be a number');
+// unit and note are no longer params; an older model call may still send them.
+async function _logBodyStat({ stat, value, date }) {
+  const key = _normStat(stat);
+  if (!key) throw new Error(`Unknown stat ${stat}; valid: ${[...BODY_STAT_KEYS].join(', ')}`);
+  const n = Number(value);
+  const max = _STAT_MAX[key] ?? _LENGTH_MAX;
+  if (value == null || value === '' || !Number.isFinite(n) || n <= 0 || n > max) {
+    throw new Error(`value for ${key} must be a number between 0 and ${max}`);
+  }
   const d = date || _today();
-  const cur = await _get(`/api/body-stats/${d}`).catch(() => ({ stats: null }));
-  const stats = { ...(cur?.stats?.stats || {}) };
-  const useUnit = unit || _defaultUnit(stat) || null;
-  stats[stat] = note != null
-    ? { value: Number(value), unit: useUnit, note }
-    : (useUnit ? { value: Number(value), unit: useUnit } : Number(value));
-  const saved = await _put(`/api/body-stats/${d}`, { stats });
+  // The server merges per key, so send only this one.
+  const saved = await _put(`/api/body-stats/${d}`, { stats: { [key]: n } });
   return {
     id: saved?.stats?.id,
-    stat,
-    value: Number(value),
-    unit: useUnit,
+    stat: key,
+    value: n,
+    unit: _defaultUnit(key),
     date: d,
   };
 }
