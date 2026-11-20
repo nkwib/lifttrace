@@ -1064,8 +1064,11 @@ const Workout = {
   async historyFor(exerciseId) {
     const rows = await dbQuery(
       `SELECT date, exercises FROM workout_log
-        WHERE user_id = ? AND deleted_at IS NULL ORDER BY date DESC`,
-      [ME]
+        WHERE user_id = ? AND deleted_at IS NULL
+          AND EXISTS (SELECT 1 FROM json_each(CASE WHEN json_valid(exercises) AND json_type(exercises) = 'array' THEN exercises ELSE '[]' END) j
+                      WHERE CAST(json_extract(j.value, '$.exercise_id') AS INTEGER) = ?)
+        ORDER BY date DESC LIMIT 50`,
+      [ME, Number(exerciseId)]
     );
     const out = [];
     for (const r of rows) {

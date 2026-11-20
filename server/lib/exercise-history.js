@@ -6,10 +6,18 @@
  */
 import db from '../db.js';
 
+const NAMES_EXERCISE = `EXISTS (SELECT 1 FROM json_each(CASE WHEN json_valid(exercises) AND json_type(exercises) = 'array' THEN exercises ELSE '[]' END) j
+                           WHERE CAST(json_extract(j.value, '$.exercise_id') AS INTEGER) = ?)`;
+
 export function exerciseHistory(userId, exerciseId) {
-  const rows = userId != null
-    ? db.prepare('SELECT * FROM workout_log WHERE user_id = ? AND deleted_at IS NULL ORDER BY date DESC').all(userId)
-    : db.prepare('SELECT * FROM workout_log WHERE user_id IS NULL AND deleted_at IS NULL ORDER BY date DESC').all();
+  // Only workouts that list the exercise; the JS find below stays the strict
+  // filter (the SQL cast is never stricter, same guard as program-access.js).
+  const owner = userId != null ? 'user_id = ?' : 'user_id IS NULL';
+  const rows = db.prepare(
+    `SELECT date, exercises FROM workout_log
+      WHERE ${owner} AND deleted_at IS NULL AND ${NAMES_EXERCISE}
+      ORDER BY date DESC`
+  ).all(...(userId != null ? [userId] : []), exerciseId);
 
   const history = [];
   for (const row of rows) {

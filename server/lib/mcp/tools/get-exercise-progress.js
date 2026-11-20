@@ -52,8 +52,11 @@ export function getExerciseProgressCore(userId, { exercise_name, start, end } = 
     params.push(rangeEnd);
   }
   const rows = db.prepare(
-    `SELECT * FROM workout_log WHERE user_id = ? AND ${conditions.join(' AND ')} ORDER BY date ASC`
-  ).all(...params);
+    `SELECT date, exercises FROM workout_log WHERE user_id = ? AND ${conditions.join(' AND ')}
+      AND EXISTS (SELECT 1 FROM json_each(CASE WHEN json_valid(exercises) AND json_type(exercises) = 'array' THEN exercises ELSE '[]' END) j
+                  WHERE CAST(json_extract(j.value, '$.exercise_id') AS INTEGER) = ?)
+      ORDER BY date ASC`
+  ).all(...params, exercise.id);
 
   const progress = [];
   for (const row of rows) {
