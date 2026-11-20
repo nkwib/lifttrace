@@ -40,6 +40,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - **Workout editor asks before discarding edits.** Back arrow and Android back confirm when there are unsaved changes. Closing the tab warns on the web; other web navigation is not intercepted.
+- **Duplicate a workout day.** A copy button on each day card in a program makes "Day (Copy)" with the same exercises, placed right after the original.
 - **Undo toast no longer covers the workout pill.** It now sits above the timer and keep-awake buttons.
 - **Weekly summary email can be turned off separately.** Settings > Notifications has an "Email the summary" toggle under Weekly Summary (on by default, so nothing changes until you switch it off). Push is unaffected.
 - **Exercise search matches muscles.** The library and the exercise picker find "triceps" or "lats" by primary and secondary muscle, not only by name. Several words must all match.

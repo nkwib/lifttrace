@@ -1448,6 +1448,7 @@
     "move_down": "Move down",
     "move_day_up": "Move {name} up",
     "move_day_down": "Move {name} down",
+    "duplicate_workout": "Duplicate workout",
     "select_workout": "Select a workout",
     "share_file":            "Share as file",
     "share_failed":          "Could not share: {error}",
@@ -1461,6 +1462,7 @@
       "deactivated":         "Program deactivated",
       "workout_added":       "Workout added",
       "workout_deleted":     "Workout deleted",
+      "day_duplicated":      "Workout duplicated",
       "program_deleted":     "Program deleted",
       "duplicated":          "Program duplicated",
       "client_fallback":     "your client"

@@ -8,7 +8,7 @@
   import { _ } from 'svelte-i18n';
   import { LtApi } from '../lib/api.js';
   import { onSyncChanges, newestRead } from '../lib/sync-refresh.js';
-  import { duplicateProgram as duplicate, moveTemplate } from '../lib/program-actions.js';
+  import { duplicateProgram as duplicate, moveTemplate, duplicateTemplate } from '../lib/program-actions.js';
   import { exportProgram } from '../lib/programShare.js';
   import { showSuccess, showError } from '../stores/toast.js';
   import { confirmDialog } from '../stores/confirmDialog.js';
@@ -173,6 +173,19 @@
       await load();
     } catch(e) { showError(e.message); }
     creating = false;
+  }
+
+  let duplicatingTpl = false;
+  async function copyTemplate(e, t) {
+    e.stopPropagation();
+    if (duplicatingTpl) return;
+    duplicatingTpl = true;
+    try {
+      await duplicateTemplate(program.id, t, program.templates || []);
+      showSuccess($_('program_detail.toast.day_duplicated'));
+      await load();
+    } catch(e) { showError(e.message); }
+    duplicatingTpl = false;
   }
 
   async function deleteTemplate(e, id) {
@@ -459,6 +472,9 @@
                             on:click={e => moveTplBy(e, idx, 1, 'down')} on:keydown|stopPropagation>
                       <span class="material-symbols-rounded">keyboard_arrow_down</span>
                     </button>
+                    <button class="btn-icon-sm btn-icon-copy" on:click={e => copyTemplate(e, t)} title={$_('program_detail.duplicate_workout')} aria-label={$_('program_detail.duplicate_workout')}>
+                      <span class="material-symbols-rounded">content_copy</span>
+                    </button>
                     <button class="btn-icon-sm" on:click={e => deleteTemplate(e, t.id)} title={$_('common.delete')}>
                       <span class="material-symbols-rounded">close</span>
                     </button>
@@ -732,6 +748,7 @@
   .btn-icon-sm.tpl-move { min-width: 40px; min-height: 40px; align-items: center; justify-content: center; }
   .btn-icon-sm.tpl-move:hover:not(:disabled) { color: var(--text-1); }
   .btn-icon-sm.tpl-move:disabled { opacity: 0.3; cursor: default; }
+  .btn-icon-copy:hover { color: var(--text-1); }
   .tpl-arrow { color: var(--text-3); font-size: 20px; }
 
   .empty-templates { text-align: center; padding: 32px; color: var(--text-3); }

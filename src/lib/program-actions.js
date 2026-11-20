@@ -57,6 +57,30 @@ export async function duplicateProgram(program) {
   return copy;
 }
 
+/**
+ * Copy one day into the same program, right after the source. Exercises are
+ * deep-copied and keep their uuids like duplicateProgram: tombstones are keyed
+ * per template, so sharing uuids across days is safe. Resolves to the new day.
+ */
+export async function duplicateTemplate(programId, template, siblings = []) {
+  const copy = await LtApi.createTemplate({
+    program_id: programId,
+    name: nextCopyName(template.name, siblings.map(t => t.name)),
+    day_label: template.day_label,
+    exercises: JSON.parse(JSON.stringify(template.exercises || [])),
+  });
+  // Create appends; moving it next to the source is a nicety.
+  try {
+    const ids = siblings.map(t => t.id).filter(id => id !== copy.id);
+    const at = ids.indexOf(template.id);
+    if (at >= 0) {
+      ids.splice(at + 1, 0, copy.id);
+      await LtApi.reorderTemplates(programId, ids);
+    }
+  } catch { /* stays at the end */ }
+  return copy;
+}
+
 /** Make this the active program, or clear whichever is active. */
 export const setActive   = (id) => LtApi.setActiveProgram(id);
 export const clearActive = ()   => LtApi.deactivateProgram();
