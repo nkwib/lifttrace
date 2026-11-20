@@ -221,6 +221,44 @@ export default router;
 // For the test that keeps these identical to the client's (scripts/ai-models.test.js).
 export const _models = { AI_DEFAULT_MODELS, AI_MODEL_RENAMES, GEMINI_RETIRED, geminiModelFor };
 
+// Provider failures reach the person as the provider's own words (bad key,
+// quota, unknown model) instead of "Internal server error". 502 for all but
+// a 429, which passes through (the client has no special case for it). Never
+// 401/403: the client reads any 401 as "Not signed in". The key is stripped
+// from the text, and a network error says only who, never the URL (Gemini's
+// carries the key, oai-compat's is the admin's).
+const PROVIDER_MSG_MAX = 300;
+function providerError(label, status, data, apiKey, fallback) {
+  const raw = data?.error?.message ?? (typeof data?.error === 'string' ? data.error : null);
+  let text = typeof raw === 'string' ? raw : '';
+  if (apiKey && apiKey.length >= 8) text = text.split(apiKey).join('[key]');
+  text = text.replace(/[\u0000-\u001f\u007f]+/g, ' ').trim().slice(0, PROVIDER_MSG_MAX);
+  const e = new Error(`${label}: ${text || fallback || `HTTP ${status}`}`);
+  e.status = status === 429 ? 429 : 502;
+  return e;
+}
+
+// Wraps only the network call. AbortError passes as is.
+async function fetchProvider(label, url, init) {
+  try {
+    return await fetch(url, init);
+  } catch (e) {
+    if (e?.name === 'AbortError') throw e;
+    const err = new Error(`Could not reach ${label}`);
+    err.status = 502;
+    throw err; // no cause: the original carries the URL
+  }
+}
+
+// The reply body as JSON. A body that isn't JSON on a failure is {} (the
+// status says it); on a success it is an error, not an empty answer.
+async function readProviderJson(label, r, apiKey) {
+  try { return await r.json(); } catch {
+    if (r.ok) throw providerError(label, r.status, null, apiKey, 'unreadable reply');
+    return {};
+  }
+}
+
 // ── Provider implementations (server-side) ──────────────────────────────────
 //
 // Each adapter takes OpenAI-shape inputs and returns one of:
@@ -251,7 +289,7 @@ async function _callClaude(apiKey, model, messages, systemPrompt, tools, last = 
 
   // An empty reply is asked for once more (lib/trace-reply.js).
   const sent = await sendForReply('claude', body, async (b) => {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
+    const r = await fetchProvider('Claude', 'https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -260,10 +298,10 @@ async function _callClaude(apiKey, model, messages, systemPrompt, tools, last = 
       },
       body: JSON.stringify(b),
     });
-    return { ok: r.ok, status: r.status, data: await r.json().catch(() => ({})) };
+    return { ok: r.ok, status: r.status, data: await readProviderJson('Claude', r, apiKey) };
   });
   const data = sent.data;
-  if (!sent.ok) throw new Error(data.error?.message || `Claude API ${sent.status}`);
+  if (!sent.ok) throw providerError('Claude', sent.status, data, apiKey);
   const short = stoppedShort('claude', data);
   // The last round: nothing at all goes back as no text, and the app says it ran out of rounds.
   if (short && !(last && short === 'empty')) throw stoppedShortError(short);
@@ -314,13 +352,14 @@ async function _callOpenAI(apiKey, model, messages, systemPrompt, tools, baseUrl
   if (last && openaiTools.length) body.tool_choice = 'none';
 
   // An empty reply is asked for once more (lib/trace-reply.js).
+  const label = baseUrl === 'https://api.openai.com' ? 'OpenAI' : 'oai-compat';
   const send = (req) => sendForReply('openai', req, async (b) => {
-    const r = await fetch(`${baseUrl}/v1/chat/completions`, {
+    const r = await fetchProvider(label, `${baseUrl}/v1/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify(b),
     });
-    return { ok: r.ok, status: r.status, data: await r.json() };
+    return { ok: r.ok, status: r.status, data: await readProviderJson(label, r, apiKey) };
   });
   // A model that can't use tools gets the request again without them
   // (TraceApps/nutritrace#259); toolsUnsupported lets the app say so.
@@ -331,7 +370,7 @@ async function _callOpenAI(apiKey, model, messages, systemPrompt, tools, baseUrl
     sent = await sendWithToolFallback(body, send, { memory: toolSupport, baseUrl, model: selectedModel });
   }
   const { ok, status, data, toolsDropped, toolsRouted } = sent;
-  if (!ok) throw new Error(data.error?.message || `OpenAI API ${status}`);
+  if (!ok) throw providerError(label, status, data, apiKey);
   const short = stoppedShort('openai', data);
   // The last round: nothing at all goes back as no text, and the app says it ran out of rounds.
   if (short && !(last && short === 'empty')) throw stoppedShortError(short);
@@ -375,15 +414,15 @@ async function _callGemini(apiKey, model, messages, systemPrompt, tools, last = 
 
   // An empty reply is asked for once more (lib/trace-reply.js).
   const sent = await sendForReply('gemini', body, async (b) => {
-    const r = await fetch(url, {
+    const r = await fetchProvider('Gemini', url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(b),
     });
-    return { ok: r.ok, status: r.status, data: await r.json() };
+    return { ok: r.ok, status: r.status, data: await readProviderJson('Gemini', r, apiKey) };
   });
   const data = sent.data;
-  if (!sent.ok) throw new Error(data.error?.message || `Gemini API ${sent.status}`);
+  if (!sent.ok) throw providerError('Gemini', sent.status, data, apiKey);
   const short = stoppedShort('gemini', data);
   // The last round: nothing at all goes back as no text, and the app says it ran out of rounds.
   if (short && !(last && short === 'empty')) throw stoppedShortError(short);

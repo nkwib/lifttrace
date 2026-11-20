@@ -198,8 +198,8 @@ test('a server that refuses tool_choice is asked once more without it; one that 
   const en = JSON.parse(read('../src/i18n/en.json'));
   assert.match(en.trace_reply.out_of_rounds, /more steps than one answer allows/);
   if (needsServer(t)) return;
-  // The server answers a provider's failure with its own error, as it always has.
-  await run(askProxy, /AI proxy error 500/);
+  // The server answers a provider's failure as a 502 (see trace-proxy-provider-errors-visible.test.js).
+  await run(askProxy, /AI proxy error 502/);
 });
 
 test('a conversation that gets too big wraps up early the same way; a photo the user attached does not count', async (t) => {
