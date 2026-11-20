@@ -265,7 +265,7 @@ async function _processUser(userId) {
 
       await pushNotify(userId, '📊 Weekly Summary', summaryLine(summary, { unit, locale }), 4);
 
-      if (isEmailConfigured()) {
+      if (isEmailConfigured() && _getUserSetting(userId, 'notifWeeklySummaryEmail', true) !== false) {
         const user = userId ? db.prepare('SELECT * FROM users WHERE id = ?').get(userId) : null;
         if (user?.email) {
           try {

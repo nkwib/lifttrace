@@ -362,8 +362,8 @@ export function renderWeeklySummary(name, summary, origin = '', { unit = 'lbs', 
 
   return {
     subject: 'LiftTrace: your week in review',
-    html: emailWrapper(origin, body, 'You received this because weekly summaries are enabled in your settings.'),
-    text: `Your week (${range}): ${summaryLine(summary, { unit, locale })}\n\nView this week: ${statsUrl}`,
+    html: emailWrapper(origin, body, 'Turn off weekly emails in Settings, Notifications.'),
+    text: `Your week (${range}): ${summaryLine(summary, { unit, locale })}\n\nView this week: ${statsUrl}\n\nTurn off weekly emails in Settings, Notifications.`,
   };
 }
 

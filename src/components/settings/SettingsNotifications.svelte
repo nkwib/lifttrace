@@ -12,7 +12,7 @@
     notifWorkoutComplete, notifPRCelebrations,
     notifMemberCompletes, notifMemberMissed, notifMemberReply,
     notifCoachFeedback, notifCoachRecommendation, notifClientAnswer, notifCoachMessage, notifCoachMessageEmail,
-    notifWeeklySummary, weeklySummaryDay, weeklySummaryTime,
+    notifWeeklySummary, notifWeeklySummaryEmail, weeklySummaryDay, weeklySummaryTime,
   } from '../../stores/settings.js';
   import { currentUser } from '../../stores/auth.js';
   import { inCoaching, coachTab } from '../../stores/coaching.js';
@@ -346,6 +346,13 @@
             <Toggle bind:checked={$notifWeeklySummary} />
           </div>
           {#if $notifWeeklySummary}
+            <div class="setting-row">
+              <div class="setting-label-group">
+                <span class="setting-label">{$_('settings_notifications.summaries.weekly_email')}</span>
+                <span class="setting-hint">{$_('settings_notifications.summaries.weekly_email_desc')}</span>
+              </div>
+              <Toggle bind:checked={$notifWeeklySummaryEmail} />
+            </div>
             <div class="setting-row">
               <span class="setting-label">{$_('settings_notifications.summaries.delivery_day')}</span>
               <select class="form-select-sm" bind:value={$weeklySummaryDay}>

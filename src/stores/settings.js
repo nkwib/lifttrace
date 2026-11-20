@@ -39,7 +39,7 @@ const SERVER_SETTINGS = new Set([
   'notifWorkoutComplete', 'notifPRCelebrations',
   'notifMemberCompletes', 'notifMemberMissed', 'notifMemberReply', 'notifCoachFeedback',
   'notifCoachRecommendation', 'notifClientAnswer', 'notifCoachMessage', 'notifCoachMessageEmail',
-  'notifWeeklySummary', 'weeklySummaryDay', 'weeklySummaryTime',
+  'notifWeeklySummary', 'notifWeeklySummaryEmail', 'weeklySummaryDay', 'weeklySummaryTime',
   'bodyStatsVisible', 'exerciseLoadTypes', 'exerciseSetTypes', 'exerciseDistanceUnits',
   'radioEnabled', 'radioProvider', 'radioUrl', 'radioUser', 'radioPassword', 'radioCrossfade', 'radioOriginalFormat',
   'radioStationsEnabled',
@@ -328,6 +328,7 @@ export const notifClientAnswer        = createSettingStore('notifClientAnswer', 
 export const notifCoachMessage        = createSettingStore('notifCoachMessage',        true);
 export const notifCoachMessageEmail   = createSettingStore('notifCoachMessageEmail',   false);
 export const notifWeeklySummary   = createSettingStore('notifWeeklySummary',   false);
+export const notifWeeklySummaryEmail = createSettingStore('notifWeeklySummaryEmail', true);
 export const weeklySummaryDay     = createSettingStore('weeklySummaryDay',     0);
 export const weeklySummaryTime    = createSettingStore('weeklySummaryTime',    '09:00');
 

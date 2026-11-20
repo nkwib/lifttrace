@@ -2690,6 +2690,8 @@
     "summaries": {
       "weekly":            "Weekly Summary",
       "weekly_desc":       "Push + email digest of your training week",
+      "weekly_email":      "Email the summary",
+      "weekly_email_desc": "Also send it by email when the server has email set up",
       "delivery_day":      "Delivery Day",
       "delivery_time":     "Delivery Time",
       "day_sun":           "Sunday",
