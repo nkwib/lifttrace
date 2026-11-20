@@ -1,5 +1,6 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { dayIntensity } from '../lib/heatmap-intensity.js';
+import { onMount, onDestroy } from 'svelte';
   import { push, querystring } from 'svelte-spa-router';
   import { _ } from 'svelte-i18n';
   import { LtApi } from '../lib/api.js';
@@ -472,6 +473,12 @@
   $: maxWeekdayCount = weekdayDist.length ? Math.max(...weekdayDist.map(w => w.count)) : 0;
 
   // Heatmap (90 days, Mon-first week)
+  $: intensity = dayIntensity(recentWorkouts);
+  function hmDetail(i) {
+    if (!i) return ' ✓';
+    if (i.metric === 'minutes' && i.minutes > 0) return ` · ${$_('statistics.n_min', { values: { n: i.minutes } })}`;
+    return i.sets > 0 ? ` · ${$_('statistics.n_sets', { values: { n: i.sets } })}` : ' ✓';
+  }
   $: heatmapDays = Array.from({ length: 91 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (90 - i));
@@ -920,17 +927,23 @@
           <div class="heatmap">
             {#each heatmapDays as day}
               {@const excusedDay = excusedDates.has(day) ? excusedByDate.get(day) : null}
-              <div class="hm-cell"
+              {@const lv = workoutDates.has(day) ? (intensity.get(day)?.level || 1) : 0}
+              <div class="hm-cell {lv ? `hm-l${lv}` : ''}"
                 class:hm-active={workoutDates.has(day)}
                 class:hm-excused={!!excusedDay}
                 class:hm-today={day === localDateStr()}
-                title={day + (workoutDates.has(day) ? ' ✓' : excusedDay ? ` · ${$_('excused.banner', { values: { reason: $_(`excused.reason.${excusedDay.reason}`) } })}` : '')}></div>
+                title={day + (workoutDates.has(day) ? hmDetail(intensity.get(day)) : excusedDay ? ` · ${$_('excused.banner', { values: { reason: $_(`excused.reason.${excusedDay.reason}`) } })}` : '')}></div>
             {/each}
           </div>
           <div class="hm-legend">
             <div class="hm-legend-scale">
-              <div class="hm-cell"></div><span>{$_('statistics.hm_rest')}</span>
-              <div class="hm-cell hm-active"></div><span>{$_('statistics.hm_workout')}</span>
+              <span>{$_('statistics.hm_less')}</span>
+              <div class="hm-cell"></div>
+              <div class="hm-cell hm-active hm-l1"></div>
+              <div class="hm-cell hm-active hm-l2"></div>
+              <div class="hm-cell hm-active hm-l3"></div>
+              <div class="hm-cell hm-active hm-l4"></div>
+              <span>{$_('statistics.hm_more')}</span>
               <div class="hm-cell hm-excused"></div><span>{$_('statistics.hm_excused')}</span>
             </div>
             <span class="hm-legend-label">{$_('statistics.total_workouts', { values: { n: streaks.totalWorkouts } })}</span>
@@ -1710,7 +1723,11 @@
   /* Heatmap */
   .heatmap { display: grid; grid-template-columns: repeat(13, 1fr); gap: 3px; margin: 8px 0; }
   .hm-cell { aspect-ratio: 1; border-radius: 3px; background: var(--surface-3); }
-  .hm-cell.hm-active { background: var(--accent); }
+  /* Shade by time trained (or sets): four steps of the accent over the rest cell. */
+  .hm-cell.hm-l1 { background: color-mix(in srgb, var(--accent) 35%, var(--surface-3)); }
+  .hm-cell.hm-l2 { background: color-mix(in srgb, var(--accent) 55%, var(--surface-3)); }
+  .hm-cell.hm-l3 { background: color-mix(in srgb, var(--accent) 78%, var(--surface-3)); }
+  .hm-cell.hm-l4 { background: var(--accent); }
   /* Excused (issue #121): its own slate, striped so it stays apart from a
      workout and a rest day whatever the accent. */
   .hm-cell.hm-excused {

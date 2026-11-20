@@ -132,7 +132,9 @@ new all-time best, which is right for them.
 
 **Effort:** 2 to 3 days.
 
-### [ ] 6. Activity heatmap shaded by time trained
+### [x] 6. Activity heatmap shaded by time trained
+
+**Built (2026-11-20):** `src/lib/heatmap-intensity.js` ranks the user's own trained days into four shades by summed `duration_min` (each workout capped at 300), or by working sets when most days lack a duration (units are never mixed). Legend is Less / More; the tooltip names minutes or sets.
 
 **Today:** the Statistics heatmap is binary: trained or rest.
 
