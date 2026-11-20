@@ -88,17 +88,23 @@ function _todayStr(timezone) {
   }
 }
 
+/**
+ * Run fn for each user id, isolating failures: one poisoned account must not
+ * skip later users or the housekeeping after the loop. A user that keeps
+ * failing is retried every tick, which is fine because it is logged.
+ */
+export async function _runUsers(ids, fn) {
+  for (const id of ids) {
+    try { await fn(id); }
+    catch (e) { logger.error(`[scheduler] user ${id}: ${e.message}`); }
+  }
+}
+
 async function _tick() {
   try {
     const users = db.prepare('SELECT * FROM users').all();
-    if (users.length === 0) {
-      // Single-user mode — run with userId = null
-      await _processUser(null);
-    } else {
-      for (const user of users) {
-        await _processUser(user.id);
-      }
-    }
+    // No users: single-user mode, run with userId = null
+    await _runUsers(users.length === 0 ? [null] : users.map(u => u.id), _processUser);
 
     // Housekeeping — remove invite tokens that are past their expiry or
     // already used. GET /api/auth/invites filters them out of the admin

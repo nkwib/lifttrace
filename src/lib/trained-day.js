@@ -67,7 +67,7 @@ export function exercisesOf(row) {
 /** At least one completed set that isn't a warm-up. */
 export function hasWorkingSet(exercises) {
   if (!Array.isArray(exercises)) return false;
-  return exercises.some(ex => (ex?.sets || []).some(s => s && s.completed && !s.warmup));
+  return exercises.some(ex => (Array.isArray(ex?.sets) ? ex.sets : []).some(s => s && s.completed && !s.warmup));
 }
 
 /** Does this workout row make its day a trained day? */

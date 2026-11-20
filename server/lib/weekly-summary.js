@@ -24,7 +24,10 @@ export function shiftDate(ymd, days) {
 
 function _exercisesOf(row) {
   if (Array.isArray(row.exercises)) return row.exercises;
-  try { return JSON.parse(row.exercises || '[]'); } catch { return []; }
+  try {
+    const parsed = JSON.parse(row.exercises || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch { return []; }
 }
 
 const _working = (s) => s && s.completed && !s.warmup;
@@ -65,12 +68,13 @@ export function buildWeeklySummary({ workouts, library = new Map(), today, goal 
     let workingSets = 0;
 
     for (const ex of row.exercises) {
+      if (!ex || typeof ex !== 'object') continue;
       const info = library.get(ex.exercise_id) || { muscles: [], category: 'other', load_type: null };
       const loadType = resolveLoadType(ex, info.load_type);
       const key = ex.exercise_id || ex.exercise_name;
       const groups = [...new Set((info.muscles.length ? info.muscles : [info.category]).map(normalizeMuscle))];
 
-      for (const set of ex.sets || []) {
+      for (const set of Array.isArray(ex.sets) ? ex.sets : []) {
         if (!_working(set)) continue;
         workingSets++;
         if (!inWeek) {
