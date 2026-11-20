@@ -35,17 +35,13 @@
     await load({ quiet: true });
   }
 
-  const HISTORY_CAP = 50;
   async function removeExercise() {
     if (!await confirmDialog({
       title: $_('exercise_detail.confirm.delete_title', { values: { name: exercise.name } }),
-      // History is one entry per workout, but Android Local caps it at 50 (HISTORY_CAP), so show "N+" there.
-      // Empty also covers a failed load.
-      message: history.length >= HISTORY_CAP
-        ? $_('exercise_detail.confirm.delete_msg_many', { values: { count: HISTORY_CAP } })
-        : history.length
-          ? $_('exercise_detail.confirm.delete_msg_used', { values: { count: history.length } })
-          : $_('exercise_detail.confirm.delete_msg'),
+      // History is one entry per workout. Empty also covers a failed load.
+      message: history.length
+        ? $_('exercise_detail.confirm.delete_msg_used', { values: { count: history.length } })
+        : $_('exercise_detail.confirm.delete_msg'),
       confirmText: $_('common.delete'), dangerous: true,
     })) return;
     try {

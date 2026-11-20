@@ -87,7 +87,7 @@ test('native layer and MCP progress tool carry the SQL guard', () => {
   const native = fs.readFileSync('src/lib/api-native.js', 'utf8');
   const hist = native.slice(native.indexOf('async historyFor'));
   assert.match(hist.slice(0, 900), /json_each/);
-  assert.match(hist.slice(0, 900), /LIMIT 50/);
+  assert.doesNotMatch(hist.slice(0, 900), /LIMIT/);
   const mcp = fs.readFileSync('server/lib/mcp/tools/get-exercise-progress.js', 'utf8');
   assert.match(mcp, /json_each/);
   assert.match(mcp, /SELECT date, exercises FROM workout_log/);

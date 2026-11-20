@@ -1106,7 +1106,7 @@ const Workout = {
         WHERE user_id = ? AND deleted_at IS NULL
           AND EXISTS (SELECT 1 FROM json_each(CASE WHEN json_valid(exercises) AND json_type(exercises) = 'array' THEN exercises ELSE '[]' END) j
                       WHERE CAST(json_extract(j.value, '$.exercise_id') AS INTEGER) = ?)
-        ORDER BY date DESC LIMIT 50`,
+        ORDER BY date DESC`,
       [ME, Number(exerciseId)]
     );
     const out = [];
@@ -1114,7 +1114,6 @@ const Workout = {
       const exs = _parseJson(r.exercises, []);
       const hit = exs.find(e => Number(e.exercise_id) === Number(exerciseId));
       if (hit) out.push({ date: r.date, ...hit });
-      if (out.length >= 50) break;
     }
     return out;
   },

@@ -993,8 +993,7 @@
     "confirm": {
       "delete_title": "Delete \"{name}\"?",
       "delete_msg":   "This removes the exercise from your library. Any workouts that logged it keep their history — only the link breaks.",
-      "delete_msg_used": "Logged in {count, plural, one {# workout} other {# workouts}}. Their history stays under the name, but links to this exercise will break.",
-      "delete_msg_many": "Logged in {count}+ workouts. Their history stays under the name, but links to this exercise will break."
+      "delete_msg_used": "Logged in {count, plural, one {# workout} other {# workouts}}. Their history stays under the name, but links to this exercise will break."
     }
   },
   "settings_federation": {
