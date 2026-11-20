@@ -150,6 +150,31 @@ export function setAmount(exercise, set) {
 }
 
 /**
+ * The best completed working set, for the collapsed card header, or null.
+ * Ranked within each set's own kind (no cross-kind comparison; the first
+ * set's kind wins when mixed): reps by weight then setReps (weaker side),
+ * time by duration (weaker side) then weight, distance and calories by
+ * amount. Ties keep the earlier set.
+ */
+export function bestSet(exercise, sets) {
+  let best = null, bestKey = null;
+  for (const s of sets || []) {
+    if (!s || !s.completed || s.warmup) continue;
+    const kind = setKind(exercise, s);
+    const w = Number(s.weight) || 0;
+    const key = kind === 'reps' ? [w, Number(setReps(s)) || 0]
+      : kind === 'time' ? [setAmount(exercise, s), w]
+      : [setAmount(exercise, s), 0];
+    if (best) {
+      if (setKind(exercise, best) !== kind) continue;
+      if (!(key[0] > bestKey[0] || (key[0] === bestKey[0] && key[1] > bestKey[1]))) continue;
+    }
+    best = s; bestKey = key;
+  }
+  return best;
+}
+
+/**
  * Exercises tracked by something other than reps by nature, matched by
  * exact normalised name.
  *

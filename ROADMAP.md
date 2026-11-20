@@ -110,8 +110,8 @@ An exercise tracked by Distance (m, km, yd or mi) or Calories next to Reps and T
 ### ~~Per-side hold timer~~ *(done, on dev, [#143](https://github.com/TraceApps/lifttrace/issues/143))*
 A timed Alternating exercise times the left side, counts a switch down, then times the right, and keeps both times; the shorter side is the set's time, so the longest-hold record tracks the weaker side. Per Side (both sides at once) keeps one timer. A program can't prescribe a different time for each side yet.
 
-### Collapsed-card summary
-Not started. When an ExerciseCard auto-collapses after completing all sets, show the best working set on the header (e.g. `Bench Press · 4/4 · 225×5`) instead of only the set count.
+### ~~Collapsed-card summary~~ *(done, on dev)*
+A collapsed exercise card shows its best completed working set after the set count (e.g. `4/4 sets · 225×5`), ranked within the set's kind.
 
 ---
 

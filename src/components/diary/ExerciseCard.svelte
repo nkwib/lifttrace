@@ -5,7 +5,7 @@
   import { LtApi } from '../../lib/api.js';
   import { onSyncChanges, newestRead } from '../../lib/sync-refresh.js';
   import { getCollapseState, setCollapsed } from '../../lib/cardCollapse.js';
-  import { generateWarmupSets, volumeDelta, resolveLoadType, resolveSetType, setKind, fmtSetLabel, rowShape, distanceUnitOf, fmtSetDuration, holdSides, parseDuration, lastCompletedSession, setReps } from '../../lib/workout.js';
+  import { generateWarmupSets, volumeDelta, resolveLoadType, resolveSetType, setKind, fmtSetLabel, rowShape, distanceUnitOf, fmtSetDuration, holdSides, parseDuration, lastCompletedSession, setReps, bestSet, repsLabel } from '../../lib/workout.js';
   import { exerciseLoadTypes, exerciseSetTypes, exerciseDistanceUnits, trackRpe } from '../../stores/settings.js';
   import { holdTimer, holdResult, startHold, stopHold, consumeHoldResult, holdMatches } from '../../stores/holdTimer.js';
   import { applyHold } from '../../lib/holdPhase.js';
@@ -41,6 +41,12 @@
   // PRs, or the "all done" auto-collapse signal.
   $: workingSets = sets.filter(s => !s.warmup);
   $: completedCount = workingSets.filter(s => s.completed).length;
+  // Best completed set, shown on the header only while collapsed. A rep set
+  // with no weight reads "BW×12", not "0×12".
+  $: best = !expanded ? bestSet(exercise, workingSets) : null;
+  $: bestLabel = !best ? ''
+    : setKind(exercise, best) === 'reps' && !Number(best.weight) ? `BW×${repsLabel(best)}`
+    : fmtSetLabel(exercise, best, distanceUnit);
   $: inSuperset = exercise.superset_id != null && exercise.superset_size > 1;
 
   // "Last time" ghost row — previous completed session for this exercise.
@@ -425,7 +431,7 @@
         </button>
       </div>
       <div class="ex-meta-row">
-        <span class="ex-meta">{completedCount}/{workingSets.length} sets</span>
+        <span class="ex-meta">{completedCount}/{workingSets.length} sets{#if bestLabel} · {bestLabel}{/if}</span>
         {#if exerciseMedia.length}
           <button type="button" class="ex-clip" on:click|stopPropagation={() => dispatch('openMedia', exerciseMedia[0])}
             title="Watch this set" aria-label="Watch this set">
@@ -590,7 +596,7 @@
     overflow: hidden;
     overflow-wrap: anywhere;
   }
-  .ex-meta { font-size: 12px; color: var(--text-3); }
+  .ex-meta { font-size: 12px; color: var(--text-3); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* Load-type chip — tiny pill next to the exercise name. Quiet (dashed
      border, muted color) when bilateral (the default); accent-styled
