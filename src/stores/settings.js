@@ -248,7 +248,7 @@ export const bannerAnimation = createSettingStore('bannerAnimation', 'shimmer');
 // embed code that still imports the symbol; new internal call sites
 // should read `bannerStyle` directly.
 export const pageBanners = derived(bannerStyle, $s => $s !== 'off');
-export const screenKeepAwake  = createSettingStore('screenKeepAwake',  false);
+export const screenKeepAwake  = createSettingStore('screenKeepAwake',  true);
 // Android-only, per-device biometric unlock for sign-in. Intentionally NOT
 // in SERVER_SETTINGS — each device opts in independently.
 export const biometricLoginEnabled = createSettingStore('biometricLoginEnabled', false);

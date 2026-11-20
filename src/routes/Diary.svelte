@@ -9,7 +9,9 @@
   import { isNative, getServerUrl } from '../lib/platform.js';
   import { currentDate, todayLog, loadWorkout, loadWorkoutSessions, saveWorkout, saveMadeTheFinish, completedSetsToday, activeProgram, loadActiveProgram, todayPrescription, todaySessions, currentSessionId, switchSession, startNewSession, deleteSession } from '../stores/workout.js';
   import { weightUnit, screenKeepAwake, pageBanners, bannerStyle, restTimerEnabled, restAutoStart, restDuration, autoFillLastWeights, showCompletionSummary, exerciseReorderMethod, autoCollapseCompleted, autoNameWorkouts, bodyStatsVisible, confirmExerciseRemoval, autoGenerateWarmups, exerciseLoadTypes, exerciseSetTypes, exerciseDistanceUnits, caloriesBurnedEnabled, currentWeightKg, heightCm, ntFederationEnabled, cardioEnabled } from '../stores/settings.js';
-  import { screenOn, enableWakeLock, disableWakeLock, toggleWakeLock } from '../stores/wakeLock.js';
+  import { get } from 'svelte/store';
+  import { shouldHoldScreen } from '../lib/wake-policy.js';
+  import { screenOn, wantScreenOn, enableWakeLock, disableWakeLock, toggleWakeLock } from '../stores/wakeLock.js';
   import { timerState, timerMs, pauseTimer, resetTimer, formatTimerMs } from '../stores/workoutTimer.js';
   import WorkoutSummary from '../components/diary/WorkoutSummary.svelte';
   import { celebrateWorkoutComplete, celebratePR, celebrateHoldPR, celebrateAmountPR, requestPermission } from '../lib/notifications.js';
@@ -946,11 +948,6 @@
     // Cache per-exercise previous bests for inline PR detection.
     loadPrevBests();
 
-    // Auto-enable wake lock if setting is on
-    if ($screenKeepAwake) {
-      enableWakeLock();
-    }
-
     document.addEventListener('visibilitychange', handleVisibility);
     _startDayTick();
 
@@ -1106,8 +1103,8 @@
   }
 
   onDestroy(() => {
-    // Don't release wake lock here — it persists across routes via the global store.
-    // Only disable if the user had auto-enable setting on (they can toggle manually too)
+    // Release only a lock this page took for the setting; a manual or hold lock is not ours.
+    if (tookWakeLock) { tookWakeLock = false; disableWakeLock(); }
     document.removeEventListener('visibilitychange', handleVisibility);
     window.removeEventListener('lt:sync-complete', _onSyncComplete);
     window.removeEventListener('lt:workout-opened', _onWorkoutOpened);
@@ -1190,6 +1187,18 @@
   }
 
   $: isToday = $currentDate === localDateStr();
+
+  // Keep-Awake follows the open workout, not the page: held from the first
+  // logged set until it is finished or the Diary is left. Runs only when the
+  // boolean flips, so a manual toggle-off sticks until the workout state changes.
+  let tookWakeLock = false;
+  $: wantWake = shouldHoldScreen($screenKeepAwake, stats.completed > 0, !!$todayLog?.completed, isToday);
+  $: syncWakeLock(wantWake);
+  function syncWakeLock(want) {
+    if (want && !tookWakeLock && !get(wantScreenOn)) { tookWakeLock = true; enableWakeLock(); }
+    else if (!want && tookWakeLock) { tookWakeLock = false; disableWakeLock(); }
+  }
+  function onWakeToggle() { tookWakeLock = false; toggleWakeLock(); }
   $: isFuture = $currentDate > localDateStr();
 
   function formatDateHeader(dateStr) {
@@ -2563,7 +2572,7 @@
         {#if !$todayLog?.completed}
           <WorkoutTimer bind:minutes={durationMin} on:update={e => updateDuration(e.detail)} />
         {/if}
-        <button class="wake-toggle tap" class:active={$screenOn} on:click={toggleWakeLock} title={$screenOn ? 'Screen lock on' : 'Screen lock off'}>
+        <button class="wake-toggle tap" class:active={$screenOn} on:click={onWakeToggle} title={$screenOn ? 'Screen lock on' : 'Screen lock off'}>
           <span class="material-symbols-rounded">
             {$screenOn ? 'stay_current_portrait' : 'screen_lock_portrait'}
           </span>

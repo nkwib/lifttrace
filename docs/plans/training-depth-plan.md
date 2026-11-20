@@ -44,12 +44,12 @@ both settings through both implementations rather than relaxing it.
 
 **Effort:** 1 day, most of it the sweep.
 
-### [ ] 2. Scope the wake lock to the workout, and default it on
+### [x] 2. Scope the wake lock to the workout, and default it on
 
 **Today:** more of this exists than it looks. `src/stores/wakeLock.js` works,
 `HoldTimer.svelte` takes the lock for the duration of a hold, and a `screenKeepAwake`
 setting (Settings, Workout) holds it for as long as the Diary is open
-(`Diary.svelte:747`). Two problems: it defaults to **off**, so the common case is
+(mount-time enable in `Diary.svelte`). Two problems: it defaults to **off**, so the common case is
 still unlocking the phone between sets, and it is scoped to the **page** rather than
 the workout, so it keeps burning battery while you browse last week and never
 releases when you finish.

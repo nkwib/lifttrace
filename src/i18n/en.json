@@ -2490,7 +2490,7 @@
       "weekly_desc":      "Target number of training days per week",
       "weekly_option":    "{n} workouts/week",
       "keep_awake":       "Screen Keep-Awake",
-      "keep_awake_desc":  "Keep the screen on during workouts",
+      "keep_awake_desc":  "Keep the screen on from your first logged set until the workout ends",
       "calorie_est":      "Show Calorie Estimate",
       "calorie_est_desc": "Approximate kcal per workout (Mifflin-St Jeor BMR + MET). Needs height, weight, date of birth, and sex set in Profile. Resistance-training estimates are loose by ±25%, treated as an \"~est\" badge in the UI, not a hard number.",
       "track_cardio":      "Track Cardio",
