@@ -358,7 +358,7 @@
     width: 2px; height: 10px; margin-top: -5px;
     transform: translateX(-1px);
     border-radius: 1px;
-    background: var(--text-3);
+    background: var(--text-4);
     opacity: 0.55;
     pointer-events: none;
   }

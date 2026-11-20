@@ -1060,11 +1060,11 @@
   /* Same rule as the sidebar and the rest of the app: amber when there is no
      network, red when the server can't be reached or is answering with errors. */
   .sync-connection-banner.wait {
-    color: var(--warning);
+    color: var(--warning-text);
     background: color-mix(in srgb, var(--warning) 8%, var(--surface-2));
     border-color: color-mix(in srgb, var(--warning) 25%, var(--border));
   }
-  .sync-connection-banner.wait .sync-banner-btn { color: var(--warning); }
+  .sync-connection-banner.wait .sync-banner-btn { color: var(--warning-text); }
 
   .sync-connection-banner {
     position: fixed;

@@ -380,11 +380,11 @@
   .sl-item.unmatched { border-color: color-mix(in srgb, var(--warning) 40%, var(--border)); }
   .sl-item-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
   .sl-item-name { flex: 1; font-size: 15px; font-weight: 700; color: var(--text-1); min-width: 0; }
-  .sl-item-name.sl-unmatched { color: var(--warning); font-style: italic; }
+  .sl-item-name.sl-unmatched { color: var(--warning-text); font-style: italic; }
   .sl-unmatched-badge {
     font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
     background: color-mix(in srgb, var(--warning) 20%, transparent);
-    color: var(--warning); padding: 2px 6px; border-radius: var(--radius-sm);
+    color: var(--warning-text); padding: 2px 6px; border-radius: var(--radius-sm);
   }
   .sl-ss-badge {
     font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;

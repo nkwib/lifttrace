@@ -1600,7 +1600,7 @@ import { onMount, onDestroy } from 'svelte';
   .goal-ring-num { font-size: 22px; font-weight: 800; color: var(--text-1); font-variant-numeric: tabular-nums; }
   .goal-ring-of  { font-size: 13px; color: var(--text-3); font-weight: 500; }
   .goal-ring-pct { font-size: 12px; font-weight: 700; color: var(--accent); }
-  .goal-ring-card.hit .goal-ring-pct { color: var(--success); }
+  .goal-ring-card.hit .goal-ring-pct { color: var(--success-text); }
   /* Excused (issue #121): days off the goal, and a fully excused week. */
   .goal-ring-excused { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--text-2); }
   .goal-ring-excused .material-symbols-rounded { font-size: 15px; color: var(--excused); }
@@ -1616,7 +1616,7 @@ import { onMount, onDestroy } from 'svelte';
     color: var(--text-3);
     font-variant-numeric: tabular-nums;
   }
-  .sc-delta.up   { color: var(--success); }
+  .sc-delta.up   { color: var(--success-text); }
   .sc-delta.down { color: var(--danger); }
 
   .summary-card {
@@ -1628,7 +1628,7 @@ import { onMount, onDestroy } from 'svelte';
   .sc-icon { font-size: 22px; color: var(--accent); margin-bottom: 2px; }
   .sc-value { font-size: 22px; font-weight: 800; color: var(--text-1); line-height: 1; }
   .sc-value-sm { font-size: 18px; font-weight: 700; color: var(--text-1); line-height: 1.2; }
-  .sc-value-sm.gain { color: var(--warning); }
+  .sc-value-sm.gain { color: var(--warning-text); }
   .sc-value-sm.loss { color: var(--info); }
   .sc-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
   .sc-spark { margin-top: 6px; width: 84px; max-width: 100%; opacity: 0.85; }
@@ -1782,9 +1782,9 @@ import { onMount, onDestroy } from 'svelte';
   }
   .bm-legend-swatch {
     width: 16px; height: 12px; border-radius: 3px;
-    border: 1px solid color-mix(in srgb, var(--text-3) 30%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-4) 30%, transparent);
   }
-  .bm-legend-swatch.l0 { background: color-mix(in srgb, var(--text-3) 25%, transparent); }
+  .bm-legend-swatch.l0 { background: color-mix(in srgb, var(--text-4) 25%, transparent); }
   .bm-legend-swatch.l1 { background: color-mix(in srgb, var(--accent) 25%, transparent); }
   .bm-legend-swatch.l2 { background: color-mix(in srgb, var(--accent) 50%, transparent); }
   .bm-legend-swatch.l3 { background: color-mix(in srgb, var(--accent) 75%, transparent); }
@@ -2115,7 +2115,7 @@ import { onMount, onDestroy } from 'svelte';
       color: var(--text-1);
       font-variant-numeric: tabular-nums;
     }
-    .rail-delta-val.up   { color: var(--success); }
+    .rail-delta-val.up   { color: var(--success-text); }
     .rail-delta-val.down { color: var(--danger);  }
     .rail-delta-note {
       font-size: 11px;

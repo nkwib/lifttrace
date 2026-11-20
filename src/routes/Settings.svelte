@@ -2255,7 +2255,7 @@
     background: color-mix(in srgb, var(--warning) 10%, transparent);
     border: 1px solid color-mix(in srgb, var(--warning) 25%, transparent);
     border-radius: var(--radius-md);
-    font-size: 13px; color: var(--warning);
+    font-size: 13px; color: var(--warning-text);
   }
   .btn-icon-toggle {
     background: none; border: none; cursor: pointer; color: var(--text-3);

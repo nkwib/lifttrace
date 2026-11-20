@@ -880,7 +880,7 @@
                     {#if p.status === 'pending'} · <span class="px-waiting">{$_('coaching.px_waiting')}</span>{/if}
                     {#if p.status === 'declined'} · <span style="color:var(--danger)">{$_('coaching.px_declined')}</span>{/if}
                     {#if p.status === 'accepted' && p.responded_at && p.completed !== 1} · {$_('coaching.px_accepted')}{/if}
-                    {#if p.completed === 1} · <span style="color:var(--success)">{$_('coaching.completed')}</span>{/if}
+                    {#if p.completed === 1} · <span style="color:var(--success-text)">{$_('coaching.completed')}</span>{/if}
                     <!-- Excused by the client (issue #121): why, instead of "missed". -->
                     {#if p.completed !== 1 && p.status !== 'declined' && p.excused_reason}{' · '}<span class="px-excused">{$_('excused.banner', { values: { reason: $_(`excused.reason.${p.excused_reason}`) } })}</span>{#if p.excused_note}{' '}({p.excused_note}){/if}
                     {:else if p.completed === 0 && p.status !== 'declined' && p.date && p.date < today} · <span style="color:var(--danger)">{$_('coaching.missed')}</span>{/if}
@@ -1375,7 +1375,7 @@
   }
   .list-row:last-child { border-bottom: none; }
   .row-icon { color: var(--text-3); font-size: 20px; flex-shrink: 0; }
-  .row-icon.done { color: var(--success); }
+  .row-icon.done { color: var(--success-text); }
   .row-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .row-title { font-size: 13px; font-weight: 600; color: var(--text-1); }
   .row-sub { font-size: 11px; color: var(--text-3); }

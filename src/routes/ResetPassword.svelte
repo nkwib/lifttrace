@@ -164,6 +164,6 @@
   .pw-strength.s-3 .pw-fill { background: var(--accent); }
   .pw-strength.s-4 .pw-fill { background: var(--success); }
   .pw-label { font-size: 11px; font-weight: 600; color: var(--text-3); min-width: 64px; text-align: right; }
-  .pw-strength.s-4 .pw-label { color: var(--success); }
+  .pw-strength.s-4 .pw-label { color: var(--success-text); }
   .pw-strength.s-0 .pw-label, .pw-strength.s-1 .pw-label { color: var(--danger); }
 </style>

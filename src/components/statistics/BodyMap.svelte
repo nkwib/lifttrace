@@ -76,7 +76,7 @@
   /* Inert parts (head, hair, hands, feet, knees, ankles) — always
      drawn as silhouette so the figure is recognisable. */
   .bm-sil {
-    fill: color-mix(in srgb, var(--text-3) 25%, transparent);
+    fill: color-mix(in srgb, var(--text-4) 25%, transparent);
     stroke: none;
   }
   /* Muscles — shaded by level. Same 5-step scale a heat-map would use
@@ -84,11 +84,11 @@
      Untrained (l0) is the same neutral as the inert silhouette so the
      eye focuses on what IS trained. */
   .bm-m {
-    stroke: color-mix(in srgb, var(--text-3) 30%, transparent);
+    stroke: color-mix(in srgb, var(--text-4) 30%, transparent);
     stroke-width: 0.5;
     transition: fill var(--dur-fast, 150ms);
   }
-  .bm-m.l0 { fill: color-mix(in srgb, var(--text-3) 25%, transparent); }
+  .bm-m.l0 { fill: color-mix(in srgb, var(--text-4) 25%, transparent); }
   .bm-m.l1 { fill: color-mix(in srgb, var(--accent) 25%, transparent); }
   .bm-m.l2 { fill: color-mix(in srgb, var(--accent) 50%, transparent); }
   .bm-m.l3 { fill: color-mix(in srgb, var(--accent) 75%, transparent); }

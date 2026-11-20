@@ -305,7 +305,7 @@
   }
   .gt-bar-end {
     width: 60px; height: 8px;
-    background: var(--text-3); border-radius: 4px;
+    background: var(--text-4); border-radius: 4px;
     flex-shrink: 0;
   }
   .gt-plate {
@@ -327,7 +327,7 @@
     border: 1px solid; font-size: 13px; font-weight: 600;
   }
 
-  .gt-remainder { font-size: 12px; color: var(--warning); }
+  .gt-remainder { font-size: 12px; color: var(--warning-text); }
   .gt-empty { font-size: 13px; color: var(--text-3); text-align: center; padding: 20px 0; }
 
   /* Converter */

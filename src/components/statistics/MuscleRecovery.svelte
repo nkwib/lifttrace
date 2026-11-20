@@ -136,13 +136,13 @@
   /* Head, neck and torso are one mass, so no separation stroke: one drawn
      between them reads as a collar and cuts a band across the jaw. */
   :global(.body-solid) {
-    fill: color-mix(in srgb, var(--text-3) 18%, transparent);
+    fill: color-mix(in srgb, var(--text-4) 18%, transparent);
     stroke: none;
   }
   /* Limbs are cut out of the card colour so they read as in front of the
      torso without needing an outline that also traces every other seam. */
   :global(.body-cut) {
-    fill: color-mix(in srgb, var(--text-3) 18%, transparent);
+    fill: color-mix(in srgb, var(--text-4) 18%, transparent);
     stroke: var(--surface-1);
     stroke-width: 1.1;
   }

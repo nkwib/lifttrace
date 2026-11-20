@@ -491,7 +491,7 @@
           <p class="cc-result">
             <span class="cc-result-count">{customCatalogResult.count}</span>
             {$_('settings_catalog.result.imported_to', { values: { name: customCatalogResult.catalogName } })}
-            {#if customCatalogResult.duplicates > 0}, <span style="color:var(--warning)">{customCatalogResult.duplicates}</span> {$_('settings_catalog.result.duplicates_skipped')}{/if}
+            {#if customCatalogResult.duplicates > 0}, <span style="color:var(--warning-text)">{customCatalogResult.duplicates}</span> {$_('settings_catalog.result.duplicates_skipped')}{/if}
             {#if customCatalogResult.skipped > 0}, <span style="color:var(--text-3)">{customCatalogResult.skipped}</span> {$_('settings_catalog.result.invalid_skipped')}{/if}
           </p>
         {/if}
@@ -682,7 +682,7 @@
     font-size: 12px;
     color: var(--text-2);
   }
-  .cc-result-count { color: var(--success); font-weight: 600; }
+  .cc-result-count { color: var(--success-text); font-weight: 600; }
 
   /* My Exercises rows */
   .my-ex-row {

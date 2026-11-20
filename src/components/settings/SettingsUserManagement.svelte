@@ -564,7 +564,7 @@
             {#if inviteResult}
               <div class="invite-result">
                 {#if inviteResult.sent}
-                  <span class="material-symbols-rounded" style="font-size:16px;color:var(--success)">check_circle</span>
+                  <span class="material-symbols-rounded" style="font-size:16px;color:var(--success-text)">check_circle</span>
                   <span>{$_('settings.users.invite_sent_to', { values: { email: inviteEmail || $_('settings.users.user_fallback') } })}</span>
                 {:else}
                   <span class="setting-hint" style="margin:0">{$_('settings.users.share_link_intro')}</span>

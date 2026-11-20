@@ -180,7 +180,7 @@
   }
   .hold-head { display: flex; align-items: baseline; gap: 8px; max-width: 100%; }
   .hold-label { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; color: var(--accent); }
-  .past-target .hold-label { color: var(--success); }
+  .past-target .hold-label { color: var(--success-text); }
   .hold-exercise {
     font-size: 12px; color: var(--text-2);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -195,7 +195,7 @@
   }
   .hold-clock.lead { color: var(--accent); cursor: pointer; }
   .hold-sub { font-size: 12px; color: var(--text-3); }
-  .past-target .hold-sub { color: var(--success); font-weight: 600; }
+  .past-target .hold-sub { color: var(--success-text); font-weight: 600; }
 
   .hold-actions { display: flex; gap: 8px; width: 100%; margin-top: 8px; }
   .hold-btn {

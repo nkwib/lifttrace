@@ -75,7 +75,7 @@ test('an untrained muscle is still distinguishable from the body', () => {
 
   const bodyPct = Number(
     readFileSync(new URL('../src/components/statistics/MuscleRecovery.svelte', import.meta.url), 'utf8')
-      .match(/\.body-solid\)\s*\{\s*fill: color-mix\(in srgb, var\(--text-3\) (\d+)%/)[1],
+      .match(/\.body-solid\)\s*\{\s*fill: color-mix\(in srgb, var\(--text-4\) (\d+)%/)[1],
   );
   const untrainedPct = Number(untrained.match(/(\d+)%/)[1]);
   assert.ok(untrainedPct >= bodyPct + 10,

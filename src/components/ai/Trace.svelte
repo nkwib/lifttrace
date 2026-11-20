@@ -1106,7 +1106,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
     box-shadow: 0 0 24px color-mix(in srgb, var(--danger) 70%, transparent);
   }
   .lb-fab.recording.cancel-preview {
-    background: var(--text-3);
+    background: var(--text-4);
     animation: none;
     opacity: 0.6;
     box-shadow: none;
@@ -1212,7 +1212,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
   .lb-drag-handle {
     width: 40px; height: 4px;
     border-radius: 2px;
-    background: var(--text-3);
+    background: var(--text-4);
     opacity: 0.4;
     margin: 8px auto 4px;
   }
@@ -1408,7 +1408,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
   .lb-dot {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: var(--text-3);
+    background: var(--text-4);
     animation: lb-bounce 1.4s ease-in-out infinite;
   }
   .lb-dot:nth-child(2) { animation-delay: 0.2s; }

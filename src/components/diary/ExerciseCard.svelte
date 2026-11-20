@@ -666,7 +666,7 @@
     background: var(--surface-2);
     font-variant-numeric: tabular-nums;
   }
-  .vol-delta.up { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); }
+  .vol-delta.up { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success-text); }
   .vol-delta.down { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); }
 
   .progression-chip {

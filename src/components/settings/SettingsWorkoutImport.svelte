@@ -153,7 +153,7 @@
             </ol>
           {:else if importResult}
             <div class="result-card ok">
-              <span class="material-symbols-rounded" style="font-size:28px;color:var(--success)">check_circle</span>
+              <span class="material-symbols-rounded" style="font-size:28px;color:var(--success-text)">check_circle</span>
               <div>
                 <div class="result-title">{$_('settings_workout_import.imported', { values: { count: importResult.imported } })}</div>
                 <div class="result-sub">

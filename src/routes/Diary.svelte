@@ -4166,7 +4166,7 @@
   .finish-btn .material-symbols-rounded { font-size: 20px; }
   .finish-btn.reopen {
     background: var(--surface-1);
-    color: var(--success);
+    color: var(--success-text);
     border: 1px solid var(--success);
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--success) 18%, transparent);
   }
@@ -4439,7 +4439,7 @@
   }
   .coach-banner.loaded { border-color: var(--success); background: linear-gradient(135deg, color-mix(in srgb, var(--success) 14%, transparent), transparent); }
   .coach-icon { font-size: 22px; color: var(--accent); flex-shrink: 0; }
-  .coach-banner.loaded .coach-icon { color: var(--success); }
+  .coach-banner.loaded .coach-icon { color: var(--success-text); }
   .coach-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .coach-title { font-size: 13px; color: var(--text-1); line-height: 1.4; }
   .coach-title strong { font-weight: 700; }
@@ -4455,7 +4455,7 @@
     display: inline-flex; align-items: center; gap: 4px;
     padding: 5px 10px; border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--success) 16%, transparent);
-    color: var(--success); font-size: 11px; font-weight: 700;
+    color: var(--success-text); font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0;
   }
 
@@ -5218,7 +5218,7 @@
       background: var(--border);
       border-radius: var(--radius-full);
     }
-    :global(html.wide-content) .diary-right-rail::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+    :global(html.wide-content) .diary-right-rail::-webkit-scrollbar-thumb:hover { background: var(--text-4); }
     /* Widgets keep natural size; rail scrolls internally when the
        stack exceeds max-height. :global(*) because widget component
        roots (BodyStatsWidget, GymTools) don't carry Diary's scoping

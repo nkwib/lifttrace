@@ -917,7 +917,7 @@
     color: var(--text-3); padding: 4px;
     transition: color var(--dur-fast);
   }
-  .check-btn.checked { color: var(--success); }
+  .check-btn.checked { color: var(--success-text); }
   .check-btn:active { transform: scale(0.9); }
 
   .remove-btn {

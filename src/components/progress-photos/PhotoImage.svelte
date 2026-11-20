@@ -116,7 +116,7 @@
     width: 100%; height: 100%;
     background: linear-gradient(90deg,
       var(--surface-2) 25%,
-      color-mix(in srgb, var(--text-3) 12%, var(--surface-2)) 37%,
+      color-mix(in srgb, var(--text-4) 12%, var(--surface-2)) 37%,
       var(--surface-2) 63%);
     background-size: 400% 100%;
     animation: pi-shimmer 1.4s ease infinite;

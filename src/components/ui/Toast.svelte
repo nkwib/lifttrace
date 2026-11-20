@@ -62,7 +62,7 @@
   .toast--success { border-color: rgba(79,255,176,0.25); }
   .toast--error   { border-color: rgba(255,92,92,0.25); }
   .toast-icon { font-size: 18px; flex-shrink: 0; }
-  .toast--success .toast-icon { color: var(--success); }
+  .toast--success .toast-icon { color: var(--success-text); }
   .toast--error   .toast-icon { color: var(--danger); }
   .toast-msg { flex: 1; }
   .toast-action {

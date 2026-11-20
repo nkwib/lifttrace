@@ -635,7 +635,7 @@
     text-transform: uppercase;
     padding: 2px 6px;
     border-radius: var(--radius-sm, 4px);
-    background: color-mix(in srgb, var(--text-3) 18%, transparent);
+    background: color-mix(in srgb, var(--text-4) 18%, transparent);
     color: var(--text-3);
   }
   .oidc-test-result {

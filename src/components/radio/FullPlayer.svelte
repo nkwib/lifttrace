@@ -290,7 +290,7 @@
   .fp-handle {
     width: 40px; height: 4px;
     border-radius: 2px;
-    background: var(--text-3); opacity: 0.4;
+    background: var(--text-4); opacity: 0.4;
     margin: 10px auto 20px;
   }
   @media (min-width: 769px) { .fp-handle { display: none; }

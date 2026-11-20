@@ -1809,7 +1809,7 @@
   .rb-search-input::-webkit-search-decoration { -webkit-appearance: none; display: none; }
   .rb-search-clear {
     width: 24px; height: 24px; border-radius: 50%;
-    background: var(--text-3); color: var(--surface-1);
+    background: var(--text-4); color: var(--surface-1);
     border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; opacity: 0.7;

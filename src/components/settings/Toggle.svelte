@@ -54,7 +54,7 @@
     width: 20px;
     height: 20px;
     border-radius: var(--radius-full);
-    background: var(--text-3);
+    background: var(--text-4);
     transition: transform var(--dur-base) var(--ease-spring),
                 background var(--dur-base) var(--ease-out);
     box-shadow: var(--shadow-sm);

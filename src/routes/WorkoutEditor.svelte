@@ -1270,7 +1270,7 @@
     background: color-mix(in srgb, var(--warning) 10%, transparent);
     border: 1px solid color-mix(in srgb, var(--warning) 25%, transparent);
     border-radius: var(--radius-md);
-    font-size: 13px; color: var(--warning);
+    font-size: 13px; color: var(--warning-text);
   }
   .page { min-height: 100dvh; background: var(--bg); padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + var(--mini-player-h, 0px) + 16px); }
 

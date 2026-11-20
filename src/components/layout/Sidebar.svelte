@@ -318,12 +318,12 @@
   }
   .sync-row .material-symbols-rounded { font-size: 15px; color: var(--text-3); flex-shrink: 0; }
   .sync-row-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .sync-row.ok .material-symbols-rounded { color: var(--success); }
+  .sync-row.ok .material-symbols-rounded { color: var(--success-text); }
   .sync-row.wait {
     background: color-mix(in srgb, var(--warning) 14%, transparent);
-    color: var(--warning);
+    color: var(--warning-text);
   }
-  .sync-row.wait .material-symbols-rounded { color: var(--warning); }
+  .sync-row.wait .material-symbols-rounded { color: var(--warning-text); }
   .sync-row.bad {
     background: color-mix(in srgb, var(--danger) 15%, transparent);
     color: var(--danger);
