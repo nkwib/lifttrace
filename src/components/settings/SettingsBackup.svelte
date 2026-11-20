@@ -11,6 +11,9 @@
   import { showSuccess, showError } from '../../stores/toast.js';
   import Dialog from '../ui/Dialog.svelte';
   import TimePicker from '../ui/TimePicker.svelte';
+  import Spinner from '../ui/Spinner.svelte';
+  import { LtApi } from '../../lib/api.js';
+  import { exportAllWorkoutsCsv } from '../../lib/workoutCsv.js';
   import { isNative, getNativeMode } from '../../lib/platform.js';
   import {
     localBackupSchedule, localBackupTime, localBackupRetention,
@@ -41,6 +44,32 @@
   // Auto Backup config renders in both modes from different sources.
   const _isNativeLocal = isNative && getNativeMode() === 'local';
   $: serverEnabled = !_isNativeLocal;
+
+  // Export every workout as one CSV. Works in local and server mode.
+  let exportingCsv = false;
+  async function exportAllCsv() {
+    if (exportingCsv) return;
+    exportingCsv = true;
+    try {
+      const all = await LtApi.getRecentWorkouts(20000);
+      const workouts = (all || [])
+        .filter(w => w && !w.deleted_at && (w.exercises || []).length > 0)
+        .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      if (!workouts.length) { showError($_('settings_backup.toast.no_workouts')); return; }
+      let libLoadTypes = null;
+      try {
+        libLoadTypes = new Map();
+        for (const e of (await LtApi.listExercises()) || []) {
+          if (e?.id != null && e.load_type) libLoadTypes.set(e.id, e.load_type);
+        }
+      } catch {}
+      await exportAllWorkoutsCsv(workouts, $weightUnit, libLoadTypes);
+    } catch (e) {
+      showError(e?.message || $_('settings_backup.toast.export_failed'));
+    } finally {
+      exportingCsv = false;
+    }
+  }
 
   // Scheduled-backup state — TraceApps parity with NT + CT.
   let scheduleCfg = null;
@@ -413,6 +442,22 @@
           </div>
         </div>
       {/if}
+
+      <p class="sub-label">{$_('settings_backup.sections.export')}</p>
+      <div class="card">
+        <button class="setting-row setting-action" on:click={exportAllCsv} disabled={exportingCsv}>
+          <span class="material-symbols-rounded">csv</span>
+          <div class="setting-label-group">
+            <span class="setting-label">{$_('settings_backup.export.all_csv')}</span>
+            <div class="setting-desc">{$_('settings_backup.export.all_csv_desc')}</div>
+          </div>
+          {#if exportingCsv}
+            <Spinner size="sm" inline />
+          {:else}
+            <span class="material-symbols-rounded" style="font-size:18px;flex-shrink:0">download</span>
+          {/if}
+        </button>
+      </div>
 
       {#if serverEnabled}
       <p class="sub-label">{$_('settings_backup.sections.full_backup')}</p>

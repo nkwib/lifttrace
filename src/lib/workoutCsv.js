@@ -56,14 +56,16 @@ function _row(values) {
  * — matches pre-issue-#24 semantics for any caller that hasn't been
  * updated yet.
  */
-export function workoutToCsv(workout, weightUnit = 'lbs', libraryLoadTypes) {
-  const header = [
-    'date', 'workout', 'exercise', 'exercise_index', 'superset',
-    'set_index', 'warmup', 'reps', 'weight', 'weight_unit', 'side',
-    'rpe', 'completed', 'set_notes', 'exercise_notes', 'workout_notes',
-    'workout_duration_min', 'duration_sec', 'distance_m', 'calories',
-  ];
-  const lines = [_row(header)];
+const HEADER = [
+  'date', 'workout', 'exercise', 'exercise_index', 'superset',
+  'set_index', 'warmup', 'reps', 'weight', 'weight_unit', 'side',
+  'rpe', 'completed', 'set_notes', 'exercise_notes', 'workout_notes',
+  'workout_duration_min', 'duration_sec', 'distance_m', 'calories',
+];
+
+/** Data rows (no header) for one workout; see workoutToCsv for libraryLoadTypes. */
+export function workoutRows(workout, weightUnit = 'lbs', libraryLoadTypes) {
+  const lines = [];
 
   const date = workout?.date || '';
   const wName = workout?.name || '';
@@ -144,10 +146,29 @@ export function workoutToCsv(workout, weightUnit = 'lbs', libraryLoadTypes) {
     });
   });
 
+  return lines;
+}
+
+export function workoutToCsv(workout, weightUnit = 'lbs', libraryLoadTypes) {
+  const date = workout?.date || '';
+  const wName = workout?.name || '';
+  const lines = [_row(HEADER), ...workoutRows(workout, weightUnit, libraryLoadTypes)];
   const csv = lines.join('\r\n') + '\r\n';
   const safeName = (wName || 'workout').replace(/[^a-z0-9_-]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'workout';
   const filename = `lifttrace-${date || 'untitled'}-${safeName}.csv`;
   return { csv, filename };
+}
+
+/**
+ * Many workouts, one header. Rows keep the order given. Empty list is the
+ * header only. Same-date workouts are told apart by the workout column.
+ * workout_duration_min is the stored duration_min, which can differ from
+ * the value WorkoutSummary derives from set timestamps for single export.
+ */
+export function workoutsToCsv(workouts, weightUnit = 'lbs', libraryLoadTypes) {
+  const lines = [_row(HEADER)];
+  for (const w of workouts || []) lines.push(...workoutRows(w, weightUnit, libraryLoadTypes));
+  return lines.join('\r\n') + '\r\n';
 }
 
 function withSide(tail, side) {
@@ -163,7 +184,16 @@ function withSide(tail, side) {
  */
 export async function exportWorkoutCsv(workout, weightUnit = 'lbs', libraryLoadTypes) {
   const { csv, filename } = workoutToCsv(workout, weightUnit, libraryLoadTypes);
+  return deliverCsv(csv, filename, 'LiftTrace workout', 'Save workout CSV');
+}
 
+export async function exportAllWorkoutsCsv(workouts, weightUnit = 'lbs', libraryLoadTypes) {
+  const csv = workoutsToCsv(workouts, weightUnit, libraryLoadTypes);
+  const filename = `lifttrace-workouts-${new Date().toISOString().slice(0, 10)}.csv`;
+  return deliverCsv(csv, filename, 'LiftTrace workouts', 'Save workouts CSV');
+}
+
+async function deliverCsv(csv, filename, shareTitle, dialogTitle) {
   if (isNative) {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem');
     const { Share } = await import('@capacitor/share');
@@ -178,10 +208,10 @@ export async function exportWorkoutCsv(workout, weightUnit = 'lbs', libraryLoadT
     });
     try {
       await Share.share({
-        title: 'LiftTrace workout',
+        title: shareTitle,
         text: filename,
         url: writeRes?.uri,
-        dialogTitle: 'Save workout CSV',
+        dialogTitle,
       });
     } catch {
       // User dismissed the share sheet — the file is still on device.

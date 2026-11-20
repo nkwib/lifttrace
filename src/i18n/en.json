@@ -2103,9 +2103,12 @@
       "data_cleared":           "All workout data cleared",
       "backup_failed": "Backup failed",
       "restore_failed": "Restore failed",
-      "file_too_large": "File too large"
+      "file_too_large": "File too large",
+      "no_workouts": "No workouts to export",
+      "export_failed": "Export failed"
     },
     "sections": {
+      "export":                 "Export",
       "auto_backup":            "Auto Backup",
       "full_backup":            "Full Backup",
       "danger_zone":            "Danger Zone"
@@ -2130,6 +2133,10 @@
       "retention_note_plural":  "Keeps the {n} newest backups, older archives prune automatically after each run.",
       "retention_note_local":         "Keeps the {n} newest auto-backup, manual exports are never pruned.",
       "retention_note_local_plural":  "Keeps the {n} newest auto-backups, manual exports are never pruned."
+    },
+    "export": {
+      "all_csv":                "Export all workouts (CSV)",
+      "all_csv_desc":           "One file, one row per set, oldest first."
     },
     "full": {
       "desc":                   "A complete snapshot of everything: all workout data, programs, exercises, settings, and uploaded images. Saved on the server and available to download or restore at any time.",

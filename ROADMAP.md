@@ -394,7 +394,7 @@ Long-format CSV (one row per set) downloads from WorkoutSummary. PWA path is a d
 PNG render from completion summary.
 
 ### Per-entity CSV/JSON export
-Not started in the app. Workouts.csv, programs.json, exercises.csv separate from the full-backup ZIP; CSV export is still one workout at a time. Since v1.3.0 the REST API reads the same data for scripts.
+Partly done: Settings > Backup exports all workouts as one CSV. Not started: programs.json, exercises.csv separate from the full-backup ZIP. Since v1.3.0 the REST API reads the same data for scripts.
 
 ---
 
