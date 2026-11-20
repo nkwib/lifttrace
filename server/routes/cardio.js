@@ -164,7 +164,7 @@ router.get('/stats/weekly', wrap((req, res) => {
   const rows = userId != null
     ? db.prepare('SELECT date, duration_min FROM cardio_log WHERE user_id = ? AND date BETWEEN ? AND ?').all(userId, start, end)
     : db.prepare('SELECT date, duration_min FROM cardio_log WHERE user_id IS NULL AND date BETWEEN ? AND ?').all(start, end);
-  const startsOn = userWeekStart(userId);
+  const startsOn = userWeekStart(userId, req.query.week_start);
   const byWeek = {};
   for (const row of rows) {
     const weekStart = _weekStart(row.date, startsOn);

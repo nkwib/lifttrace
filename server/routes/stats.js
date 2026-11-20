@@ -58,7 +58,7 @@ router.get('/volume', wrap((req, res) => {
   const { start, end } = req.query;
   const rows = getWorkouts(uid(req), start, end);
   const libMap = loadLibraryLoadTypes();
-  const startsOn = userWeekStart(uid(req));
+  const startsOn = userWeekStart(uid(req), req.query.week_start);
   const byWeek = {};
   for (const row of rows) {
     const weekStart = _weekStart(row.date, startsOn);
@@ -76,7 +76,7 @@ router.get('/volume', wrap((req, res) => {
 router.get('/frequency', wrap((req, res) => {
   const { start, end, cardio } = req.query;
   const days = trainedDateSet(uid(req), { start, end, cardio });
-  res.json(trainedDaysByWeek(days, start, end, userWeekStart(uid(req))));
+  res.json(trainedDaysByWeek(days, start, end, userWeekStart(uid(req), req.query.week_start)));
 }));
 
 // GET /api/stats/records — personal records per exercise

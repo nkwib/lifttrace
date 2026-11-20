@@ -2,6 +2,8 @@
  * api.js — LiftTrace API client
  */
 import { planWeekQuery } from './plan-week-query.js';
+import { DB } from './db.js';
+import { normalizeWeekStart } from './week-start.js';
 
 async function _json(res) {
   const data = await res.json();
@@ -17,6 +19,13 @@ async function _json(res) {
 }
 
 const opts = { credentials: 'include' };
+// The week start for weekly buckets. The server only has it with accounts, so
+// send it always (ignored there) to keep server and Statistics keys aligned.
+const _weekStartQ = () => {
+  let v = 'monday';
+  try { v = DB.getSetting('weekStartsOn', 'monday'); } catch { /* no storage: Monday */ }
+  return `week_start=${normalizeWeekStart(v)}`;
+};
 // Whether cardio counts as training (Track Cardio), for the statistics that
 // count trained days. Said by the app: without accounts the switch lives
 // only on this device (server/lib/trained-days.js cardioCounts).
@@ -145,8 +154,8 @@ export const LtApi = {
     fetch('/api/set-media/cleanup', { ...jsonOpts, method: 'POST', body: JSON.stringify({ before }) }).then(_json),
 
   // ── Statistics ─────────────────────────────────────────────────────────
-  getVolume: (start, end) => fetch(`/api/stats/volume?start=${start}&end=${end}`, opts).then(_json),
-  getFrequency: (start, end, cardio) => fetch(`/api/stats/frequency?start=${start}&end=${end}${cardio == null ? '' : '&' + _cardio(cardio)}`, opts).then(_json),
+  getVolume: (start, end) => fetch(`/api/stats/volume?start=${start}&end=${end}&${_weekStartQ()}`, opts).then(_json),
+  getFrequency: (start, end, cardio) => fetch(`/api/stats/frequency?start=${start}&end=${end}&${_weekStartQ()}${cardio == null ? '' : '&' + _cardio(cardio)}`, opts).then(_json),
   getRecords: () => fetch('/api/stats/records', opts).then(_json),
   getProgress: (exerciseId, start, end) => fetch(`/api/stats/progress/${exerciseId}?start=${start}&end=${end}`, opts).then(_json),
   getStreaks: (cardio) => fetch(`/api/stats/streaks${cardio == null ? '' : '?' + _cardio(cardio)}`, opts).then(_json),
@@ -162,7 +171,7 @@ export const LtApi = {
   createCardio: (data) => fetch('/api/cardio', { ...jsonOpts, method: 'POST', body: JSON.stringify(data) }).then(_json),
   updateCardio: (id, data) => fetch(`/api/cardio/${id}`, { ...jsonOpts, method: 'PUT', body: JSON.stringify(data) }).then(_json),
   deleteCardio: (id) => fetch(`/api/cardio/${id}`, { ...opts, method: 'DELETE' }).then(_json),
-  getCardioWeekly: (start, end) => fetch(`/api/cardio/stats/weekly?start=${start}&end=${end}`, opts).then(_json),
+  getCardioWeekly: (start, end) => fetch(`/api/cardio/stats/weekly?start=${start}&end=${end}&${_weekStartQ()}`, opts).then(_json),
   getCardioTemplates: () => fetch('/api/cardio/templates', opts).then(_json),
   toggleCardioTemplate: (id, is_template) => fetch(`/api/cardio/${id}`, { ...jsonOpts, method: 'PUT', body: JSON.stringify({ is_template: is_template ? 1 : 0 }) }).then(_json),
   getWeekdayDistribution: (start, end, cardio) => fetch(`/api/stats/weekday-distribution?start=${start}&end=${end}${cardio == null ? '' : '&' + _cardio(cardio)}`, opts).then(_json),

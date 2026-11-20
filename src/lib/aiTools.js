@@ -1186,6 +1186,9 @@ async function _getCardio({ date_from, date_to, activity } = {}) {
 // Track Cardio (Settings > Workout) as this device has it: the value the
 // Diary shows the Cardio card by, read from this device's settings so it
 // holds offline and in the Android app with no server.
+function _weekStartVal() {
+  try { return normalizeWeekStart(DB.getSetting('weekStartsOn', 'monday')); } catch { return 'monday'; }
+}
 function _cardioOn() {
   try { return !!DB.getSetting('cardioEnabled', false); } catch { return false; }
 }
@@ -1235,8 +1238,8 @@ async function _getStatsOverview({ range } = {}) {
   const cardio = _cardioOn() ? 1 : 0;
   const [streaks, volume, frequency, muscleSets, records, excused] = await Promise.all([
     _get(`/api/stats/streaks?cardio=${cardio}`).catch(() => ({})),
-    _get(`/api/stats/volume?start=${from}&end=${to}`).catch(() => []),
-    _get(`/api/stats/frequency?start=${from}&end=${to}&cardio=${cardio}`).catch(() => []),
+    _get(`/api/stats/volume?start=${from}&end=${to}&week_start=${_weekStartVal()}`).catch(() => []),
+    _get(`/api/stats/frequency?start=${from}&end=${to}&cardio=${cardio}&week_start=${_weekStartVal()}`).catch(() => []),
     _get(`/api/stats/muscle-effective-sets?start=${from}&end=${to}`).catch(() => ({})),
     _get('/api/stats/records').catch(() => []),
     _get('/api/excused-days').catch(() => []),

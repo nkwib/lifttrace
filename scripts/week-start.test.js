@@ -131,9 +131,9 @@ test("the server reads each user's setting, Monday when unset or invalid", { ski
 test('every weekly bucket and the setting are wired to the one rule', () => {
   const stats = read('../server/routes/stats.js');
   const cardio = read('../server/routes/cardio.js');
-  assert.match(stats, /userWeekStart\(uid\(req\)\)/);
+  assert.match(stats, /userWeekStart\(uid\(req\), req.query.week_start\)/);
   assert.match(stats, /trainedDaysByWeek\(days, start, end, userWeekStart/);
-  assert.match(cardio, /userWeekStart\(userId\)/);
+  assert.match(cardio, /userWeekStart\(userId, req.query.week_start\)/);
   assert.match(read('../server/routes/settings.js'), /key === 'weekStartsOn' && !WEEK_STARTS\.includes\(value\)/);
   assert.match(read('../src/stores/settings.js'), /'dateFormat', 'timeFormat', 'weekStartsOn'/);
   assert.match(read('../src/components/settings/SettingsUnits.svelte'), /bind:value=\{\$weekStartsOn\}/);
@@ -144,4 +144,20 @@ test('every weekly bucket and the setting are wired to the one rule', () => {
   for (const f of ['../src/lib/trained-day.js', '../server/routes/stats.js', '../server/routes/cardio.js', '../src/lib/api-native.js']) {
     assert.doesNotMatch(read(f), /day === 0 \? 6 : day - 1/, f);
   }
+});
+
+test('no accounts: week_start query is honoured when valid; accounts ignore it', { skip: !ready && 'server packages missing' }, async () => {
+  const { userWeekStart } = await import('../server/lib/week-start-pref.js');
+  assert.equal(userWeekStart(null, 'sunday'), 'sunday');
+  assert.equal(userWeekStart(null, 'monday'), 'monday');
+  assert.equal(userWeekStart(null, 'friday'), 'monday');
+  assert.equal(userWeekStart(null, ['sunday']), 'monday');
+  assert.equal(userWeekStart(null, undefined), 'monday');
+  assert.equal(userWeekStart(999999, 'sunday'), 'monday');
+});
+
+test('the client sends week_start to every weekly endpoint', () => {
+  const api = read('../src/lib/api.js');
+  assert.match(api, /DB\.getSetting\('weekStartsOn', 'monday'\)/);
+  for (const re of [/stats\/volume\?[^`]*_weekStartQ/, /stats\/frequency\?[^`]*_weekStartQ/, /cardio\/stats\/weekly\?[^`]*_weekStartQ/]) assert.match(api, re);
 });
