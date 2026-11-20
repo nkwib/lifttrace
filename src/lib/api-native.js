@@ -11,6 +11,7 @@
  * a friendly error so the UI can render an "offline / standalone" hint.
  */
 
+import { uniqueByActivity } from './cardio-templates.js';
 import {
   dbQuery,
   dbRun,
@@ -1192,7 +1193,8 @@ const Cardio = {
     return dbQuery(`SELECT * FROM cardio_log WHERE user_id = ? AND date = ? ORDER BY id ASC`, [ME, date]);
   },
   async templates() {
-    return dbQuery(`SELECT * FROM cardio_log WHERE user_id = ? AND is_template = 1 ORDER BY updated_at DESC, id DESC`, [ME]);
+    const rows = await dbQuery(`SELECT * FROM cardio_log WHERE user_id = ? AND is_template = 1 ORDER BY updated_at DESC, id DESC`, [ME]);
+    return uniqueByActivity(rows);
   },
   async create(body) {
     const { date, activity, duration_min: dm, distance: dist, distance_unit: unit, avg_hr: hr, notes, is_template: isTpl } = normalizeCardioInput(body || {});
