@@ -43,6 +43,38 @@ function _inLanguage(e) {
 }
 const _stoppedShort = (why) => _inLanguage(stoppedShortError(why));
 
+// How long one request to a provider (or the proxy) may take, answer read
+// included. As long as the proxy's own wait (apiFetch), so a slow local model
+// is not cut off earlier than before.
+export const AI_DEADLINE_MS = 300000;
+// Stopped by the person: callers treat it as a quiet cancel, never an error to show.
+const _abortError = () => new DOMException('Stopped.', 'AbortError');
+const _throwIfAborted = (signal) => { if (signal?.aborted) throw _abortError(); };
+/**
+ * Runs `fn(signal)` with a deadline joined to the caller's `signal` by hand
+ * (AbortSignal.any is missing on older WebViews). The caller's stop, however
+ * the fetch reports it (native fetch may name it differently), is an
+ * AbortError; running out of time is trace_timed_out.
+ */
+export async function _timed(signal, fn, ms = AI_DEADLINE_MS) {
+  _throwIfAborted(signal);
+  const ctl = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; ctl.abort(); }, ms);
+  const onAbort = () => ctl.abort();
+  signal?.addEventListener('abort', onAbort, { once: true });
+  try {
+    return await fn(ctl.signal);
+  } catch (err) {
+    _throwIfAborted(signal);
+    if (timedOut) throw _inLanguage(Object.assign(new Error("Trace didn't get an answer in time. Try again, or ask for less at once."), { code: 'trace_timed_out' }));
+    throw err;
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', onAbort);
+  }
+}
+
 // Rounds of tool calls in one answer. Going through a lot of training (a
 // page of workouts, the next page, the PRs...) needs more than a handful
 // (TraceApps/notetrace#34); a model that loops forever still stops.
@@ -89,7 +121,9 @@ const _repeatGuard = (tools) => {
 const _failed = (r) => !!r && typeof r === 'object' && !Array.isArray(r) && r.error != null;
 // What the last request says: out of rounds, and the tool a model got stuck on.
 const _lastNote = (guard) => (guard.stuck ? `${OUT_OF_ROUNDS}\n\n${toolStuckNote(guard.stuck)}` : OUT_OF_ROUNDS);
-async function _runTool(onToolCall, onToolResult, name, args, budget, guard) {
+// A tool already running can't be stopped; one not yet started is not run.
+async function _runTool(onToolCall, onToolResult, name, args, budget, guard, signal) {
+  _throwIfAborted(signal);
   if (budget.left <= 0) return { error: TOOL_SKIPPED };
   if (guard && guard.check(name, args) !== 'run') return { error: TOOL_REPEATED };
   const result = onToolCall ? await _safeExec(onToolCall, name, args) : { error: 'Tool handler not registered' };
@@ -158,14 +192,14 @@ export async function fetchProvider(url, init) {
   }
 }
 
-export async function callAI({ provider, apiKey, model, messages, systemPrompt, tools, onToolCall, onToolResult, onToolsUnsupported, baseUrl }) {
+export async function callAI({ provider, apiKey, model, messages, systemPrompt, tools, onToolCall, onToolResult, onToolsUnsupported, baseUrl, signal }) {
   // The 'oai-compat' provider points at any /v1/chat/completions endpoint.
   // Local endpoints (Ollama default) don't need an API key; cloud ones do.
   // Other providers still require a key.
   if (!apiKey && provider !== 'oai-compat') {
     throw new Error('No API key configured. Add one in Settings → AI Assistant.');
   }
-  const cb = { onToolCall, onToolResult, onToolsUnsupported };
+  const cb = { onToolCall, onToolResult, onToolsUnsupported, signal };
   switch (provider) {
     case 'claude':     return _callClaudeWithTools(apiKey, model, messages, systemPrompt, tools, cb);
     case 'openai':     return _callOpenAIWithTools(apiKey, renamedModel(model), messages, systemPrompt, tools, cb, 'https://api.openai.com');
@@ -199,7 +233,7 @@ export async function callAI({ provider, apiKey, model, messages, systemPrompt, 
  * (cookies don't survive Android WebView reloads). Without the Bearer
  * header, env-locked AI calls from Android return 401.
  */
-export async function callAIProxy({ messages, systemPrompt, tools, onToolCall, onToolResult, onToolsUnsupported }) {
+export async function callAIProxy({ messages, systemPrompt, tools, onToolCall, onToolResult, onToolsUnsupported, signal }) {
   const { apiUrl, isNative, getServerUrl, getAuthToken } = await import('./platform.js');
 
   // Server proxy expects OpenAI wire shape regardless of the env-locked
@@ -222,20 +256,26 @@ export async function callAIProxy({ messages, systemPrompt, tools, onToolCall, o
       const token = getAuthToken();
       if (token) headers['Authorization'] = `Bearer ${token}`;
     }
-    const res = await fetch(apiUrl('/api/ai/chat'), {
-      method: 'POST',
-      credentials: 'include',
-      headers,
-      // Out of rounds: told to answer in the system prompt, which a server
-      // from before `last` passes on too.
-      body: JSON.stringify({
-        messages: currentMessages,
-        systemPrompt: last ? `${systemPrompt}\n\n${_lastNote(guard)}${dropped.length ? `\n\n${TOOLS_DROPPED} ${dropped.join(', ')}.` : ''}` : systemPrompt,
-        tools,
-        ...(last ? { last: true } : {}),
-      }),
+    // apiFetch can answer a stopped request as a 503 instead of throwing, so
+    // the stop is checked on both sides of the read.
+    const { res, data } = await _timed(signal, async (sig) => {
+      const res = await fetch(apiUrl('/api/ai/chat'), {
+        method: 'POST',
+        credentials: 'include',
+        signal: sig,
+        headers,
+        // Out of rounds: told to answer in the system prompt, which a server
+        // from before `last` passes on too.
+        body: JSON.stringify({
+          messages: currentMessages,
+          systemPrompt: last ? `${systemPrompt}\n\n${_lastNote(guard)}${dropped.length ? `\n\n${TOOLS_DROPPED} ${dropped.join(', ')}.` : ''}` : systemPrompt,
+          tools,
+          ...(last ? { last: true } : {}),
+        }),
+      });
+      return { res, data: await res.json().catch(() => ({})) };
     });
-    const data = await res.json().catch(() => ({}));
+    _throwIfAborted(signal);
     if (!res.ok) {
       if (res.status === 401) throw new Error('Not signed in. Sign in again to use AI features.');
       throw _inLanguage(Object.assign(new Error(data.error || `AI proxy error ${res.status}`), { code: data.code }));
@@ -270,7 +310,7 @@ export async function callAIProxy({ messages, systemPrompt, tools, onToolCall, o
     const budget = _budget(currentMessages, startBytes);
     currentMessages.push(assistantMessage);
     for (const tc of calls) {
-      const result = await _runTool(onToolCall, onToolResult, tc.name, tc.args || {}, budget, guard);
+      const result = await _runTool(onToolCall, onToolResult, tc.name, tc.args || {}, budget, guard, signal);
       currentMessages.push({
         role: 'tool',
         tool_call_id: tc.id,
@@ -388,7 +428,7 @@ function _toGeminiParts(content) {
 
 // ── Anthropic Claude (with tool use) ─────────────────────────────────────────
 async function _callClaudeWithTools(apiKey, model, messages, systemPrompt, tools, cb) {
-  const { onToolCall, onToolResult } = cb || {};
+  const { onToolCall, onToolResult, signal } = cb || {};
   const claudeTools = (tools || []).map(t => ({
     name: t.name,
     description: t.description,
@@ -419,17 +459,20 @@ async function _callClaudeWithTools(apiKey, model, messages, systemPrompt, tools
     // A model that can't write that many is asked again as before, and an
     // empty reply once more (trace-reply.js).
     const res = await sendForReply('claude', body, async (b) => {
-      const r = await fetchProvider('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify(b),
+      return _timed(signal, async (sig) => {
+        const r = await fetchProvider('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true',
+          },
+          body: JSON.stringify(b),
+          signal: sig,
+        });
+        return { ok: r.ok, status: r.status, data: await r.json() };
       });
-      return { ok: r.ok, status: r.status, data: await r.json() };
     });
     const data = res.data;
     if (!res.ok) throw new Error(data.error?.message || `Claude API error ${res.status}`);
@@ -448,7 +491,7 @@ async function _callClaudeWithTools(apiKey, model, messages, systemPrompt, tools
     currentMessages.push({ role: 'assistant', content: data.content });
     const toolResults = [];
     for (const tu of toolUses) {
-      const result = await _runTool(onToolCall, onToolResult, tu.name, tu.input || {}, budget, guard);
+      const result = await _runTool(onToolCall, onToolResult, tu.name, tu.input || {}, budget, guard, signal);
       toolResults.push({ type: 'tool_result', tool_use_id: tu.id, content: JSON.stringify(result) });
     }
     currentMessages.push({ role: 'user', content: toolResults });
@@ -465,7 +508,7 @@ async function _callClaudeWithTools(apiKey, model, messages, systemPrompt, tools
 const toolSupport = createToolSupportMemory();
 
 async function _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools, cb, baseUrl = 'https://api.openai.com') {
-  const { onToolCall, onToolResult, onToolsUnsupported } = cb || {};
+  const { onToolCall, onToolResult, onToolsUnsupported, signal } = cb || {};
   const openaiTools = (tools || []).map(t => ({
     type: 'function',
     function: { name: t.name, description: t.description, parameters: t.parameters },
@@ -504,12 +547,15 @@ async function _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools
     // A server that won't take the longer reply is asked again as before,
     // and an empty reply once more (trace-reply.js).
     const send = (body) => sendForReply('openai', body, async (b) => {
-      const res = await fetchProvider(`${baseUrl}/v1/chat/completions`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(b),
+      return _timed(signal, async (sig) => {
+        const res = await fetchProvider(`${baseUrl}/v1/chat/completions`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(b),
+          signal: sig,
+        });
+        return { ok: res.ok, status: res.status, data: await res.json() };
       });
-      return { ok: res.ok, status: res.status, data: await res.json() };
     });
     // A model that can't use tools gets the request again without them.
     let sent = await sendWithToolFallback(body, send, { memory: toolSupport, baseUrl, model: selectedModel });
@@ -538,7 +584,7 @@ async function _callOpenAIWithTools(apiKey, model, messages, systemPrompt, tools
     currentMessages.push(msg);
     for (const tc of msg.tool_calls) {
       const args = _safeJsonParse(tc.function?.arguments, {});
-      const result = await _runTool(onToolCall, onToolResult, tc.function?.name, args, budget, guard);
+      const result = await _runTool(onToolCall, onToolResult, tc.function?.name, args, budget, guard, signal);
       currentMessages.push({ role: 'tool', tool_call_id: tc.id, content: JSON.stringify(result) });
     }
   }
@@ -566,7 +612,7 @@ export function geminiModelFor(model) {
 }
 
 async function _callGeminiWithTools(apiKey, model, messages, systemPrompt, tools, cb) {
-  const { onToolCall, onToolResult } = cb || {};
+  const { onToolCall, onToolResult, signal } = cb || {};
   const m = geminiModelFor(model);
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`;
 
@@ -599,12 +645,15 @@ async function _callGeminiWithTools(apiKey, model, messages, systemPrompt, tools
 
     // An empty reply is asked for once more (trace-reply.js).
     const sent = await sendForReply('gemini', body, async (b) => {
-      const r = await fetchProvider(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(b),
+      return _timed(signal, async (sig) => {
+        const r = await fetchProvider(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(b),
+          signal: sig,
+        });
+        return { ok: r.ok, status: r.status, data: await r.json() };
       });
-      return { ok: r.ok, status: r.status, data: await r.json() };
     });
     const data = sent.data;
     if (!sent.ok) throw new Error(data.error?.message || `Gemini API error ${sent.status}`);
@@ -626,7 +675,7 @@ async function _callGeminiWithTools(apiKey, model, messages, systemPrompt, tools
     contents.push({ role: 'model', parts });
     const responseParts = [];
     for (const fc of functionCalls) {
-      const result = await _runTool(onToolCall, onToolResult, fc.functionCall.name, fc.functionCall.args || {}, budget, guard);
+      const result = await _runTool(onToolCall, onToolResult, fc.functionCall.name, fc.functionCall.args || {}, budget, guard, signal);
       responseParts.push({ functionResponse: { name: fc.functionCall.name, response: geminiToolResponse(result) } });
     }
     contents.push({ role: 'user', parts: responseParts });

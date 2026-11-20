@@ -593,8 +593,22 @@
     return parts.length ? '\n' + parts.join('\n') : '';
   }
 
+  // Stop and Clear. `epoch` moves on when the conversation is cleared: an answer
+  // still on its way belongs to the old one and is dropped. `sendCtl` stops the
+  // request being answered. A tool already running can't be stopped, but none
+  // starts after it (aiChat.js).
+  let epoch = 0;
+  let sendCtl = null;
+  let textareaEl;
+
+  function stopSending() { sendCtl?.abort(); }
+
   async function send() {
     if ((!input.trim() && pendingImages.length === 0) || sending) return;
+    const myEpoch = epoch;
+    const ctl = new AbortController();
+    sendCtl = ctl;
+    const stale = () => myEpoch !== epoch;
     const text = input.trim();
     input = '';
 
@@ -623,6 +637,7 @@
 
     try {
       const ctx = await buildContext();
+      if (stale()) return;
       const profile = buildUserProfile();
       // Context trimmed 2026-07-27: Trace now uses tool-use for live data (see aiTools.js).
       // Only stable + never-would-fetch-on-demand values stay in the prompt.
@@ -698,6 +713,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
           messages: apiMessages,
           systemPrompt,
           tools: TOOLS,
+          signal: ctl.signal,
           onToolCall: (name, args) => runTool(name, args),
           onToolsUnsupported,
         });
@@ -706,10 +722,14 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
           messages: apiMessages,
           systemPrompt,
           tools: TOOLS,
+          signal: ctl.signal,
           onToolCall: (name, args) => runTool(name, args),
           onToolsUnsupported,
         });
       }
+
+      // Cleared or stopped while it answered: no reply is shown or saved.
+      if (stale() || ctl.signal.aborted) return;
 
       // No words: said as an error, never shown or saved as a blank answer
       // (TraceApps/nutritrace#286).
@@ -726,10 +746,21 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
         body: JSON.stringify(aMsg),
       }).catch(() => {});
     } catch(e) {
+      // Cleared, or stopped by the person (however the fetch names it): nothing
+      // to say. The user's message stays in the history, which then ends on a
+      // user turn; the next request sends two in a row, as for any failed one.
+      if (stale() || ctl.signal.aborted) return;
       messages = [...messages, { role: 'assistant', content: `Sorry, I couldn't respond: ${e.message}`, time: new Date().toISOString() }];
+    } finally {
+      // Only this send's own state: after Clear, a newer send may be running.
+      if (!stale()) {
+        if (sendCtl === ctl) sendCtl = null;
+        sending = false;
+        if (ctl.signal.aborted) { await tick(); textareaEl?.focus(); }
+      }
     }
 
-    sending = false;
+    if (stale()) return;
     await tick();
     scrollBottom();
   }
@@ -741,6 +772,10 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
       confirmText: $_('trace.clear_confirm_ok'),
       dangerous: true,
     })) return;
+    epoch++;
+    sendCtl?.abort();
+    sendCtl = null;
+    sending = false;
     messages = [];
     toolsNotice.reset();
     fetch('/api/ai/history', { method: 'DELETE', credentials: 'include' }).catch(() => {});
@@ -969,16 +1004,27 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
             on:keydown={onKey}
             on:paste={onPaste}
             placeholder={$_('trace.ask_placeholder')}
+            bind:this={textareaEl}
             disabled={sending}
           ></textarea>
-          <button
-            class="lb-send-btn"
-            on:click={send}
-            title={$_('trace.send')} aria-label={$_('trace.send')}
-            disabled={sending || (!input.trim() && pendingImages.length === 0)}
-          >
-            <span class="material-symbols-rounded" style="font-size:20px">send</span>
-          </button>
+          {#if sending}
+            <button
+              class="lb-send-btn lb-stop-btn"
+              on:click={stopSending}
+              title={$_('trace.stop')} aria-label={$_('trace.stop')}
+            >
+              <span class="material-symbols-rounded" style="font-size:20px">stop</span>
+            </button>
+          {:else}
+            <button
+              class="lb-send-btn"
+              on:click={send}
+              title={$_('trace.send')} aria-label={$_('trace.send')}
+              disabled={!input.trim() && pendingImages.length === 0}
+            >
+              <span class="material-symbols-rounded" style="font-size:20px">send</span>
+            </button>
+          {/if}
         </div>
       </aside>
     {/if}

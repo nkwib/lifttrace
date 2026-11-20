@@ -363,6 +363,7 @@
   },
   "trace": {
     "send": "Send",
+    "stop": "Stop",
     "fab_label":          "Open Trace (hold to voice-log a workout)",
     "fab_tooltip":        "Tap to chat · hold to voice-log",
     "ask_placeholder":    "Ask me anything…",
