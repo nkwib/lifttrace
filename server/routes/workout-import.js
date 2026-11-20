@@ -9,6 +9,8 @@ import { parseFitnotes }  from '../lib/workout-import/fitnotes.js';
 import { parseJefit }     from '../lib/workout-import/jefit.js';
 import { parseGarminFit } from '../lib/workout-import/garmin-fit.js';
 import { matchExercise }  from '../lib/workout-import/common.js';
+import { importKeys, importKey, planImport } from '../lib/import-match.js';
+import { readTimes } from '../lib/field-sync.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -63,14 +65,9 @@ router.post('/preview', upload.single('file'), wrap((req, res) => {
     }
   }
 
-  // Count workouts that already have a matching workout_log entry —
-  // scoped to (user_id, date, name), not date alone (issue #76): a date
-  // can now legitimately hold more than one distinctly-named session, so
-  // "duplicate" means "would replace/skip the same-named session on
-  // commit" rather than "this date already has anything logged." Matches
-  // commit's own dedup scope below exactly.
-  const dupeCheckStmt = db.prepare('SELECT 1 FROM workout_log WHERE user_id = ? AND date = ? AND name = ? AND deleted_at IS NULL LIMIT 1');
-  const duplicateCount = workouts.filter(w => dupeCheckStmt.get(userId, w.date, w.name || 'Imported')).length;
+  // A file session is a duplicate when it pairs with a live same-(date,
+  // name) session, n-th with n-th: the same pairing commit uses (issue #76).
+  const duplicateCount = planImport(workouts, _loadExisting(userId, workouts)).filter(p => p.existing).length;
 
   res.json({
     workouts: workouts.length,
@@ -104,35 +101,28 @@ router.post('/commit', upload.single('file'), wrap((req, res) => {
   catch(e) { return res.status(400).json({ error: `Parse failed: ${e.message}` }); }
 
   const library = _loadLibraryForUser(userId);
-  // Dedup scoped to (user_id, date, name) — not date alone (issue #76): a
-  // Strong/Hevy export with two distinctly-named same-day sessions ("AM"/
-  // "PM") now imports both instead of the second one silently skipping
-  // or replacing the first. A re-import of the SAME file still matches
-  // and skips/replaces as before, since it produces the same names.
-  const existingStmt = db.prepare('SELECT id, session_seq FROM workout_log WHERE user_id = ? AND date = ? AND name = ? AND deleted_at IS NULL');
-  const deleteStmt   = db.prepare('DELETE FROM workout_log WHERE id = ?');
+  // Dedup scoped to (user_id, date, name), not date alone (issue #76): the
+  // n-th file session of a key pairs with the n-th live existing one, so two
+  // same-name same-day sessions import as two, and a re-import skips or
+  // replaces each against its own copy. Existing rows are read once up front;
+  // rows inserted below are never candidates.
+  const plan = planImport(workouts, _loadExisting(userId, workouts));
   const nextSeqStmt  = db.prepare('SELECT COALESCE(MAX(session_seq), -1) + 1 AS n FROM workout_log WHERE user_id = ? AND date = ?');
   const insertStmt   = db.prepare(
     `INSERT INTO workout_log (user_id, date, name, notes, duration_min, exercises, completed, session_seq, created_at)
      VALUES (?, ?, ?, ?, ?, ?, 1, ?, datetime('now'))`
   );
+  // In place, so the row keeps its id (coach feedback, tombstones, template/
+  // program links) and its position among the date's sessions.
+  const replaceStmt  = db.prepare(
+    `UPDATE workout_log SET notes = ?, duration_min = ?, exercises = ?, completed = 1, field_times = ?, updated_at = datetime('now')
+     WHERE id = ? AND user_id = ? AND deleted_at IS NULL`
+  );
 
   let imported = 0, skipped = 0, replaced = 0;
   const tx = db.transaction(() => {
-    for (const w of workouts) {
-      const importName = w.name || 'Imported';
-      const existing = existingStmt.get(userId, w.date, importName);
-      let sessionSeq;
-      if (existing) {
-        if (dupeMode === 'skip') { skipped++; continue; }
-        // Reuse the replaced row's own session_seq so its position among
-        // any OTHER same-date sessions doesn't shuffle.
-        sessionSeq = existing.session_seq;
-        deleteStmt.run(existing.id);
-        replaced++;
-      } else {
-        sessionSeq = nextSeqStmt.get(userId, w.date).n;
-      }
+    for (const { w, name: importName, existing } of plan) {
+      if (existing && dupeMode === 'skip') { skipped++; continue; }
       const exerciseRows = w.exercises.map(ex => {
         const match = matchExercise(ex.sourceName, library);
         return {
@@ -146,9 +136,20 @@ router.post('/commit', upload.single('file'), wrap((req, res) => {
           ...(ex.set_type ? { set_type: ex.set_type } : {}),
         };
       });
+      if (existing) {
+        const now = new Date().toISOString();
+        const times = { ...readTimes(existing.field_times) };
+        for (const f of ['notes', 'duration_min', 'exercises', 'completed']) times[f] = now;
+        replaceStmt.run(
+          w.notes || null, w.duration_min || null, JSON.stringify(exerciseRows),
+          JSON.stringify(times), existing.id, userId,
+        );
+        replaced++;
+        continue;
+      }
       insertStmt.run(
         userId, w.date, importName, w.notes || null,
-        w.duration_min || null, JSON.stringify(exerciseRows), sessionSeq,
+        w.duration_min || null, JSON.stringify(exerciseRows), nextSeqStmt.get(userId, w.date).n,
       );
       imported++;
     }
@@ -163,6 +164,14 @@ router.post('/commit', upload.single('file'), wrap((req, res) => {
 }));
 
 // ── helpers ────────────────────────────────────────────────────────────────
+// Live rows per (date, name) key of the file, in session_seq, id order.
+function _loadExisting(userId, workouts) {
+  const stmt = db.prepare('SELECT id, session_seq, field_times FROM workout_log WHERE user_id = ? AND date = ? AND name = ? AND deleted_at IS NULL ORDER BY session_seq, id');
+  const byKey = new Map();
+  for (const [date, name] of importKeys(workouts)) byKey.set(importKey(date, name), stmt.all(userId, date, name));
+  return byKey;
+}
+
 function _getUserWeightUnit(userId) {
   const row = db.prepare("SELECT value FROM user_settings WHERE user_id = ? AND key = 'weightUnit'").get(userId);
   if (!row) return 'lbs';
