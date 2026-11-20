@@ -4,6 +4,7 @@ import { planReminders, fireTime, WORKOUT_DAYS } from './reminder-plan.js';
 import { isNative, getServerUrl } from './platform.js';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { SECRET_SET } from './secret-set.js';
+import { syncTouched } from './sync-refresh.js';
 
 // Verbose notification logs gated by dev OR opt-in verbose mode
 // (Settings → Diagnostics → Verbose diagnostic logging).
@@ -319,10 +320,20 @@ export function scheduleNativeReminders({ weekly = true } = {}) {
   return _scheduling;
 }
 
+// What a sync has to bring for the reminders to move. Settings come through
+// 'wl:setting' (App.svelte), one event per key, so they aren't here.
+const REMINDER_KINDS = ['workouts', 'excusedDays'];
+
 let _soon = null;
-/** The training-day reminders set again a moment from now, once for a burst of changes (a set saved, a sync, the app coming back). */
-export function rescheduleRemindersSoon() {
+/**
+ * The training-day reminders set again a moment from now, once for a burst of
+ * changes (a set saved, a sync, the app coming back). Given an
+ * 'lt:sync-complete' event, only when that sync brought workouts or excused
+ * days: the 30-second poll would otherwise rerun the whole pass every time.
+ */
+export function rescheduleRemindersSoon(event) {
   if (!isNative) return;
+  if (event?.type === 'lt:sync-complete' && !syncTouched(event.detail, REMINDER_KINDS)) return;
   clearTimeout(_soon);
   _soon = setTimeout(() => { scheduleNativeReminders({ weekly: false }); }, 2000);
 }

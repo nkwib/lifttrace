@@ -14,6 +14,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Pictures load with less work on the server.** Exercise images and other uploads are now served before the sign-in check, which never decided anything for them, so each one no longer costs a token check and an account lookup. Progress photos stay private as before.
 - **The app's sync with the server does less work.** Each sync asks the server for what changed since the last one, and the server looked through every one of your workouts, body stats and chat messages to find them. It now finds them directly. Existing servers build the lookup once, on the first start after updating.
 - **The app starts faster.** It loaded the code of every page before showing the Diary. Now only the Diary's comes first, half the size, and each other page's when you first open it. The installed app keeps them all for offline use as before.
+- **The Android app does less in the background.** It set its training reminders again after every sync, every 30 seconds while open, even when nothing changed. Now only when a sync brings workouts or excused days, when you train, and when you come back to the app; and opening the app no longer waits for them. A cardio session logged on the web moves your reminders the next time you open the app.
 
 ### Fixed
 
