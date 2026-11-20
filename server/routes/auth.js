@@ -101,6 +101,12 @@ const COOKIE_OPTS = {
   secure: !_insecureCookies,
 };
 
+// The one place the sign-in cookie is set, so its lifetime always follows the
+// Session Duration setting.
+function setSessionCookie(res, token) {
+  res.cookie('lt_token', token, { ...COOKIE_OPTS, maxAge: sessionMaxAge() });
+}
+
 // A browser drops a Secure cookie on a plain-HTTP page (localhost aside), so
 // signing in from one succeeds and then lands back on the login page with
 // nothing in the log to say why. The browser's Origin header shows the page
@@ -135,7 +141,7 @@ function safeUser(u) {
 export function finishSignIn(req, res, user, extra = {}) {
   const token = signToken(user);
   warnIfPlainHttp(req);
-  res.cookie('lt_token', token, { ...COOKIE_OPTS, maxAge: sessionMaxAge() });
+  setSessionCookie(res, token);
   res.json({ ...extra, user: safeUser(user), token });
 }
 
@@ -148,7 +154,7 @@ export function finishSignIn(req, res, user, extra = {}) {
  */
 export function reissueSession(req, res, user) {
   const token = signToken(user, { authTime: Number(req.user?.auth_time ?? req.user?.iat) });
-  res.cookie('lt_token', token, { ...COOKIE_OPTS, maxAge: sessionMaxAge() });
+  setSessionCookie(res, token);
   return { token };
 }
 
@@ -281,7 +287,7 @@ router.post('/register', wrap((req, res) => {
     claimAnonymousData(user.id);
     token = signToken(user);
     warnIfPlainHttp(req);
-    res.cookie('lt_token', token, COOKIE_OPTS);
+    setSessionCookie(res, token);
   }
   res.json({ user: safeUser(user), token });
 }));
@@ -568,7 +574,7 @@ router.post('/reset-password', wrap((req, res) => {
     return res.status(401).json({ error, password_changed: true });
   }
   const token2 = signToken(user);
-  res.cookie('lt_token', token2, COOKIE_OPTS);
+  setSessionCookie(res, token2);
   res.json({ user: safeUser(user), token: token2 });
 }));
 
@@ -658,7 +664,7 @@ router.post('/accept-invite', wrap((req, res) => {
   const kind = challengeFor(user);
   if (kind) return sendTwoStepChallenge(res, user, kind, { account_created: true });
   const issued = signToken(user);
-  res.cookie('lt_token', issued, COOKIE_OPTS);
+  setSessionCookie(res, issued);
   res.json({ user: safeUser(user), token: issued });
 }));
 

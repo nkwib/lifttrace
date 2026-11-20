@@ -38,9 +38,9 @@ test('the server reports the cookie setting and logs a plain-HTTP sign-in', () =
   // (nutritrace#222), both sign in through finishSignIn().
   assert.match(login, /finishSignIn\(req, res, user\);/, 'sign-in goes through finishSignIn');
   const finish = auth.slice(auth.indexOf('export function finishSignIn'), auth.indexOf('export function finishSignIn') + 400);
-  assert.match(finish, /warnIfPlainHttp\(req\);\s*\n\s*res\.cookie\('lt_token'/, 'logged when signing in');
+  assert.match(finish, /warnIfPlainHttp\(req\);\s*\n\s*setSessionCookie\(res, token\)/, 'logged when signing in');
   const register = auth.slice(auth.indexOf("router.post('/register'"), auth.indexOf("res.json({ user: safeUser(user), token });", auth.indexOf("router.post('/register'")));
-  assert.match(register, /warnIfPlainHttp\(req\);\s*\n\s*res\.cookie\('lt_token'/, 'and when the first account signs in');
+  assert.match(register, /warnIfPlainHttp\(req\);\s*\n\s*setSessionCookie\(res, token\)/, 'and when the first account signs in');
   assert.match(auth, /if \(_insecureCookies\) return;/, 'never on a server set up for plain HTTP');
 });
 
