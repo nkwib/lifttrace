@@ -9,9 +9,35 @@ import { foldText } from '../lib/search-text.js';
 import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/create-keys.js';
 import { applyToBody, deleteLoses, refuseDelete, createdTimes } from '../lib/newer-wins.js';
 import { syncOf } from '../lib/sync-fields.js';
+import { unlinkMediaFile } from '../lib/upload-paths.js';
 
 const router = Router();
 router.use(requireAuth);
+
+const EXERCISE_UPLOADS = '/uploads/exercises/';
+const MEDIA_COLS = ['img_url', 'gif_url', 'video_url'];
+
+// Uploaded media URLs of exercise rows, read before they are deleted.
+function mediaUrls(rows) {
+  const urls = new Set();
+  for (const r of rows) for (const c of MEDIA_COLS) {
+    if (typeof r[c] === 'string' && r[c].startsWith(EXERCISE_UPLOADS)) urls.add(r[c]);
+  }
+  return urls;
+}
+
+// After a delete: remove each uploaded file no remaining row still points at.
+// Soft-deleted rows count as remaining (sync can restore them). Never throws.
+function unlinkOrphanedUploads(urls) {
+  for (const url of urls) {
+    try {
+      const used = db.prepare(
+        'SELECT 1 FROM exercises WHERE img_url = ? OR gif_url = ? OR video_url = ? LIMIT 1'
+      ).get(url, url, url);
+      if (!used) unlinkMediaFile(url);
+    } catch { /* best effort: a stray file must not fail the delete */ }
+  }
+}
 
 // GET /api/exercises — list with optional filters
 router.get('/', wrap((req, res) => {
@@ -264,9 +290,11 @@ router.put('/:id', wrap((req, res) => {
 // maker, as everywhere else (lib/exercise-owner.js); this used to refuse them.
 router.delete('/custom/all', wrap((req, res) => {
   const userId = uid(req);
-  const r = db.prepare(
-    "DELETE FROM exercises WHERE is_global = 0 AND source = 'custom' AND created_by IS ?"
-  ).run(userId);
+  const where = "FROM exercises WHERE is_global = 0 AND source = 'custom' AND created_by IS ?";
+  let urls = new Set();
+  try { urls = mediaUrls(db.prepare(`SELECT img_url, gif_url, video_url ${where}`).all(userId)); } catch { /* best effort */ }
+  const r = db.prepare(`DELETE ${where}`).run(userId);
+  unlinkOrphanedUploads(urls);
   res.json({ ok: true, removed: r.changes });
 }));
 
@@ -294,6 +322,7 @@ function _deleteExercise(req, res, id, extra = {}) {
   const later = deleteLoses(req, row);
   if (later) return refuseDelete(res, row, later);
   db.prepare('DELETE FROM exercises WHERE id = ?').run(id);
+  unlinkOrphanedUploads(mediaUrls([row]));
   res.json({ ok: true, ...extra });
 }
 

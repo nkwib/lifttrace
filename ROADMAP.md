@@ -179,7 +179,7 @@ Single-exercise export from ExerciseDetail; importer accepts file pick or URL pa
 ### ~~Public catalogs in the standalone Android app~~ *(done, v1.0.2, [#18](https://github.com/TraceApps/lifttrace/issues/18))*
 
 ### Orphan upload cleanup
-Still open. When a custom exercise is deleted, its `/uploads/exercises/<uuid>.ext` file stays on disk. Progress photos and set videos already delete their files.
+Partly done. Deleting a custom exercise (single or bulk) now removes its `/uploads/exercises/<uuid>.ext` files unless another exercise row, soft-deleted ones included, still uses them. Still open: exercises deleted through sync leave their files on disk.
 
 ---
 
