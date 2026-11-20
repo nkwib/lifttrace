@@ -25,6 +25,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Workout import works without accounts.** Duplicates are detected on preview, skip and replace no longer re-add everything, and same-day imports get distinct session order.
 - **Workout reminder names the next day without accounts.** Single-user mode reminders always named the program's first day; they now follow the program's order like accounts do.
 - **Full exercise history on Android Local.** Exercise detail no longer stops at the newest 50 workouts, so bests and the delete warning count every session.
+- **Local "Clear all data" now clears cardio.** Android Local mode left cardio sessions and workout tombstones behind.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added

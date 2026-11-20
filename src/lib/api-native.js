@@ -296,6 +296,8 @@ const Settings = {
   async clearData() {
     await dbRun(`DELETE FROM workout_log WHERE user_id = ?`, [ME]);
     await dbRun(`DELETE FROM body_stats_log WHERE user_id = ?`, [ME]);
+    await dbRun(`DELETE FROM cardio_log WHERE user_id = ?`, [ME]);
+    await dbRun(`DELETE FROM workout_tombstones WHERE user_id = ?`, [ME]);
     await dbRun(`DELETE FROM excused_days`, []);
     await dbRun(`DELETE FROM ai_chat_history WHERE user_id = ?`, [ME]);
     return { ok: true };
