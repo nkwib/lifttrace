@@ -1628,17 +1628,20 @@ async function handle(method, path, body, query) {
           ORDER BY date DESC`, [ME]
       );
       const out = {};
+      // Outside the rows loop: several completed sessions can share a date
+      // and must count as one distinct day (parity with server/routes/exercises.js).
+      const seenOnDate = new Set();
       for (const row of rows) {
         let exs;
         try { exs = JSON.parse(row.exercises || '[]'); } catch { continue; }
-        const seen = new Set();
         for (const ex of exs) {
           if (!ex.exercise_id) continue;
           const hasCompleted = (ex.sets || []).some(s => s.completed && !s.warmup);
           if (!hasCompleted) continue;
           const k = `${ex.exercise_id}`;
-          if (seen.has(k)) continue;
-          seen.add(k);
+          const dayKey = `${k}:${row.date}`;
+          if (seenOnDate.has(dayKey)) continue;
+          seenOnDate.add(dayKey);
           if (!out[k]) out[k] = { count: 0, last_date: row.date };
           out[k].count++;
           if (row.date > out[k].last_date) out[k].last_date = row.date;
