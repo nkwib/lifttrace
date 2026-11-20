@@ -561,7 +561,9 @@
 
   {#if $trackRpe && !showAsWarmup}
     <div class="rpe-wrap">
-      <button class="rpe-chip tap {chipLevel ? 'lvl-' + chipLevel : ''}" class:set={set.rpe != null}
+      <button class="rpe-chip tap" class:set={set.rpe != null}
+        class:lvl-easy={chipLevel === 'easy'} class:lvl-moderate={chipLevel === 'moderate'}
+        class:lvl-hard={chipLevel === 'hard'} class:lvl-max={chipLevel === 'max'}
         bind:this={rpeTriggerEl}
         on:click={() => rpeOpen ? (rpeOpen = false) : openRpePicker()}
         title={setScale(set) === 'rir' && set.rpe != null ? $_('exercise_card.rir_chip_title', { values: { n: rirLabel(rpeToRir(set.rpe)) } }) : $_(pickerScale === 'rir' ? 'exercise_card.rir_title' : 'exercise_card.rpe_title')}>
