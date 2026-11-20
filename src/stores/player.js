@@ -1359,14 +1359,26 @@ export function removeFromQueue(index) {
 
 // ── ICY now-playing polling (radio stations only) ─────────────────────────
 let _nowPlayingTimer = null;
+let _nowPlayingGen = 0;
+let _nowPlayingAbort = null;
 function _startNowPlayingPoll(originalUrl) {
   _stopNowPlayingPoll();
   if (!originalUrl) return;
-  const poll = async () => {
+  const myGen = _nowPlayingGen;
+  const ctrl = new AbortController();
+  _nowPlayingAbort = ctrl;
+  let inFlight = false;
+  const poll = async (isTick) => {
+    // Plain skip while paused (timer keeps running, title stays visible).
+    // Not when hidden: background radio needs the lockscreen metadata.
+    if (inFlight || myGen !== _nowPlayingGen || (isTick && audio && audio.paused)) return;
+    inFlight = true;
     try {
-      const res = await fetch(`/api/radio-proxy/now-playing?url=${encodeURIComponent(originalUrl)}`, { credentials: 'include' });
+      const res = await fetch(`/api/radio-proxy/now-playing?url=${encodeURIComponent(originalUrl)}`, { credentials: 'include', signal: ctrl.signal });
       if (res.ok) {
         const { title, artwork } = await res.json();
+        // Station changed while the request was in flight: drop the result.
+        if (myGen !== _nowPlayingGen) return;
         if (title) streamNowPlaying.set(title);
         // Server-extracted iHeart amgArtworkURL — empty for non-iHeart
         // stations, in which case we don't override the existing value
@@ -1378,10 +1390,10 @@ function _startNowPlayingPoll(originalUrl) {
         // station name from the initial _updateMediaSession call.
         if (title || artwork) _updateStreamMediaSession(title, artwork);
       }
-    } catch {}
+    } catch {} finally { inFlight = false; }
   };
-  poll();
-  _nowPlayingTimer = setInterval(poll, 8000);
+  poll(false);
+  _nowPlayingTimer = setInterval(() => poll(true), 8000);
 }
 
 /**
@@ -1420,6 +1432,8 @@ function _updateStreamMediaSession(title, artwork) {
   } catch {}
 }
 function _stopNowPlayingPoll() {
+  _nowPlayingGen++;
+  if (_nowPlayingAbort) { _nowPlayingAbort.abort(); _nowPlayingAbort = null; }
   if (_nowPlayingTimer) { clearInterval(_nowPlayingTimer); _nowPlayingTimer = null; }
   streamNowPlaying.set('');
   streamArtwork.set('');
