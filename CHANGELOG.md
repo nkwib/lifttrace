@@ -10,6 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - **Supersets in the Diary go round by round.** The sets used to be listed one exercise after the other (A, A, A, B, B, B), so every set meant scrolling to the other exercise, worse with three or more. Now the exercises sit at the top as A, B, C, with their load type, targets, coach notes and actions, and the sets below go A, B, C for round 1, then round 2, and so on, the order they are lifted in. The round you're on is highlighted with the next set marked, each row shows what you lifted in that round last time, and a finished round folds to one line (tap it to open it again). Add Round gives every exercise one more set. Rounds follow the round numbers you set on uneven supersets, the same as the rest timer. Folded, a superset shows its exercises by name and the round you're on.
+- **Pages load faster on a phone.** The server now compresses what it sends (gzip or Brotli): the app's code and styles about a quarter of the size, and the larger lists, such as the exercise library or a year of workouts, far smaller. Behind a proxy that already compresses, nothing changes.
 
 ### Fixed
 

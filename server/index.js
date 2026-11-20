@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import compression from 'compression';
 import { rememberAdminOrigin } from './lib/public-url.js';
 import { corsOrigin } from './lib/cors.js';
 import { framingHeaders, parseFrameAncestors } from './lib/frame-ancestors.js';
@@ -117,6 +118,18 @@ const router = express.Router();
 const FRAMING = framingHeaders(process.env.FRAME_ANCESTORS);
 for (const w of parseFrameAncestors(process.env.FRAME_ANCESTORS).warnings) console.warn(`[lifttrace] FRAME_ANCESTORS: ${w}`);
 router.use((req, res, next) => { res.set(FRAMING); next(); });
+
+// gzip/br for the app bundle and JSON (the Docker image has no nginx in
+// front). Not for server-sent events, which must reach the client as each
+// event is written, nor the radio proxy's endless stream; media types that
+// are already compressed are skipped by compression's own filter.
+router.use(compression({
+  filter(req, res) {
+    if (req.path.startsWith('/api/radio-proxy')) return false;
+    if (/^text\/event-stream/i.test(String(res.getHeader('Content-Type') || ''))) return false;
+    return compression.filter(req, res);
+  },
+}));
 
 // Global JSON body limit defaults to 1 MB. The handful of routes that
 // legitimately accept large bodies (full-backup restore, exercise import)
