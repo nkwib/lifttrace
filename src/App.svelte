@@ -11,7 +11,6 @@
   import ConfirmDialogMount from './components/ui/ConfirmDialogMount.svelte';
   import PlainHttpSheetMount from './components/ui/PlainHttpSheetMount.svelte';
   import AccountCheckError from './components/AccountCheckError.svelte';
-  import Trace   from './components/ai/Trace.svelte';
   import { DB }    from './lib/db.js';
   import { initFold } from './lib/fold.js';
   import { isPullSyncExempt } from './lib/pull-sync.js';
@@ -30,7 +29,6 @@
   import { accountGate, ensureLocalAccount, accountReadyFor } from './lib/local-account.js';
   import { get as getStore } from 'svelte/store';
   import { offlineState } from './lib/offline-api.js';
-  import NativeSetup from './routes/NativeSetup.svelte';
 
   // Native-server connection state for the hamburger offline badge.
   // Mirrors NutriTrace's pattern (App.svelte#367) — only show when the
@@ -196,30 +194,41 @@
     window.location.hash = '#/wizard';
   }
 
+  // Only the Diary (home, and where an unknown address lands) is in the
+  // first bundle; every other page is its own chunk, fetched when first
+  // opened (the PWA precaches them all, Android ships them in the APK).
   import Diary           from './routes/Diary.svelte';
-  import Exercises       from './routes/Exercises.svelte';
-  import ExerciseDetail  from './routes/ExerciseDetail.svelte';
-  import Programs        from './routes/Programs.svelte';
-  import ProgramDetail   from './routes/ProgramDetail.svelte';
-  import WorkoutEditor   from './routes/WorkoutEditor.svelte';
-  import Statistics      from './routes/Statistics.svelte';
-  import Progress        from './routes/Progress.svelte';
-  import Radio           from './routes/Radio.svelte';
-  import Settings        from './routes/Settings.svelte';
-  import Coaching        from './routes/Coaching.svelte';
-  import Coach           from './routes/Coach.svelte';
+  import wrap            from 'svelte-spa-router/wrap';
+  const lazy = (load) => wrap({ asyncComponent: load });
+  const Exercises       = lazy(() => import('./routes/Exercises.svelte'));
+  const ExerciseDetail  = lazy(() => import('./routes/ExerciseDetail.svelte'));
+  const Programs        = lazy(() => import('./routes/Programs.svelte'));
+  const ProgramDetail   = lazy(() => import('./routes/ProgramDetail.svelte'));
+  const WorkoutEditor   = lazy(() => import('./routes/WorkoutEditor.svelte'));
+  const Statistics      = lazy(() => import('./routes/Statistics.svelte'));
+  const Progress        = lazy(() => import('./routes/Progress.svelte'));
+  const Radio           = lazy(() => import('./routes/Radio.svelte'));
+  const Settings        = lazy(() => import('./routes/Settings.svelte'));
+  const Coaching        = lazy(() => import('./routes/Coaching.svelte'));
+  const Coach           = lazy(() => import('./routes/Coach.svelte'));
+  const Wizard          = lazy(() => import('./routes/Wizard.svelte'));
+  const Profile         = lazy(() => import('./routes/Profile.svelte'));
+  const ForgotPassword  = lazy(() => import('./routes/ForgotPassword.svelte'));
+  const ResetPassword   = lazy(() => import('./routes/ResetPassword.svelte'));
+  const AcceptInvite    = lazy(() => import('./routes/AcceptInvite.svelte'));
   import MiniPlayer      from './components/radio/MiniPlayer.svelte';
   import RestTimer       from './components/diary/RestTimer.svelte';
-  import FullPlayer      from './components/radio/FullPlayer.svelte';
   import WorkoutModeBar  from './components/WorkoutModeBar.svelte';
   import { miniPlayerVisible } from './stores/player.js';
   let fullPlayerOpen = false;
-  import Wizard          from './routes/Wizard.svelte';
-  import Login           from './routes/Login.svelte';
-  import Profile         from './routes/Profile.svelte';
-  import ForgotPassword  from './routes/ForgotPassword.svelte';
-  import ResetPassword   from './routes/ResetPassword.svelte';
-  import AcceptInvite    from './routes/AcceptInvite.svelte';
+  // The full player opens only from the mini player: fetched once that shows,
+  // so it is mounted (closed) before the first tap and its open transition plays.
+  let FullPlayer = null;
+  $: if ($miniPlayerVisible && !FullPlayer) import('./components/radio/FullPlayer.svelte').then(m => { FullPlayer = m.default; }).catch(() => {});
+  // Rarely shown or not needed for the first paint: their own chunks.
+  const loadNativeSetup = () => import('./routes/NativeSetup.svelte');
+  const loadLogin = () => import('./routes/Login.svelte');
+  const loadTrace = () => import('./components/ai/Trace.svelte');
 
   const routes = {
     '/':                      Diary,
@@ -874,7 +883,7 @@
 />
 
 {#if showNativeSetup}
-  <NativeSetup />
+  {#await loadNativeSetup() then { default: NativeSetup }}<NativeSetup />{/await}
   <Toast />
   <!-- Replace with Server asks before dropping unsent changes, and the
        local-data count can ask whether a server is the same one. -->
@@ -882,7 +891,7 @@
 {:else if !authLoaded}
   <!-- Asking the server who is signed in: a blank page, never the app. -->
 {:else if needsLogin}
-  <Login />
+  {#await loadLogin() then { default: Login }}<Login />{/await}
 {:else if !accountReady}
   <!-- Checking the phone's copy is this account's: never another account's data. -->
   {#if $accountGate.state === 'error'}
@@ -978,12 +987,12 @@
 {/if}
 
 <MiniPlayer on:expand={() => fullPlayerOpen = true} />
-<FullPlayer bind:open={fullPlayerOpen} />
+{#if FullPlayer}<svelte:component this={FullPlayer} bind:open={fullPlayerOpen} />{/if}
 <RestTimer />
 <WorkoutModeBar />
 <Toast />
 <ConfirmDialogMount />
-<Trace />
+{#await loadTrace() then { default: Trace }}<Trace />{/await}
 
 {/if}
 
