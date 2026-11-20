@@ -1,6 +1,6 @@
 <script>
   import { dayIntensity } from '../lib/heatmap-intensity.js';
-import { onMount, onDestroy } from 'svelte';
+import { onMount, onDestroy, tick } from 'svelte';
   import { push, querystring } from 'svelte-spa-router';
   import { _ } from 'svelte-i18n';
   import { LtApi } from '../lib/api.js';
@@ -82,13 +82,22 @@ import { onMount, onDestroy } from 'svelte';
   // (which silently chopped older imported data). Loaded lazily.
   let earliestWorkoutDate = null;
 
+  // Local "today", fixed at mount and rolled forward by refreshToday() so a
+  // page left open past midnight stops treating yesterday as today.
+  let today = localDateStr();
+  function refreshToday() {
+    const t = localDateStr();
+    if (t === today) return false;
+    today = t;
+    return true;
+  }
   $: startDate = (() => {
     if (range === 'All') return earliestWorkoutDate || '2000-01-01';
-    const d = new Date();
+    const d = new Date(today + 'T12:00:00');
     d.setDate(d.getDate() - RANGES[range]);
     return localDateStr(d);
   })();
-  $: endDate = localDateStr();
+  $: endDate = today;
 
   // ── Shared data (loaded on mount, refreshed on range change) ─────────
   let streaks = { currentStreak: 0, longestStreak: 0, totalWorkouts: 0 };
@@ -206,6 +215,7 @@ import { onMount, onDestroy } from 'svelte';
   // re-fetch on next navigation, so freshly-pulled workouts wouldn't
   // show up in charts until the user left and came back.
   let _onSyncComplete = null;
+  let _onVisible = null;
   onMount(async () => {
     try { exercises = await LtApi.getExercises(); } catch {}
     try {
@@ -221,19 +231,27 @@ import { onMount, onDestroy } from 'svelte';
     // the pull to say so.
     let _quietAt = 0;
     _onSyncComplete = (e) => {
+      // Before the quiet-window return: a day rollover must always reload.
+      const rolled = refreshToday();
       // The exercise picker's names (one renamed or added on the web).
       if (syncTouched(e?.detail, ['exercises'])) LtApi.getExercises().then(list => { exercises = list; }).catch(() => {});
-      if (e?.detail?.changed === false) {
+      if (e?.detail?.changed === false && !rolled) {
         if (Date.now() - _quietAt < 5 * 60 * 1000) return;
         _quietAt = Date.now();
       }
       loadData();
     };
     window.addEventListener('lt:sync-complete', _onSyncComplete);
+    // Back to a tab or app left open past midnight; reload only on rollover.
+    _onVisible = () => {
+      if (document.visibilityState === 'visible' && refreshToday()) loadData();
+    };
+    if (typeof document !== 'undefined') document.addEventListener('visibilitychange', _onVisible);
   });
 
   onDestroy(() => {
     if (_onSyncComplete) window.removeEventListener('lt:sync-complete', _onSyncComplete);
+    if (_onVisible && typeof document !== 'undefined') document.removeEventListener('visibilitychange', _onVisible);
     if (typeof window !== 'undefined') window.removeEventListener('resize', _measureIndicator);
   });
 
@@ -262,7 +280,10 @@ import { onMount, onDestroy } from 'svelte';
   }
 
   // Sync and Retry: everything, progress included.
-  function loadData() {
+  async function loadData() {
+    // The startDate/endDate statements only flush on the next tick; wait so
+    // the first fetch after midnight uses the new date.
+    if (refreshToday()) await tick();
     loadRangeData();
     loadBaseData();
     if (metric === 'progress' && selectedExerciseId) loadProgress();
@@ -433,7 +454,7 @@ import { onMount, onDestroy } from 'svelte';
   // It used to count finished sessions, so two workouts on one day counted
   // twice and a day trained without pressing Finish didn't count.
   $: weekProgress = (() => {
-    const start = weekStartOf(localDateStr(), $weekStartsOn);
+    const start = weekStartOf(today, $weekStartsOn);
     return weeklyGoal({ goal: $weeklyWorkoutGoal || 4, trained: workoutDates, excused: excusedDates, start, end: shiftDate(start, 6) });
   })();
 
@@ -494,7 +515,7 @@ import { onMount, onDestroy } from 'svelte';
     return i.sets > 0 ? ` · ${$_('statistics.n_sets', { values: { n: i.sets } })}` : ' ✓';
   }
   $: heatmapDays = Array.from({ length: 91 }, (_, i) => {
-    const d = new Date();
+    const d = new Date(today + 'T12:00:00');
     d.setDate(d.getDate() - (90 - i));
     return localDateStr(d);
   });
@@ -503,7 +524,7 @@ import { onMount, onDestroy } from 'svelte';
   // 14-day dot sparkline for the streak card: 1 per day, filled when a
   // workout was logged.
   $: streakSparkline = Array.from({ length: 14 }, (_, i) => {
-    const d = new Date();
+    const d = new Date(today + 'T12:00:00');
     d.setDate(d.getDate() - (13 - i));
     return workoutDates.has(localDateStr(d)) ? 1 : 0;
   });
@@ -945,7 +966,7 @@ import { onMount, onDestroy } from 'svelte';
               <div class="hm-cell {lv ? `hm-l${lv}` : ''}"
                 class:hm-active={workoutDates.has(day)}
                 class:hm-excused={!!excusedDay}
-                class:hm-today={day === localDateStr()}
+                class:hm-today={day === today}
                 title={day + (workoutDates.has(day) ? hmDetail(intensity.get(day)) : excusedDay ? ` · ${$_('excused.banner', { values: { reason: $_(`excused.reason.${excusedDay.reason}`) } })}` : '')}></div>
             {/each}
           </div>

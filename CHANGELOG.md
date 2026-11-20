@@ -19,6 +19,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **RIR/RPE chips readable on the light theme.** Chip text uses the darker status text colours (new hard and danger text tokens); borders keep the vivid hues.
 - **Cardio statistics count empty weeks.** The weekly average and "on target" ratio include layoff weeks, and long ranges thin the week labels.
 - **Trace remembers photo questions and times.** Messages sent with photos are now saved to chat history (as text plus a photo marker, never the image), and reloaded messages show their time again.
+- **Statistics after midnight.** A Statistics page left open past midnight now treats the new day as today (range, heatmap, weekly ring) and reloads when you come back to it.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added
