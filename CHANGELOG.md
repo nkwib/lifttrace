@@ -11,6 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **Workout pill no longer shows a frozen ".00".** The floating timer pill now shows m:ss without the centisecond suffix.
 - **Fast day switching in the Diary.** Coach feedback and set videos from a day you already left no longer show up on the day you land on.
+- **Diary progression chip uses the exercise's equipment.** Cable and machine lifts now suggest +5 kg / +10 lb and dumbbells +2 kg, read from the library (it was always the flat 2.5 kg / 5 lb). Assisted exercises no longer get a "Try more weight" chip.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added
@@ -22,7 +23,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Deleting a custom exercise tells you how many workouts logged it.** The confirm dialog shows the count; their history stays under the name.
 - **Keyboard access for Radio rows, program days and the avatar.** Enter or Space plays a track, opens an artist, expands a station group, jumps in the queue and opens a program day. The profile picture is a real button, and the Trace button also answers to Space.
 - **Full player seek and volume work from the keyboard.** Both bars are sliders: arrows, Home and End, with labels and values for screen readers. Seek is disabled on live streams.
-- **Diary progression chip respects rep ranges.** With a target like 8-12 the "Try X" chip now needs every working set at the top of the range (it used to trigger at 8), ignores warm-ups, and its tooltip says why. It shows less often for ranges, by design. Per-equipment increments are built in, but the workout row carries no equipment yet, so the flat 2.5 kg / 5 lb step still applies.
+- **Diary progression chip respects rep ranges.** With a target like 8-12 the "Try X" chip now needs every working set at the top of the range (it used to trigger at 8), ignores warm-ups, and its tooltip says why. It shows less often for ranges, by design. Increments depend on the equipment (see Fixed).
 - **Plate split under barbell exercises.** Settings > Workout > Show plate split (off by default) shows the plates per side for the next set, with the bar taken from the equipment (20 kg / 45 lb, EZ 10 / 25, trap 25 / 55; nothing for Smith). Display only, the logged weight stays the total.
 - **Weekly bar charts read on phones.** With many weeks (6M, 1Y, All) labels show every few bars, and tapping a bar shows its week and value under the chart.
 - **Activity heatmap shaded by effort.** Statistics shades each trained day in four steps by time trained (sets when there are no durations), with a Less / More legend and the minutes or sets in the tooltip.

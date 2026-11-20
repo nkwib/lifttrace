@@ -27,7 +27,7 @@ test('equipment increments and fallback', () => {
   assert.equal(incrementFor('kg', 'Machine'), 5);
   assert.equal(incrementFor('lbs', ''), 5);
   assert.equal(incrementFor('kg', 'Kettlebell'), 2.5);
-  assert.equal(nextTarget({ targetReps: '10', lastSets: sets(2, 10), unit: 'kg', equipment: 'Bodyweight' }), null);
+  assert.equal(nextTarget({ targetReps: '10', lastSets: sets(2, 10, 0), unit: 'kg', equipment: 'Bodyweight' }), null);
 });
 test('zero weight null; split reps via repsOf', () => {
   assert.equal(nextTarget({ targetReps: '10', lastSets: sets(3, 10, 0) }), null);

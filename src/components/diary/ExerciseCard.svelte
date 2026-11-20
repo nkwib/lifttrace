@@ -1,3 +1,8 @@
+<script context="module">
+  // Library equipment per exercise id, shared by every card (one getExercise each).
+  const _equipById = new Map();
+</script>
+
 <script>
   import { createEventDispatcher, onMount, afterUpdate } from 'svelte';
   import { _ } from 'svelte-i18n';
@@ -180,13 +185,15 @@
   $: volumeCmp = lastSession ? volumeDelta({ ...exercise, load_type: loadType }, lastSession.sets, { done: workoutDone }) : null;
   $: volumeDeltaPct = volumeCmp ? volumeCmp.pct : null;
 
-  // Progression nudge (rules in lib/progression.js). Equipment is not on the
-  // workout row, so the flat step applies until it is plumbed through.
-  $: progressionSuggestion = (notReps || !lastSession) ? null : nextTarget({
+  // Progression nudge (rules in lib/progression.js). Equipment comes from the
+  // library row (libEquipment below), not the workout row. Held back while it
+  // loads so the step does not jump; a failed or empty lookup keeps the flat step.
+  $: progressionWaits = !!exercise.exercise_id && libEquipment === null && !_equipFailed;
+  $: progressionSuggestion = (notReps || !lastSession || progressionWaits) ? null : nextTarget({
     targetReps: exercise.target_reps,
     lastSets: lastSession.sets,
     unit,
-    equipment: exercise.equipment,
+    equipment: libEquipment?.length ? libEquipment.join(' ') : '',
     loadType,
     repsOf: setReps,
   });
@@ -292,13 +299,14 @@
 
   // Inline plate split (display only; the logged weight stays the total).
   // The workout exercise carries no equipment, so the library row is read
-  // once per exercise id, only while the setting is on. Without a library
-  // row the name stands in ("EZ Bar Curl").
-  const _equipById = new Map();
+  // once per exercise id, for the plate split and the progression chip.
+  // Without a library row the name stands in for plates only ("EZ Bar Curl").
   let libEquipment = null;
   let _equipFor = null;
-  $: if ($showPlateSplit && exercise.exercise_id && exercise.exercise_id !== _equipFor) {
+  let _equipFailed = false;
+  $: if (($showPlateSplit || (!notReps && lastSession)) && exercise.exercise_id && exercise.exercise_id !== _equipFor) {
     _equipFor = exercise.exercise_id;
+    _equipFailed = false;
     loadEquipment(exercise.exercise_id);
   }
   async function loadEquipment(id) {
@@ -309,7 +317,7 @@
       const eq = Array.isArray(row?.equipment) ? row.equipment : [];
       _equipById.set(id, eq);
       if (_equipFor === id) libEquipment = eq;
-    } catch { /* no split without equipment */ }
+    } catch { if (_equipFor === id) _equipFailed = true; /* no split, flat step */ }
   }
   $: plateBar = !$showPlateSplit ? null
     : barWeightForEquipment(

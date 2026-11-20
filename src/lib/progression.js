@@ -38,7 +38,8 @@ export function incrementFor(unit, equipment) {
 export function nextTarget({ targetReps, lastSets, unit = 'lbs', equipment = '', loadType, repsOf } = {}) {
   const tgt = parseRepTarget(targetReps);
   if (!tgt || !Array.isArray(lastSets)) return null;
-  if (normalizeEquipment(equipment) === 'Bodyweight' && loadType !== 'weighted') return null;
+  // Assisted lifts progress by lowering the assist, so adding weight is wrong.
+  if (/assisted/i.test(String(equipment))) return null;
   const read = repsOf || (s => s.reps);
   const working = lastSets.filter(s => s && !s.warmup && (parseInt(read(s)) || 0) > 0);
   if (!working.length) return null;
