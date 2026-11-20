@@ -620,7 +620,7 @@ export function saveWorkout(dateStr, entry) {
           // Keeps the tab strip's own names/checkmarks current — without
           // this, completing or renaming a session wouldn't show up on
           // its tab until a full page reload.
-          loadWorkoutSessions(dateStr).catch(() => {});
+          _tabsAfterSave(dateStr, saved);
           // Clear so lifecycle-driven flushes (App.pause / visibilitychange /
           // pagehide) don't re-fire the same already-saved entry. A genuine
           // subsequent edit re-populates via a new `saveWorkout` call.
@@ -631,6 +631,18 @@ export function saveWorkout(dateStr, entry) {
       } catch (e) { reject(e); }
     }, 350);
   });
+}
+
+/** The tab strip after a save: the saved workout's tab takes the server's
+ *  answer in place, over the row the list read returned (which also carries
+ *  what a save doesn't change: coach feedback, the program's length), else
+ *  the list is read again (a new workout, or a save queued offline). */
+function _tabsAfterSave(dateStr, saved) {
+  const w = saved.workout;
+  const list = get(todaySessions);
+  const at = !saved.queued && w.id != null && Array.isArray(list) ? list.findIndex(s => s?.id === w.id) : -1;
+  if (at < 0) { loadWorkoutSessions(dateStr).catch(() => {}); return; }
+  todaySessions.set(list.map((s, i) => (i === at ? { ...s, ...w } : s)));
 }
 
 /** Force-flush any pending save immediately (for navigation away, App.pause,
@@ -651,7 +663,7 @@ export async function flushWorkoutSave(dateStr) {
     if (_latestEntry === toSave && toSaveEpoch === _epoch && saved?.workout) {
       todayLog.set(saved.workout);
       currentSessionId.set(saved.workout?.id ?? null);
-      loadWorkoutSessions(date).catch(() => {});
+      _tabsAfterSave(date, saved);
       // Clear so re-firing lifecycle handlers can't re-save the same
       // already-flushed entry. See saveWorkout for the full rationale.
       _latestEntry = null;
