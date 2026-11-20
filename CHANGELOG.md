@@ -27,6 +27,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Full exercise history on Android Local.** Exercise detail no longer stops at the newest 50 workouts, so bests and the delete warning count every session.
 - **Local "Clear all data" now clears cardio.** Android Local mode left cardio sessions and workout tombstones behind.
 - **Exercise usage in Local mode.** An exercise done in two sessions on the same day now counts as one day, matching the server, so picker sorting is consistent.
+- **Escape in the custom equipment field no longer closes the exercise editor.** It only cancels the new chip, keeping your other edits.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added

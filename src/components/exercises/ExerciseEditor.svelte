@@ -209,7 +209,7 @@
             placeholder="e.g. Slackboard"
             bind:value={newCustomEq}
             on:blur={addCustomEquipment}
-            on:keydown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomEquipment(); } if (e.key === 'Escape') { newCustomEq = ''; addingCustomEq = false; } }}
+            on:keydown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomEquipment(); } if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); newCustomEq = ''; addingCustomEq = false; } }}
             autofocus
           />
         {:else}
