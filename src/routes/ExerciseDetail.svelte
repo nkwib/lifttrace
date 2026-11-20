@@ -8,6 +8,7 @@
   import { onSyncChanges, newestRead } from '../lib/sync-refresh.js';
   import { weightUnit, exerciseDistanceUnits } from '../stores/settings.js';
   import { setKind, SET_TYPE_FIELD, fmtSetAmount, fromMeters, distanceUnitOf, setReps } from '../lib/workout.js';
+  import { exerciseWeightPr } from '../lib/history-set.js';
   import { showError, showSuccess } from '../stores/toast.js';
   import { confirmDialog } from '../stores/confirmDialog.js';
   import ExerciseInfo from '../components/exercises/ExerciseInfo.svelte';
@@ -129,15 +130,7 @@
     if (!top) return null;
     const amount = fmtSetAmount(detailKind, best, detailUnit);
     return { label: atWeight ? `${amount} @ ${atWeight} ${$weightUnit}` : amount, date: prDate };
-  })() : (() => {
-    let max = 0, prDate = '';
-    for (const h of history) {
-      for (const s of h.sets || []) {
-        if (s.completed && s.weight > max && setKind({ set_type: h.set_type }, s) === 'reps') { max = s.weight; prDate = h.date; }
-      }
-    }
-    return max > 0 ? { weight: max, date: prDate, unit: $weightUnit } : null;
-  })();
+  })() : exerciseWeightPr(history, $weightUnit, (v, u) => $_('exercise_info.e1rm', { values: { value: v, unit: u } }));
 
   // Per-session top set for the inline progress chart. Oldest first so the
   // chart reads left-to-right chronologically. Limited to the last 24

@@ -930,7 +930,11 @@
     "how_to_perform":        "How to Perform",
     "tips":                  "Tips",
     "personal_record":       "Personal Record",
-    "recent_history":        "Recent History"
+    "recent_history":        "Recent History",
+    "warmup":                "Warm-up",
+    "warmup_short":          "W",
+    "show_all":              "Show all ({count})",
+    "e1rm":                  "Est. 1RM {value} {unit}"
   },
   "workout_summary": {
     "sets":                  "Sets",

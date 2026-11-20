@@ -2,7 +2,7 @@
   import { resolveAssetUrl } from '../../lib/platform.js';
   import { failedMedia, mediaFailed } from '../../lib/media-fallback.js';
   import { _ } from 'svelte-i18n';
-  import { setKind, fmtSetLabel, distanceUnitOf } from '../../lib/workout.js';
+  import { fmtHistorySet, historyHasRepSets } from '../../lib/history-set.js';
   import { weightUnit, exerciseDistanceUnits } from '../../stores/settings.js';
   /**
    * Shared exercise detail content — reused by the full ExerciseDetail
@@ -10,31 +10,15 @@
    * exercise object and optionally a personal-record/history block.
    */
   export let exercise = null;
-  export let pr = null;          // { weight, date, unit } or null
+  export let pr = null;          // { weight, date, unit } or { label, sub?, date }, or null
   export let history = null;     // [{ date, sets: [...] }] or null
 
-  // Load-type-aware set formatter (issue #24). Alternating exercises
-  // logged with per-side reps show `w × L+R` (e.g. `30 × 5+5`);
-  // paired shows `w × N` unchanged; bilateral is the current
-  // `w × reps` form. Uses the exercise library's `load_type` since
-  // this component receives the library exercise object.
-  function _formatSet(s, h) {
-    // Timed sets (issue #89) read as a duration: "1:00" or "25×1:00";
-    // distance and calorie sets (issue #119) as "500 m" or "20 cal".
-    const kind = setKind({ set_type: h?.set_type }, s);
-    if (kind !== 'reps') {
-      const unit = distanceUnitOf({ exercise_id: exercise?.id, exercise_name: exercise?.name, distance_unit: h?.distance_unit },
-        $weightUnit === 'lbs', $exerciseDistanceUnits);
-      return fmtSetLabel({ set_type: kind }, s, unit);
-    }
-    const lt = exercise?.load_type || 'bilateral';
-    if (lt === 'unilateral' && (s.reps_l != null || s.reps_r != null)) {
-      const l = s.reps_l ?? '';
-      const r = s.reps_r ?? '';
-      return `${s.weight}×${l}+${r}`;
-    }
-    return `${s.weight}×${s.reps}`;
-  }
+  let showAll = false;
+  let lastId = null;
+  $: if ((exercise?.id ?? null) !== lastId) { lastId = exercise?.id ?? null; showAll = false; }
+  $: rows = history || [];
+  $: shown = showAll ? rows : rows.slice(0, 10);
+  $: ctx = { exerciseId: exercise?.id, exerciseName: exercise?.name, imperial: $weightUnit === 'lbs', distanceUnits: $exerciseDistanceUnits };
 </script>
 
 {#if exercise}
@@ -115,6 +99,7 @@
       <div class="pr-info">
         <span class="pr-label">{$_('exercise_info.personal_record')}</span>
         <span class="pr-value">{pr.label ?? `${pr.weight} ${pr.unit || ''}`}</span>
+        {#if pr.sub}<span class="pr-sub">{pr.sub}</span>{/if}
         <span class="pr-date">{pr.date}</span>
       </div>
     </div>
@@ -125,14 +110,21 @@
     <div class="section">
       <h3 class="section-title">{$_('exercise_info.recent_history')}</h3>
       <div class="history-list">
-        {#each history.slice(0, 10) as h}
+        {#each shown as h}
           <div class="history-row">
             <span class="hist-date">{h.date}</span>
             <span class="hist-sets">
-              {(h.sets || []).filter(s => s.completed).map(s => _formatSet(s, h)).join(' | ')}
+              {#each (h.sets || []).filter(s => s.completed) as s, i}
+                {#if i > 0}<span class="sep"> | </span>{/if}
+                {#if s.warmup}<span class="warm" title={$_('exercise_info.warmup')}><span aria-hidden="true">{$_('exercise_info.warmup_short')}</span> {fmtHistorySet(s, h, ctx)}</span>{:else}<span>{fmtHistorySet(s, h, ctx)}</span>{/if}
+              {/each}
+              {#if historyHasRepSets(h)}<span class="unit">{$weightUnit}</span>{/if}
             </span>
           </div>
         {/each}
+        {#if !showAll && rows.length > 10}
+          <button class="show-all" on:click={() => (showAll = true)}>{$_('exercise_info.show_all', { values: { count: rows.length } })}</button>
+        {/if}
       </div>
     </div>
   {/if}
@@ -164,6 +156,7 @@
   .pr-info { display: flex; flex-direction: column; gap: 2px; }
   .pr-label { font-size: 12px; color: var(--text-3); font-weight: 600; text-transform: uppercase; }
   .pr-value { font-size: 22px; font-weight: 700; color: #FFD54F; }
+  .pr-sub   { font-size: 12px; color: var(--text-2); }
   .pr-date  { font-size: 12px; color: var(--text-3); }
 
   .history-list { display: flex; flex-direction: column; gap: 6px; }
@@ -174,6 +167,12 @@
     border-radius: var(--radius-md);
   }
   .hist-date { font-size: 13px; font-weight: 600; color: var(--text-2); }
+  .warm { opacity: 0.55; }
+  .sep, .unit { color: var(--text-3); }
+  .show-all {
+    background: none; border: 1px solid var(--border); border-radius: var(--radius-md);
+    color: var(--accent); padding: 8px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
   .hist-sets { font-size: 13px; color: var(--text-1); font-variant-numeric: tabular-nums; }
 
   /* ── Media ────────────────────────────────────────────────────────── */

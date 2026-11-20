@@ -1,0 +1,53 @@
+import { setKind, fmtSetLabel, distanceUnitOf, setReps } from './workout.js';
+import { estimateOneRm } from './one-rm.js';
+
+/**
+ * One completed set as shown in an exercise's history row. Rep sets read
+ * `w×r`, or `w×L+R` whenever either side is recorded (any load type); the
+ * unit is shown once per row by the caller. Timed, distance and calorie sets
+ * carry their own unit via fmtSetLabel.
+ * ctx: { exerciseId, exerciseName, imperial, distanceUnits }
+ */
+export function fmtHistorySet(set, h, ctx = {}) {
+  const kind = setKind({ set_type: h?.set_type }, set);
+  if (kind !== 'reps') {
+    const unit = distanceUnitOf(
+      { exercise_id: ctx.exerciseId, exercise_name: ctx.exerciseName, distance_unit: h?.distance_unit },
+      !!ctx.imperial, ctx.distanceUnits);
+    return fmtSetLabel({ set_type: kind }, set, unit);
+  }
+  if (set.reps_l != null || set.reps_r != null) {
+    return `${set.weight}×${set.reps_l ?? ''}+${set.reps_r ?? ''}`;
+  }
+  return `${set.weight}×${setReps(set)}`;
+}
+
+/** True when the row has a completed rep set (so a weight unit applies). */
+export function historyHasRepSets(h) {
+  return (h?.sets || []).some(s => s.completed && setKind({ set_type: h?.set_type }, s) === 'reps');
+}
+
+/**
+ * Heaviest completed, non-warm-up rep set across history. Tie on weight goes
+ * to the most reps. Returns { weight, date, unit, reps?, label?, sub? } or null.
+ * e1RM (sub) is omitted for 1 rep or more than 12 (estimateOneRm range).
+ * fmtE1rm(value, unit) supplies the localized sub text.
+ */
+export function exerciseWeightPr(history, unit, fmtE1rm) {
+  let max = 0, maxReps = 0, date = '';
+  for (const h of history || []) {
+    for (const s of h.sets || []) {
+      if (!s.completed || s.warmup || setKind({ set_type: h.set_type }, s) !== 'reps') continue;
+      const w = Number(s.weight) || 0, r = Number(setReps(s)) || 0;
+      if (w > max || (w === max && w > 0 && r > maxReps)) { max = w; maxReps = r; date = h.date; }
+    }
+  }
+  if (!(max > 0)) return null;
+  if (!maxReps) return { weight: max, date, unit };
+  const e1 = estimateOneRm(max, maxReps);
+  return {
+    weight: max, date, unit, reps: maxReps,
+    label: `${max} ${unit} × ${maxReps}`,
+    sub: e1 && maxReps > 1 && fmtE1rm ? fmtE1rm(Math.round(e1 * 10) / 10, unit) : undefined,
+  };
+}

@@ -6,6 +6,7 @@
   import { LtApi } from '../../lib/api.js';
   import { weightUnit } from '../../stores/settings.js';
   import { CATEGORIES } from '../../lib/workout.js';
+  import { exerciseWeightPr } from '../../lib/history-set.js';
   import { normalizeEquipment, sortByBucket } from '../../lib/equipment.js';
   import ExerciseInfoSheet from './ExerciseInfoSheet.svelte';
   import ExerciseInfo from './ExerciseInfo.svelte';
@@ -45,15 +46,7 @@
   }
   // PR derivation matches ExerciseInfoSheet so the inline pane shows
   // the same top weight/date chip.
-  $: _infoPr = (() => {
-    let max = 0, prDate = '';
-    for (const h of _infoHistory || []) {
-      for (const s of h.sets || []) {
-        if (s.completed && s.weight > max) { max = s.weight; prDate = h.date; }
-      }
-    }
-    return max > 0 ? { weight: max, date: prDate, unit: $weightUnit } : null;
-  })();
+  $: _infoPr = exerciseWeightPr(_infoHistory, $weightUnit, (v, u) => $_('exercise_info.e1rm', { values: { value: v, unit: u } }));
 
   // Wide-mode gate — tracks the same media query the desktop shell
   // uses (>=1280px + not html.force-mobile-layout). Kept as a reactive

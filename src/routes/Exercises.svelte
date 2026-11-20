@@ -8,6 +8,7 @@
   import { isNative, getServerUrl, resolveAssetUrl } from '../lib/platform.js';
   import { failedMedia, mediaFailed, workingMedia } from '../lib/media-fallback.js';
   import { CATEGORIES } from '../lib/workout.js';
+  import { exerciseWeightPr } from '../lib/history-set.js';
   import { normalizeEquipment, sortByBucket } from '../lib/equipment.js';
   import { showSuccess, showError } from '../stores/toast.js';
   import ExerciseEditor from '../components/exercises/ExerciseEditor.svelte';
@@ -278,15 +279,7 @@
     catch { _detailHistory = []; }
     _detailLoading = false;
   }
-  $: _detailPr = (() => {
-    let max = 0, prDate = '';
-    for (const h of _detailHistory || []) {
-      for (const s of h.sets || []) {
-        if (s.completed && s.weight > max) { max = s.weight; prDate = h.date; }
-      }
-    }
-    return max > 0 ? { weight: max, date: prDate, unit: $weightUnit } : null;
-  })();
+  $: _detailPr = exerciseWeightPr(_detailHistory, $weightUnit, (v, u) => $_('exercise_info.e1rm', { values: { value: v, unit: u } }));
   function _openExercise(ex) {
     if (_wideMode) _loadDetail(ex);
     else push(`/exercise/${ex.id}`);
