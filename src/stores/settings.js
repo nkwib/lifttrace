@@ -61,10 +61,12 @@ export async function flushSettingSaves() {
   await Promise.allSettled(keys.map(async (key) => {
     delete _saveQueue[key];
     if (!_isLoggedIn() || _saveUser[key] !== _userKey()) return;
-    await fetch('/api/settings', {
+    const res = await fetch('/api/settings', {
       method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key, value: _saveValue[key] }),
     });
+    // Silent: this runs during sign-out.
+    if (!res.ok) return;
   }));
 }
 
@@ -91,8 +93,27 @@ export function scheduleSave(key, value) {
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key, value }),
-    }).catch(() => {});
+    }).then((res) => {
+      // 401 is the session-ended UI's to report.
+      if (!res.ok && res.status !== 401) _notifySaveFailed();
+    }).catch(() => { /* offline: the web offline layer queues it */ });
   }, 600);
+}
+
+// Throttled: bulkSet and sync pulls can fail many keys at once.
+let _lastSaveFailToast = 0;
+export function _resetSaveFailThrottle() { _lastSaveFailToast = 0; }
+async function _notifySaveFailed() {
+  try {
+    const now = Date.now();
+    if (now - _lastSaveFailToast < 30000) return;
+    // Native saves go through the sync queue, not this PUT.
+    const { isNative } = await import('../lib/platform.js');
+    if (isNative) return;
+    _lastSaveFailToast = now;
+    const [{ showError }, { _: t }] = await Promise.all([import('./toast.js'), import('svelte-i18n')]);
+    showError(get(t)('settings.save_failed'));
+  } catch { /* feedback is best effort */ }
 }
 
 /**

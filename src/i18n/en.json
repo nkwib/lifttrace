@@ -538,6 +538,7 @@
     "biometric_signin":      "Sign In with Biometric"
   },
   "settings": {
+    "save_failed": "Could not save a setting to the server. It may revert.",
     "units": {
       "section":  "Language & Region",
       "language": "Language"
