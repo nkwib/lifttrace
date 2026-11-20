@@ -74,9 +74,9 @@ test('connected to a server, Statistics asks the server; a local 501 never ends 
 test('Statistics shows a failure as an error, keeps what did load, and reports it once', () => {
   const page = read('../src/routes/Statistics.svelte');
   assert.match(page, /Promise\.allSettled\(\[/);
-  assert.match(page, /if \(seq !== _loadSeq\) return;/);
+  assert.match(page, /if \(seq !== _rangeSeq\) return;/);
   assert.match(page, /\{#if loadError\}[\s\S]*?statistics\.load_failed_detail[\s\S]*?on:click=\{loadData\}/);
-  assert.match(page, /if \(range === 'All'\) await loadData\(\);/, 'mount does not load a second time');
+  assert.match(page, /if \(range === 'All'\) await loadRangeData\(\);/, 'mount does not load a second time');
   const en = JSON.parse(read('../src/i18n/en.json'));
   assert.ok(en.statistics.load_failed_detail && en.statistics.retry);
 });

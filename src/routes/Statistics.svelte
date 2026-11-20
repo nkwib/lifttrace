@@ -210,7 +210,7 @@
     } catch {}
     // The range statement below already loaded once; only All needs a second
     // pass, because its start date is the earliest workout just fetched.
-    if (range === 'All') await loadData();
+    if (range === 'All') await loadRangeData();
 
     // After a sync that brought nothing, every few minutes: the totals come
     // from the server, and cardio logged on the web or the watch isn't in
@@ -233,50 +233,93 @@
     if (typeof window !== 'undefined') window.removeEventListener('resize', _measureIndicator);
   });
 
-  $: range, loadData();
+  // Range-bound stats reload on a range (or Track Cardio) change; the base
+  // set (records, streaks, recent workouts, excused and cardio days) does not
+  // depend on the range, so it loads on mount, on Track Cardio and on sync.
+  $: range, $cardioEnabled, loadRangeData();
+  $: $cardioEnabled, loadBaseData();
 
   // Each stat loads on its own, so one that fails no longer throws away the
   // rest, and a failure shows as an error rather than as zeros that look like
-  // real statistics (issue #101). Only the newest load may write results or
-  // report an error, so overlapping loads can't double the toast.
-  let loadError = false;
-  let _loadSeq = 0;
-  async function loadData() {
-    const seq = ++_loadSeq;
-    loading = true;
+  // real statistics (issue #101). Only the newest load of each kind may write
+  // results or report an error, and only one toast shows when both fail.
+  let rangeError = false;
+  let baseError = false;
+  $: loadError = rangeError || baseError;
+  let _rangeSeq = 0;
+  let _baseSeq = 0;
+  let _pending = 0;
+  let loadedOnce = false;
+
+  function loadStart() { _pending++; loading = true; }
+  function loadEnd() {
+    _pending--;
+    if (_pending === 0) { loading = false; loadedOnce = true; }
+  }
+
+  // Sync and Retry: everything, progress included.
+  function loadData() {
+    loadRangeData();
+    loadBaseData();
+    if (metric === 'progress' && selectedExerciseId) loadProgress();
+  }
+
+  async function loadRangeData() {
+    const seq = ++_rangeSeq;
+    loadStart();
     try {
       const results = await Promise.allSettled([
         LtApi.getVolume(startDate, endDate),
         LtApi.getFrequency(startDate, endDate, $cardioEnabled),
-        LtApi.getRecords(),
-        LtApi.getStreaks($cardioEnabled),
         LtApi.getMuscleGroupVolume(startDate, endDate),
         LtApi.getMuscleEffectiveSets(startDate, endDate),
         LtApi.getWeekdayDistribution(startDate, endDate, $cardioEnabled),
         LtApi.getCardioWeekly(startDate, endDate).catch(() => []),
         LtApi.listCardio(startDate, endDate).catch(() => []),
+        loadBodyWeights(seq),
       ]);
-      if (seq !== _loadSeq) return;
-      const [v, f, r, s, mg, mes, wd, cw, cs] = results.map(x => (x.status === 'fulfilled' ? x.value : undefined));
+      if (seq !== _rangeSeq) return;
+      const [v, f, mg, mes, wd, cw, cs] = results.map(x => (x.status === 'fulfilled' ? x.value : undefined));
       const failed = results.filter(x => x.status === 'rejected');
       failed.forEach(x => console.error(x.reason));
       if (v !== undefined) volumeRaw = v;
       if (f !== undefined) frequencyRaw = f;
-      // Rows with no record in them (a bodyweight rep exercise) are left out.
-      if (r !== undefined) records = (r || []).filter(hasRecord);
-      if (s !== undefined) streaks = s;
       if (mg !== undefined) muscleGroups = mg;
       if (mes !== undefined) muscleLoad = mes || {};
       if (wd !== undefined) weekdayDist = wd;
       cardioWeekly = Array.isArray(cw) ? cw : [];
       cardioSessions = Array.isArray(cs) ? cs : [];
-      loadError = failed.length > 0;
-      if (loadError) showError($_('statistics.load_failed'));
+      reportLoad('range', failed.length > 0);
+    } catch(e) {
+      console.error(e);
+      if (seq === _rangeSeq) reportLoad('range', true);
+    } finally {
+      loadEnd();
+    }
+  }
+
+  async function loadBaseData() {
+    const seq = ++_baseSeq;
+    loadStart();
+    try {
+      const results = await Promise.allSettled([
+        LtApi.getRecords(),
+        LtApi.getStreaks($cardioEnabled),
+      ]);
+      if (seq !== _baseSeq) return;
+      const [r, s] = results.map(x => (x.status === 'fulfilled' ? x.value : undefined));
+      const failed = results.filter(x => x.status === 'rejected');
+      failed.forEach(x => console.error(x.reason));
+      // Rows with no record in them (a bodyweight rep exercise) are left out.
+      if (r !== undefined) records = (r || []).filter(hasRecord);
+      if (s !== undefined) streaks = s;
+      reportLoad('base', failed.length > 0);
 
       // Heatmap dates + cached full records (the calorie estimator needs
       // exercises + duration_min, both already in this payload).
       try {
         const recent = await fetch('/api/workout/recent?limit=365', { credentials: 'include' });
+        if (seq !== _baseSeq) return;
         if (recent.ok) {
           // Trained days by the shared rule (src/lib/trained-day.js), the one
           // the Diary's dots and /api/stats/streaks use: a completed working
@@ -288,25 +331,28 @@
           // them out.
           const logs = (await recent.json()).filter(l => exercisesOf(l).length > 0);
           const cardioRows = $cardioEnabled ? await LtApi.listCardio().catch(() => []) : [];
+          const excused = await LtApi.listExcusedDays().catch(() => excusedRows);
+          if (seq !== _baseSeq) return;
           workoutDates = trainedDates({ workouts: logs, cardio: cardioRows, cardioOn: $cardioEnabled });
-          excusedRows = await LtApi.listExcusedDays().catch(() => excusedRows);
+          excusedRows = excused;
           recentWorkouts = logs;
         }
       } catch {}
-
-      // Body weight sampling
-      await loadBodyWeights();
-
-      // If exercise progress is selected, refresh its data too
-      if (metric === 'progress' && selectedExerciseId) await loadProgress();
     } catch(e) {
       console.error(e);
-      if (seq === _loadSeq) { loadError = true; showError($_('statistics.load_failed')); }
+      if (seq === _baseSeq) reportLoad('base', true);
+    } finally {
+      loadEnd();
     }
-    if (seq === _loadSeq) loading = false;
   }
 
-  async function loadBodyWeights() {
+  function reportLoad(kind, failed) {
+    const other = kind === 'range' ? baseError : rangeError;
+    if (kind === 'range') rangeError = failed; else baseError = failed;
+    if (failed && !other) showError($_('statistics.load_failed'));
+  }
+
+  async function loadBodyWeights(seq) {
     try {
       // Body stats are independent of workout history: someone can weigh in
       // during a break, or import years of weigh-ins from another app before
@@ -315,13 +361,14 @@
       // that startDate already falls back to when there are no workouts.
       const from = range === 'All' ? '2000-01-01' : startDate;
       const rows = await LtApi.getBodyStatsRange(from, endDate);
+      if (seq !== _rangeSeq) return;
       bodyRows = (rows || [])
         .map(r => ({ date: r.date, stats: r.stats || {} }))
         .sort((a, b) => a.date.localeCompare(b.date));
       bodyWeights = bodyRows
         .map(r => ({ date: r.date, weight: parseFloat(r.stats?.weight) }))
         .filter(p => Number.isFinite(p.weight));
-    } catch { bodyWeights = []; bodyRows = []; }
+    } catch { if (seq === _rangeSeq) { bodyWeights = []; bodyRows = []; } }
   }
 
   async function loadProgress() {
@@ -751,10 +798,10 @@
       </div>
     {/each}
   </nav>
-  {#if loading}
+  {#if !loadedOnce}
     <div class="loading">{$_('statistics.loading_stats')}</div>
   {:else}
-    <div class="content">
+    <div class="content" class:reloading={loading}>
       {#if loadError}
         <div class="stats-load-error" role="alert">
           <span class="material-symbols-rounded">error</span>
@@ -1819,6 +1866,7 @@
   .empty-state .material-symbols-rounded { font-size: 40px; color: var(--text-3); }
   .empty-state p { font-size: 13px; color: var(--text-2); margin: 0; line-height: 1.5; max-width: 32em; }
   .empty-title { font-size: 15px; font-weight: 700; color: var(--text-1); margin: 0; }
+  .content.reloading { opacity: 0.5; pointer-events: none; transition: opacity 0.15s; }
   .loading { text-align: center; padding: 48px; color: var(--text-3); font-size: 14px; }
 
   @media (max-width: 400px) {
