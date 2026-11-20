@@ -1710,6 +1710,18 @@
     });
   }
 
+  // Several exercises changed together (a superset's "Add Round"), saved as
+  // one: separate updateExercise calls in the same tick would each start
+  // from `exercises` as it was and the last would win. No set is completed
+  // here, so there is no rest, PR or finish to check.
+  async function updateExercises(changes) {
+    const updated = [...exercises];
+    for (const { idx, exercise } of changes || []) {
+      if (updated[idx]) updated[idx] = exercise;
+    }
+    await saveWorkout($currentDate, { ...($todayLog || {}), exercises: updated });
+  }
+
   async function updateExercise(idx, ex) {
     const old = exercises[idx];
     let setJustCompleted = false;
@@ -2954,6 +2966,7 @@
               relTime={relInboxTime}
               {replySavedFlash}
               on:update={e => updateExercise(e.detail.idx, e.detail.exercise)}
+              on:updateMany={e => updateExercises(e.detail)}
               on:remove={e => removeExercise(e.detail.idx)}
               on:removeSuperset={e => removeSuperset(e.detail)}
               on:addToSuperset={e => openSupersetPicker(e.detail)}
@@ -5438,10 +5451,8 @@
        visible instead of a memory game.
 
        Scoped to .ex-card.standalone (the class ExerciseCard sets
-       when NOT inside a superset) so nested ex-cards inside a
-       SupersetCard keep their linear layout — the .ss-connector
-       + narrower nested container makes a 2-col grid there squish
-       badly. */
+       when NOT inside a superset). A SupersetCard lays its sets out
+       by round, with no ex-card inside it. */
     :global(html.wide-content) .diary-body .exercise-list :global(.ex-card.standalone) {
       display: grid;
       grid-template-columns: minmax(200px, 260px) 1fr;

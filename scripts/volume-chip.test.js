@@ -162,7 +162,11 @@ test('the card uses it and says what it compares', () => {
     assert.equal(found.length, 1);
     assert.match(found[0], /workoutDone=\{!!\$todayLog\?\.completed\}/, `Diary's ${name}`);
   }
-  const inSuperset = tags(read('../src/components/diary/SupersetCard.svelte'), 'ExerciseCard');
-  assert.equal(inSuperset.length, 2, 'alone and in a superset');
-  for (const tag of inSuperset) assert.match(tag, /\{workoutDone\}/);
+  const ss = read('../src/components/diary/SupersetCard.svelte');
+  const inSuperset = tags(ss, 'ExerciseCard');
+  assert.equal(inSuperset.length, 1, 'a superset of one');
+  assert.match(inSuperset[0], /\{workoutDone\}/);
+  // A superset's members, by the same rule.
+  assert.match(ss, /volumeDelta\([^\n]*\{ done: workoutDone \}\)/);
+  assert.doesNotMatch(ss, /lastVolume/, 'no second copy of the rule');
 });
