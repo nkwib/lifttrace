@@ -127,18 +127,21 @@ async function _sessionsInProgram(programId, assignedAt) {
 
 // Resolve current_week for an active program row + its assignment, so the
 // Diary's week bar and week-aware prefill work offline. Returns { current_week,
-// sessions_in_program, paused_days } or null when the program isn't
-// progressed/active. paused_days: the days this phone's excused days have
+// sessions_in_program, paused_days } (only sessions_in_program for a
+// one-week program) or null without a program. paused_days: the days this phone's excused days have
 // pushed a calendar-mode program back (issue #121), by the same rule and
 // window the server uses (programWeek.js). `query.cardio`: the Track Cardio
 // switch the app sends (plan-week-query.js).
 async function _resolveCurrentWeek(program, assignment, query = {}) {
-  if (!program || (program.duration_weeks || 1) <= 1) return null;
+  if (!program) return null;
+  const sessions = await _sessionsInProgram(program.id, assignment?.assigned_at);
+  // One-week programs are not progressed: sessions only, no current_week
+  // (the server leaves it unset too).
+  if ((program.duration_weeks || 1) <= 1) return { sessions_in_program: sessions };
   const tplCount = (await dbQuery(
     `SELECT COUNT(*) AS c FROM workout_templates WHERE program_id = ? AND deleted_at IS NULL`,
     [program.id]
   ))[0]?.c || 0;
-  const sessions = await _sessionsInProgram(program.id, assignment?.assigned_at);
   const now = Date.now();
   const window = pauseWindow(program, assignment, { now });
   let excusedDays = [], trainedDays = new Set();

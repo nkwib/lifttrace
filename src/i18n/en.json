@@ -1177,6 +1177,7 @@
     "goal":                  "Goal",
     "cancel":                "Cancel",
     "week_of": "Week {week} of {total}",
+    "n_sessions": "{count, plural, one {# session} other {# sessions}}",
     "n_week_program": "{n}-week program",
     "n_weeks": "{n, plural, one {# week} other {# weeks}}",
     "paused_days": "{count, plural, one {Paused # day for excused days} other {Paused # days for excused days}}"

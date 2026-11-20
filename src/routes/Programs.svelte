@@ -277,7 +277,7 @@
                 {/if}
                 {#if p.sessions_in_program > 0}
                   <span class="progress-sep">·</span>
-                  <span class="progress-stat">{p.sessions_in_program} {p.sessions_in_program === 1 ? 'session' : 'sessions'}</span>
+                  <span class="progress-stat">{$_('programs.n_sessions', { values: { count: p.sessions_in_program } })}</span>
                 {/if}
               </div>
             {/if}
