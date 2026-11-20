@@ -8,6 +8,7 @@ import { pushNotify } from '../lib/push-notify.js';
 import { deleteMediaForUser } from '../lib/body-stat-media.js';
 import { deleteMediaForUser as deleteSetMediaForUser } from '../lib/set-media.js';
 import { fetchChecked, serviceBase } from '../lib/ssrf-guard.js';
+import { WEEK_STARTS } from '../../src/lib/week-start.js';
 import { clientSetting, readSettingRaw, settingToStore } from '../lib/secret-settings.js';
 
 // Push services usually live on the home network, so that's allowed for
@@ -50,6 +51,7 @@ router.put('/', wrap((req, res) => {
   if (!userMgmtActive() || !req.user) return res.json({ ok: true });
   const { key, value } = req.body;
   if (!key) return res.status(400).json({ error: 'key required' });
+  if (key === 'weekStartsOn' && !WEEK_STARTS.includes(value)) return res.status(400).json({ error: 'weekStartsOn must be monday or sunday' });
   // The newer edit of a setting stays (lib/newer-wins.js). Losing, the row
   // is still written (as it is), so its change time moves and the device
   // gets the value that stays with its next pull.

@@ -8,6 +8,8 @@ import { musclesOf } from '../lib/muscle-load.js';
 import { trainedDateSet } from '../lib/trained-days.js';
 import { currentStreak, longestStreak, trainedDaysByWeek, weekdayCounts, hasWorkingSet } from '../../src/lib/trained-day.js';
 import { userToday } from '../lib/user-zone.js';
+import { weekStart } from '../../src/lib/week-start.js';
+import { userWeekStart } from '../lib/week-start-pref.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -44,25 +46,22 @@ function loadLibraryLoadTypes() {
   return map;
 }
 
-// Monday of a workout's week. Workout dates are calendar days, so the maths
-// runs in UTC on the bare date: parsing them in the server's local time moved
-// every week to a Tuesday and shifted workouts into the wrong week on any
-// server whose TZ is west of UTC (issue #101). api-native's Stats does the same.
-function _weekStart(date) {
-  const d = new Date(`${date}T00:00:00Z`);
-  const day = d.getUTCDay();
-  d.setUTCDate(d.getUTCDate() - (day === 0 ? 6 : day - 1));
-  return d.toISOString().slice(0, 10);
-}
+// First day of a workout's week (Monday, or Sunday by the user's weekStartsOn).
+// Workout dates are calendar days, so the maths runs in UTC on the bare date
+// (src/lib/week-start.js): parsing them in the server's local time shifted
+// workouts into the wrong week on any server whose TZ is west of UTC (issue
+// #101). api-native's Stats does the same.
+const _weekStart = weekStart;
 
 // GET /api/stats/volume?start=&end=
 router.get('/volume', wrap((req, res) => {
   const { start, end } = req.query;
   const rows = getWorkouts(uid(req), start, end);
   const libMap = loadLibraryLoadTypes();
+  const startsOn = userWeekStart(uid(req));
   const byWeek = {};
   for (const row of rows) {
-    const weekStart = _weekStart(row.date);
+    const weekStart = _weekStart(row.date, startsOn);
     if (!byWeek[weekStart]) byWeek[weekStart] = 0;
     for (const ex of row.exercises) {
       byWeek[weekStart] += exerciseVolume(ex, libMap.get(ex.exercise_id));
@@ -77,7 +76,7 @@ router.get('/volume', wrap((req, res) => {
 router.get('/frequency', wrap((req, res) => {
   const { start, end, cardio } = req.query;
   const days = trainedDateSet(uid(req), { start, end, cardio });
-  res.json(trainedDaysByWeek(days, start, end));
+  res.json(trainedDaysByWeek(days, start, end, userWeekStart(uid(req))));
 }));
 
 // GET /api/stats/records — personal records per exercise

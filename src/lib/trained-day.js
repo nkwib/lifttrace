@@ -14,10 +14,12 @@
  * finished sessions rather than days, and the weekly summary left warm-ups
  * out while the streak didn't.
  *
- * Pure, with no imports, so the server can load it from here: it imports
- * ../../src/lib/trained-day.js, and the Dockerfile copies this file to that
- * place in the image, as it does the exercise-source fetchers.
+ * Pure, its only import the pure week-start.js, so the server can load it
+ * from here: it imports ../../src/lib/trained-day.js, and the Dockerfile
+ * copies both files to that place in the image, as it does the
+ * exercise-source fetchers.
  */
+import { weekStart } from './week-start.js';
 
 /** Why a day was excused, in the order the app offers them. */
 export const EXCUSE_REASONS = ['injury', 'illness', 'appointment', 'other'];
@@ -39,11 +41,9 @@ export function shiftDate(ymd, days) {
   return new Date(Date.parse(`${ymd}T00:00:00Z`) + days * DAY_MS).toISOString().slice(0, 10);
 }
 
-/** The Monday of a date's week (weeks start on Monday everywhere in the app). */
-export function weekStartOf(ymd) {
-  const d = new Date(`${ymd}T00:00:00Z`);
-  const day = d.getUTCDay();
-  return shiftDate(ymd, -(day === 0 ? 6 : day - 1));
+/** The first day of a date's week: Monday, or Sunday when the setting weekStartsOn says so. */
+export function weekStartOf(ymd, startsOn = 'monday') {
+  return weekStart(ymd, startsOn);
 }
 
 /** A workout row's exercises, whether stored as JSON text or already read. */
@@ -115,12 +115,12 @@ export function longestStreak(dates) {
 
 const _inRange = (d, from, to) => (!from || d >= from) && (!to || d <= to);
 
-/** Trained days per Monday week in a range: [{ week, count }], oldest first. */
-export function trainedDaysByWeek(dates, from, to) {
+/** Trained days per week in a range: [{ week, count }], oldest first. */
+export function trainedDaysByWeek(dates, from, to, startsOn = 'monday') {
   const byWeek = {};
   for (const d of dates) {
     if (!_inRange(d, from, to)) continue;
-    const w = weekStartOf(d);
+    const w = weekStartOf(d, startsOn);
     byWeek[w] = (byWeek[w] || 0) + 1;
   }
   return Object.keys(byWeek).sort().map(week => ({ week, count: byWeek[week] }));

@@ -6,6 +6,8 @@ import { normalizeCardioInput, normalizeExternalId } from '../lib/cardio-log.js'
 import { checkedCardioDate } from '../lib/cardio-log.js';
 import { saveCardioSession } from '../lib/mcp/tools/log-cardio.js';
 import { isHistoryUpload } from '../lib/log-webhooks.js';
+import { weekStart as _weekStart } from '../../src/lib/week-start.js';
+import { userWeekStart } from '../lib/week-start-pref.js';
 import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/create-keys.js';
 
 const router = Router();
@@ -148,18 +150,12 @@ router.delete('/by-key/:key', wrap((req, res) => {
 }));
 
 // A session's date is a calendar day: its week is found in UTC on the bare
-// date, as stats.js does (#101). Reading it as local time put Monday
+// date (src/lib/week-start.js, #101). Reading it as local time put Monday
 // sessions in the week before, west of UTC. A date stored with a time on
 // it counts by its day.
-function _weekStart(date) {
-  const d = new Date(`${String(date).slice(0, 10)}T00:00:00Z`);
-  const day = d.getUTCDay();
-  d.setUTCDate(d.getUTCDate() - (day === 0 ? 6 : day - 1));
-  return d.toISOString().slice(0, 10);
-}
 
 // GET /api/cardio/stats/weekly?start=YYYY-MM-DD&end=YYYY-MM-DD
-//   Weekly minutes total, ISO-week bucketed (Monday start), for the
+//   Weekly minutes total, bucketed by the user's week start (Monday by default), for the
 //   Statistics Cardio metric.
 router.get('/stats/weekly', wrap((req, res) => {
   const { start, end } = req.query;
@@ -168,9 +164,10 @@ router.get('/stats/weekly', wrap((req, res) => {
   const rows = userId != null
     ? db.prepare('SELECT date, duration_min FROM cardio_log WHERE user_id = ? AND date BETWEEN ? AND ?').all(userId, start, end)
     : db.prepare('SELECT date, duration_min FROM cardio_log WHERE user_id IS NULL AND date BETWEEN ? AND ?').all(start, end);
+  const startsOn = userWeekStart(userId);
   const byWeek = {};
   for (const row of rows) {
-    const weekStart = _weekStart(row.date);
+    const weekStart = _weekStart(row.date, startsOn);
     byWeek[weekStart] = (byWeek[weekStart] || 0) + row.duration_min;
   }
   res.json(Object.entries(byWeek).map(([week, minutes]) => ({ week, minutes })).sort((a, b) => a.week.localeCompare(b.week)));

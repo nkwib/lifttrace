@@ -42,6 +42,17 @@ Every place that buckets by week reads it:
 **Risk:** the parity test pins the Monday implementation. Update the test to run
 both settings through both implementations rather than relaxing it.
 
+**Status (partly done, item stays unchecked):** `src/lib/week-start.js` is the one
+rule. Done: server stats volume and frequency, cardio weekly, `Stats`/`Cardio` in
+`api-native.js` (read `weekStartsOn` from `user_settings`), `weekStartOf` and
+`trainedDaysByWeek` in `trained-day.js`, the Statistics weekly goal ring, excused
+weeks and weekday bars, the select in Settings > Units (`SERVER_SETTINGS`, validated
+server side). Left: `weekly-summary.js` and the Diary week strip are rolling seven
+day windows ending today, so they do not bucket by week start (decide whether
+"this week" should become a calendar week); the Diary and DatePicker calendar grids
+(`getDay()` first column); the heatmap, which does not exist yet. Existing weekly
+buckets re-bucket after the change (stats are computed on read, nothing is stored).
+
 **Effort:** 1 day, most of it the sweep.
 
 ### [x] 2. Scope the wake lock to the workout, and default it on

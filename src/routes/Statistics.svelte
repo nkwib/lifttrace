@@ -14,12 +14,13 @@ import { onMount, onDestroy } from 'svelte';
   import Sheet from '../components/ui/Sheet.svelte';
   import BodyMap from '../components/statistics/BodyMap.svelte';
   import { MUSCLES, MUSCLE_NAME, rankOf } from '../lib/muscles.js';
-  import { weeklyWorkoutGoal, cardioEnabled, weeklyCardioMinutesGoal, caloriesBurnedEnabled, heightCm, currentWeightKg } from '../stores/settings.js';
+  import { weeklyWorkoutGoal, weekStartsOn, cardioEnabled, weeklyCardioMinutesGoal, caloriesBurnedEnabled, heightCm, currentWeightKg } from '../stores/settings.js';
   import { currentUser } from '../stores/auth.js';
   import { DB } from '../lib/db.js';
   import { estimateWorkoutCalories, ageFromDob, isRepSet, fmtSetDuration, fmtDistance, fmtCalories, fromMeters, distanceUnitOf } from '../lib/workout.js';
   import { fmtVol, fmtWeekLabel, fillWeeks, hasRecord, recordDate } from '../lib/statsFormat.js';
   import { localDateStr } from '../lib/db.js';
+  import { weekdayOrder } from '../lib/week-start.js';
   import { trainedDates, weeklyGoal, weekStartOf, shiftDate, hasWorkingSet, exercisesOf, excusedOnly } from '../lib/trained-day.js';
   import { excusedMap } from '../lib/excused-view.js';
   import { showError } from '../stores/toast.js';
@@ -109,7 +110,7 @@ import { onMount, onDestroy } from 'svelte';
   let excusedRows = [];
   $: excusedByDate = excusedMap(excusedRows);
   $: excusedDates = excusedOnly(excusedRows, workoutDates);
-  $: excusedWeeks = [...excusedDates].reduce((m, d) => { const w = weekStartOf(d); m[w] = (m[w] || 0) + 1; return m; }, {});
+  $: excusedWeeks = [...excusedDates].reduce((m, d) => { const w = weekStartOf(d, $weekStartsOn); m[w] = (m[w] || 0) + 1; return m; }, {});
   let recentWorkouts = []; // full records (exercises + duration) — used by the calorie estimator
   let exercises = [];
   let loading = true;
@@ -416,12 +417,12 @@ import { onMount, onDestroy } from 'svelte';
   })();
   $: avgFreq = frequency.length ? (totalWorkoutsInRange / frequency.length).toFixed(1) : 0;
 
-  // Weekly goal progress for the Overview ring: trained days this Monday to
-  // Sunday against the goal, by the shared rule (src/lib/trained-day.js).
+  // Weekly goal progress for the Overview ring: trained days this week
+  // (Monday or Sunday first, weekStartsOn) against the goal, by the shared rule (src/lib/trained-day.js).
   // It used to count finished sessions, so two workouts on one day counted
   // twice and a day trained without pressing Finish didn't count.
   $: weekProgress = (() => {
-    const start = weekStartOf(localDateStr());
+    const start = weekStartOf(localDateStr(), $weekStartsOn);
     return weeklyGoal({ goal: $weeklyWorkoutGoal || 4, trained: workoutDates, excused: excusedDates, start, end: shiftDate(start, 6) });
   })();
 
@@ -470,6 +471,8 @@ import { onMount, onDestroy } from 'svelte';
   })();
   $: maxVolWeek = volume.length ? Math.max(...volume.map(v => v.volume)) : 0;
   $: maxFreqWeek = frequency.length ? Math.max(...frequency.map(f => f.count)) : 0;
+  // Weekday bars start on the week's first day; entries keep their day index (0 = Sunday).
+  $: weekdayView = weekdayOrder($weekStartsOn).map(i => weekdayDist.find(w => w.day === i)).filter(Boolean);
   $: maxWeekdayCount = weekdayDist.length ? Math.max(...weekdayDist.map(w => w.count)) : 0;
 
   // Heatmap (90 days, Mon-first week)
@@ -1229,7 +1232,7 @@ import { onMount, onDestroy } from 'svelte';
           <div class="chart-card">
             <h3 class="chart-title">{$_('statistics.weekday_dist')}</h3>
             <div class="bar-chart">
-              {#each weekdayDist as w}
+              {#each weekdayView as w}
                 <div class="bar-col">
                   <div class="bar" style="height: {maxWeekdayCount ? (w.count / maxWeekdayCount * 100) : 0}%"></div>
                   <span class="bar-label">{$_(DAY_LABELS[w.day])}</span>
@@ -1237,7 +1240,7 @@ import { onMount, onDestroy } from 'svelte';
               {/each}
             </div>
             <p class="chart-sub">
-              {$_('statistics.most_active', { values: { day: weekdayDist.length ? $_(DAY_LABELS[weekdayDist.indexOf(weekdayDist.reduce((a, b) => a.count > b.count ? a : b))]) : '—' } })}
+              {$_('statistics.most_active', { values: { day: weekdayDist.length ? $_(DAY_LABELS[weekdayDist.reduce((a, b) => a.count > b.count ? a : b).day]) : '—' } })}
             </p>
           </div>
         {/if}

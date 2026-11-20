@@ -91,19 +91,22 @@ const method = (obj, name) => {
   const end = native.indexOf('\n  },\n', from);
   return native.slice(from, end + 4);
 };
-const statsHelpers = ['_weekStart'].map((n) => {
-  const s = native.indexOf(`  ${n}(date)`, native.indexOf('const Stats = {'));
-  return native.slice(s, native.indexOf('\n  },\n', s) + 4);
-}).join('\n');
+const statsHelpers = (() => {
+  const s = native.indexOf('  _weekStart(date, startsOn)', native.indexOf('const Stats = {'));
+  return native.slice(s, native.indexOf('\n  },\n', native.indexOf('  async _startsOn(', s)) + 4);
+})();
 
 for (const TZ of ZONES) {
   test(`the phone's copy groups cardio into Monday weeks in ${TZ}`, () => {
     const script = `
       const rows = ${JSON.stringify(PHONE_ROWS)};
-      const dbQuery = async () => rows; const ME = 1;
-      const Stats = {\n${statsHelpers}\n};
-      const Cardio = {\n${method('Cardio', 'weekly')}\n};
-      Cardio.weekly('2025-12-01', '2026-10-31').then(r => process.stdout.write(JSON.stringify(r)));`;
+      const dbQuery = async (sql) => (/user_settings/.test(sql) ? [] : rows); const ME = 1;
+      const _parseJson = (s, f) => { try { return JSON.parse(s); } catch { return f; } };
+      import(${JSON.stringify(new URL('../src/lib/week-start.js', import.meta.url).href)}).then(async ({ weekStart, normalizeWeekStart }) => {
+        const Stats = {\n${statsHelpers}\n};
+        const Cardio = {\n${method('Cardio', 'weekly')}\n};
+        process.stdout.write(JSON.stringify(await Cardio.weekly('2025-12-01', '2026-10-31')));
+      });`;
     const out = execFileSync(process.execPath, ['-e', script], { env: { ...process.env, TZ }, encoding: 'utf8' });
     assert.deepEqual(JSON.parse(out), EXPECTED);
   });

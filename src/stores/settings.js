@@ -10,7 +10,7 @@ export const envLocks = writable({ smtp: false, ai: false, ai_enabled: false, oi
 
 const SERVER_SETTINGS = new Set([
   'weightUnit', 'heightUnit',
-  'dateFormat', 'timeFormat',
+  'dateFormat', 'timeFormat', 'weekStartsOn',
   'weeklyWorkoutGoal', 'goals',
   // On the server so the public API and MCP can refuse cardio writes while
   // it's off (issue #134), the same opt-in the Diary and streaks honor.
@@ -367,6 +367,8 @@ export const weightUnit  = createSettingStore('weightUnit',  'lbs');
 export const heightUnit  = createSettingStore('heightUnit',  'ft');
 export const dateFormat  = createSettingStore('dateFormat',  'US');
 export const timeFormat  = createSettingStore('timeFormat',  '12h');
+// 'monday' | 'sunday': the first day of every weekly bucket (src/lib/week-start.js).
+export const weekStartsOn = createSettingStore('weekStartsOn', 'monday');
 
 // Goals
 export const weeklyWorkoutGoal = createSettingStore('weeklyWorkoutGoal', 4);

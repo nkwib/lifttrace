@@ -1,6 +1,6 @@
 <script>
   import { slide } from 'svelte/transition';
-  import { weightUnit, dateFormat, timeFormat, language } from '../../stores/settings.js';
+  import { weightUnit, dateFormat, timeFormat, weekStartsOn, language } from '../../stores/settings.js';
   import { _ } from 'svelte-i18n';
   import { AVAILABLE_LOCALES } from '../../i18n/index.js';
 
@@ -39,6 +39,13 @@
             <option value="US">{$_('settings_units.date_us')}</option>
             <option value="EU">{$_('settings_units.date_eu')}</option>
             <option value="ISO">{$_('settings_units.date_iso')}</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">{$_('settings_units.week_starts_on')}</span>
+          <select class="form-select-sm" bind:value={$weekStartsOn}>
+            <option value="monday">{$_('settings_units.week_monday')}</option>
+            <option value="sunday">{$_('settings_units.week_sunday')}</option>
           </select>
         </div>
         <div class="setting-row">

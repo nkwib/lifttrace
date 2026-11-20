@@ -27,6 +27,7 @@ import { getServerUrl } from './platform.js';
 import { checkedCardioDate, normalizeCardioInput } from './cardio-input.js';
 import { newTempId } from './offline-edits.js';
 import { planImport, importKeys, importKey } from '../../server/lib/import-match.js';
+import { weekStart, normalizeWeekStart } from './week-start.js';
 import { trainedDates, currentStreak, longestStreak, trainedDaysByWeek, weekdayCounts, hasWorkingSet, cleanExcuse, isCalendarDate } from './trained-day.js';
 
 const ME = 1; // single-user id in standalone mode
@@ -1260,10 +1261,11 @@ const Cardio = {
       `SELECT date, duration_min FROM cardio_log WHERE user_id = ? AND date BETWEEN ? AND ?`,
       [ME, start, end]
     );
+    const startsOn = await Stats._startsOn();
     const byWeek = {};
     for (const row of rows) {
       // Calendar days, weeks in UTC, like the server (Stats._weekStart).
-      const weekStart = Stats._weekStart(String(row.date).slice(0, 10));
+      const weekStart = Stats._weekStart(String(row.date).slice(0, 10), startsOn);
       byWeek[weekStart] = (byWeek[weekStart] || 0) + row.duration_min;
     }
     return Object.entries(byWeek).map(([week, minutes]) => ({ week, minutes })).sort((a, b) => a.week.localeCompare(b.week));
@@ -1295,11 +1297,12 @@ const Stats = {
   // Workout dates are calendar days, so week maths run in UTC on the bare
   // date. Parsing them as local time put every workout on the previous day
   // for anyone west of UTC.
-  _weekStart(date) {   // Monday, like the server
-    const d = new Date(`${date}T00:00:00Z`);
-    const day = d.getUTCDay();
-    d.setUTCDate(d.getUTCDate() - (day === 0 ? 6 : day - 1));
-    return d.toISOString().slice(0, 10);
+  // First day of the week (src/lib/week-start.js), like the server.
+  _weekStart(date, startsOn) { return weekStart(date, startsOn); },
+  // The weekStartsOn setting (Monday when unset or invalid), like the server's userWeekStart.
+  async _startsOn() {
+    const rows = await dbQuery(`SELECT value FROM user_settings WHERE user_id = ? AND key = 'weekStartsOn'`, [ME]);
+    return normalizeWeekStart(rows[0] ? _parseJson(rows[0].value, rows[0].value) : null);
   },
   async _library() {
     // Includes cleared library rows (#49) so old sets still resolve.
@@ -1328,13 +1331,14 @@ const Stats = {
     return { currentStreak: currentStreak(dates, today), longestStreak: longestStreak(dates), totalWorkouts: dates.size, totalSessions: sessions };
   },
   async volume(from, to) {
-    // Mirror of GET /api/stats/volume: [{ week, volume }] by Monday week,
+    // Mirror of GET /api/stats/volume: [{ week, volume }] by week (weekStartsOn),
     // with each exercise's load type (unilateral counts both sides).
     const lib = await Stats._library();
     const rows = (await Stats._allWorkouts()).filter(Stats._hasCompletedSet).filter(w => Stats._inRange(w, from, to));
+    const startsOn = await Stats._startsOn();
     const byWeek = {};
     for (const w of rows) {
-      const week = Stats._weekStart(w.date);
+      const week = Stats._weekStart(w.date, startsOn);
       if (!byWeek[week]) byWeek[week] = 0;
       for (const ex of w.exercises || []) {
         byWeek[week] += exerciseVolume(ex, { libraryLoadType: lib.get(Number(ex.exercise_id))?.load_type });
@@ -1343,8 +1347,8 @@ const Stats = {
     return Object.entries(byWeek).map(([week, volume]) => ({ week, volume }));
   },
   async frequency(from, to, cardio) {
-    // Mirror of GET /api/stats/frequency: trained days per Monday week.
-    return trainedDaysByWeek(await Stats._trained(cardio), from, to);
+    // Mirror of GET /api/stats/frequency: trained days per week (weekStartsOn).
+    return trainedDaysByWeek(await Stats._trained(cardio), from, to, await Stats._startsOn());
   },
   async records() {
     // Match server shape: [{ exerciseId, name, maxWeight, maxReps, date, e1rm }].

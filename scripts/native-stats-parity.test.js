@@ -55,12 +55,15 @@ test('the phone answers every Statistics request the page makes, with the same r
   }
 });
 
-test('weeks start on Monday and dates are read as calendar days, on both sides', () => {
-  assert.match(stats, /_weekStart\(date\) \{[\s\S]*?getUTCDay\(\)[\s\S]*?day === 0 \? 6 : day - 1/);
+test('weeks start on the chosen day (Monday by default) and dates are read as calendar days, on both sides', () => {
+  assert.match(stats, /_weekStart\(date, startsOn\) \{ return weekStart\(date, startsOn\); \}/);
+  assert.match(native, /import \{ weekStart, normalizeWeekStart \} from '\.\/week-start\.js'/);
   assert.doesNotMatch(stats, /d\.setDate\(d\.getDate\(\) - d\.getDay\(\)\)/, 'no Sunday-first week');
   assert.doesNotMatch(stats, /new Date\(w\.date\)\.getDay\(\)/, 'no local-time weekday');
   const server = read('../server/routes/stats.js');
-  assert.match(server, /function _weekStart\(date\) \{[\s\S]*?getUTCDay\(\)/);
+  assert.match(server, /import \{ weekStart \} from '\.\.\/\.\.\/src\/lib\/week-start\.js'/);
+  assert.match(read('../server/routes/cardio.js'), /import \{ weekStart as _weekStart \} from '\.\.\/\.\.\/src\/lib\/week-start\.js'/);
+  assert.doesNotMatch(server + read('../server/routes/cardio.js') + stats, /day === 0 \? 6 : day - 1/, 'one week rule, in week-start.js');
   assert.doesNotMatch(server, /const d = new Date\(row\.date\);\s*\n\s*(\/\/.*\n\s*)?const day = d\.getDay\(\)/);
 });
 
