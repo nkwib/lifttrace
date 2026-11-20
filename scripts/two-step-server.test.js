@@ -287,7 +287,7 @@ test('pending tokens: expired, forged, signed with the session secret, or after 
   // Made with the right key but naming another account's password.
   assert.equal((await tryVerify(j.sign({ ...claims, pwv: '0000000000000000' }, pendingKey(), { expiresIn: '5m' }))).status, 401);
   // The other way round: a pending token made with our secret isn't a session.
-  const typed = j.sign({ id: ids.carol, username: 'carol', role: 'user', typ: 'two_step_pending' }, JWT_SECRET, { expiresIn: '5m' });
+  const typed = j.sign({ id: ids.carol, username: 'carol', role: ROLE, typ: 'two_step_pending' }, JWT_SECRET, { expiresIn: '5m' });
   assert.equal((await send(S, { method: 'GET', path: '/api/auth/me', bearer: typed, ip })).data.user, null);
   // Nor through the image loader's query-string token (GET ?_lt_t=), nor the real pending token.
   assert.equal((await send(S, { method: 'GET', path: `/api/auth/me?_lt_t=${encodeURIComponent(typed)}`, ip })).data.user, null);
@@ -556,7 +556,7 @@ test('require for everyone: setup right after the password, then codes; invites 
   assert.equal((await login('ned', ip, 'Reset-Pass-99!z')).data.two_step, 'verify');
 
   // An invite accepted while it's required: the account, then setup.
-  const inv = await send(S, { path: '/api/auth/invite', body: { role: 'user' }, bearer: tok.admin, ip });
+  const inv = await send(S, { path: '/api/auth/invite', body: { role: ROLE }, bearer: tok.admin, ip });
   const invToken = new URL(inv.data.inviteUrl.replace('/#/', '/')).searchParams.get('token');
   const acc = await send(S, { path: '/api/auth/accept-invite', body: { token: invToken, username: 'olga', password: PW }, ip });
   assert.equal(acc.status, 401);
@@ -566,9 +566,9 @@ test('require for everyone: setup right after the password, then codes; invites 
 
   // A single sign-on account (no password) can't set it up; the IdP does its own.
   const db = openDb(S);
-  const sso = db.prepare(`INSERT INTO users (username, password_hash, role) VALUES ('ssouser', NULL, 'user')`).run().lastInsertRowid;
+  const sso = db.prepare(`INSERT INTO users (username, password_hash, role) VALUES ('ssouser', NULL, ?)`).run(ROLE).lastInsertRowid;
   db.close();
-  const ssoTok = jwt().sign({ id: Number(sso), username: 'ssouser', role: 'user', csrf: 'x' }, JWT_SECRET, { expiresIn: '1h' });
+  const ssoTok = jwt().sign({ id: Number(sso), username: 'ssouser', role: ROLE, csrf: 'x' }, JWT_SECRET, { expiresIn: '1h' });
   const st = await send(S, { method: 'GET', path: '/api/auth/two-step/status', bearer: ssoTok, ip });
   assert.equal(st.data.has_password, false);
   const sStart = await send(S, { path: '/api/auth/two-step/setup/start', body: {}, bearer: ssoTok, ip });
