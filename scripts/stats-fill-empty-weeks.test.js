@@ -77,3 +77,29 @@ test('Statistics fills raw rows and keeps emptiness checks on the raw arrays', (
   assert.match(src, /\{#if volumeRaw\.length === 0\}/);
   assert.match(src, /!volumeRaw\.length/);
 });
+
+test('Sunday-start rows are kept, not replaced by Monday-keyed zeros', () => {
+  const rows = [{ week: '2026-11-01', count: 3 }, { week: '2026-11-08', count: 4 }];
+  const r = fillWeeks(rows, '2026-10-20', '2026-11-18', z, 520, 'sunday');
+  assert.deepEqual(r.map(x => x.count), [3, 4]);
+  assert.ok(r.every(x => new Date(x.week + 'T00:00:00Z').getUTCDay() === 0));
+});
+
+test('Sunday-start: gaps on Sundays, start mid first-row week, empty end week', () => {
+  const rows = [{ week: '2026-10-25', count: 3 }, { week: '2026-11-08', count: 1 }];
+  const r = fillWeeks(rows, '2026-10-28', '2026-11-15', z, 520, 'sunday');
+  assert.deepEqual(weeks(r), ['2026-10-25', '2026-11-01', '2026-11-08']);
+  assert.deepEqual(r.map(x => x.count), [3, 0, 1]);
+});
+
+test('monday default unchanged', () => {
+  const r = fillWeeks([{ week: '2026-11-02', count: 1 }], '2026-10-20', '2026-11-18', z);
+  assert.deepEqual(weeks(r), ['2026-11-02', '2026-11-09']);
+});
+
+test('Statistics passes $weekStartsOn to fillWeeks and refetches on it', () => {
+  const src = readFileSync(new URL('../src/routes/Statistics.svelte', import.meta.url), 'utf8');
+  assert.match(src, /fillWeeks\(volumeRaw, startDate, endDate, \{ volume: 0 \}, 520, \$weekStartsOn\)/);
+  assert.match(src, /fillWeeks\(frequencyRaw, startDate, endDate, \{ count: 0 \}, 520, \$weekStartsOn\)/);
+  assert.match(src, /\$: range, \$cardioEnabled, \$weekStartsOn, loadRangeData\(\);/);
+});

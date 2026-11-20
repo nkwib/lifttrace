@@ -52,22 +52,23 @@ export function recordDate(r) {
 
 /**
  * Weekly rows with the empty weeks between them filled in, so averages and
- * bars count a layoff. `rows` are [{ week: Monday YYYY-MM-DD, ... }] oldest
+ * bars count a layoff. `rows` are [{ week: week-start YYYY-MM-DD, ... }] oldest
  * first; `zero` is the row's fields for a week with no data ({ count: 0 }).
  * Starts at the first data week (a range start before it, or an 'All' range
  * from before the first workout, adds nothing: a new user is not diluted).
  * Ends at the last data week, or the week before `end`'s when `end`'s own
  * week has no data yet (an in-progress empty week would drag the average).
- * Never past `end`'s week, never more than `cap` weeks. Pure UTC date math.
+ * Never past `end`'s week, never more than `cap` weeks. `startsOn` ("monday"
+ * or "sunday") must match the setting the rows were keyed with. Pure UTC date math.
  */
-export function fillWeeks(rows, start, end, zero, cap = 520) {
+export function fillWeeks(rows, start, end, zero, cap = 520, startsOn = 'monday') {
   if (!rows || !rows.length) return [];
   const byWeek = new Map(rows.map(r => [r.week, r]));
   const weeks = [...byWeek.keys()].sort();
-  const endWeek = end ? weekStartOf(end) : weeks[weeks.length - 1];
+  const endWeek = end ? weekStartOf(end, startsOn) : weeks[weeks.length - 1];
   const lastData = weeks[weeks.length - 1];
   let first = weeks[0];
-  if (start) { const s = weekStartOf(start); if (s > first) first = s; }
+  if (start) { const s = weekStartOf(start, startsOn); if (s > first) first = s; }
   let last = lastData;
   if (endWeek > last) last = byWeek.has(endWeek) ? endWeek : shiftDate(endWeek, -7);
   if (last < lastData) last = lastData;

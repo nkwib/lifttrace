@@ -7,6 +7,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
+
 ### Added
 
 - **Weekly bar charts read on phones.** With many weeks (6M, 1Y, All) labels show every few bars, and tapping a bar shows its week and value under the chart.

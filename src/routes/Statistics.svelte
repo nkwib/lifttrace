@@ -96,8 +96,8 @@ import { onMount, onDestroy } from 'svelte';
   let frequencyRaw = [];
   // Weekly rows with the empty weeks filled in (statsFormat.fillWeeks): charts,
   // averages and the Weeks card count a layoff. Emptiness checks use the raw rows.
-  $: volume = fillWeeks(volumeRaw, startDate, endDate, { volume: 0 });
-  $: frequency = fillWeeks(frequencyRaw, startDate, endDate, { count: 0 });
+  $: volume = fillWeeks(volumeRaw, startDate, endDate, { volume: 0 }, 520, $weekStartsOn);
+  $: frequency = fillWeeks(frequencyRaw, startDate, endDate, { count: 0 }, 520, $weekStartsOn);
   let records = [];
   let muscleGroups = [];
   let muscleLoad = {};   // { [slug]: effectiveSets } for the body map
@@ -238,7 +238,7 @@ import { onMount, onDestroy } from 'svelte';
   // Range-bound stats reload on a range (or Track Cardio) change; the base
   // set (records, streaks, recent workouts, excused and cardio days) does not
   // depend on the range, so it loads on mount, on Track Cardio and on sync.
-  $: range, $cardioEnabled, loadRangeData();
+  $: range, $cardioEnabled, $weekStartsOn, loadRangeData();
   $: $cardioEnabled, loadBaseData();
 
   // Each stat loads on its own, so one that fails no longer throws away the
