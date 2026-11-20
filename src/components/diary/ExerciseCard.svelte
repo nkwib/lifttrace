@@ -9,6 +9,7 @@
   import { exerciseLoadTypes, exerciseSetTypes, exerciseDistanceUnits, trackRpe } from '../../stores/settings.js';
   import { holdTimer, holdResult, startHold, stopHold, consumeHoldResult, holdMatches } from '../../stores/holdTimer.js';
   import { applyHold } from '../../lib/holdPhase.js';
+  import { nextTarget } from '../../lib/progression.js';
   import LoadTypeMenu from '../ui/LoadTypeMenu.svelte';
 
   export let exercise;
@@ -177,20 +178,16 @@
   $: volumeCmp = lastSession ? volumeDelta({ ...exercise, load_type: loadType }, lastSession.sets, { done: workoutDone }) : null;
   $: volumeDeltaPct = volumeCmp ? volumeCmp.pct : null;
 
-  // Progression nudge: if last session hit target reps across the board at a given weight,
-  // suggest +5 (or +2.5 for kg) on today's target weight.
-  $: progressionSuggestion = (() => {
-    // Weight nudges are a reps idea; a hold is progressed by time.
-    if (notReps || !lastSession || !exercise.target_reps) return null;
-    const tgtReps = parseInt(String(exercise.target_reps).split(/[-\u2013]/)[0]);
-    if (!Number.isFinite(tgtReps)) return null;
-    const hitAll = lastSession.sets.length > 0 && lastSession.sets.every(s => (parseInt(setReps(s)) || 0) >= tgtReps);
-    if (!hitAll) return null;
-    const lastWeight = Math.max(...lastSession.sets.map(s => parseFloat(s.weight) || 0));
-    if (!lastWeight) return null;
-    const step = unit === 'kg' ? 2.5 : 5;
-    return { weight: lastWeight + step, step };
-  })();
+  // Progression nudge (rules in lib/progression.js). Equipment is not on the
+  // workout row, so the flat step applies until it is plumbed through.
+  $: progressionSuggestion = (notReps || !lastSession) ? null : nextTarget({
+    targetReps: exercise.target_reps,
+    lastSets: lastSession.sets,
+    unit,
+    equipment: exercise.equipment,
+    loadType,
+    repsOf: setReps,
+  });
 
   // Auto-collapse when all sets complete. Signature-gated within a session,
   // AND respects an explicit "expanded" state the user set earlier so it
@@ -540,9 +537,9 @@
         {#if setType === 'distance' && exercise.target_distance}<span class="target-chip">{exercise.target_distance} {distanceUnit}</span>{/if}
         {#if setType === 'calories' && exercise.target_calories}<span class="target-chip">{exercise.target_calories} cal</span>{/if}
         {#if progressionSuggestion}
-          <span class="progression-chip" title="Last session hit target reps — try going up">
+          <span class="progression-chip" title={$_(progressionSuggestion.reasonKey, { values: progressionSuggestion.values })}>
             <span class="material-symbols-rounded">trending_up</span>
-            Try {progressionSuggestion.weight} ({unit === 'kg' ? '+2.5' : '+5'})
+            {$_('diary.progression.chip', { values: { weight: progressionSuggestion.weight, step: progressionSuggestion.step } })}
           </span>
         {/if}
         {#if exercise.notes}<span class="target-note">{exercise.notes}</span>{/if}

@@ -209,6 +209,11 @@
     }
   },
   "diary": {
+    "progression": {
+      "chip": "Try {weight} (+{step})",
+      "reason_range": "Last session hit {reps} reps on every set, the top of your range. Try going up.",
+      "reason_target": "Last session hit {reps} reps on every set. Try going up."
+    },
     "prev_month": "Previous month",
     "next_month": "Next month",
     "view_exercise_details": "View exercise details",
