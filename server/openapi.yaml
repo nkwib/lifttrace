@@ -708,7 +708,7 @@ paths:
                 type: object
                 additionalProperties: true
         '400':
-          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          description: Bad request (invalid date, unknown exercise, cardio_disabled, a value that is non-numeric or out of range, more than one of duration_sec, distance_m and calories).
           content:
             application/json:
               schema:
@@ -812,18 +812,40 @@ components:
     SetInput:
       type: object
       required: [exercise_id]
-      description: Give reps, or duration_sec, distance_m or calories instead.
+      description: |
+        Give reps, or one of duration_sec, distance_m and calories instead
+        (sending more than one of those three is a 400). Limits match the
+        MCP log_set tool. Numeric strings and "true"/"false" are tolerated
+        for numbers and flags, but send real JSON types.
       properties:
         exercise_id: {type: integer}
-        reps: {type: integer}
-        weight: {type: number}
-        rpe: {type: number}
+        reps: {type: integer, minimum: 0, maximum: 1000}
+        weight: {type: number, minimum: 0, maximum: 10000}
+        rpe: {type: number, minimum: 1, maximum: 10}
         warmup: {type: boolean}
         completed: {type: boolean}
         workout_id: {type: integer}
-        duration_sec: {type: integer}
-        distance_m: {type: number}
-        calories: {type: number}
+        duration_sec:
+          type: integer
+          minimum: 1
+          maximum: 86400
+          description: Seconds. With duration_l_sec and duration_r_sec it must equal the shorter side, else 400.
+        duration_l_sec:
+          type: integer
+          minimum: 1
+          maximum: 86400
+          description: Left side hold in seconds, for a hold timed per side. Send together with duration_r_sec.
+        duration_r_sec:
+          type: integer
+          minimum: 1
+          maximum: 86400
+          description: Right side hold in seconds. Send together with duration_l_sec.
+        distance_m:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          maximum: 1000000
+        calories: {type: integer, minimum: 1, maximum: 100000}
     StartInput:
       type: object
       properties:
