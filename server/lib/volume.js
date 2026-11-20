@@ -144,6 +144,8 @@ export function setReps(set) {
  * maxCaloriesWeight and maxCaloriesLoad. None of them touch the rep fields:
  * an estimated 1RM for a wall sit is meaningless, and a heavy sled push is
  * not a heavier bench. A tie on the amount is broken by the heavier load.
+ * A tie on maxWeight is broken by more reps (the date moves to that set).
+ * Callers feed sets oldest first, so a full tie keeps the earlier date.
  */
 export function newRecord(name) {
   return {
@@ -178,7 +180,8 @@ export function accumulateRecord(record, exercise, set, date) {
   // Split reps count at the weaker side (setReps).
   const reps = setReps(set);
   const e1rm = reps === 1 ? set.weight : Math.round(set.weight * (1 + reps / 30));
-  if (set.weight > record.maxWeight) {
+  // More reps at the same max weight is a better record (and moves the date).
+  if (set.weight > record.maxWeight || (set.weight === record.maxWeight && reps > record.maxReps)) {
     record.maxWeight = set.weight;
     record.maxReps = reps;
     record.date = date;

@@ -1253,7 +1253,7 @@ const Cardio = {
 const Stats = {
   async _allWorkouts() {
     const rows = await dbQuery(
-      `SELECT * FROM workout_log WHERE user_id = ? AND deleted_at IS NULL`,
+      `SELECT * FROM workout_log WHERE user_id = ? AND deleted_at IS NULL ORDER BY date ASC`,
       [ME]
     );
     return rows.map(_workoutFromRow);
@@ -1368,7 +1368,7 @@ const Stats = {
           const reps = Number(setReps(s)) || 0;
           if (wt <= 0) continue;
           const e1rm = reps === 1 ? wt : Math.round(wt * (1 + reps / 30));
-          if (wt > records[id].maxWeight) {
+          if (wt > records[id].maxWeight || (wt === records[id].maxWeight && reps > records[id].maxReps)) {
             records[id].maxWeight = wt;
             records[id].maxReps = reps;
             records[id].date = w.date;
