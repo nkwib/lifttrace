@@ -32,6 +32,14 @@ const _weekStartQ = () => {
 const _cardio = (on) => (on == null ? '' : `cardio=${on ? 1 : 0}`);
 const jsonOpts = { ...opts, headers: { 'Content-Type': 'application/json' } };
 
+// Exercise history reads in flight, so the Diary's PR badges and every
+// ExerciseCard's "Last time" row share one request. No TTL: an entry lives
+// only until its request settles. Callers only read the result.
+const _historyInflight = new Map();
+const _dropHistory = () => _historyInflight.clear();
+// A read issued after a write must not join one that began before it.
+const _afterWrite = (p) => { _dropHistory(); return p.finally(_dropHistory); };
+
 export const LtApi = {
   // ── Exercises ──────────────────────────────────────────────────────────
   getExercises: (params = {}) => {
@@ -86,7 +94,7 @@ export const LtApi = {
   // LOCAL_FIRST_GET_PATTERNS (same treatment as getWorkoutFeedback) —
   // a session-aware caller always wants live data, not a stale cache.
   getWorkoutSessions: (date) => fetch(`/api/workout/${date}/sessions`, opts).then(_json),
-  deleteWorkout: (date, id = null) => fetch(`/api/workout/${date}${id != null ? `?id=${id}` : ''}`, { ...opts, method: 'DELETE' }).then(_json),
+  deleteWorkout: (date, id = null) => _afterWrite(fetch(`/api/workout/${date}${id != null ? `?id=${id}` : ''}`, { ...opts, method: 'DELETE' }).then(_json)),
   getCoachFeedbackInbox: () => fetch('/api/coach-feedback/inbox', opts).then(_json),
   markCoachFeedbackSeen: (id = null) => fetch('/api/coach-feedback/seen', { ...jsonOpts, method: 'POST', body: JSON.stringify(id ? { id } : {}) }).then(_json),
   // Carries where this person stands in coaching as a header (stores/coaching.js),
@@ -99,9 +107,18 @@ export const LtApi = {
     return _json(res);
   }),
   replyToCoachFeedback: (id, reply) => fetch(`/api/coach-feedback/${id}/reply`, { ...jsonOpts, method: 'PUT', body: JSON.stringify({ reply }) }).then(_json),
-  saveWorkout: (date, data) => fetch(`/api/workout/${date}`, { ...jsonOpts, method: 'PUT', body: JSON.stringify(data) }).then(_json),
+  saveWorkout: (date, data) => _afterWrite(fetch(`/api/workout/${date}`, { ...jsonOpts, method: 'PUT', body: JSON.stringify(data) }).then(_json)),
   getRecentWorkouts: (limit = 30) => fetch(`/api/workout/recent?limit=${limit}`, opts).then(_json),
-  getWorkoutHistory: (exerciseId) => fetch(`/api/workout/history/${exerciseId}`, opts).then(_json),
+  getWorkoutHistory: (exerciseId) => {
+    const key = String(exerciseId);
+    const hit = _historyInflight.get(key);
+    if (hit) return hit;
+    const p = fetch(`/api/workout/history/${exerciseId}`, opts).then(_json);
+    _historyInflight.set(key, p);
+    const done = () => { if (_historyInflight.get(key) === p) _historyInflight.delete(key); };
+    p.then(done, done);
+    return p;
+  },
 
   // ── Body Stats ─────────────────────────────────────────────────────────
   getBodyStats: (date) => fetch(`/api/body-stats/${date}`, opts).then(_json),
