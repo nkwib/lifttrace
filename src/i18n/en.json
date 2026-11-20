@@ -358,6 +358,11 @@
     "attach_image":       "Attach image"
   },
   "wizard": {
+    "step_status": "Step {n} of {total}",
+    "done": {
+      "title": "You're All Set!",
+      "sub":   "Welcome to LiftTrace. Loading your diary…"
+    },
     "nav": {
       "back":         "Back",
       "next":         "Next",
@@ -395,6 +400,7 @@
       "create_admin_desc":      "Your LiftTrace instance requires an admin account. This is the first user and will have full control over the app.",
       "multi_user_desc":        "LiftTrace can run in single-user mode (default) or multi-user mode with separate logins and password resets. You can always enable this later in Settings.",
       "enable_toggle":          "Enable user accounts",
+      "name_placeholder":       "Your name (optional)",
       "username_placeholder":   "Username (required)",
       "fullname_placeholder":   "Full name (optional)",
       "email_placeholder":      "Email (optional, for password resets)",
@@ -422,6 +428,7 @@
     "library": {
       "title":     "Exercise Library",
       "optional":  "(Optional)",
+      "partial":   "{done} imported, {failed} failed. You can retry from Settings.",
       "desc":      "Pick what to import. All downloads come directly from upstream sources. You can add or remove these any time from Settings.",
       "import_n":  "Import ({n})",
       "importing": "Importing…",

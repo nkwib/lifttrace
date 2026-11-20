@@ -102,7 +102,7 @@
     libImporting = false;
     libProgress = null;
     if (failed === 0) showSuccess($_('wizard.library.ready', { values: { n: done } }));
-    else showError(`${done} imported, ${failed} failed. You can retry from Settings.`);
+    else showError($_('wizard.library.partial', { values: { done, failed } }));
     step = 6;
   }
 
@@ -154,6 +154,7 @@
       step++;
       return;
     }
+    if (umLoading) return;
     umError = '';
     if (!adminUser.trim()) { umError = $_('wizard.users.errors.username_required'); return; }
     const pwErr = _validatePw(adminPass);
@@ -194,7 +195,8 @@
       }
       step++;
     } catch(e) {
-      umError = e.message;
+      // Only a failed fetch (TypeError) means the server is unreachable.
+      umError = e instanceof TypeError ? $_('common.errors.cant_reach_server') : e.message;
     }
     umLoading = false;
   }
@@ -322,15 +324,15 @@
           {#each Array(14) as _, i}<span class="conf c{i % 7}" style:--i={i}></span>{/each}
         </div>
         <span class="material-symbols-rounded wizard-done-icon">emoji_events</span>
-        <h2 class="wizard-done-title">You're All Set!</h2>
-        <p class="wizard-done-sub">Welcome to LiftTrace. Loading your diary…</p>
+        <h2 class="wizard-done-title">{$_('wizard.done.title')}</h2>
+        <p class="wizard-done-sub">{$_('wizard.done.sub')}</p>
       </div>
     {:else}
     <!-- Top-bar Skip — visible past step 0, suppressed when PWA is forcing
          admin-account creation (no users yet on server, no skip allowed). -->
     {#if step > 0 && !(forceAccountCreation && !$userMgmtActive)}
       <div class="wizard-topbar">
-        <button class="btn btn-ghost wizard-skip" on:click={() => skipModal = true}>
+        <button type="button" class="btn btn-ghost wizard-skip" on:click={() => skipModal = true}>
           {$_('wizard.nav.skip')}
         </button>
       </div>
@@ -384,7 +386,7 @@
         {#if !forceAccountCreation}
           <div class="toggle-row">
             <span class="toggle-label">{$_('wizard.users.enable_toggle')}</span>
-            <button class="toggle-pill" class:active={enableUsers} on:click={() => enableUsers = !enableUsers}>
+            <button type="button" class="toggle-pill" role="switch" aria-checked={enableUsers} aria-label={$_('wizard.users.enable_toggle')} class:active={enableUsers} on:click={() => enableUsers = !enableUsers}>
               <span class="toggle-thumb"></span>
             </button>
           </div>
@@ -395,13 +397,13 @@
             {#if $signInProblem}
               <CookieWarning reason={$signInProblem} />
             {/if}
-            <input class="wiz-input" type="text" bind:value={adminUser} placeholder={$_('wizard.users.username_placeholder')} />
-            <input class="wiz-input" type="text" bind:value={adminName} placeholder={$_('wizard.users.fullname_placeholder')} />
-            <input class="wiz-input" type="email" bind:value={adminEmail} placeholder={$_('wizard.users.email_placeholder')} />
-            <input class="wiz-input" type="password" autocomplete="new-password" passwordrules="minlength: 8; required: upper; required: lower; required: digit; required: special;" bind:value={adminPass} placeholder={$_('wizard.users.password_placeholder')} />
-            <input class="wiz-input" type="password" autocomplete="new-password" passwordrules="minlength: 8; required: upper; required: lower; required: digit; required: special;" bind:value={adminConf} placeholder={$_('wizard.users.confirm_placeholder')} />
+            <input class="wiz-input" type="text" form="wiz-users-form" autocomplete="username" aria-label={$_('wizard.users.username_placeholder')} bind:value={adminUser} placeholder={$_('wizard.users.username_placeholder')} />
+            <input class="wiz-input" type="text" form="wiz-users-form" autocomplete="name" aria-label={$_('wizard.users.fullname_placeholder')} bind:value={adminName} placeholder={$_('wizard.users.fullname_placeholder')} />
+            <input class="wiz-input" type="email" form="wiz-users-form" autocomplete="email" aria-label={$_('wizard.users.email_placeholder')} bind:value={adminEmail} placeholder={$_('wizard.users.email_placeholder')} />
+            <input class="wiz-input" type="password" form="wiz-users-form" autocomplete="new-password" passwordrules="minlength: 8; required: upper; required: lower; required: digit; required: special;" aria-label={$_('wizard.users.password_placeholder')} bind:value={adminPass} placeholder={$_('wizard.users.password_placeholder')} />
+            <input class="wiz-input" type="password" form="wiz-users-form" autocomplete="new-password" passwordrules="minlength: 8; required: upper; required: lower; required: digit; required: special;" aria-label={$_('wizard.users.confirm_placeholder')} bind:value={adminConf} placeholder={$_('wizard.users.confirm_placeholder')} />
             {#if umError}
-              <span class="um-error">{umError}</span>
+              <span class="um-error" role="alert">{umError}</span>
             {/if}
           </div>
         {:else}
@@ -411,19 +413,21 @@
             <input
               class="wiz-input"
               type="text"
-              placeholder="Your name (optional)"
+              form="wiz-users-form"
+              aria-label={$_('wizard.users.name_placeholder')}
+              placeholder={$_('wizard.users.name_placeholder')}
               bind:value={localName}
               autocomplete="given-name"
               style="text-align:center" />
           </div>
         {/if}
 
-        <div class="wizard-nav">
-          <button class="btn btn-secondary wizard-btn-sm" on:click={() => step = 0}>{$_('wizard.nav.back')}</button>
-          <button class="btn btn-primary wizard-btn-sm" on:click={nextFromUsers} disabled={umLoading}>
+        <form id="wiz-users-form" class="wizard-nav" on:submit|preventDefault={nextFromUsers}>
+          <button type="button" class="btn btn-secondary wizard-btn-sm" on:click={() => step = 0}>{$_('wizard.nav.back')}</button>
+          <button type="submit" class="btn btn-primary wizard-btn-sm" disabled={umLoading}>
             {umLoading ? $_('wizard.users.creating') : $_('wizard.nav.next')}
           </button>
-        </div>
+        </form>
       </div>
       {/if}
 
@@ -433,20 +437,20 @@
         <h2 class="wizard-step-title">{$_('wizard.units.title')}</h2>
         <p class="wizard-step-desc">{$_('wizard.units.desc')}</p>
         <div class="unit-cards">
-          <button class="unit-card" class:selected={unitSystem === 'metric'} on:click={() => unitSystem = 'metric'}>
+          <button type="button" class="unit-card" class:selected={unitSystem === 'metric'} aria-pressed={unitSystem === 'metric'} on:click={() => unitSystem = 'metric'}>
             <span class="material-symbols-rounded unit-card-icon">straighten</span>
             <span class="unit-card-label">{$_('wizard.units.metric')}</span>
             <span class="unit-card-sub">{$_('wizard.units.metric_sub')}</span>
             {#if unitSystem === 'metric'}
-              <span class="material-symbols-rounded unit-card-check">check_circle</span>
+              <span class="material-symbols-rounded unit-card-check" aria-hidden="true">check_circle</span>
             {/if}
           </button>
-          <button class="unit-card" class:selected={unitSystem === 'imperial'} on:click={() => unitSystem = 'imperial'}>
+          <button type="button" class="unit-card" class:selected={unitSystem === 'imperial'} aria-pressed={unitSystem === 'imperial'} on:click={() => unitSystem = 'imperial'}>
             <span class="material-symbols-rounded unit-card-icon">scale</span>
             <span class="unit-card-label">{$_('wizard.units.imperial')}</span>
             <span class="unit-card-sub">{$_('wizard.units.imperial_sub')}</span>
             {#if unitSystem === 'imperial'}
-              <span class="material-symbols-rounded unit-card-check">check_circle</span>
+              <span class="material-symbols-rounded unit-card-check" aria-hidden="true">check_circle</span>
             {/if}
           </button>
         </div>
@@ -629,6 +633,7 @@
     {/if}
 
     <!-- Progress dots -->
+    <p class="sr-only" role="status" aria-live="polite">{$_('wizard.step_status', { values: { n: step + 1, total: STEPS.length } })}</p>
     <div class="wizard-dots">
       {#each STEPS as _, i}
         <div class="dot" class:active={step === i}></div>
