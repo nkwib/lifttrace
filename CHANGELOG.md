@@ -33,7 +33,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- **Undo toast no longer covers the workout pill.** It now sits above the timer and keep-awake buttons.
 - **Weekly summary email can be turned off separately.** Settings > Notifications has an "Email the summary" toggle under Weekly Summary (on by default, so nothing changes until you switch it off). Push is unaffected.
 - **Exercise search matches muscles.** The library and the exercise picker find "triceps" or "lats" by primary and secondary muscle, not only by name. Several words must all match.
 - **Duplicate exercise names get a warning.** Saving a custom exercise named like an existing one (any case, accents) asks first. Blank names are rejected on the server and in Local mode, names are trimmed, and Local mode no longer edits library exercises.
@@ -47,16 +46,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **OpenAPI spec for the public API.** `server/openapi.yaml` describes every `/api/v1` route, with scopes and the write flag, for Postman, codegen and Home Assistant. Also served at `/api/v1/openapi.yaml` without a token while the API is enabled.
 - **RIR as an alternative to RPE.** Settings > Workout > Effort scale (with Track RPE on) switches the set picker to reps in reserve (0 to 5+), with a colour per level. Each set keeps the scale it was logged with, so changing the setting leaves old sets alone. Stats and exports keep RPE (RIR n is RPE 10 - n).
 - **Week starts on Sunday or Monday.** A setting under Settings > Units (Monday by default) moves weekly volume, workout frequency, cardio minutes, the weekly goal ring and the weekday chart, on the server and in Local mode. Past weeks are re-bucketed on read, so charts and goal history shift by a day for Sunday starters. The weekly summary and the Diary week strip are rolling seven day windows and are unchanged. Also applies on the web server without user accounts.
-
 - **Undo after removing a set or an exercise.** A toast with Undo stays for a few seconds and puts it back where it was. Removing an exercise offers it only when "confirm exercise removal" is off.
 - **A collapsed exercise card shows its best set.** After the set count, e.g. `4/4 sets · 225×5`: heaviest for reps, longest for holds, farthest for distance, most for calories. Warm-ups and sets not done are ignored.
 - **1RM calculator in Gym Tools.** A new 1RM tab estimates your one-rep max from a weight and 1 to 12 reps (Epley), with a 50 to 100% table rounded to your plate step (2.5 kg / 5 lb).
 - **Export all workouts as one CSV.** Settings > Backup has a new Export all workouts row: one file, one row per set, oldest first, same columns as the single-workout export. Works on the Android app in Local mode too.
 - **Share a routine as a file.** A program's menu has Share as file, which saves its workouts as a `.lifttrace-program.json` (no ids, history or assignments). Import program on the Programs page reads one as a new inactive program, named with (Copy) if the name is taken. Exercises are matched by name; ones you don't have are added to your library.
 
+### Changed
+
+- **Keep-Awake follows the workout, not the page, and is on by default.** The screen stays on from your first logged set on today's workout until you finish it or leave the Diary, then is released. Stored choices are unchanged; new installs and anyone who never touched it now get it on.
+
 ### Fixed
 
-- **Trace training summary counts empty weeks.** `weekly_avg` and the weekly series now include weeks with no training, matching Statistics (series capped at the last 104 weeks). Statistics also fills weeks by the Sunday or Monday week start.
+- **Undo toast no longer covers the workout pill.** It now sits above the timer and keep-awake buttons.
+- **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
+- **Trace training summary counts empty weeks.** `weekly_avg` and the weekly series now include weeks with no training, matching Statistics (series capped at the last 104 weeks).
 - **Program import errors are translated.** Import failures and the share sheet title follow the app language.
 - **Workouts saved with an impossible date (e.g. 2026-02-31) can be deleted again.** Delete only checks the date format, on the server and in Local mode.
 - **Trace refuses nonsense set values like the API.** `log_set` and `log_workout` no longer store "abc", "225 lbs", reps 5000 or RPE 12 as 0 or as is: they return an error the model can fix (naming the exercise and set), a rep set needs reps, and an exercise with no sets is refused. Nothing is saved if any set is bad.
@@ -65,14 +69,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Trace logs body stats the app can read.** "Body fat 15%" was reported saved but dropped, and a weigh-in was stored as an object the Diary showed as [object Object]. Trace now stores plain numbers under the app's stat names, labels them in your units, and reports an unknown stat instead of faking success.
 - **Trace on a server-key install shows why the provider failed.** A bad key, quota, unknown model or an unreachable provider now says so (e.g. `Claude: invalid x-api-key`) instead of "Internal server error".
 - **Trace can be stopped.** A Stop button replaces Send while it answers, and no more tools start after it. Direct and proxy requests give up after five minutes with a timeout message instead of waiting forever. Clearing the conversation while Trace is answering no longer lets the late reply reappear.
-
 - **Trace failures no longer pollute the chat.** A failed reply shows as a note with a Retry button, is not sent to the model on the next message, and the two sign-in/API-key errors are translatable.
 - **One bad account no longer stops reminders for everyone.** An error while processing one user in the scheduler is logged and the next users, invite cleanup and scheduled backup still run.
 - **The workout reminder names your next program day.** It always named the program's first day; it now names the day after the last one you finished, as Start program workout picks it.
 - **Restarting the server no longer resends reminders or the weekly summary.** Send markers are kept in the database, so a restart inside a due window (e.g. an auto-update) does not notify twice.
 - **Clearing a custom exercise's picture, instructions, tips or category sticks.** The server ignored the empty value and kept the old one; it now clears it and deletes the replaced or removed upload file.
 - **Diary progress strip shows while a workout timer runs.** It compared the timer to text and never matched, so with no sets done the strip stayed hidden. The timer also only redraws every frame while the timer readout is on screen, saving battery elsewhere.
-
 - **Secondary text is readable.** Muted text (`--text-3`) and, in the light theme, green and amber status text now meet 4.5:1 contrast. Secondary text (`--text-2`) is a step brighter to keep the hierarchy; faint fills keep the old look via `--text-4`.
 - **CSV exports expand alternating exercises and use your local date.** The library lookup called a method that did not exist, so alternating exercises were never split into L and R rows. The all-workouts filename date no longer shifts to the UTC day.
 - **Android Local mode imports same-day sessions like the server.** A file with two sessions on one date no longer loses one, and Replace updates the matching session in place instead of deleting and re-adding it. The duplicate count in the preview is per session.
@@ -102,7 +104,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **The web app's update banner now appears.** New versions used to take over an open tab silently, and pages opened afterwards could fail to load until a reload. The update now waits for Reload, and a page that fails to load after a deploy reloads itself once.
 - **Pausing during a radio crossfade no longer restarts the music.** The fading-in track kept playing and took over; pause now cancels the fade and restores volume.
 - **Radio now-playing no longer shows the previous station's title.** A late response after switching stations is dropped, and polling pauses while the radio is paused.
-- **Keep-Awake follows the workout, not the page, and is on by default.** The screen stays on from your first logged set on today's workout until you finish it or leave the Diary, then is released. Stored choices are unchanged; new installs and anyone who never touched it now get it on.
 - **Clear All Data works on a server without accounts, and clears cardio too.** With no accounts it did nothing to workouts, body stats or chat history. Cardio sessions and deleted-workout records are now cleared as well. Built-in programs stay.
 - **Another member's own exercises are no longer readable by id.** The exercise detail route and the media pre-cache list answered for any exercise on the instance, including other members' private ones. They now cover the library and your own, as the exercise list already did. Single-user instances are unchanged.
 - **Importing two same-day sessions with the same name keeps both.** A Hevy export with two "Push" sessions on one day imported only the first, or, with Replace, deleted one and kept the other. Each file session now pairs with the matching existing one in order, and the preview count matches. Replace now updates the session in place, so its coach feedback stays.
@@ -111,7 +112,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **A taken username says so.** Creating an account or accepting an invite with a name already in use (also in another letter case or with spaces around it) now answers "Username already taken" instead of a raw database error, and the invite stays usable. Unexpected server errors no longer show their internal message.
 - **Imports from Hevy, Strong, Jefit and FitNotes keep rows after a note with a line break.** A multi-line description or note was cut into pieces, so a Hevy file could import nothing and a Strong note could drop the Weight Unit (100 kg came in as 100 lbs). Quoted fields now read as the CSV standard says.
 - **Saving your profile no longer nudges your weight.** Opening Profile and saving rewrote your weight from the rounded number on screen, so a pound value drifted by up to 0.1 kg per save. Weight is now only written when you edit it, and stored to 0.01 kg so pounds round-trip exactly.
-
 - **Android Local exercise progress counts volume by load type.** Per-session volume for dumbbell (paired) and one-sided exercises now matches the server, and each row carries its workout id.
 - **Deleting a custom exercise deletes its uploaded picture, GIF and video.** The files stayed on the server's disk. A file another exercise still uses is kept. Exercises deleted on another device and synced still leave theirs.
 - **Coaching "Missed" and "Clear clips older than" use your local date.** Both compared against the UTC date, so around midnight a workout could show Missed a day early or late, and the clip cutoff could land a day off. A cutoff from the 31st now clamps to the last day of a shorter month.
