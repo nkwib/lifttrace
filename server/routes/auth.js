@@ -23,6 +23,9 @@ import { bumpSessionVersion } from '../lib/session-version.js';
 
 const router = Router();
 
+const ROLES = ['admin', 'trainer', 'member'];
+const _validRole = (r) => typeof r === 'string' && ROLES.includes(r);
+
 // ── Password validation (single source of truth) ────────────────────────────
 function validatePassword(pw, userInputs = []) {
   if (!pw || pw.length < 8) return 'Password must be at least 8 characters';
@@ -262,6 +265,7 @@ router.post('/register', wrap((req, res) => {
   const username = _normUsername(req.body.username);
   if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
   { const pwErr = validatePassword(password, [username, email, full_name].filter(Boolean)); if (pwErr) return res.status(400).json({ error: pwErr }); }
+  if (!isFirst && role != null && !_validRole(role)) return res.status(400).json({ error: 'Invalid role' });
   const assignedRole = isFirst ? 'admin' : (role || 'member');
   // A coach chosen on the form (never implied by who created the account).
   const coachId = isFirst ? null : _chosenCoach(req.body?.coach_id, assignedRole);
@@ -444,7 +448,7 @@ router.put('/users/:id/password', requireAuth, requireAdmin, wrap((req, res) => 
 router.put('/users/:id/role', requireAuth, requireAdmin, wrap((req, res) => {
   const id = parseInt(req.params.id);
   const { role } = req.body;
-  if (!['admin', 'trainer', 'member'].includes(role)) return res.status(400).json({ error: 'Invalid role' });
+  if (!_validRole(role)) return res.status(400).json({ error: 'Invalid role' });
   if (id === req.user.id) return res.status(400).json({ error: 'Cannot change your own role' });
   db.prepare('UPDATE users SET role = ? WHERE id = ?').run(role, id);
   // Only Members are coached: anyone else leaves their coach (and their
@@ -589,6 +593,7 @@ function _chosenCoach(raw, role) {
 
 router.post('/invite', requireAuth, requireAdmin, wrap(async (req, res) => {
   const { email, role = 'member' } = req.body;
+  if (!_validRole(role)) return res.status(400).json({ error: 'Invalid role' });
   const coachId = _chosenCoach(req.body?.coach_id, role);
   if (coachId === false) return res.status(400).json({ error: 'That person can\'t coach.' });
   const token = crypto.randomBytes(32).toString('hex');
