@@ -18,6 +18,7 @@
 
   let programs = [];
   let loading = true;
+  let loadError = '';
 
   // New program form
   let showCreate = false;
@@ -31,7 +32,7 @@
   onMount(() => {
     load();
     if (isNative && getServerUrl()) {
-      _onSyncComplete = (e) => { if (e?.detail?.changed !== false) load(); };
+      _onSyncComplete = (e) => { if (e?.detail?.changed !== false) load(true); };
       window.addEventListener('lt:sync-complete', _onSyncComplete);
     }
   });
@@ -39,10 +40,15 @@
     if (_onSyncComplete) window.removeEventListener('lt:sync-complete', _onSyncComplete);
   });
 
-  async function load() {
-    loading = true;
-    try { programs = await LtApi.getPrograms(); }
-    catch(e) { showError(e.message); }
+  // quiet: a sync-driven re-read keeps the list on screen instead of
+  // flashing the spinner.
+  async function load(quiet = false) {
+    if (!quiet) loading = true;
+    try { programs = await LtApi.getPrograms(); loadError = ''; }
+    catch(e) {
+      loadError = e.message || $_('programs.load_failed');
+      if (programs.length) showError(loadError); // cached list stays, say why it's stale
+    }
     loading = false;
   }
 
@@ -193,12 +199,18 @@
          preview pane on the right. On mobile this is a plain block. -->
     <div class="programs-body">
     {#if loading}
-      <div class="loading">Loading programs...</div>
+      <div class="loading">{$_('programs.loading')}</div>
+    {:else if loadError && programs.length === 0}
+      <div class="empty load-error">
+        <span class="material-symbols-rounded">error_outline</span>
+        <p>{$_('programs.load_failed')}</p>
+        <button class="btn btn-primary" on:click={() => load()}>{$_('sync.retry')}</button>
+      </div>
     {:else if programs.length === 0}
       <div class="empty">
         <span class="material-symbols-rounded">calendar_month</span>
         <h3>{$_('programs.empty_title')}</h3>
-        <p>Create a training program to organize your workout templates.</p>
+        <p>{$_('programs.empty_desc')}</p>
         <button class="btn btn-primary" on:click={() => showCreate = true}>{$_('programs.create_program')}</button>
       </div>
     {:else}

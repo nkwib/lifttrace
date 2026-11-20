@@ -28,9 +28,21 @@
   let importBusy = false;
   let fileInput;
 
+  // Reads the library. A failure sets loadError (the empty branch offers
+  // Retry); with a list already on screen it keeps that list, and speaks
+  // only when the user caused the read (import, save).
+  let loadError = '';
+  async function loadExercises(userInitiated = false) {
+    try { exercises = await LtApi.getExercises(); loadError = ''; }
+    catch(e) {
+      loadError = e.message || $_('exercises_page.load_failed');
+      if (userInitiated) showError($_('exercises_page.refresh_failed'));
+    }
+  }
+
   async function onEditorSaved(e) {
     // Re-fetch the library so the new / updated exercise appears immediately.
-    try { exercises = await LtApi.getExercises(); } catch {}
+    await loadExercises(true);
   }
 
   function onAddMenuPick(e) {
@@ -45,7 +57,7 @@
     try {
       const created = await importSharedExercise(payload);
       showSuccess(`Imported "${created?.name || payload.name}"`);
-      try { exercises = await LtApi.getExercises(); } catch {}
+      await loadExercises(true);
     } catch(e) {
       showError(`${sourceLabel}: ${e.message || 'Import failed'}`);
     }
@@ -161,13 +173,12 @@
     catch { usage = {}; }
   }
   onMount(async () => {
-    try { exercises = await LtApi.getExercises(); }
-    catch(e) { showError(e.message); }
+    await loadExercises();
     loadUsage();
     loading = false;
     if (isNative && getServerUrl()) {
       _onSyncComplete = async (e) => {
-        try { exercises = await LtApi.getExercises(); } catch {}
+        await loadExercises();
         loadUsage();
         // The detail pane beside the list (wide screens): the exercise open in
         // it and its history are read again when the sync changed them.
@@ -509,19 +520,25 @@
          detail pane in the grid. On mobile this is a plain block. -->
     <div class="ex-list-col">
     {#if loading}
-      <div class="loading">Loading exercises...</div>
+      <div class="loading">{$_('exercises_page.loading')}</div>
+    {:else if loadError && exercises.length === 0}
+      <div class="empty load-error">
+        <span class="material-symbols-rounded">error_outline</span>
+        <p>{$_('exercises_page.load_failed')}</p>
+        <button class="btn btn-primary" on:click={async () => { loading = true; await loadExercises(); loading = false; }}>{$_('sync.retry')}</button>
+      </div>
     {:else if filtered.length === 0}
       <div class="empty">
         <span class="material-symbols-rounded">search_off</span>
         {#if exercises.length === 0}
-          <p>Your library is empty. Import a source from Settings to get started.</p>
+          <p>{$_('exercises_page.library_empty')}</p>
           <!-- Straight to the catalog, not the top of Settings (#133). -->
           <button class="btn btn-primary" on:click={() => push('/settings/catalog')}>{$_('exercises_page.go_to_settings')}</button>
         {:else}
-          <p>No exercises match the current filters.</p>
+          <p>{$_('exercises_page.no_match')}</p>
           <button class="btn btn-secondary" on:click={() => { search = ''; selectedCategory = ''; clearEq(); }}>
             <span class="material-symbols-rounded" style="font-size:16px">filter_alt_off</span>
-            Clear filters
+            {$_('exercises_page.clear_filters')}
           </button>
         {/if}
       </div>

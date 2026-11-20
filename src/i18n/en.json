@@ -823,6 +823,12 @@
     "tools_unsupported_routed": "The model that answered can't use tools, so nothing was logged or looked up."
   },
   "exercises_page": {
+    "loading": "Loading exercises…",
+    "load_failed": "Couldn't load the exercise library.",
+    "refresh_failed": "Couldn't refresh the exercise list.",
+    "library_empty": "Your library is empty. Import a source from Settings to get started.",
+    "no_match": "No exercises match the current filters.",
+    "clear_filters": "Clear filters",
     "all_equipment":         "All Equipment",
     "go_to_settings":        "Go to Settings",
     "custom":                "Custom",
@@ -881,6 +887,10 @@
     "done":                  "Done"
   },
   "exercise_detail": {
+    "loading": "Loading exercise…",
+    "log_today": "Log this in today's workout",
+    "sessions_count": "{count, plural, one {# session} other {# sessions}}",
+    "load_failed": "Couldn't load this exercise.",
     "deleted":               "Exercise deleted",
     "top_set_over_time":     "Top Set Over Time",
     "longest_hold_over_time": "Longest Hold Over Time",
@@ -1068,6 +1078,9 @@
     "amrap":                 "AMRAP"
   },
   "programs": {
+    "loading": "Loading programs…",
+    "load_failed": "Couldn't load your programs.",
+    "empty_desc": "Create a training program to organize your workout templates.",
     "delete_title":          "Delete program?",
     "delete_message":        "Deletes the program and all of its workouts. This cannot be undone.",
     "delete_confirm":        "Delete",

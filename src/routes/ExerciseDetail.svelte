@@ -220,12 +220,12 @@
   <ExerciseEditor bind:open={showEditor} {exercise} on:saved={onEditorSaved} />
 
   {#if loading}
-    <Spinner block label="Loading exercise…" />
+    <Spinner block label={$_('exercise_detail.loading')} />
   {:else if exercise}
     <div class="content">
       <button class="log-today-btn" on:click={logToday}>
         <span class="material-symbols-rounded">add_circle</span>
-        Log this in today's workout
+        {$_('exercise_detail.log_today')}
       </button>
 
       <ExerciseInfo {exercise} {pr} {history} />
@@ -237,7 +237,7 @@
               : detailKind === 'distance' ? $_('exercise_detail.longest_distance_over_time')
               : detailKind === 'calories' ? $_('exercise_detail.most_calories_over_time')
               : $_('exercise_detail.top_set_over_time')}</h3>
-            <span class="progress-meta">{progressPoints.length} sessions</span>
+            <span class="progress-meta">{$_('exercise_detail.sessions_count', { values: { count: progressPoints.length } })}</span>
           </div>
           <svg class="progress-svg" viewBox="0 0 {progressSvg.W} {progressSvg.H}" preserveAspectRatio="none">
             <polyline fill="none" stroke="var(--accent)" stroke-width="2"
@@ -282,7 +282,7 @@
   {:else}
     <div class="load-error">
       <span class="material-symbols-rounded">error_outline</span>
-      <p>Couldn't load this exercise.</p>
+      <p>{$_('exercise_detail.load_failed')}</p>
       {#if loadError}<p class="err-detail">{loadError}</p>{/if}
       <div class="err-actions">
         <button class="btn btn-primary" on:click={load}>{$_('exercise_detail.try_again')}</button>
