@@ -4,6 +4,7 @@
   import { KG_PER_LB } from '../../lib/workout.js';
   import { portal } from '../../lib/portal.js';
   import { weightUnit } from '../../stores/settings.js';
+  import OneRmCalc from './OneRmCalc.svelte';
 
   export let open = false;
   /**
@@ -14,7 +15,7 @@
    */
   export let embed = false;
 
-  let tab = 'plates'; // 'plates' | 'convert'
+  let tab = 'plates'; // 'plates' | 'convert' | 'onerm'
 
   // ── Plate Calculator ────────────────────────────────────────
   $: barWeight = $weightUnit === 'kg' ? 20 : 45;
@@ -89,6 +90,9 @@
       <button class="gt-tab" class:active={tab === 'convert'} on:click={() => tab = 'convert'}>
         <span class="material-symbols-rounded" style="font-size:16px">swap_horiz</span> {$_('gym_tools.convert')}
       </button>
+      <button class="gt-tab" class:active={tab === 'onerm'} on:click={() => tab = 'onerm'}>
+        <span class="material-symbols-rounded" style="font-size:16px">percent</span> {$_('gym_tools.one_rm')}
+      </button>
     </div>
     {#if tab === 'plates'}
       <div class="gt-body gt-body-embed">
@@ -122,6 +126,10 @@
         {:else if targetWeight}
           <div class="gt-empty">{$_('gym_tools.under_bar', { values: { weight: barWeight, unit: $weightUnit } })}</div>
         {/if}
+      </div>
+    {:else if tab === 'onerm'}
+      <div class="gt-body gt-body-embed">
+        <OneRmCalc compact />
       </div>
     {:else}
       <div class="gt-body gt-body-embed">
@@ -161,6 +169,9 @@
         <button class="gt-tab" class:active={tab === 'convert'} on:click={() => tab = 'convert'}>
           <span class="material-symbols-rounded" style="font-size:18px">swap_horiz</span> {$_('gym_tools.convert')}
         </button>
+        <button class="gt-tab" class:active={tab === 'onerm'} on:click={() => tab = 'onerm'}>
+          <span class="material-symbols-rounded" style="font-size:18px">percent</span> {$_('gym_tools.one_rm')}
+        </button>
       </div>
 
       {#if tab === 'plates'}
@@ -196,6 +207,11 @@
           {:else if targetWeight}
             <div class="gt-empty">{$_('gym_tools.under_bar', { values: { weight: barWeight, unit: $weightUnit } })}</div>
           {/if}
+        </div>
+
+      {:else if tab === 'onerm'}
+        <div class="gt-body">
+          <OneRmCalc />
         </div>
 
       {:else}

@@ -11,6 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **Undo after removing a set or an exercise.** A toast with Undo stays for a few seconds and puts it back where it was. Removing an exercise offers it only when "confirm exercise removal" is off.
 - **A collapsed exercise card shows its best set.** After the set count, e.g. `4/4 sets · 225×5`: heaviest for reps, longest for holds, farthest for distance, most for calories. Warm-ups and sets not done are ignored.
+- **1RM calculator in Gym Tools.** A new 1RM tab estimates your one-rep max from a weight and 1 to 12 reps (Epley), with a 50 to 100% table rounded to your plate step (2.5 kg / 5 lb).
 
 ### Fixed
 

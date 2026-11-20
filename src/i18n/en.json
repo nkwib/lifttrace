@@ -1747,7 +1747,12 @@
     "kg_to_lbs":       "kg → lbs",
     "pounds":          "Pounds",
     "kilograms":       "Kilograms",
-    "weight_ph":       "Enter weight"
+    "weight_ph":       "Enter weight",
+    "one_rm":          "1RM",
+    "lifted_weight":   "Weight lifted",
+    "reps":            "Reps",
+    "est_1rm":         "Estimated 1RM",
+    "reps_hint":       "Enter a weight and 1 to {max} reps. The estimate is unreliable above {max}."
   },
   "progress": {
     "add_photo":      "Add Photo",
