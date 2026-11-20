@@ -34,7 +34,7 @@ async function _playStreamNative(track) {
   _destroyHls();
   _resetMse();
   _stopProgress();
-  if (_crossfadeAudio) { _crossfadeAudio.pause(); _crossfadeAudio = null; }
+  _cancelCrossfade();
 
   const np = await import('../lib/native-player.js');
   _wireNativeListenersOnce(np);
@@ -100,7 +100,7 @@ async function _playMusicNative(track) {
   _destroyHls();
   _resetMse();
   _stopProgress();
-  if (_crossfadeAudio) { _crossfadeAudio.pause(); _crossfadeAudio = null; }
+  _cancelCrossfade();
 
   const np = await import('../lib/native-player.js');
   _wireNativeListenersOnce(np);
@@ -546,6 +546,15 @@ let _fallbackPrefetchFired = false;
 function _stopProgress() { clearInterval(_progressInterval); }
 
 // ── Crossfade (manual, using second audio element) ──────────────────────────
+// Abort an in-flight crossfade: drop the fade-in element and undo the
+// fade-out on the main one. No-op when no crossfade is active.
+function _cancelCrossfade() {
+  const wasActive = _isCrossfading || !!_crossfadeAudio;
+  clearInterval(_crossfadeTimer);
+  if (_crossfadeAudio) { _crossfadeAudio.pause(); _crossfadeAudio = null; }
+  _isCrossfading = false;
+  if (wasActive && audio) audio.volume = get(volume);
+}
 function _startCrossfade(fadeSecs) {
   _isCrossfading = true;
   const q = get(queue);
@@ -569,6 +578,7 @@ function _startCrossfade(fadeSecs) {
     if (_crossfadeAudio) _crossfadeAudio.volume = vol * f;
     if (step >= steps) {
       clearInterval(_crossfadeTimer);
+      if (!_crossfadeAudio) { _isCrossfading = false; return; }
       // Move the faded-in stream into the main element (reuse element — critical for mobile)
       const swappedSrc = _crossfadeAudio.src;
       const swappedPos = _crossfadeAudio.currentTime;
@@ -788,7 +798,7 @@ export async function playTrack(track, newQueue = null, startIndex = 0) {
   _resetNextUp();
   clearInterval(_crossfadeTimer);
   _destroyHls();
-  if (_crossfadeAudio) { _crossfadeAudio.pause(); _crossfadeAudio = null; }
+  _cancelCrossfade();
 
   if (newQueue) {
     queue.set(newQueue);
@@ -1070,6 +1080,7 @@ export function pause() {
     return;
   }
   if (audio) {
+    _cancelCrossfade();
     audio.pause();
     isPlaying.set(false);
     _stopProgress();
@@ -1089,7 +1100,7 @@ export function stop() {
   // Tear down native ExoPlayer (radio OR library — only one is active at a time).
   _teardownNativeStream();
   _teardownNativeMusic();
-  if (_crossfadeAudio) { _crossfadeAudio.pause(); _crossfadeAudio = null; }
+  _cancelCrossfade();
   _resetMse();
   if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); }
   _stopProgress();
