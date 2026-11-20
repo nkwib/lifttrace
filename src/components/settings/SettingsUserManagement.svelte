@@ -246,6 +246,7 @@
       if (!res.ok) { showError(data.error || $_('settings.users.err_failed_create_invite')); return; }
       inviteResult = data;
       if (data.sent) showSuccess($_('settings.users.invite_sent_to', { values: { email: _inviteEmailTrimmed } }));
+      else if (data.email_error) showError($_('settings.users.invite_email_failed'));
       inviteEmail = '';
       inviteCoach = '';
       await loadPendingInvites();

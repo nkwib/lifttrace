@@ -595,7 +595,13 @@ router.post('/invite', requireAuth, requireAdmin, wrap(async (req, res) => {
   if (email && isEmailConfigured()) {
     const inviter = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
     const inviterName = inviter?.nickname || inviter?.full_name || inviter?.username || 'An admin';
-    await sendInvite(email, inviteUrl, inviterName);
+    try {
+      await sendInvite(email, inviteUrl, inviterName);
+    } catch (e) {
+      // Token already stored: still hand the admin the link to share.
+      console.warn('[invite] send failed:', e?.message);
+      return res.json({ ok: true, sent: false, inviteUrl, email_error: 'Email could not be sent. Share the link yourself.' });
+    }
     res.json({ ok: true, sent: true, inviteUrl });
   } else {
     res.json({ ok: true, sent: false, inviteUrl });
