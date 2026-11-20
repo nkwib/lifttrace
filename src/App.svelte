@@ -11,12 +11,15 @@
   import ConfirmDialogMount from './components/ui/ConfirmDialogMount.svelte';
   import PlainHttpSheetMount from './components/ui/PlainHttpSheetMount.svelte';
   import AccountCheckError from './components/AccountCheckError.svelte';
-  import Trace   from './components/ai/Trace.svelte';
   import { DB }    from './lib/db.js';
   import { initFold } from './lib/fold.js';
   import { isPullSyncExempt } from './lib/pull-sync.js';
   import { handleBack } from './lib/back-stack.js';
-  import { navStyle, applyAccentColor, accentColor, applyAppearance, appearance, disableAnimations, sidebarPersistent, language, pageBanners, bannerStyle, bannerAnimation, forceMobileLayout } from './stores/settings.js';
+  import { navStyle, applyAccentColor, accentColor, applyAppearance, appearance, disableAnimations, sidebarPersistent, language, pageBanners, bannerStyle, bannerAnimation, forceMobileLayout, aiEffectivelyEnabled } from './stores/settings.js';
+  // Trace is split into its own chunk and fetched the first time AI is enabled.
+  // Never unmounted once loaded (chat state); Trace itself hides its UI when off.
+  let TraceComp;
+  $: if ($aiEffectivelyEnabled && !TraceComp) import('./components/ai/Trace.svelte').then(m => { TraceComp = m.default; }).catch(() => {});
   import { _, locale } from 'svelte-i18n';
   import { slide } from 'svelte/transition';
   import { portal } from './lib/portal.js';
@@ -983,7 +986,7 @@
 <WorkoutModeBar />
 <Toast />
 <ConfirmDialogMount />
-<Trace />
+{#if TraceComp}<svelte:component this={TraceComp} />{/if}
 
 {/if}
 
