@@ -22,9 +22,20 @@ test('range loader does not fetch the base set', () => {
   assert.match(r, /loadBodyWeights/);
 });
 
-test('base loader fetches recent workouts once, range loader never', () => {
-  assert.match(fn('loadBaseData'), /workout\/recent/);
+test('recent workouts: one fetch helper, base and wide loaders use it, range loader never', () => {
+  assert.match(fn('loadBaseData'), /fetchRecentLogs\(365\)/);
+  assert.match(fn('loadWideData'), /fetchRecentLogs\(limit\)/);
+  assert.doesNotMatch(fn('loadRangeData'), /fetchRecentLogs|workout\/recent/);
   assert.equal(page.split('/api/workout/recent').length - 1, 1);
+  assert.doesNotMatch(page, /limit=365/);
+});
+
+test('wide loader has its own seq guard and does not touch base state', () => {
+  const w = fn('loadWideData');
+  assert.match(w, /_wideSeq/);
+  assert.doesNotMatch(w, /_baseSeq|loadStart|recentWorkouts\s*=/);
+  assert.match(page, /\$: range, \$cardioEnabled, loadWideData\(\);/);
+  assert.match(page, /loadWideData\(true\)/);
 });
 
 test('range change triggers only the range loader', () => {

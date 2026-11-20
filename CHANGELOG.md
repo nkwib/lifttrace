@@ -20,6 +20,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Cardio statistics count empty weeks.** The weekly average and "on target" ratio include layoff weeks, and long ranges thin the week labels.
 - **Trace remembers photo questions and times.** Messages sent with photos are now saved to chat history (as text plus a photo marker, never the image), and reloaded messages show their time again.
 - **Statistics after midnight.** A Statistics page left open past midnight now treats the new day as today (range, heatmap, weekly ring) and reloads when you come back to it.
+- **Statistics 1Y and All calories and period deltas.** They read only the newest 365 sessions, so a busy lifter's prior-year comparison and All calories were too low. Those ranges now load more history, and hide the figure when it still can't be complete.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added

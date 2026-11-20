@@ -78,3 +78,22 @@ export function fillWeeks(rows, start, end, zero, cap = 520, startsOn = 'monday'
   }
   return out;
 }
+
+/** Newest sessions to fetch for the range's calories and prior-window deltas. */
+export function workoutsLimitFor(range) {
+  if (range === 'All') return 20000;
+  if (range === '1Y') return 4000;
+  return 365;
+}
+
+/**
+ * True when a newest-first fetch may be missing sessions on or after `date`:
+ * it returned exactly `limit` rows and its oldest row is after `date`.
+ * `rows` is the raw response (dates as YYYY-MM-DD strings).
+ */
+export function recentTruncated(rows, limit, date) {
+  if (!Array.isArray(rows) || rows.length < limit) return false;
+  let oldest = null;
+  for (const r of rows) if (r?.date && (oldest === null || r.date < oldest)) oldest = r.date;
+  return oldest !== null && oldest > date;
+}

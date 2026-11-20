@@ -19,6 +19,7 @@ import { onMount, onDestroy, tick } from 'svelte';
   import { DB } from '../lib/db.js';
   import { estimateWorkoutCalories, ageFromDob, isRepSet, fmtSetDuration, fmtDistance, fmtCalories, fromMeters, distanceUnitOf } from '../lib/workout.js';
   import { fmtVol, fmtWeekLabel, fillWeeks, showBarLabel, hasRecord, recordDate } from '../lib/statsFormat.js';
+  import { fmtVol, fmtWeekLabel, fillWeeks, hasRecord, recordDate, workoutsLimitFor, recentTruncated } from '../lib/statsFormat.js';
   import { localDateStr } from '../lib/db.js';
   import { weekdayOrder } from '../lib/week-start.js';
   import { trainedDates, weeklyGoal, weekStartOf, shiftDate, hasWorkingSet, exercisesOf, excusedOnly } from '../lib/trained-day.js';
@@ -122,6 +123,7 @@ import { onMount, onDestroy, tick } from 'svelte';
   $: excusedByDate = excusedMap(excusedRows);
   $: excusedDates = excusedOnly(excusedRows, workoutDates);
   $: excusedWeeks = [...excusedDates].reduce((m, d) => { const w = weekStartOf(d, $weekStartsOn); m[w] = (m[w] || 0) + 1; return m; }, {});
+  let baseMeta = null;
   let recentWorkouts = []; // full records (exercises + duration) — used by the calorie estimator
   let exercises = [];
   let loading = true;
@@ -260,6 +262,9 @@ import { onMount, onDestroy, tick } from 'svelte';
   // depend on the range, so it loads on mount, on Track Cardio and on sync.
   $: range, $cardioEnabled, $weekStartsOn, loadRangeData();
   $: $cardioEnabled, loadBaseData();
+  // 1Y and All need more than the base set's 365 sessions (calories, prior
+  // window); a separate lazy loader feeds only those two.
+  $: range, $cardioEnabled, loadWideData();
 
   // Each stat loads on its own, so one that fails no longer throws away the
   // rest, and a failure shows as an error rather than as zeros that look like
@@ -286,6 +291,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     if (refreshToday()) await tick();
     loadRangeData();
     loadBaseData();
+    loadWideData(true);
     if (metric === 'progress' && selectedExerciseId) loadProgress();
   }
 
@@ -323,6 +329,40 @@ import { onMount, onDestroy, tick } from 'svelte';
     }
   }
 
+  async function fetchRecentLogs(limit) {
+    const res = await fetch('/api/workout/recent?limit=' + limit, { credentials: 'include' });
+    return res.ok ? await res.json() : null;
+  }
+
+  // Wide set for 1Y and All: same filters and trained-day rule as the base
+  // set, own sequence guard, no loading state. Null for shorter ranges.
+  let wideLogs = null;
+  let wideDates = null;
+  let wideMeta = null;
+  let _wideSeq = 0;
+  let _wideLimit = 0;
+  async function loadWideData(force = false) {
+    const limit = workoutsLimitFor(range);
+    if (limit === 365) { _wideSeq++; _wideLimit = 0; wideLogs = wideDates = wideMeta = null; return; }
+    if (!force && limit === _wideLimit) return;
+    const seq = ++_wideSeq;
+    _wideLimit = limit;
+    wideLogs = wideDates = wideMeta = null;
+    try {
+      const raw = await fetchRecentLogs(limit);
+      if (seq !== _wideSeq || !raw) { if (seq === _wideSeq) _wideLimit = 0; return; }
+      const logs = raw.filter(l => exercisesOf(l).length > 0);
+      const cardioRows = $cardioEnabled ? await LtApi.listCardio().catch(() => []) : [];
+      if (seq !== _wideSeq) return;
+      wideDates = trainedDates({ workouts: logs, cardio: cardioRows, cardioOn: $cardioEnabled });
+      wideMeta = { raw, limit };
+      wideLogs = logs;
+    } catch (e) {
+      console.error(e);
+      if (seq === _wideSeq) _wideLimit = 0;
+    }
+  }
+
   async function loadBaseData() {
     const seq = ++_baseSeq;
     loadStart();
@@ -343,9 +383,9 @@ import { onMount, onDestroy, tick } from 'svelte';
       // Heatmap dates + cached full records (the calorie estimator needs
       // exercises + duration_min, both already in this payload).
       try {
-        const recent = await fetch('/api/workout/recent?limit=365', { credentials: 'include' });
+        const recentRaw = await fetchRecentLogs(365);
         if (seq !== _baseSeq) return;
-        if (recent.ok) {
+        if (recentRaw) {
           // Trained days by the shared rule (src/lib/trained-day.js), the one
           // the Diary's dots and /api/stats/streaks use: a completed working
           // set, or a cardio session while Track Cardio is on. Clearing a
@@ -354,13 +394,14 @@ import { onMount, onDestroy, tick } from 'svelte';
           // (issue #124, PR #120). Empty workouts are dropped from the
           // cached records too; the phone's standalone mode already leaves
           // them out.
-          const logs = (await recent.json()).filter(l => exercisesOf(l).length > 0);
+          const logs = recentRaw.filter(l => exercisesOf(l).length > 0);
           const cardioRows = $cardioEnabled ? await LtApi.listCardio().catch(() => []) : [];
           const excused = await LtApi.listExcusedDays().catch(() => excusedRows);
           if (seq !== _baseSeq) return;
           workoutDates = trainedDates({ workouts: logs, cardio: cardioRows, cardioOn: $cardioEnabled });
           excusedRows = excused;
           recentWorkouts = logs;
+          baseMeta = { raw: recentRaw, limit: 365 };
         }
       } catch {}
     } catch(e) {
@@ -427,8 +468,19 @@ import { onMount, onDestroy, tick } from 'svelte';
   // the user hasn't opted in OR the body profile is incomplete — the UI
   // hides the row in that case rather than showing "0 kcal" (which would
   // imply the workout had no thermic effect).
+  // Calories and deltas read the wide set on 1Y/All, else the base set. When
+  // the fetch hit its limit before reaching the window start, the numbers
+  // would be wrong, so they are hidden.
+  $: statsWorkouts = wideLogs || recentWorkouts;
+  $: statsDates = wideDates || workoutDates;
+  $: statsMeta = wideLogs ? wideMeta : baseMeta;
+  function windowTruncated(date) {
+    return !!statsMeta && recentTruncated(statsMeta.raw, statsMeta.limit, date);
+  }
+
   $: rangeCalories = (() => {
-    if (!$caloriesBurnedEnabled || !recentWorkouts.length) return null;
+    if (!$caloriesBurnedEnabled || !statsWorkouts.length) return null;
+    if (windowTruncated(startDate)) return null;
     const dob = $currentUser?.birthday || DB.getSetting('dob', null);
     const sex = $currentUser?.gender   || DB.getSetting('gender', null);
     const profile = {
@@ -439,7 +491,7 @@ import { onMount, onDestroy, tick } from 'svelte';
       weight_unit: $weightUnit,
     };
     if (!profile.weight_kg || !profile.height_cm || !profile.age) return null;
-    const inRange = recentWorkouts.filter(w => w.date >= startDate && w.date <= endDate);
+    const inRange = statsWorkouts.filter(w => w.date >= startDate && w.date <= endDate);
     let total = 0;
     for (const w of inRange) {
       const k = estimateWorkoutCalories(w, profile);
@@ -462,7 +514,7 @@ import { onMount, onDestroy, tick } from 'svelte';
   // workout count to the same-length window immediately before. Returns
   // null when the user has nothing in the prior window to compare.
   $: periodDeltas = (() => {
-    if (!recentWorkouts.length || !volumeRaw.length) return null;
+    if (!statsWorkouts.length || !volumeRaw.length) return null;
     const rangeDays = RANGES[range];
     if (!rangeDays) return null;  // 'All' has no prior period
     const priorEnd = new Date(startDate + 'T12:00:00');
@@ -471,11 +523,12 @@ import { onMount, onDestroy, tick } from 'svelte';
     priorStart.setDate(priorStart.getDate() - rangeDays + 1);
     const priorEndStr = localDateStr(priorEnd);
     const priorStartStr = localDateStr(priorStart);
-    const priorWorkouts = recentWorkouts.filter(w =>
+    if (windowTruncated(priorStartStr)) return null;
+    const priorWorkouts = statsWorkouts.filter(w =>
       hasWorkingSet(exercisesOf(w)) && w.date >= priorStartStr && w.date <= priorEndStr
     );
     // Trained days, as the range's own count (frequency) is.
-    const priorDays = [...workoutDates].filter(d => d >= priorStartStr && d <= priorEndStr).length;
+    const priorDays = [...statsDates].filter(d => d >= priorStartStr && d <= priorEndStr).length;
     if (priorDays === 0) return null;
     let priorVol = 0;
     for (const w of priorWorkouts) {
