@@ -107,7 +107,7 @@ router.post('/commit', upload.single('file'), wrap((req, res) => {
   // replaces each against its own copy. Existing rows are read once up front;
   // rows inserted below are never candidates.
   const plan = planImport(workouts, _loadExisting(userId, workouts));
-  const nextSeqStmt  = db.prepare('SELECT COALESCE(MAX(session_seq), -1) + 1 AS n FROM workout_log WHERE user_id = ? AND date = ?');
+  const nextSeqStmt  = db.prepare('SELECT COALESCE(MAX(session_seq), -1) + 1 AS n FROM workout_log WHERE user_id IS ? AND date = ?');
   const insertStmt   = db.prepare(
     `INSERT INTO workout_log (user_id, date, name, notes, duration_min, exercises, completed, session_seq, created_at)
      VALUES (?, ?, ?, ?, ?, ?, 1, ?, datetime('now'))`
@@ -116,7 +116,7 @@ router.post('/commit', upload.single('file'), wrap((req, res) => {
   // program links) and its position among the date's sessions.
   const replaceStmt  = db.prepare(
     `UPDATE workout_log SET notes = ?, duration_min = ?, exercises = ?, completed = 1, field_times = ?, updated_at = datetime('now')
-     WHERE id = ? AND user_id = ? AND deleted_at IS NULL`
+     WHERE id = ? AND user_id IS ? AND deleted_at IS NULL`
   );
 
   let imported = 0, skipped = 0, replaced = 0;
@@ -166,14 +166,14 @@ router.post('/commit', upload.single('file'), wrap((req, res) => {
 // ── helpers ────────────────────────────────────────────────────────────────
 // Live rows per (date, name) key of the file, in session_seq, id order.
 function _loadExisting(userId, workouts) {
-  const stmt = db.prepare('SELECT id, session_seq, field_times FROM workout_log WHERE user_id = ? AND date = ? AND name = ? AND deleted_at IS NULL ORDER BY session_seq, id');
+  const stmt = db.prepare('SELECT id, session_seq, field_times FROM workout_log WHERE user_id IS ? AND date = ? AND name = ? AND deleted_at IS NULL ORDER BY session_seq, id');
   const byKey = new Map();
   for (const [date, name] of importKeys(workouts)) byKey.set(importKey(date, name), stmt.all(userId, date, name));
   return byKey;
 }
 
 function _getUserWeightUnit(userId) {
-  const row = db.prepare("SELECT value FROM user_settings WHERE user_id = ? AND key = 'weightUnit'").get(userId);
+  const row = db.prepare("SELECT value FROM user_settings WHERE user_id IS ? AND key = 'weightUnit'").get(userId);
   if (!row) return 'lbs';
   try { return JSON.parse(row.value); } catch { return row.value || 'lbs'; }
 }
@@ -182,7 +182,7 @@ function _loadLibraryForUser(userId) {
   return db.prepare(
     // Live rows only — matching an imported workout against a soft-deleted
     // exercise would immediately orphan the reference again (#49).
-    `SELECT id, name FROM exercises WHERE deleted_at IS NULL AND (is_global = 1 OR created_by = ?)`
+    `SELECT id, name FROM exercises WHERE deleted_at IS NULL AND (is_global = 1 OR created_by IS ?)`
   ).all(userId);
 }
 
