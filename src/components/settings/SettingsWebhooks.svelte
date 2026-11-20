@@ -315,7 +315,7 @@
     display: flex; align-items: center; gap: 6px;
     font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: 4px;
   }
-  .just-created-warn { font-size: 12px; color: var(--warning, var(--accent)); margin: 0 0 8px; }
+  .just-created-warn { font-size: 12px; color: var(--warning-text, #7A5000); margin: 0 0 8px; }
   .just-created-row { display: flex; gap: 6px; align-items: center; }
   .just-created-value {
     flex: 1; font-family: var(--mono, monospace); font-size: 12px;
@@ -338,7 +338,7 @@
   .webhook-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
   .webhook-toggle { display: flex; align-items: center; padding: 0 4px; }
   .status-badge { font-size: 10px; padding: 1px 6px; border-radius: var(--radius-full); font-weight: 600; }
-  .status-success { background: color-mix(in srgb, var(--success, var(--accent)) 15%, transparent); color: var(--success, var(--accent)); }
+  .status-success { background: color-mix(in srgb, var(--success, var(--accent)) 15%, transparent); color: var(--success-text, #00704A); }
   .status-failed { background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }
   .create-form { display: flex; flex-direction: column; gap: 10px; }
   .event-grid { display: flex; flex-direction: column; gap: 6px; }

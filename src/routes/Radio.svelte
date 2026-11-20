@@ -1862,7 +1862,7 @@
     padding: 6px 10px; border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--success, #2FD66F) 14%, transparent);
     border: 1px solid color-mix(in srgb, var(--success, #2FD66F) 40%, transparent);
-    color: var(--success, #2FD66F);
+    color: var(--success-text, #00704A);
     font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
     flex-shrink: 0;
   }

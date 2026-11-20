@@ -135,7 +135,7 @@
         {#if !$caloriesBurnedEnabled}
           <div class="setting-row">
             <div class="setting-label-group">
-              <span class="setting-hint" style="color: var(--warning, #f59e0b)">
+              <span class="setting-hint" style="color: var(--warning-text, #7A5000)">
                 {$_('settings_federation.calories_off')}
               </span>
             </div>

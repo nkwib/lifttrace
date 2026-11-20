@@ -419,7 +419,7 @@
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 10px; border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--success, #2FD66F) 22%, transparent);
-    color: var(--success, #2FD66F);
+    color: var(--success-text, #00704A);
     font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
     margin-left: 8px; flex-shrink: 0;
   }

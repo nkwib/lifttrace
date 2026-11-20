@@ -1763,10 +1763,10 @@ import { onMount, onDestroy, tick } from 'svelte';
   .overlay-chips { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; }
   .overlay-chips::-webkit-scrollbar { display: none; }
   .overlay-chip { flex: 0 0 auto; padding: 4px 10px; border-radius: var(--radius-full); border: 1px solid var(--border); background: transparent; color: var(--text-2); font-size: 12px; cursor: pointer; white-space: nowrap; transition: all var(--dur-fast); }
-  .overlay-chip.active { border-color: var(--warning, #FFB020); color: var(--warning, #FFB020); }
+  .overlay-chip.active { border-color: var(--warning, #FFB020); color: var(--warning-text, #7A5000); }
   .chart-wrap { position: relative; }
   .overlay-axis { position: absolute; inset: 0; pointer-events: none; }
-  .overlay-axis span { position: absolute; right: 2px; transform: translateY(-50%); font-size: 11px; line-height: 1; color: var(--warning, #FFB020); padding: 1px 5px; border-radius: 4px; background: var(--surface-1); }
+  .overlay-axis span { position: absolute; right: 2px; transform: translateY(-50%); font-size: 11px; line-height: 1; color: var(--warning-text, #7A5000); padding: 1px 5px; border-radius: 4px; background: var(--surface-1); }
   .overlay-axis span.w { left: 2px; right: auto; color: var(--accent); }
   .overlay-axis .mark-max { top: 8.3%; }  /* band top edge, y=10 of the 120 viewBox */
   .overlay-axis .mark-min { top: 83.3%; } /* band bottom edge, y=100 */

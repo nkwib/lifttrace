@@ -1516,7 +1516,7 @@
                   <div class="not-encrypted"><span class="material-symbols-rounded" aria-hidden="true">lock_open</span>{$_('plain_http.not_encrypted')}</div>
                 {/if}
               </div>
-              <span class="material-symbols-rounded" style="color:var(--success, #22c55e);font-size:22px">cloud_done</span>
+              <span class="material-symbols-rounded" style="color:var(--success-text, #00704A);font-size:22px">cloud_done</span>
             </div>
             <div class="setting-divider"></div>
             <div class="setting-row">
@@ -1914,7 +1914,7 @@
     margin-top: 4px;
     font-size: 12px;
     font-weight: 600;
-    color: var(--warning, #f59e0b);
+    color: var(--warning-text, #7A5000);
   }
   .not-encrypted .material-symbols-rounded { font-size: 15px; }
   /* Settings → Server Connection: sign-in options, as on the setup screen */

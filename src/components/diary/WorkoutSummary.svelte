@@ -480,7 +480,7 @@
     padding: 2px 6px; border-radius: var(--radius-full);
   }
   .ws-calorie-badge.rough {
-    color: var(--warning, #f59e0b);
+    color: var(--warning-text, #7A5000);
     background: color-mix(in srgb, var(--warning, #f59e0b) 12%, transparent);
   }
 

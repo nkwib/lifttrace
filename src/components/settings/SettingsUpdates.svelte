@@ -541,7 +541,7 @@
   }
   .version-chip.chip-warn {
     background: color-mix(in srgb, var(--warning, #f57c00) 15%, transparent);
-    color: var(--warning, #f57c00);
+    color: var(--warning-text, #7A5000);
   }
   /* Small status dot used in the server row's description line to
      make current-vs-behind scannable without color-blind users needing
@@ -804,7 +804,7 @@
     margin: 0 16px 16px;
     border-radius: 8px;
     background: color-mix(in srgb, var(--success, #2e7d32) 10%, transparent);
-    color: var(--success, #2e7d32);
+    color: var(--success-text, #00704A);
     font-size: 13px; font-weight: 600;
     width: fit-content;
   }
@@ -822,7 +822,7 @@
   .server-instructions { display: flex; flex-direction: column; gap: 12px; }
   .server-headline {
     display: flex; align-items: flex-start; gap: 12px;
-    color: var(--warning, #f57c00);
+    color: var(--warning-text, #7A5000);
   }
   .server-headline .material-symbols-rounded { font-size: 22px; margin-top: 2px; }
   .server-headline-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
@@ -849,11 +849,11 @@
   }
   .badge-warn {
     background: color-mix(in srgb, var(--warning, #f57c00) 15%, transparent);
-    color: var(--warning, #f57c00);
+    color: var(--warning-text, #7A5000);
   }
   .badge-ok {
     background: color-mix(in srgb, var(--success, #2e7d32) 15%, transparent);
-    color: var(--success, #2e7d32);
+    color: var(--success-text, #00704A);
   }
 
   .spin { animation: spin 1s linear infinite; }

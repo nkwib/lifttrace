@@ -131,7 +131,7 @@
   .goal-label {
     position: absolute; right: 0; top: -7px;
     background: var(--surface-1);
-    color: var(--success, #2FD66F);
+    color: var(--success-text, #00704A);
     font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
     padding: 0 6px;
     border-radius: var(--radius-sm);

@@ -278,7 +278,7 @@
     background: color-mix(in srgb, var(--warning, #FFB020) 12%, transparent);
     color: var(--text-2); font-size: 12px; line-height: 1.4;
   }
-  .warn-inline .material-symbols-rounded { color: var(--warning, #FFB020); font-size: 18px; flex-shrink: 0; }
+  .warn-inline .material-symbols-rounded { color: var(--warning-text, #7A5000); font-size: 18px; flex-shrink: 0; }
 
   .unmatched { font-size: 12px; }
   .unmatched summary { cursor: pointer; color: var(--text-2); font-weight: 600; padding: 6px 0; }

@@ -68,14 +68,18 @@ test('light status fills are unchanged', () => {
   assert.equal(light.warning, '#E09400');
 });
 
+// CookieWarning and PlainHttpSheetMount are shared byte-for-byte with sibling Trace apps (hash-pinned),
+// and only color an icon glyph, so they are exempt here.
+const SHARED = ['CookieWarning.svelte', 'PlainHttpSheetMount.svelte'];
+// Covers fallback forms (var(--success, #hex)) and inline style. Non-text glyphs use -text too, for consistency.
 test('text color never uses the raw status fills', () => {
   const bad = [];
   const walk = (d) => {
     for (const e of readdirSync(d, { withFileTypes: true })) {
       const p = join(d, e.name);
       if (e.isDirectory()) walk(p);
-      else if (/\.(svelte|js|css)$/.test(e.name)
-        && /(^|[^-\w])color:\s*var\(--(success|warning)\)/m.test(readFileSync(p, 'utf8'))) bad.push(p);
+      else if (/\.(svelte|js|css)$/.test(e.name) && !SHARED.includes(e.name)
+        && /(^|[^-\w])color:\s*var\(--(success|warning)\s*[,)]/m.test(readFileSync(p, 'utf8'))) bad.push(p);
     }
   };
   walk(join(root, 'src'));

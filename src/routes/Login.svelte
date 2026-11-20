@@ -456,7 +456,7 @@
 
           <div class="recovery-part">
             <strong class="recovery-heading recovery-heading-danger">
-              <span class="material-symbols-rounded" style="font-size:18px;color:var(--warning,#f59e0b)">warning</span>
+              <span class="material-symbols-rounded" style="font-size:18px;color:var(--warning-text, #7A5000)">warning</span>
               {$_('two_step.locked_out.disable_title')}
             </strong>
             <p style="margin:0">{@html $_('login.recovery.explainer')}</p>
