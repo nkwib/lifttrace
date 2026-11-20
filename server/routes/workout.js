@@ -7,7 +7,7 @@ import { afterWatchFinish } from '../lib/watch-finish.js';
 import { mergeExercises, ensureExerciseUuids, changedUuidsOf } from '../lib/workout-merge.js';
 import { dispatchWebhookEvent } from '../lib/webhooks.js';
 import { exerciseHistory } from '../lib/exercise-history.js';
-import { getWorkoutCore } from '../lib/mcp/tools/get-workout.js';
+import { formatWorkoutRow } from '../lib/mcp/tools/get-workout.js';
 import { isHistoryUpload, recordsBeforeSave, sendNewRecords } from '../lib/log-webhooks.js';
 import { getActiveProgramCore } from '../lib/mcp/tools/get-active-program.js';
 import { cleanWorkoutRefs, workoutProgramVisible } from '../lib/program-access.js';
@@ -381,11 +381,15 @@ router.put('/:date', wrap((req, res) => {
       setImmediate(() => { afterWatchFinish(userId, workout).catch(() => {}); });
     }
 
-    // workout.completed webhook (issue #79). Reuses getWorkoutCore so
-    // the payload matches exactly what GET /api/v1/workouts/:date and
-    // MCP's get_workout tool already return, one shape everywhere.
+    // workout.completed webhook (issue #79). The saved session itself, in
+    // the shape GET /api/v1/workouts (range) returns, so a second session
+    // of the day reports its own data, not session 0's. Re-read raw:
+    // `workout` above has its exercises already parsed.
     if (!_historyUpload) {
-      try { dispatchWebhookEvent(userId, 'workout.completed', getWorkoutCore(userId, { date })); }
+      try {
+        const saved = db.prepare('SELECT * FROM workout_log WHERE id = ? AND deleted_at IS NULL').get(targetId);
+        if (saved) dispatchWebhookEvent(userId, 'workout.completed', { ...formatWorkoutRow(saved), session_seq: saved.session_seq ?? 0 });
+      }
       catch (e) { /* never let a webhook failure block the save */ }
     }
 

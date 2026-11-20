@@ -90,8 +90,9 @@ Every delivery is a JSON POST with this envelope:
 }
 ```
 
-`data` for `workout.completed` matches the shape `GET /api/v1/workouts/:date`
-returns. `data` for `body_stat.logged` is the date and every stat on that
+`data` for `workout.completed` is the session that was just completed, in the
+shape `GET /api/v1/workouts` returns for a session (including `session_seq`,
+0 for the day's first session, 1 for the next, and so on). `data` for `body_stat.logged` is the date and every stat on that
 date after the save, as stored:
 
 ```json
