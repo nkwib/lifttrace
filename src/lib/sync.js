@@ -2914,8 +2914,12 @@ export async function fullSync(silent = false, forceCheck = false, showFailureBa
  * Wire `online` event + page-visibility change to flush the queue + pull
  * automatically when the device reconnects or the user comes back to the app.
  */
+let _bgSyncWired = false;
 export function startBackgroundSync() {
   if (!isNative || !getServerUrl()) return;
+  // Idempotent: App boot and Login both call this; listeners are never removed.
+  if (_bgSyncWired) return;
+  _bgSyncWired = true;
 
   const trigger = () => { runSync().catch(() => {}); };
 
