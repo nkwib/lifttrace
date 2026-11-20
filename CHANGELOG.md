@@ -17,6 +17,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- **CSV exports expand alternating exercises and use your local date.** The library lookup called a method that did not exist, so alternating exercises were never split into L and R rows. The all-workouts filename date no longer shifts to the UTC day.
 - **Clear All Data works on a server without accounts, and clears cardio too.** With no accounts it did nothing to workouts, body stats or chat history. Cardio sessions and deleted-workout records are now cleared as well. Built-in programs stay.
 - **Another member's own exercises are no longer readable by id.** The exercise detail route and the media pre-cache list answered for any exercise on the instance, including other members' private ones. They now cover the library and your own, as the exercise list already did. Single-user instances are unchanged.
 - **Importing two same-day sessions with the same name keeps both.** A Hevy export with two "Push" sessions on one day imported only the first, or, with Replace, deleted one and kept the other. Each file session now pairs with the matching existing one in order, and the preview count matches. Replace now updates the session in place, so its coach feedback stays.

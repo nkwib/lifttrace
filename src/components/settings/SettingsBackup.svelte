@@ -13,7 +13,7 @@
   import TimePicker from '../ui/TimePicker.svelte';
   import Spinner from '../ui/Spinner.svelte';
   import { LtApi } from '../../lib/api.js';
-  import { exportAllWorkoutsCsv } from '../../lib/workoutCsv.js';
+  import { exportAllWorkoutsCsv, loadLibraryLoadTypes } from '../../lib/workoutCsv.js';
   import { isNative, getNativeMode } from '../../lib/platform.js';
   import {
     localBackupSchedule, localBackupTime, localBackupRetention,
@@ -56,13 +56,7 @@
         .filter(w => w && !w.deleted_at && (w.exercises || []).length > 0)
         .sort((a, b) => String(a.date).localeCompare(String(b.date)));
       if (!workouts.length) { showError($_('settings_backup.toast.no_workouts')); return; }
-      let libLoadTypes = null;
-      try {
-        libLoadTypes = new Map();
-        for (const e of (await LtApi.listExercises()) || []) {
-          if (e?.id != null && e.load_type) libLoadTypes.set(e.id, e.load_type);
-        }
-      } catch {}
+      const libLoadTypes = await loadLibraryLoadTypes(LtApi);
       await exportAllWorkoutsCsv(workouts, $weightUnit, libLoadTypes);
     } catch (e) {
       showError(e?.message || $_('settings_backup.toast.export_failed'));

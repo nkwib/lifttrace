@@ -29,6 +29,7 @@
 
 import { isNative } from './platform.js';
 import { setKind, holdSides } from './workout.js';
+import { localDateStr } from './date-local.js';
 
 function _escape(v) {
   if (v == null) return '';
@@ -178,6 +179,26 @@ function withSide(tail, side) {
 }
 
 /**
+ * Library load_type per exercise id (alternating, per-side, ...) so a single
+ * `reps` value on an alternating exercise expands to L + R rows. Non-fatal:
+ * on failure warns and returns null (export falls back to logged data only).
+ * The list endpoint omits soft-deleted exercises and disabled catalogs, so
+ * workouts referencing those keep the bilateral fallback.
+ */
+export async function loadLibraryLoadTypes(api) {
+  try {
+    const map = new Map();
+    for (const e of (await api.getExercises()) || []) {
+      if (e?.id != null && e.load_type) map.set(e.id, e.load_type);
+    }
+    return map;
+  } catch (err) {
+    console.warn('CSV export: could not load library load types', err);
+    return null;
+  }
+}
+
+/**
  * Deliver the CSV to the user — direct download on PWA, write-to-device +
  * Share intent on Android (so they can pipe it into Drive / email / a
  * file manager from the system sheet).
@@ -189,7 +210,7 @@ export async function exportWorkoutCsv(workout, weightUnit = 'lbs', libraryLoadT
 
 export async function exportAllWorkoutsCsv(workouts, weightUnit = 'lbs', libraryLoadTypes) {
   const csv = workoutsToCsv(workouts, weightUnit, libraryLoadTypes);
-  const filename = `lifttrace-workouts-${new Date().toISOString().slice(0, 10)}.csv`;
+  const filename = `lifttrace-workouts-${localDateStr()}.csv`;
   return deliverCsv(csv, filename, 'LiftTrace workouts', 'Save workouts CSV');
 }
 
