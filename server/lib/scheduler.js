@@ -127,11 +127,12 @@ async function _tick() {
 }
 
 async function _checkBackupSchedule() {
-  const { getScheduleConfig, runScheduledBackup } = await import('../routes/full-backup.js');
+  const { getScheduleConfig, runScheduledBackup, scheduledBackupRetryAllowed } = await import('../routes/full-backup.js');
   const cfg = getScheduleConfig();
   if (cfg.schedule === 'off') return;
   // The time is on the clock of whoever set it, in the zone saved with it (TraceApps/notetrace#44).
   if (!isBackupDue(cfg)) return;
+  if (!scheduledBackupRetryAllowed()) { logger.debug('[backup] last scheduled run failed, backing off'); return; }
   logger.info(`[backup] auto-backup due (schedule=${cfg.schedule}, time=${cfg.time} ${cfg.runsIn}, retention=${cfg.retention}, last=${cfg.lastAutoRun || 'never'})`);
   try { await runScheduledBackup(); } catch {}
 }

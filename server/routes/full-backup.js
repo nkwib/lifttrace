@@ -138,6 +138,20 @@ export function setScheduleConfig({ schedule, time, retention, timeZone }) {
   return getScheduleConfig();
 }
 
+// After a failed scheduled run, wait this long before the next try.
+export const BACKUP_RETRY_BACKOFF_MS = 6 * 60 * 60 * 1000;
+
+// Pure. Missing or unparseable errorAt means allowed (fail open).
+export function backupRetryAllowed(errorAt, now = Date.now()) {
+  const t = Date.parse(errorAt);
+  if (!errorAt || Number.isNaN(t)) return true;
+  return now - t >= BACKUP_RETRY_BACKOFF_MS;
+}
+
+export function scheduledBackupRetryAllowed(now = Date.now()) {
+  return backupRetryAllowed(_cfg('backup_last_auto_error_at'), now);
+}
+
 export function createBackup({ now = Date.now() } = {}) {
   // Named in the schedule's zone with its offset (TraceApps/notetrace#44).
   // Never overwrite: two backups in the same second get a number.
@@ -158,8 +172,15 @@ export function createBackup({ now = Date.now() } = {}) {
     };
     addDir(UPLOADS_DIR, '');
   }
-  zip.writeZip(destPath);
-  const stat = fs.statSync(destPath);
+  let stat;
+  try {
+    zip.writeZip(destPath);
+    stat = fs.statSync(destPath);
+  } catch (e) {
+    // A partial zip would count toward retention and displace good backups.
+    fs.rmSync(destPath, { force: true });
+    throw e;
+  }
   return { filename, size: stat.size, createdAt: new Date(now).toISOString() };
 }
 
@@ -188,12 +209,16 @@ export async function runScheduledBackup() {
     pruneOldBackups(cfg.retention);
     _setCfg('backup_last_auto_run', new Date().toISOString());
     _setCfg('backup_last_auto_error', '');
+    _setCfg('backup_last_auto_error_at', '');
     logger.info?.(`[backup] scheduled backup ok: ${result.filename} (${(result.size / 1024 / 1024).toFixed(1)} MB), pruned to ${cfg.retention}`);
     return result;
   } catch (e) {
+    const firstOfStreak = !_cfg('backup_last_auto_error_at');
     _setCfg('backup_last_auto_error', e.message || String(e));
+    _setCfg('backup_last_auto_error_at', new Date().toISOString());
     logger.warn?.(`[backup] scheduled backup failed: ${e.message}`);
     try {
+      if (!firstOfStreak) throw new Error('streak');
       const adminRow = db.prepare("SELECT id FROM users WHERE role = 'admin' ORDER BY id LIMIT 1").get();
       if (adminRow) {
         const { pushNotify } = await import('../lib/push-notify.js');
