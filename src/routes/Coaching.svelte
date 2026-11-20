@@ -237,7 +237,7 @@
     try {
       // Re-use the assign endpoint with make_active=true; on the server this
       // deactivates the member's other assignments and activates this one.
-      // Idempotent if the row already exists (ON CONFLICT DO UPDATE).
+      // If the row already exists it keeps its start date (ON CONFLICT DO UPDATE).
       await LtApi.assignProgram(programId, { user_id: memberId, make_active: true });
       showSuccess($_('coaching.toast.program_active', { values: { program: programName, name: memberLabel(overview?.user) } }));
       await loadOverview(memberId);

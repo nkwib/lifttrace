@@ -417,9 +417,15 @@ router.post('/:id/assign', requireTrainerOrAdmin, wrap((req, res) => {
         `UPDATE program_assignments SET active = 0 WHERE assigned_to = ? AND program_id <> ?`
       ).run(user_id, programId);
     }
+    // A re-assign never wipes what is already there: no start_date keeps the
+    // existing one (so a coach cannot clear it through assign), and
+    // make_active:false leaves an active row active. Only an explicit
+    // start_date or make_active:true change an existing row.
     db.prepare(
       `INSERT INTO program_assignments (program_id, assigned_to, assigned_by, start_date, active)
-       VALUES (?, ?, ?, ?, ?) ON CONFLICT(program_id, assigned_to) DO UPDATE SET active = excluded.active, start_date = excluded.start_date`
+       VALUES (?, ?, ?, ?, ?) ON CONFLICT(program_id, assigned_to) DO UPDATE SET
+         active = CASE WHEN excluded.active = 1 THEN 1 ELSE program_assignments.active END,
+         start_date = COALESCE(excluded.start_date, program_assignments.start_date)`
     ).run(programId, user_id, req.user?.id || null, start_date || null, active);
   })();
   res.json({ ok: true });
