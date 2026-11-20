@@ -37,6 +37,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Move up/down no longer splits supersets.** A single exercise jumps over a whole superset; members reorder only within their group (use Remove from superset to leave it).
 - **Progress photos older than 12 months.** The timeline has a "Last 12 months" / "All time" switch, so older photos can be viewed, compared and deleted.
 - **Today's weigh-in updates the profile weight.** Logging body weight for today (Body Stats, widget, progress photo prompt) now feeds the weight used for calorie burn. Past dates are unchanged.
+- **Progress timeline stays put after saving a weight.** The photo timeline no longer blanks with a spinner and jumps scroll; only the weights refresh.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added

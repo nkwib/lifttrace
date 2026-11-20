@@ -131,8 +131,9 @@
 
   // Weight can be logged from the diary, the desktop widget, or the prompt
   // below, so follow the signal the app already broadcasts rather than
-  // assuming this component is the only writer.
-  function onStatsChanged() { if (!loading) load(); }
+  // assuming this component is the only writer. Only the weights are read
+  // again, quietly: no spinner, scroll stays.
+  function onStatsChanged() { refreshStats(); }
   onMount(() => {
     if (typeof window === 'undefined') return;
     window.addEventListener('lt:body-stats-saved', onStatsChanged);
