@@ -27,10 +27,10 @@ const code = (src) => src
   .filter(l => !/^\s*\/\//.test(l))
   .join('\n');
 
-test('the Diary has one helper that fetches, updates notes and coach feedback', () => {
+test('the Diary has one helper that fetches, then runs the guarded after-load sequence', () => {
   assert.match(
     diary,
-    /function goToDiaryDate\(ds\) \{\s*\n\s*loadWorkout\(ds\)\.then\(\(\) => \{ notes = \$todayLog\?\.notes \|\| ''; loadCoachFeedback\(ds\); loadSetMedia\(ds\); \}\);/,
+    /function goToDiaryDate\(ds\) \{\s*\n\s*loadWorkout\(ds\)\.then\(\(\) => afterDayLoad\(ds\)\);/,
   );
 });
 

@@ -474,7 +474,7 @@
     const d = String(day).padStart(2, '0');
     const dateStr = `${calYear}-${m}-${d}`;
     showDatePicker = false;
-    loadWorkout(dateStr).then(() => { notes = $todayLog?.notes || ''; loadCoachFeedback(dateStr); loadSetMedia(dateStr); });
+    loadWorkout(dateStr).then(() => afterDayLoad(dateStr));
   }
   function calPickYear(y)  { calYear = y; showYearPicker = false; }
   function calPickMonth(m) { calMonth = m; showMonthPicker = false; }
@@ -673,13 +673,25 @@
   let playerSubtitle = '';
   $: mediaBySet = new Map((setMedia || []).filter(m => m.set_uuid).map(m => [m.set_uuid, m]));
 
+  // A load for a day the user already navigated away from must not touch
+  // the on-screen day.
   async function loadSetMedia(dateStr) {
     try {
       const r = await LtApi.getSetMediaForDate(dateStr);
+      if (dateStr !== get(currentDate)) return;
       setMedia = r?.media || [];
     } catch {
+      if (dateStr !== get(currentDate)) return;
       setMedia = [];
     }
+  }
+
+  // Post-navigation side effects; skipped when a newer navigation superseded ds.
+  function afterDayLoad(ds) {
+    if (ds !== get(currentDate)) return;
+    notes = $todayLog?.notes || '';
+    loadCoachFeedback(ds);
+    loadSetMedia(ds);
   }
 
   function openVideoSheet(idx) {
@@ -707,6 +719,7 @@
   async function loadCoachFeedback(dateStr) {
     try {
       const fb = await LtApi.getWorkoutFeedback(dateStr);
+      if (dateStr !== get(currentDate)) return;
       // Merge into todayLog so the existing render path picks it up.
       todayLog.update(curr => curr ? { ...curr, feedback: fb || [] } : curr);
     } catch { /* server old / offline — leave existing feedback alone */ }
@@ -1134,10 +1147,7 @@
   function _maybeRollDay() {
     const today = localDateStr();
     if (_knownToday && _knownToday !== today && $currentDate === _knownToday) {
-      loadWorkout(today).then(() => {
-        notes = $todayLog?.notes || '';
-        loadCoachFeedback(today);
-      });
+      loadWorkout(today).then(() => afterDayLoad(today));
     }
     _knownToday = today;
   }
@@ -1160,18 +1170,18 @@
     const d = new Date($currentDate + 'T12:00:00');
     d.setDate(d.getDate() - 1);
     const ds = localDateStr(d);
-    loadWorkout(ds).then(() => { notes = $todayLog?.notes || ''; loadCoachFeedback(ds); loadSetMedia(ds); });
+    loadWorkout(ds).then(() => afterDayLoad(ds));
   }
   function nextDay() {
     const d = new Date($currentDate + 'T12:00:00');
     d.setDate(d.getDate() + 1);
     const ds = localDateStr(d);
-    loadWorkout(ds).then(() => { notes = $todayLog?.notes || ''; loadCoachFeedback(ds); loadSetMedia(ds); });
+    loadWorkout(ds).then(() => afterDayLoad(ds));
   }
   function goToday() {
     if (!isToday) {
       const ds = localDateStr();
-      loadWorkout(ds).then(() => { notes = $todayLog?.notes || ''; loadCoachFeedback(ds); loadSetMedia(ds); });
+      loadWorkout(ds).then(() => afterDayLoad(ds));
     }
   }
 
@@ -1183,7 +1193,7 @@
   // and populates todayLog. Same fetch+notes+feedback sequence prevDay/
   // nextDay/goToday already use above.
   function goToDiaryDate(ds) {
-    loadWorkout(ds).then(() => { notes = $todayLog?.notes || ''; loadCoachFeedback(ds); loadSetMedia(ds); });
+    loadWorkout(ds).then(() => afterDayLoad(ds));
   }
 
   $: isToday = $currentDate === localDateStr();
