@@ -4,7 +4,7 @@
    * Mirrors WeeklyVolumeChart.svelte — same multi-week / solo / empty behaviour.
    */
   import { _ } from 'svelte-i18n';
-  import { fmtWeekLabel } from '../../lib/statsFormat.js';
+  import { fmtWeekLabel, showBarLabel } from '../../lib/statsFormat.js';
 
   export let frequency = [];   // [{ week, count }]
   export let detailed = false;
@@ -19,6 +19,13 @@
   const target = (week) => Math.max(0, goal - (excusedWeeks[week] || 0));
   const hit = (f) => goal > 0 && target(f.week) > 0 && f.count >= target(f.week);
 
+  $: dense = frequency.length > 12;
+  // Tap-to-read: index of the selected bar, cleared when the data changes.
+  let selected = -1;
+  $: frequency, (selected = -1);
+  const toggle = (i) => { selected = selected === i ? -1 : i; };
+  $: barText = (f) => $_(hit(f) ? 'workout_frequency_chart.readout_hit' : 'workout_frequency_chart.readout', { values: { week: f.week, count: f.count } });
+
   $: max = frequency.length ? Math.max(...frequency.map(f => f.count)) : 0;
   // Height % from the bottom of the chart. Using the SAME max as the bars,
   // so an uncapped goal that exceeds max renders at the top edge.
@@ -29,38 +36,42 @@
   <div class="chart-card">
     <h3 class="chart-title">{$_('workout_frequency_chart.title')}</h3>
     {#if detailed}
-      <p class="chart-desc">Training days logged each week in this range.</p>
+      <p class="chart-desc">{$_('workout_frequency_chart.desc')}</p>
     {/if}
-    <div class="bar-chart">
+    <div class="bar-chart" class:dense>
       {#if goalHeightPct > 0}
-        <div class="goal-line" style="bottom: {goalHeightPct}%" title="Weekly goal: {goal}">
-          <span class="goal-label">Goal {goal}</span>
+        <div class="goal-line" style="bottom: {goalHeightPct}%" title={$_('workout_frequency_chart.goal_title', { values: { goal } })}>
+          <span class="goal-label">{$_('workout_frequency_chart.goal', { values: { goal } })}</span>
         </div>
       {/if}
-      {#each frequency as f}
-        <div class="bar-col">
-          <div class="bar freq" class:hit-goal={hit(f)} style="height: {max ? (f.count / max * 100) : 0}%"
-            title={`${f.week}: ${f.count} workouts${goal > 0 ? (hit(f) ? ' (hit goal)' : '') : ''}`}></div>
-          <span class="bar-label">{fmtWeekLabel(f.week)}</span>
-        </div>
+      {#each frequency as f, i}
+        <button type="button" class="bar-col" class:selected={selected === i}
+          aria-pressed={selected === i}
+          aria-label={barText(f)}
+          title={barText(f)}
+          on:click={() => toggle(i)}>
+          <span class="bar freq" class:hit-goal={hit(f)} style="height: {max ? (f.count / max * 100) : 0}%"></span>
+          <span class="bar-label" class:shown={showBarLabel(i, frequency.length)} aria-hidden="true">{fmtWeekLabel(f.week)}</span>
+        </button>
       {/each}
     </div>
+    <p class="readout" aria-live="polite">{#if selected >= 0 && frequency[selected]}{barText(frequency[selected])}{/if}</p>
     {#if detailed}
-      <p class="chart-sub">Average: {avg} workouts/week</p>
+      <p class="chart-sub">{$_('workout_frequency_chart.average', { values: { avg } })}</p>
     {/if}
   </div>
 {:else if frequency.length === 1}
   <div class="chart-card">
     <h3 class="chart-title">{$_('workout_frequency_chart.title')}</h3>
     {#if detailed}
-      <p class="chart-desc">Training days logged each week in this range.</p>
+      <p class="chart-desc">{$_('workout_frequency_chart.desc')}</p>
     {/if}
     <div class="solo-stat">
       <span class="solo-value">{frequency[0].count}</span>
       <span class="solo-label">{$_('workout_frequency_chart.this_week')}</span>
     </div>
     {#if detailed}
-      <p class="chart-sub">Log another week to see trends.</p>
+      <p class="chart-sub">{$_('workout_frequency_chart.log_another')}</p>
     {/if}
   </div>
 {/if}
@@ -84,9 +95,17 @@
   .solo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); font-weight: 600; }
 
   .bar-chart { position: relative; display: flex; align-items: flex-end; gap: 4px; height: 120px; padding: 0 2px; }
-  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; min-width: 0; }
+  .bar-col {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; min-width: 0;
+    background: none; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bar-col:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 3px; }
+  .bar-col.selected .bar { filter: brightness(1.35); }
+  .dense { gap: 1px; }
+  .dense .bar { border-radius: 1px 1px 0 0; }
   .bar {
-    width: 100%; min-height: 4px;
+    display: block; width: 100%; min-height: 4px;
     background: linear-gradient(180deg, var(--accent), var(--accent-2));
     border-radius: 3px 3px 0 0;
     transition: height var(--dur-slow);
@@ -96,7 +115,10 @@
     background: linear-gradient(180deg, var(--success, #2FD66F), var(--accent-2));
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--success, #2FD66F) 40%, transparent);
   }
-  .bar-label { font-size: 9px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .bar-label { font-size: 9px; color: var(--text-3); white-space: nowrap; max-width: 100%; visibility: hidden; }
+  .bar-label.shown { visibility: visible; }
+  .dense .bar-label.shown { overflow: visible; max-width: 0; display: flex; justify-content: center; }
+  .readout { font-size: 12px; color: var(--text-2, var(--text-3)); margin: 6px 0 0; min-height: 1.4em; text-align: center; font-variant-numeric: tabular-nums; }
 
   /* Horizontal goal reference line */
   .goal-line {

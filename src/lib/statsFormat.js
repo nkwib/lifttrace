@@ -13,9 +13,24 @@ export function fmtVol(v) {
   return String(Math.round(v));
 }
 
-/** Turn a "2026-W17" style ISO week into just "W17" for axis labels. */
+/** Turn a week key (the Monday date, "2026-04-20") into "04-20" for axis labels. */
 export function fmtWeekLabel(w) {
   return w ? w.slice(5) : '';
+}
+
+/** Bars per axis label: every bar up to 12 bars, then about 8 labels in all. */
+export function labelStride(count) {
+  return count <= 12 ? 1 : Math.ceil(count / 8);
+}
+
+/** Show the axis label of bar i? Every Nth bar plus the last; an Nth label
+ *  within N/2 of the last is dropped so the two never touch. */
+export function showBarLabel(i, count) {
+  const n = labelStride(count);
+  if (n === 1) return true;
+  const last = count - 1;
+  if (i === last) return true;
+  return i % n === 0 && last - i >= n / 2;
 }
 
 /**

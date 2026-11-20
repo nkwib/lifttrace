@@ -886,11 +886,22 @@
   },
   "workout_frequency_chart": {
     "title":                 "Workouts per Week",
-    "this_week":             "This Week"
+    "this_week":             "This Week",
+    "desc":                  "Training days logged each week in this range.",
+    "log_another":           "Log another week to see trends.",
+    "average":               "Average: {avg} workouts/week",
+    "goal":                  "Goal {goal}",
+    "goal_title":            "Weekly goal: {goal}",
+    "readout":               "{week}: {count} workouts",
+    "readout_hit":           "{week}: {count} workouts (hit goal)"
   },
   "weekly_volume_chart": {
     "title":                 "Weekly Volume",
-    "this_week":             "This Week"
+    "this_week":             "This Week",
+    "desc":                  "Total weight moved each week (weight × reps across all completed sets).",
+    "log_another":           "Log another week to see trends.",
+    "total_peak":            "Total: {total} {unit} · Peak: {peak} {unit}",
+    "readout":               "{week}: {value} {unit}"
   },
   "settings_units": {
     "weight_unit":           "Weight Unit",
