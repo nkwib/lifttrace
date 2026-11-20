@@ -39,3 +39,19 @@ export function reinsertExercise(exercises, ex, origIdx) {
   out.splice(clampIdx(origIdx, cur.length), 0, item);
   return out;
 }
+
+/** Put a removed superset back. `removed` is [{ ex, idx }] with original
+ *  indices. Inserts ascending (clamped), fresh exercise and set uuids, and
+ *  keeps superset_id/superset_size (the whole group returns together). */
+export function reinsertExercises(exercises, removed) {
+  const cur = Array.isArray(exercises) ? exercises : [];
+  const list = (Array.isArray(removed) ? removed : []).filter(r => r && r.ex);
+  if (!list.length) return cur;
+  const fresh = withFreshIds(list.map(r => r.ex));
+  const out = cur.slice();
+  list
+    .map((r, k) => ({ item: fresh[k], idx: r.idx }))
+    .sort((a, b) => a.idx - b.idx)
+    .forEach(({ item, idx }) => out.splice(clampIdx(idx, out.length), 0, item));
+  return out;
+}

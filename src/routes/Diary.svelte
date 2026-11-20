@@ -23,7 +23,7 @@
   import BodyStats from '../components/diary/BodyStats.svelte';
   import GymTools from '../components/diary/GymTools.svelte';
   import { showSuccess, showError, showToast } from '../stores/toast.js';
-  import { reinsertSet, reinsertExercise } from '../lib/undoRemove.js';
+  import { reinsertSet, reinsertExercise, reinsertExercises } from '../lib/undoRemove.js';
   import { localDateStr } from '../lib/db.js';
   import { trainedDates, excusedOnly, hasWorkingSet } from '../lib/trained-day.js';
   import { LtApi } from '../lib/api.js';
@@ -2205,9 +2205,28 @@
         dangerous: true,
       })) return;
     }
+    const removed = exercises
+      .map((ex, idx) => ({ ex, idx }))
+      .filter(r => String(r.ex.superset_id) === String(supersetId));
+    const date = $currentDate;
+    const logId = $todayLog?.id;
     const updated = exercises.filter(ex => String(ex.superset_id) !== String(supersetId));
-    await saveWorkout($currentDate, { ...($todayLog || {}), exercises: updated });
-    showSuccess($_('diary.toast.superset_removed'));
+    await saveWorkout(date, { ...($todayLog || {}), exercises: updated });
+    // With the confirm dialog on, the user already confirmed: no undo.
+    if (!$confirmExerciseRemoval && removed.length) {
+      let undone = false;
+      showToast($_('diary.toast.superset_removed'), 6000, 'default', {
+        label: $_('common.undo'),
+        onClick: async () => {
+          if ($currentDate !== date || !$todayLog || $todayLog.id !== logId || undone) return;
+          undone = true;
+          const cur = $todayLog.exercises || [];
+          await saveWorkout(date, { ...$todayLog, exercises: reinsertExercises(cur, removed) });
+        },
+      });
+    } else {
+      showSuccess($_('diary.toast.superset_removed'));
+    }
   }
 
   // ── Superset management ─────────────────────────────────────────────
