@@ -1,14 +1,15 @@
 <script>
-  import { closeOnBack } from '../lib/back-stack.js';
-  import { onMount } from 'svelte';
+  import { closeOnBack, onBack } from '../lib/back-stack.js';
+  import { onMount, onDestroy } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { _ } from 'svelte-i18n';
   import { LtApi } from '../lib/api.js';
   import { onSyncChanges, newestRead } from '../lib/sync-refresh.js';
-  import { mergeTemplate } from '../lib/editor-merge.js';
+  import { mergeTemplate, isEditorDirty } from '../lib/editor-merge.js';
   import { currentUser, userMgmtActive } from '../stores/auth.js';
   import { diffTombstones } from '../lib/workout-uuid.js';
   import { showSuccess, showError } from '../stores/toast.js';
+  import { confirmDialog } from '../stores/confirmDialog.js';
   import { exerciseLoadTypes, exerciseSetTypes, exerciseDistanceUnits, trackRpe, weightUnit } from '../stores/settings.js';
   import { resolveLoadType, resolveSetType, parseDuration, startSetType, distanceUnitOf, toMeters, maskDurationInput, fmtSetDuration, lastCompletedSession } from '../lib/workout.js';
   import TemplateSpecRow from '../components/programs/TemplateSpecRow.svelte';
@@ -828,16 +829,53 @@
       const deleted_uuids = diffTombstones(_originalExercises, template.exercises);
       await LtApi.updateTemplate(params.templateId, { name, exercises: template.exercises, deleted_uuids });
       showSuccess($_('workout_editor.toast.saved'));
+      _base = _copy(template); // saved: leaving is not a loss
       push(`/programs/${params.programId}`);
     } catch(e) { showError(e.message); }
     saving = false;
   }
 
+  // Leaving with unsaved edits asks first. Covers the back arrow and Android
+  // back (onBack); the tab bar, browser history and swipe-back on the web
+  // bypass it (beforeunload only covers closing the tab).
+  $: dirty = !loading && !gone && !othersProgram && isEditorDirty(_base, template);
+  let leaving = false;
+  async function leave() {
+    if (saving || leaving) return;
+    if (dirty) {
+      leaving = true;
+      const ok = await confirmDialog({
+        title: $_('workout_editor.leave_title'),
+        message: $_('workout_editor.leave_msg'),
+        confirmText: $_('workout_editor.leave_confirm'),
+        cancelText: $_('workout_editor.leave_keep'),
+        dangerous: true,
+      });
+      leaving = false;
+      if (!ok) return;
+    }
+    push(`/programs/${params.programId}`);
+  }
+  let releaseBack = null;
+  const onUnload = e => { e.preventDefault(); e.returnValue = ''; };
+  function trackDirty(d) {
+    if (d && !releaseBack) {
+      releaseBack = onBack(leave);
+      window.addEventListener('beforeunload', onUnload);
+    } else if (!d && releaseBack) stopTracking();
+  }
+  function stopTracking() {
+    releaseBack?.(); releaseBack = null;
+    window.removeEventListener('beforeunload', onUnload);
+  }
+  $: trackDirty(dirty);
+  onDestroy(stopTracking);
+
 </script>
 
 <div class="page">
   <header class="page-header">
-    <button class="back-btn" on:click={() => push(`/programs/${params.programId}`)} aria-label={$_('common.back')}>
+    <button class="back-btn" on:click={leave} aria-label={$_('common.back')}>
       <span class="material-symbols-rounded">arrow_back</span>
     </button>
     {#if template}

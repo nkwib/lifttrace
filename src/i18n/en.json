@@ -1671,6 +1671,10 @@
       "new_ss": "Start new superset...",
       "delete_exercise": "Delete exercise"
     },
+    "leave_title": "Discard changes?",
+    "leave_msg": "You have unsaved changes to this workout.",
+    "leave_confirm": "Discard",
+    "leave_keep": "Keep editing",
     "gone": "This workout was deleted elsewhere, so your changes here can't be saved.",
     "toast": {
       "removed_from_ss":   "Removed from superset",

@@ -75,3 +75,16 @@ export function mergeTemplate(base, mine, fresh) {
   out.exercises = tidySupersets([...kept, ...added]);
   return { template: out, listFrom: 'mine' };
 }
+
+// Key order and undefined-vs-missing don't count.
+const stable = v => Array.isArray(v) ? v.map(stable)
+  : v && typeof v === 'object'
+    ? Object.fromEntries(Object.keys(v).sort().filter(k => v[k] !== undefined).map(k => [k, stable(v[k])]))
+    : v;
+
+/** True when the editor's name or exercises differ from `base` (what it opened with or last took in). */
+export function isEditorDirty(base, cur) {
+  if (!base || !cur) return false;
+  const pick = t => stable({ name: t.name ?? '', exercises: t.exercises ?? [] });
+  return JSON.stringify(pick(base)) !== JSON.stringify(pick(cur));
+}
