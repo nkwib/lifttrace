@@ -72,10 +72,39 @@
     return `${m}:${String(sec).padStart(2, '0')}`;
   }
 
+  $: seekable = Number.isFinite($duration) && $duration > 0;
+  const clamp01 = (x) => Math.max(0, Math.min(1, x));
+
   function onSeek(e) {
+    if (!seekable) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const fraction = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     seek(fraction);
+  }
+
+  function onSeekKey(e) {
+    if (!seekable) return;
+    let f;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') f = ($currentTime + 5) / $duration;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') f = ($currentTime - 5) / $duration;
+    else if (e.key === 'Home') f = 0;
+    else if (e.key === 'End') f = 1;
+    else return;
+    e.preventDefault();
+    e.stopPropagation();
+    seek(clamp01(f));
+  }
+
+  function onVolumeKey(e) {
+    let v;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') v = $volume + 0.05;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') v = $volume - 0.05;
+    else if (e.key === 'Home') v = 0;
+    else if (e.key === 'End') v = 1;
+    else return;
+    e.preventDefault();
+    e.stopPropagation();
+    setVolume(Math.round(clamp01(v) * 20) / 20);
   }
 
   function onVolume(e) {
@@ -130,8 +159,12 @@
       </div>
 
       <!-- Progress -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div class="fp-progress-wrap" on:click={onSeek}>
+      <div class="fp-progress-wrap" role="slider" tabindex={seekable ? 0 : -1}
+        aria-label={$_('radio.seek')} aria-valuemin="0" aria-valuemax="100"
+        aria-valuenow={Math.round($progress * 100)}
+        aria-valuetext={seekable ? `${fmtTime($currentTime)} / ${fmtTime($duration)}` : undefined}
+        aria-disabled={!seekable}
+        on:click={onSeek} on:keydown={onSeekKey}>
         <div class="fp-progress-track">
           <div class="fp-progress-fill" style="width:{$progress * 100}%"></div>
         </div>
@@ -161,8 +194,10 @@
       </div>
 
       <!-- Volume -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div class="fp-volume" on:click={onVolume}>
+      <div class="fp-volume" role="slider" tabindex="0"
+        aria-label={$_('radio.volume')} aria-valuemin="0" aria-valuemax="100"
+        aria-valuenow={Math.round($volume * 100)}
+        on:click={onVolume} on:keydown={onVolumeKey}>
         <span class="material-symbols-rounded" style="font-size:18px;color:var(--text-3)">volume_up</span>
         <div class="fp-vol-track">
           <div class="fp-vol-fill" style="width:{$volume * 100}%"></div>
@@ -329,6 +364,9 @@
   .fp-artist { font-size: 14px; color: var(--text-3); margin-top: 4px; }
 
   .fp-progress-wrap { width: 100%; margin-bottom: 16px; cursor: pointer; }
+  .fp-progress-wrap:focus-visible, .fp-volume:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px;
+  }
   .fp-progress-track {
     height: 4px; border-radius: 2px;
     background: var(--surface-3); overflow: hidden;

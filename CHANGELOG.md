@@ -19,6 +19,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Duplicate exercise names get a warning.** Saving a custom exercise named like an existing one (any case, accents) asks first. Blank names are rejected on the server and in Local mode, names are trimmed, and Local mode no longer edits library exercises.
 - **Deleting a custom exercise tells you how many workouts logged it.** The confirm dialog shows the count; their history stays under the name.
 - **Keyboard access for Radio rows, program days and the avatar.** Enter or Space plays a track, opens an artist, expands a station group, jumps in the queue and opens a program day. The profile picture is a real button, and the Trace button also answers to Space.
+- **Full player seek and volume work from the keyboard.** Both bars are sliders: arrows, Home and End, with labels and values for screen readers. Seek is disabled on live streams.
 - **Weekly bar charts read on phones.** With many weeks (6M, 1Y, All) labels show every few bars, and tapping a bar shows its week and value under the chart.
 - **Activity heatmap shaded by effort.** Statistics shades each trained day in four steps by time trained (sets when there are no durations), with a Less / More legend and the minutes or sets in the tooltip.
 - **OpenAPI spec for the public API.** `server/openapi.yaml` describes every `/api/v1` route, with scopes and the write flag, for Postman, codegen and Home Assistant. Also served at `/api/v1/openapi.yaml` without a token while the API is enabled.

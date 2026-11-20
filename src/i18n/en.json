@@ -1592,6 +1592,7 @@
     "next": "Next",
     "stop": "Stop",
     "volume": "Volume",
+    "seek": "Seek",
     "shuffle": "Shuffle",
     "repeat_off": "Repeat off",
     "repeat_all": "Repeat all",
