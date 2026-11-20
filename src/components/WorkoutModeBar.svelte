@@ -1,7 +1,7 @@
 <script>
   import { push } from 'svelte-spa-router';
   import { _ } from 'svelte-i18n';
-  import { timerState, timerMs, formatTimerMs, pauseTimer, resumeTimer, resetTimer } from '../stores/workoutTimer.js';
+  import { timerState, timerSec, formatTimerMs, pauseTimer, resumeTimer, resetTimer } from '../stores/workoutTimer.js';
   import { wantScreenOn, screenOn, toggleWakeLock } from '../stores/wakeLock.js';
   import { onDestroy } from 'svelte';
   import { miniPlayerVisible } from '../stores/player.js';
@@ -10,7 +10,7 @@
   $: running = $timerState && !$timerState.paused;
   $: paused = $timerState && $timerState.paused;
   $: visible = active || $wantScreenOn;
-  $: display = active ? formatTimerMs($timerMs) : '';
+  $: display = active ? formatTimerMs($timerSec * 1000) : '';
 
   // Publish pill height (46px) plus an 8px gap to :root so the Toast clears it.
   function _setHeightVar(on) {

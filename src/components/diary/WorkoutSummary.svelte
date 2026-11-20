@@ -10,7 +10,7 @@
   import { LtApi } from '../../lib/api.js';
   import { showError } from '../../stores/toast.js';
   import { estimateWorkoutCalories, toKg, ageFromDob, exerciseVolume, fmtSetLabel, distanceUnitOf } from '../../lib/workout.js';
-  import { timerState, timerMs } from '../../stores/workoutTimer.js';
+  import { timerState, timerSec } from '../../stores/workoutTimer.js';
 
   export let open = false;
   export let workout = null;  // { name, exercises, duration_min, date }
@@ -40,7 +40,7 @@
     const saved = workout?.duration_min;
     if (saved && saved > 0) return saved;
     if ($timerState && workout?.date && $timerState.date === workout.date) {
-      return Math.round($timerMs / 60000 * 10) / 10;
+      return Math.round($timerSec / 60 * 10) / 10;
     }
     return saved || 0;
   })();

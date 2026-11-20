@@ -1,4 +1,4 @@
-import { writable, get } from 'svelte/store';
+import { writable, readable, get } from 'svelte/store';
 
 const KEY = 'lt:workoutTimer';
 
@@ -88,8 +88,38 @@ const saved = _load();
 
 export const timerState = writable(saved);
 
-/** Elapsed in milliseconds — updated via requestAnimationFrame when running */
-export const timerMs = writable(saved ? _computeMs(saved) : 0);
+// The rAF loop only runs while something subscribes to timerMs (the timer
+// readout needs centiseconds); everything else reads timerSec or getElapsedMs.
+let _watched = false;
+
+/** Elapsed in milliseconds. Updated via requestAnimationFrame while subscribed and running */
+export const timerMs = writable(saved ? _computeMs(saved) : 0, () => {
+  _watched = true;
+  const state = get(timerState);
+  timerMs.set(_computeMs(state));
+  if (state && !state.paused) _startTicking();
+  return () => { _watched = false; _stopTicking(); };
+});
+
+/** Elapsed in whole seconds, ticking once a second (no rAF). */
+export const timerSec = readable(Math.floor((saved ? _computeMs(saved) : 0) / 1000), (set) => {
+  let timeout = null;
+  const sync = () => {
+    clearTimeout(timeout);
+    timeout = null;
+    const state = get(timerState);
+    const ms = _computeMs(state);
+    set(Math.floor(ms / 1000));
+    if (state && !state.paused) timeout = setTimeout(sync, 1000 - (ms % 1000) + 5);
+  };
+  const unsub = timerState.subscribe(sync);
+  return () => { unsub(); clearTimeout(timeout); };
+});
+
+/** Fresh elapsed ms, whether or not anything subscribes. */
+export function getElapsedMs() {
+  return _computeMs(get(timerState));
+}
 
 function _computeMs(state) {
   if (!state) return 0;
@@ -107,7 +137,7 @@ function _tick() {
 }
 
 function _startTicking() {
-  if (_rafId != null) return;
+  if (!_watched || _rafId != null) return;
   _rafId = requestAnimationFrame(_tick);
 }
 
@@ -117,11 +147,6 @@ function _stopTicking() {
     _rafId = null;
   }
 }
-
-// If we have saved running state, resume ticking
-if (saved && !saved.paused) _startTicking();
-// If paused, just set the frozen elapsed
-if (saved && saved.paused) timerMs.set(_computeMs(saved));
 
 /** Start the timer for a given date (or resume from minutes) */
 export function startTimer(dateStr, resumeFromMinutes = 0) {
@@ -161,6 +186,7 @@ export function resumeTimer() {
   };
   timerState.set(resumed);
   _save(resumed);
+  timerMs.set(_computeMs(resumed));
   _startTicking();
 }
 

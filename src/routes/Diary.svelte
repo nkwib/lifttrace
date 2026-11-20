@@ -12,7 +12,7 @@
   import { get } from 'svelte/store';
   import { shouldHoldScreen } from '../lib/wake-policy.js';
   import { screenOn, wantScreenOn, enableWakeLock, disableWakeLock, toggleWakeLock } from '../stores/wakeLock.js';
-  import { timerState, timerMs, pauseTimer, resetTimer, formatTimerMs } from '../stores/workoutTimer.js';
+  import { timerState, timerSec, getElapsedMs, pauseTimer, resetTimer, formatTimerMs } from '../stores/workoutTimer.js';
   import WorkoutSummary from '../components/diary/WorkoutSummary.svelte';
   import { celebrateWorkoutComplete, celebratePR, celebrateHoldPR, celebrateAmountPR, requestPermission } from '../lib/notifications.js';
   import { prFlags, celebrationFor, earlierWorkouts } from '../lib/pr-sets.js';
@@ -550,7 +550,7 @@
   // sets. Uses the load-type-aware helper so per-side / alternating
   // exercises contribute the correct multiplier.
   $: totalVolume = exercises.reduce((sum, ex) => sum + exerciseVolume(ex), 0);
-  $: showProgressStrip = exercises.length > 0 && (stats.completed > 0 || $timerState === 'running' || $timerState === 'paused');
+  $: showProgressStrip = exercises.length > 0 && (stats.completed > 0 || ($timerState && $timerState.date === $currentDate));
 
   // "Now doing" — the first exercise with any incomplete working set. Tapping
   // the floating pill scrolls directly to its card. For supersets we report
@@ -1856,7 +1856,7 @@
     let finalDuration = $todayLog?.duration_min || 0;
     if ($timerState && $timerState.date === $currentDate) {
       if (!$timerState.paused) pauseTimer();
-      finalDuration = Math.round($timerMs / 60000 * 10) / 10;
+      finalDuration = Math.round(getElapsedMs() / 60000 * 10) / 10;
     }
     const saved = await saveWorkout($currentDate, {
       ...($todayLog || {}),
@@ -3127,7 +3127,7 @@
             {$todayLog?.completed ? 'View workout summary' : 'Finish workout'}
           </span>
           {#if !$todayLog?.completed}
-            <span class="finish-sub">{stats.completed}/{stats.total} sets · {formatTimerMs($timerMs, { centi: false })}</span>
+            <span class="finish-sub">{stats.completed}/{stats.total} sets · {formatTimerMs($timerSec * 1000, { centi: false })}</span>
           {/if}
         </button>
       {/if}
