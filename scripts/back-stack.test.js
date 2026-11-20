@@ -101,6 +101,7 @@ test('every modal overlay in the app is registered', () => {
   // Inner panels of an already-registered backdrop carry the role too.
   const innerPanels = [
     ['components/ui/Sheet.svelte', 'sheet-panel'], ['components/ui/Dialog.svelte', 'dialog-box'],
+    ['components/ui/ActionSheet.svelte', 'as-panel'],
   ];
   const files = walk(new URL('../src/', import.meta.url).pathname).filter((f) => f.endsWith('.svelte'));
   const missing = [];

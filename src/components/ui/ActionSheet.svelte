@@ -1,5 +1,6 @@
 <script>
   import { closeOnBack } from '../../lib/back-stack.js';
+  import { trapFocus } from '../../lib/focus-trap.js';
   import { fly, fade } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { createEventDispatcher } from 'svelte';
@@ -27,12 +28,16 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div use:portal class="as-backdrop" on:click={cancel} use:closeOnBack={() => { open = false; dispatch('cancel'); }}
+    use:trapFocus={{ onEscape: cancel }}
     in:fade={{ duration: 180 }} out:fade={{ duration: 140 }}>
     <div
       class="as-panel"
       in:fly={{ y: 60, duration: 260, easing: cubicOut }}
       out:fly={{ y: 60, duration: 180 }}
       on:click|stopPropagation
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
     >
       <div class="as-handle"></div>
       {#if title}

@@ -1,5 +1,10 @@
+<script context="module">
+  let dialogSeq = 0;
+</script>
+
 <script>
   import { closeOnBack } from '../../lib/back-stack.js';
+  import { trapFocus } from '../../lib/focus-trap.js';
   import { scale, fade } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { createEventDispatcher } from 'svelte';
@@ -16,6 +21,7 @@
    *  (an async confirm that can fail keeps the dialog open to say why). */
   export let manualClose = false;
 
+  const titleId = `dlg-title-${++dialogSeq}`;
   const dispatch = createEventDispatcher();
   let _locked = false;
   let _lockTimer;
@@ -36,6 +42,7 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div use:portal class="dialog-backdrop" on:click={cancel} use:closeOnBack={() => { open = false; dispatch('cancel'); }}
+    use:trapFocus={{ onEscape: cancel, initial: dangerous ? '.dialog-actions .btn-secondary' : '' }}
     in:fade={{ duration: 180 }} out:fade={{ duration: 140 }}>
     <div
       class="dialog-box"
@@ -44,10 +51,10 @@
       on:click|stopPropagation
       role="alertdialog"
       aria-modal="true"
-      aria-labelledby="dlg-title"
+      aria-labelledby={title ? titleId : undefined}
     >
       {#if title}
-        <h3 class="dialog-title" id="dlg-title">{title}</h3>
+        <h3 class="dialog-title" id={titleId}>{title}</h3>
       {/if}
       {#if message}
         <p class="dialog-msg">{message}</p>
