@@ -9,19 +9,19 @@ import { foldText } from '../lib/search-text.js';
 import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/create-keys.js';
 import { applyToBody, deleteLoses, refuseDelete, createdTimes } from '../lib/newer-wins.js';
 import { syncOf } from '../lib/sync-fields.js';
-import { unlinkMediaFile } from '../lib/upload-paths.js';
+import { resolveUploadSubdirPath, unlinkMediaFile } from '../lib/upload-paths.js';
 
 const router = Router();
 router.use(requireAuth);
 
-const EXERCISE_UPLOADS = '/uploads/exercises/';
+const EXERCISE_DIR = 'exercises';
 const MEDIA_COLS = ['img_url', 'gif_url', 'video_url'];
 
 // Uploaded media URLs of exercise rows, read before they are deleted.
 function mediaUrls(rows) {
   const urls = new Set();
   for (const r of rows) for (const c of MEDIA_COLS) {
-    if (typeof r[c] === 'string' && r[c].startsWith(EXERCISE_UPLOADS)) urls.add(r[c]);
+    if (resolveUploadSubdirPath(r[c], EXERCISE_DIR)) urls.add(r[c]);
   }
   return urls;
 }
@@ -34,7 +34,7 @@ function unlinkOrphanedUploads(urls) {
       const used = db.prepare(
         'SELECT 1 FROM exercises WHERE img_url = ? OR gif_url = ? OR video_url = ? LIMIT 1'
       ).get(url, url, url);
-      if (!used) unlinkMediaFile(url);
+      if (!used) unlinkMediaFile(url, EXERCISE_DIR);
     } catch { /* best effort: a stray file must not fail the delete */ }
   }
 }

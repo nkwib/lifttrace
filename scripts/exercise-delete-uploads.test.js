@@ -86,3 +86,26 @@ maybe('bulk delete removes files', async () => {
   assert.equal(fs.existsSync(a.abs), false);
   assert.equal(fs.existsSync(b.abs), false);
 });
+
+maybe('../ inside the exercises prefix cannot reach sibling files', async () => {
+  const root = process.env.UPLOADS_PATH;
+  fs.mkdirSync(path.join(root, 'body-stats'), { recursive: true });
+  const keep = path.join(root, 'keep2.jpg');
+  const photo = path.join(root, 'body-stats', 'x.jpg');
+  fs.writeFileSync(keep, 'x');
+  fs.writeFileSync(photo, 'x');
+  const id = add('T', {
+    img: '/uploads/exercises/../keep2.jpg',
+    gif: '/uploads/exercises/../body-stats/x.jpg',
+    vid: '/uploads/exercises/',
+  });
+  assert.equal((await del(id)).status, 200);
+  assert.equal(fs.existsSync(keep), true);
+  assert.equal(fs.existsSync(photo), true);
+});
+
+maybe('a legit exercise file is still removed after the guard', async () => {
+  const a = file('legit.jpg');
+  assert.equal((await del(add('L', { img: a.url }))).status, 200);
+  assert.equal(fs.existsSync(a.abs), false);
+});

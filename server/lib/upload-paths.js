@@ -35,6 +35,19 @@ export function resolveUploadPath(url) {
 }
 
 /**
+ * Like resolveUploadPath, but the result must be a file strictly inside
+ * UPLOADS_PATH/<subdir>. Checked on the resolved path, so `exercises/../x`,
+ * an empty name and backslash or NUL tricks all return null.
+ */
+export function resolveUploadSubdirPath(url, subdir) {
+  if (typeof url !== 'string' || url.includes('\0')) return null;
+  const abs = resolveUploadPath(url);
+  if (!abs) return null;
+  const dir = path.resolve(uploadsPath, subdir);
+  return abs.startsWith(dir + path.sep) ? abs : null;
+}
+
+/**
  * Subdirectories under UPLOADS_PATH whose contents must never be served by
  * the static handler.
  *
@@ -97,9 +110,12 @@ export function isPrivateUploadPath(reqPath) {
   });
 }
 
-/** Delete one stored file by its `/uploads/...` URL. Never throws. */
-export function unlinkMediaFile(url) {
-  const abs = resolveUploadPath(url);
+/**
+ * Delete one stored file by its `/uploads/...` URL. Never throws. With
+ * `subdir`, only files strictly inside UPLOADS_PATH/<subdir> are deleted.
+ */
+export function unlinkMediaFile(url, subdir) {
+  const abs = subdir ? resolveUploadSubdirPath(url, subdir) : resolveUploadPath(url);
   if (!abs) return false;
   try {
     fs.unlinkSync(abs);
