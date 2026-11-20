@@ -1450,7 +1450,10 @@
       if (res.ok) recentWorkouts = (await res.json()).filter(w => exercisesOf(w).length > 0);
     } catch {}
   }
-  $: if (!loading && exercises.length === 0) loadRecentWorkouts();
+  // Boolean so this fires on the transition to an empty day, not on every
+  // todayLog update (exercises is a fresh [] each time while empty).
+  $: isEmptyDay = !loading && exercises.length === 0;
+  $: if (isEmptyDay) loadRecentWorkouts();
   // Also load once on mount so the desktop right-rail's Recent
   // Workouts card has data even during an active session (the
   // empty-state trigger above doesn't fire when exercises exist).
