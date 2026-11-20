@@ -92,6 +92,8 @@ export const LtApi = {
   replyToCoachFeedback: (id, reply) => fetch(`/api/coach-feedback/${id}/reply`, { ...jsonOpts, method: 'PUT', body: JSON.stringify({ reply }) }).then(_json),
   saveWorkout: (date, data) => fetch(`/api/workout/${date}`, { ...jsonOpts, method: 'PUT', body: JSON.stringify(data) }).then(_json),
   getRecentWorkouts: (limit = 30) => fetch(`/api/workout/recent?limit=${limit}`, opts).then(_json),
+  // The same rows as the day each trained or not, without the workouts.
+  getRecentTrainedDays: (limit = 365) => fetch(`/api/workout/recent?limit=${limit}&view=days`, opts).then(_json),
   getWorkoutHistory: (exerciseId) => fetch(`/api/workout/history/${exerciseId}`, opts).then(_json),
 
   // ── Body Stats ─────────────────────────────────────────────────────────

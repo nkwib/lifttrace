@@ -210,7 +210,7 @@
   let excusedRows = [];
   async function loadWorkoutDates() {
     try {
-      recentWorkoutRows = await LtApi.getRecentWorkouts(365);
+      recentWorkoutRows = await LtApi.getRecentTrainedDays(365);
     } catch {}
     try {
       excusedRows = await LtApi.listExcusedDays();

@@ -12,6 +12,7 @@ import { isHistoryUpload, recordsBeforeSave, sendNewRecords } from '../lib/log-w
 import { getActiveProgramCore } from '../lib/mcp/tools/get-active-program.js';
 import { cleanWorkoutRefs, workoutProgramVisible } from '../lib/program-access.js';
 import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/create-keys.js';
+import { workoutCounts } from '../../src/lib/trained-day.js';
 import { applyToBody, deleteLoses, refuseDelete, stampMerged, createdTimes, editBringsBack, deletedTimes } from '../lib/newer-wins.js';
 import { syncOf } from '../lib/sync-fields.js';
 import { timesAtDelete } from '../lib/deleted-rows.js';
@@ -29,6 +30,14 @@ router.get('/recent', wrap((req, res) => {
   const rows = userId != null
     ? db.prepare('SELECT * FROM workout_log WHERE user_id = ? AND deleted_at IS NULL ORDER BY date DESC LIMIT ?').all(userId, limit)
     : db.prepare('SELECT * FROM workout_log WHERE user_id IS NULL AND deleted_at IS NULL ORDER BY date DESC LIMIT ?').all(limit);
+  // view=days: each row as the day it trained or not, for the Diary's dots,
+  // week strip and streak. A year of whole workouts was over a megabyte the
+  // Diary read on every visit for one yes or no per row. Same rows and
+  // order, so a change waiting offline still finds its row by id and
+  // session (offline-edits.js answerWithOps).
+  if (req.query.view === 'days') {
+    return res.json(rows.map(r => ({ id: r.id, date: r.date, session_seq: r.session_seq, trained: workoutCounts(r) })));
+  }
   for (const r of rows) r.exercises = JSON.parse(r.exercises || '[]');
   res.json(rows);
 }));

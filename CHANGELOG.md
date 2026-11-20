@@ -7,6 +7,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **The Diary opens faster.** For its calendar dots, week strip and streak it read every workout of the past year in full, over a megabyte with two years of training, on each visit. It now reads one line per workout, whether it was a training day: about 20 KB.
+
 ### Fixed
 
 - **Back leaves the Android app instead of walking through every tab** (from [cooktrace#99](https://github.com/TraceApps/cooktrace/issues/99), thanks @sreich). Each tab you opened was added to the back history, so back went through all of them, and then did nothing. Now back goes one step inside a tab, from any other tab to the Diary, and from the Diary the app goes to the background, as other Android apps do; a workout in progress is kept. Pages left open in a tab you switched away from no longer come back. The installed web app works the same way; a browser tab keeps the browser's usual history.

@@ -65,9 +65,15 @@ export function hasWorkingSet(exercises) {
   return exercises.some(ex => (ex?.sets || []).some(s => s && s.completed && !s.warmup));
 }
 
-/** Does this workout row make its day a trained day? */
+/**
+ * Does this workout row make its day a trained day? A row read as a day
+ * only (GET /api/workout/recent?view=days) carries the answer as `trained`;
+ * once a change made offline gives it exercises, those decide.
+ */
 export function workoutCounts(row) {
-  return !!row && !row.deleted_at && hasWorkingSet(exercisesOf(row));
+  if (!row || row.deleted_at) return false;
+  if (row.exercises === undefined && typeof row.trained === 'boolean') return row.trained;
+  return hasWorkingSet(exercisesOf(row));
 }
 
 /**
