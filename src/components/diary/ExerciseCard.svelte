@@ -5,7 +5,7 @@
   import { LtApi } from '../../lib/api.js';
   import { onSyncChanges, newestRead } from '../../lib/sync-refresh.js';
   import { getCollapseState, setCollapsed } from '../../lib/cardCollapse.js';
-  import { generateWarmupSets, volumeDelta, resolveLoadType, resolveSetType, setKind, fmtSetLabel, rowShape, distanceUnitOf, fmtSetDuration, holdSides, parseDuration, lastCompletedSession, setReps } from '../../lib/workout.js';
+  import { generateWarmupSets, volumeDelta, resolveLoadType, resolveSetType, setKind, fmtSetLabel, rowShape, distanceUnitOf, fmtSetDuration, holdSides, parseDuration, lastCompletedSession, setReps, setAfter, withSetUpdated, progressionFor } from '../../lib/workout.js';
   import { exerciseLoadTypes, exerciseSetTypes, exerciseDistanceUnits, trackRpe } from '../../stores/settings.js';
   import { holdTimer, holdResult, startHold, stopHold, consumeHoldResult, holdMatches } from '../../stores/holdTimer.js';
   import { applyHold } from '../../lib/holdPhase.js';
@@ -173,18 +173,8 @@
 
   // Progression nudge: if last session hit target reps across the board at a given weight,
   // suggest +5 (or +2.5 for kg) on today's target weight.
-  $: progressionSuggestion = (() => {
-    // Weight nudges are a reps idea; a hold is progressed by time.
-    if (notReps || !lastSession || !exercise.target_reps) return null;
-    const tgtReps = parseInt(String(exercise.target_reps).split(/[-\u2013]/)[0]);
-    if (!Number.isFinite(tgtReps)) return null;
-    const hitAll = lastSession.sets.length > 0 && lastSession.sets.every(s => (parseInt(setReps(s)) || 0) >= tgtReps);
-    if (!hitAll) return null;
-    const lastWeight = Math.max(...lastSession.sets.map(s => parseFloat(s.weight) || 0));
-    if (!lastWeight) return null;
-    const step = unit === 'kg' ? 2.5 : 5;
-    return { weight: lastWeight + step, step };
-  })();
+  // Weight nudges are a reps idea; a hold is progressed by time.
+  $: progressionSuggestion = notReps ? null : progressionFor(exercise, lastSession?.sets, unit);
 
   // Auto-collapse when all sets complete. Signature-gated within a session,
   // AND respects an explicit "expanded" state the user set earlier so it
@@ -265,13 +255,7 @@
   $: if (_weightRo) { _weightRo.disconnect(); if (setsWrapEl) _weightRo.observe(setsWrapEl); }
 
   function addSet() {
-    const lastSet = sets[sets.length - 1] || { reps: 0, weight: 0 };
-    const next = { reps: setReps(lastSet), weight: lastSet.weight, completed: false, notes: '' };
-    if (lastSet.duration_sec) next.duration_sec = lastSet.duration_sec;
-    if (lastSet.distance_m) next.distance_m = lastSet.distance_m;
-    if (lastSet.calories) next.calories = lastSet.calories;
-    const updated = { ...exercise, sets: [...sets, next] };
-    dispatch('update', updated);
+    dispatch('update', { ...exercise, sets: [...sets, setAfter(sets)] });
   }
 
   // Index of the first uncompleted WORKING set — the one the lifter should
@@ -301,49 +285,10 @@
     dispatch('update', { ...exercise, sets: [...generated, ...sets] });
   }
 
+  // A round number picked on a set moves the sets after it too
+  // (withSetUpdated in lib/workout.js, shared with the superset rounds).
   function updateSet(setIdx, set) {
-    const updatedSets = [...sets];
-    const old = sets[setIdx];
-    updatedSets[setIdx] = set;
-
-    // When the user explicitly picks a round number on this set, propagate
-    // the same delta to every subsequent working set in this exercise.
-    // The lifter is saying "I'm actually on round N, not the auto-computed
-    // M" — the sets after this should follow the same shift so they don't
-    // have to be retyped one-by-one.
-    const numberChanged = old?.number !== set.number && !old?.warmup;
-    if (numberChanged && set.number != null) {
-      // Compute the working-set position of set[setIdx] (skipping warmups).
-      let pos = 0;
-      for (let i = 0; i < setIdx; i++) {
-        if (!sets[i].warmup) pos++;
-      }
-      const delta = set.number - (pos + 1);
-      if (delta !== 0) {
-        let workPos = pos;
-        for (let i = setIdx + 1; i < updatedSets.length; i++) {
-          if (updatedSets[i].warmup) continue;
-          workPos++;
-          const newNum = workPos + 1 + delta;
-          if (newNum >= 1 && newNum <= 8) {
-            updatedSets[i] = { ...updatedSets[i], number: newNum };
-          }
-        }
-      }
-    } else if (numberChanged && set.number == null) {
-      // Cleared the override on this set — also clear every subsequent
-      // working set's override, since we no longer have a basis for the
-      // shift and the user almost certainly wants the chain reset.
-      for (let i = setIdx + 1; i < updatedSets.length; i++) {
-        if (updatedSets[i].warmup) continue;
-        if (updatedSets[i].number != null) {
-          const { number, ...rest } = updatedSets[i];
-          updatedSets[i] = rest;
-        }
-      }
-    }
-
-    dispatch('update', { ...exercise, sets: updatedSets });
+    dispatch('update', { ...exercise, sets: withSetUpdated(sets, setIdx, set) });
   }
 
   // ── Hold timer (issue #89) ────────────────────────────────────────────

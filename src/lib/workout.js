@@ -142,6 +142,73 @@ export function setReps(set) {
   return sideReps(set.reps_l, set.reps_r) ?? set.reps;
 }
 
+/**
+ * The weight to try today when every set last session reached the target
+ * reps: the heaviest of them plus one step (2.5 kg or 5 lbs). Null when
+ * there is nothing to suggest.
+ */
+export function progressionFor(exercise, lastSets, unit) {
+  if (!lastSets || !exercise?.target_reps) return null;
+  const tgtReps = parseInt(String(exercise.target_reps).split(/[-\u2013]/)[0]);
+  if (!Number.isFinite(tgtReps)) return null;
+  const hitAll = lastSets.length > 0 && lastSets.every(s => (parseInt(setReps(s)) || 0) >= tgtReps);
+  if (!hitAll) return null;
+  const lastWeight = Math.max(...lastSets.map(s => parseFloat(s.weight) || 0));
+  if (!lastWeight) return null;
+  const step = unit === 'kg' ? 2.5 : 5;
+  return { weight: lastWeight + step, step };
+}
+
+/** The set "Add Set" appends: the last one's amounts, not done. */
+export function setAfter(sets) {
+  const lastSet = (sets || [])[(sets || []).length - 1] || { reps: 0, weight: 0 };
+  const next = { reps: setReps(lastSet), weight: lastSet.weight, completed: false, notes: '' };
+  if (lastSet.duration_sec) next.duration_sec = lastSet.duration_sec;
+  if (lastSet.distance_m) next.distance_m = lastSet.distance_m;
+  if (lastSet.calories) next.calories = lastSet.calories;
+  return next;
+}
+
+/**
+ * `sets` with the one at `setIdx` replaced. Picking a round number on a
+ * working set moves every working set after it by the same step, so they
+ * don't have to be retyped one by one; clearing it clears theirs too, as
+ * there is no basis left for the shift.
+ */
+export function withSetUpdated(sets, setIdx, set) {
+  const updatedSets = [...sets];
+  const old = sets[setIdx];
+  updatedSets[setIdx] = set;
+  const numberChanged = old?.number !== set.number && !old?.warmup;
+  if (numberChanged && set.number != null) {
+    let pos = 0;
+    for (let i = 0; i < setIdx; i++) {
+      if (!sets[i].warmup) pos++;
+    }
+    const delta = set.number - (pos + 1);
+    if (delta !== 0) {
+      let workPos = pos;
+      for (let i = setIdx + 1; i < updatedSets.length; i++) {
+        if (updatedSets[i].warmup) continue;
+        workPos++;
+        const newNum = workPos + 1 + delta;
+        if (newNum >= 1 && newNum <= 8) {
+          updatedSets[i] = { ...updatedSets[i], number: newNum };
+        }
+      }
+    }
+  } else if (numberChanged && set.number == null) {
+    for (let i = setIdx + 1; i < updatedSets.length; i++) {
+      if (updatedSets[i].warmup) continue;
+      if (updatedSets[i].number != null) {
+        const { number, ...rest } = updatedSets[i];
+        updatedSets[i] = rest;
+      }
+    }
+  }
+  return updatedSets;
+}
+
 /** The amount a non-rep set records (seconds, meters or calories), 0 for a
  *  rep set or an empty one. */
 export function setAmount(exercise, set) {

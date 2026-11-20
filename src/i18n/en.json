@@ -830,7 +830,21 @@
   "superset_card": {
     "superset":              "Superset",
     "delete":                "Delete",
-    "cancel":                "Cancel"
+    "cancel":                "Cancel",
+    "round":                 "Round {n}",
+    "round_of":              "Round {n}/{count}",
+    "rounds_done":           "All rounds done",
+    "sets_progress":         "{done}/{total} sets",
+    "warmups":               "Warm-ups",
+    "last":                  "Last {set}",
+    "add_round":             "Add Round",
+    "add_exercise":          "Add Exercise",
+    "remove_superset":       "Remove entire superset",
+    "remove_exercise":       "Remove exercise",
+    "move_up":               "Move up",
+    "move_down":             "Move down",
+    "details":               "View exercise details",
+    "more":                  "More options"
   },
   "muscle_recovery": {
     "title":                 "Muscle Recovery",

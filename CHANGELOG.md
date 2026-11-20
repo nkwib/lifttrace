@@ -7,6 +7,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Supersets in the Diary go round by round.** The sets used to be listed one exercise after the other (A, A, A, B, B, B), so every set meant scrolling to the other exercise, worse with three or more. Now the exercises sit at the top as A, B, C, with their load type, targets, coach notes and actions, and the sets below go A, B, C for round 1, then round 2, and so on, the order they are lifted in. The round you're on is highlighted with the next set marked, each row shows what you lifted in that round last time, and a finished round folds to one line (tap it to open it again). Add Round gives every exercise one more set. Rounds follow the round numbers you set on uneven supersets, the same as the rest timer. Folded, a superset shows its exercises by name and the round you're on.
+
 ### Fixed
 
 - **Back leaves the Android app instead of walking through every tab** (from [cooktrace#99](https://github.com/TraceApps/cooktrace/issues/99), thanks @sreich). Each tab you opened was added to the back history, so back went through all of them, and then did nothing. Now back goes one step inside a tab, from any other tab to the Diary, and from the Diary the app goes to the background, as other Android apps do; a workout in progress is kept. Pages left open in a tab you switched away from no longer come back. The installed web app works the same way; a browser tab keeps the browser's usual history.
