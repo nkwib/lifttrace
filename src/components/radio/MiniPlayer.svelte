@@ -18,10 +18,9 @@
 </script>
 
 {#if $miniPlayerVisible && $currentTrack}
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div class="mini-player" transition:fly={{ y: 60, duration: 260, easing: cubicOut }}
-    on:click={() => dispatch('expand')}>
+  <div class="mini-player" role="button" tabindex="0" transition:fly={{ y: 60, duration: 260, easing: cubicOut }}
+    on:click={() => dispatch('expand')}
+    on:keydown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); dispatch('expand'); } }}>
     <div class="mini-progress" style="width:{$progress * 100}%"></div>
     <div class="mini-art" class:playing={$isPlaying && !$isBuffering}>
       {#if coverSrc}
@@ -62,6 +61,7 @@
 {/if}
 
 <style>
+  .mini-player:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .mini-player {
     position: fixed;
     bottom: calc(var(--nav-bar-h, var(--nav-h)) + var(--safe-bottom, 0px));

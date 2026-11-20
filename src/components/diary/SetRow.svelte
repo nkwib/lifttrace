@@ -163,6 +163,10 @@
     numLocked = true;
     numLockTimer = setTimeout(() => { numLocked = false; }, 350);
   }
+  function onWindowKeydown(e) {
+    if (e.key !== 'Escape' || !(numOpen || rpeOpen)) return;
+    numOpen = false; rpeOpen = false;
+  }
   function closeNumIfUnlocked() { if (!numLocked) numOpen = false; }
   function pickNum(n) {
     // Picking the same value as the auto default clears the override so
@@ -296,6 +300,8 @@
     return { edge: place.edge, left };
   }
 </script>
+
+<svelte:window on:keydown={onWindowKeydown} />
 
 <!-- The grid is chosen by the exercise (rowShape), not by what this row
      happens to hold, so every row of a card and its heading line up. -->

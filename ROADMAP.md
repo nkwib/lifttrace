@@ -46,8 +46,9 @@ first-launch value in `localStorage`.
 
 ### Accessibility cleanup
 
-Still open, and larger than first counted: about 30 `svelte-ignore a11y-click-events-have-key-events`
-blocks (both spellings) (and more `a11y_no_static_element_interactions`) across the Diary, Trace, the radio
+Still open, and larger than first counted: 62 `svelte-ignore` comments remain (down from 65; Diary exercise/superset headers, the set popovers
+and the mini player now have keyboard access; `scripts/a11y-suppressions.test.js` ratchets the per-file
+`a11y_click_events_have_key_events` count down) across the Diary, Trace, the radio
 players, sheets and dialogs. Each is a clickable `<div>` without keyboard reach. The fix is
 `<button>` or keyboard handlers plus visible focus indicators on the custom widgets.
 

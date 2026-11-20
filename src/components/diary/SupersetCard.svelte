@@ -111,8 +111,8 @@
   />
 {:else}
   <div class="superset-card" class:all-done={allDone} data-progress={progress}>
-    <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-    <div class="superset-header" on:click={() => _setExpanded(!expanded)} role="button" tabindex="0">
+    <div class="superset-header" on:click={() => _setExpanded(!expanded)} role="button" tabindex="0" aria-expanded={expanded}
+      on:keydown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); _setExpanded(!expanded); } }}>
       <div class="superset-badge">
         <span class="material-symbols-rounded ss-icon">link</span>
         <span class="ss-label">{$_('superset_card.superset')}</span>
@@ -249,6 +249,7 @@
     color: inherit; font-family: inherit; cursor: pointer;
     transition: background var(--dur-fast);
   }
+  .superset-header:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .superset-header:hover { background: linear-gradient(135deg, var(--accent-dim), var(--surface-2)); }
   .superset-badge { display: flex; align-items: center; gap: 6px; }
   .ss-icon { font-size: 16px; color: var(--accent); }

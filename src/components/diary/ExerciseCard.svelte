@@ -415,8 +415,9 @@
       on:pickDistanceUnit={(e) => pickDistanceUnit(e.detail)}
       on:close={() => loadMenuOpen = false} />
   {/if}
-  <div class="ex-header"
+  <div class="ex-header" role="button" tabindex="0" aria-expanded={expanded}
     on:click={() => _setExpanded(!expanded)}
+    on:keydown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); _setExpanded(!expanded); } }}
     on:contextmenu|preventDefault={() => dispatch('menu')}>
     <div class="ex-info">
       <div class="ex-name-row">
@@ -579,6 +580,7 @@
     box-shadow: 0 0 8px color-mix(in srgb, var(--success) 40%, transparent);
   }
 
+  .ex-header:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .ex-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 14px 10px;
