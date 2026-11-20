@@ -849,6 +849,8 @@ const Templates = {
     return _templateFromRow(rows[0]);
   },
   async create(body) {
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    if (!body.program_id || !name) throw new Error('program_id and name required');
     const max = (await dbQuery(
       `SELECT COALESCE(MAX(order_index), -1) AS m FROM workout_templates WHERE program_id = ?`, [body.program_id]
     ))[0]?.m ?? -1;
@@ -857,7 +859,7 @@ const Templates = {
       `INSERT INTO workout_templates (id, program_id, name, day_label, order_index, exercises, created_at, updated_at, sync_state)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
       [
-        newId, body.program_id, body.name, body.day_label || null,
+        newId, body.program_id, name, body.day_label || null,
         body.order_index != null ? body.order_index : max + 1,
         _stringify(body.exercises || []), _now(), _now(),
       ]
@@ -867,9 +869,13 @@ const Templates = {
   async update(id, body) {
     const sets = [];
     const args = [];
-    for (const c of ['name', 'day_label']) {
-      if (body[c] !== undefined) { sets.push(`${c} = ?`); args.push(body[c]); }
+    // Same as the server: a blank name is refused, an absent one keeps it.
+    if (typeof body.name === 'string') {
+      const name = body.name.trim();
+      if (!name) throw new Error('Name required');
+      sets.push('name = ?'); args.push(name);
     }
+    if (body.day_label !== undefined) { sets.push('day_label = ?'); args.push(body.day_label); }
     if (body.order_index !== undefined) { sets.push(`order_index = ?`); args.push(body.order_index); }
     if (body.exercises !== undefined)   { sets.push(`exercises = ?`); args.push(_stringify(body.exercises)); }
     sets.push(`updated_at = ?`); args.push(_now());

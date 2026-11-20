@@ -29,6 +29,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Exercise usage in Local mode.** An exercise done in two sessions on the same day now counts as one day, matching the server, so picker sorting is consistent.
 - **Escape in the custom equipment field no longer closes the exercise editor.** It only cancels the new chip, keeping your other edits.
 - **Escape and Tab behave in more popups.** The time picker, full radio player, sign-in verification, setup skip prompt and test-email dialog now close on Escape, keep Tab inside, and return focus when closed.
+- **Workout names are trimmed and can't be blank.** Saving a workout with an empty name now shows an error instead of reporting success, on the server and in Local mode. Menus, badges and labels in the workout editor, program and exercise pages are translatable.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added

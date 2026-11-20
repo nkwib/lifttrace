@@ -23,6 +23,7 @@
     "stuck_on_tool": "Trace kept asking for the same information and got no answer, so it stopped. Try asking another way."
   },
   "nav": {
+    "update_available": "Update available",
     "diary":      "Diary",
     "exercises":  "Exercises",
     "programs":   "Programs",
@@ -978,6 +979,9 @@
     "done":                  "Done"
   },
   "exercise_detail": {
+    "share_json": "Share exercise as JSON",
+    "edit_exercise": "Edit exercise",
+    "delete_exercise": "Delete exercise",
     "loading": "Loading exercise…",
     "log_today": "Log this in today's workout",
     "sessions_count": "{count, plural, one {# session} other {# sessions}}",
@@ -1171,6 +1175,9 @@
     "added":                 "{count, plural, one {Added # exercise} other {Added # exercises}}"
   },
   "programs": {
+    "workouts_count": "{count, plural, one {# workout} other {# workouts}}",
+    "coach_badge": "Coach: {name}",
+    "assigned_by_coach": "Assigned by your coach",
     "loading": "Loading programs…",
     "load_failed": "Couldn't load your programs.",
     "empty_desc": "Create a training program to organize your workout templates.",
@@ -1431,6 +1438,9 @@
   },
   "program_detail": {
     "program_name": "Program name",
+    "duration_progression": "Duration & progression",
+    "delete_program": "Delete Program",
+    "select_workout_hint": "Tap any workout on the left to see its exercises here.",
     "program_actions": "Program actions",
     "tap_to_deactivate": "Tap to Deactivate",
     "drag_to_reorder": "Drag to reorder",
@@ -1650,6 +1660,17 @@
     }
   },
   "workout_editor": {
+    "name_required": "Give the workout a name.",
+    "loading": "Loading workout…",
+    "actions": {
+      "move_up": "Move up",
+      "move_down": "Move down",
+      "replace": "Replace exercise",
+      "leave_ss": "Remove from superset",
+      "join_ss": "Add to existing superset",
+      "new_ss": "Start new superset...",
+      "delete_exercise": "Delete exercise"
+    },
     "gone": "This workout was deleted elsewhere, so your changes here can't be saved.",
     "toast": {
       "removed_from_ss":   "Removed from superset",

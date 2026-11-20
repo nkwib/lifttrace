@@ -268,11 +268,11 @@
             </div>
             <div class="card-meta">
               <span class="goal-tag">{p.goal}</span>
-              <span class="template-count">{p.template_count} workouts</span>
+              <span class="template-count">{$_('programs.workouts_count', { values: { count: p.template_count } })}</span>
               {#if p.is_assigned && p.assigned_by_name}
-                <span class="coach-badge" title="Assigned by your coach">
+                <span class="coach-badge" title={$_('programs.assigned_by_coach')}>
                   <span class="material-symbols-rounded" style="font-size:12px">supervisor_account</span>
-                  Coach: {p.assigned_by_name}
+                  {$_('programs.coach_badge', { values: { name: p.assigned_by_name } })}
                 </span>
               {/if}
             </div>
@@ -337,7 +337,7 @@
               <span class="material-symbols-rounded">more_vert</span>
             </button>
             <button class="ppp-close" on:click={() => { _previewSelected = null; }}
-                    aria-label="Close preview" title="Close preview">
+                    aria-label={$_('exercises_page.close_preview')} title={$_('exercises_page.close_preview')}>
               <span class="material-symbols-rounded">close</span>
             </button>
           </div>
@@ -377,7 +377,7 @@
           actions={_previewActions} on:select={_onPreviewAction} />
         <Sheet bind:open={_renameOpen} title={$_('programs.rename_title')}>
           <div class="ppp-rename">
-            <input class="input" bind:value={_renameValue} maxlength="120" aria-label="Program name"
+            <input class="input" bind:value={_renameValue} maxlength="120" aria-label={$_('program_detail.program_name')}
               on:keydown={(e) => { if (e.key === 'Enter') _commitRename(); }} />
             <div class="ppp-rename-actions">
               <button class="btn btn-secondary" on:click={() => _renameOpen = false}>{$_('common.cancel')}</button>

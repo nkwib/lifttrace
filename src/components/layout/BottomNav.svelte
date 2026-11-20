@@ -60,7 +60,7 @@
       <span class="material-symbols-rounded nav-icon">
         {tab.icon}
         {#if tab.path === '/settings' && ($updateAvailable.available || $pwaUpdateReady)}
-          <span class="nav-update-dot" aria-label="Update available"></span>
+          <span class="nav-update-dot" aria-label={$_('nav.update_available')}></span>
         {/if}
         {#if tab.path === '/programs' && $coachingBadge}
           <span class="nav-update-dot" aria-label={$_('coaching.badge_aria')}></span>

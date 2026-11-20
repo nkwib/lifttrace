@@ -364,21 +364,21 @@
     asTitle = ex.exercise_name;
 
     const actions = [];
-    if (idx > 0) actions.push({ label: 'Move up', icon: 'keyboard_double_arrow_up', value: 'move_up' });
-    if (idx < exercises.length - 1) actions.push({ label: 'Move down', icon: 'keyboard_double_arrow_down', value: 'move_down' });
+    if (idx > 0) actions.push({ label: $_('workout_editor.actions.move_up'), icon: 'keyboard_double_arrow_up', value: 'move_up' });
+    if (idx < exercises.length - 1) actions.push({ label: $_('workout_editor.actions.move_down'), icon: 'keyboard_double_arrow_down', value: 'move_down' });
 
-    actions.push({ label: 'Replace exercise', icon: 'swap_horiz', value: 'replace' });
+    actions.push({ label: $_('workout_editor.actions.replace'), icon: 'swap_horiz', value: 'replace' });
 
     if (inSs) {
-      actions.push({ label: 'Remove from superset', icon: 'link_off', value: 'leave_ss' });
+      actions.push({ label: $_('workout_editor.actions.leave_ss'), icon: 'link_off', value: 'leave_ss' });
     } else {
       if (existingSupersets.length > 0) {
-        actions.push({ label: 'Add to existing superset', icon: 'link', value: 'join_ss' });
+        actions.push({ label: $_('workout_editor.actions.join_ss'), icon: 'link', value: 'join_ss' });
       }
-      actions.push({ label: 'Start new superset...', icon: 'add_link', value: 'new_ss' });
+      actions.push({ label: $_('workout_editor.actions.new_ss'), icon: 'add_link', value: 'new_ss' });
     }
 
-    actions.push({ label: 'Delete exercise', icon: 'delete', value: 'delete', danger: true });
+    actions.push({ label: $_('workout_editor.actions.delete_exercise'), icon: 'delete', value: 'delete', danger: true });
     asActions = actions;
     asOpen = true;
   }
@@ -821,10 +821,12 @@
 
   async function save() {
     if (gone) return;
+    const name = (template.name || '').trim();
+    if (!name) { showError($_('workout_editor.name_required')); return; }
     saving = true;
     try {
       const deleted_uuids = diffTombstones(_originalExercises, template.exercises);
-      await LtApi.updateTemplate(params.templateId, { name: template.name, exercises: template.exercises, deleted_uuids });
+      await LtApi.updateTemplate(params.templateId, { name, exercises: template.exercises, deleted_uuids });
       showSuccess($_('workout_editor.toast.saved'));
       push(`/programs/${params.programId}`);
     } catch(e) { showError(e.message); }
@@ -842,7 +844,7 @@
       <input class="title-input" type="text" bind:value={template.name} placeholder={$_('workout_editor.name_ph')} readonly={othersProgram} />
       {#if !othersProgram}
       <button class="btn btn-primary save-btn" on:click={save} disabled={saving || gone}>
-        {saving ? 'Saving...' : 'Save'}
+        {saving ? $_('common.saving') : $_('common.save')}
       </button>
       {/if}
     {:else}
@@ -851,7 +853,7 @@
   </header>
 
   {#if loading}
-    <Spinner block label="Loading template…" />
+    <Spinner block label={$_('workout_editor.loading')} />
   {:else if template}
     <div class="content" on:focusin={e => inField = isField(e.target)} on:focusout={onFocusOut}>
       {#if gone}

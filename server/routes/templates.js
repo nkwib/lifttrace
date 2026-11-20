@@ -32,7 +32,8 @@ router.get('/:id', wrap((req, res) => {
 
 // POST /api/templates
 router.post('/', wrap((req, res) => {
-  const { name, day_label, exercises } = req.body;
+  const { day_label, exercises } = req.body;
+  const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
   const program_id = toId(req.body.program_id);
   if (!program_id || !name) return res.status(400).json({ error: 'program_id and name required' });
   // Days go only into a program this account made (program-access.js).
@@ -97,13 +98,16 @@ router.put('/:id', wrap((req, res) => {
   if (!meets.ok) return res.status(410).json({ error: 'Deleted after this change was made', gone: true });
   // The newer edit of the name and label stays (lib/newer-wins.js); the
   // exercises merge one by one, as before.
+  // A name sent blank is refused, not silently kept (absent keeps it).
+  if (typeof req.body.name === 'string' && !req.body.name.trim()) return res.status(400).json({ error: 'Name required' });
   const body = { ...req.body };
   // A day brought back is decided as it was deleted (lib/deleted-rows.js).
   let times = applyToBody(req, existing, body, { ...syncOf('workout_templates'), times: meets.day ? timesAtDelete(existing) : undefined, current: f => existing[f] });
   if (Array.isArray(body.exercises) || body.deleted_uuids) times = stampMerged(req, times, ['exercises']);
   // Brought back: when, so a delete made before this can't win over it.
   if (meets.day) times = stampMerged(req, times, ['deleted_at']);
-  const { name, day_label, exercises } = body;
+  const { day_label, exercises } = body;
+  const name = typeof body.name === 'string' ? body.name.trim() : undefined;
 
   const tsKey = `template:${id}`;
   const priorExTs = db.prepare(

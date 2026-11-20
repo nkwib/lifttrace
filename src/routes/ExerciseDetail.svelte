@@ -199,15 +199,15 @@
     </button>
     <h1>{exercise?.name || 'Exercise'}</h1>
     {#if exercise}
-      <button class="header-btn" on:click={handleExport} disabled={exporting} title="Share exercise as JSON" aria-label="Share exercise as JSON">
+      <button class="header-btn" on:click={handleExport} disabled={exporting} title={$_('exercise_detail.share_json')} aria-label={$_('exercise_detail.share_json')}>
         <span class="material-symbols-rounded">{exporting ? 'hourglass_top' : 'share'}</span>
       </button>
     {/if}
     {#if isCustom}
-      <button class="header-btn" on:click={() => showEditor = true} title="Edit" aria-label="Edit exercise">
+      <button class="header-btn" on:click={() => showEditor = true} title={$_('common.edit')} aria-label={$_('exercise_detail.edit_exercise')}>
         <span class="material-symbols-rounded">edit</span>
       </button>
-      <button class="header-btn danger" on:click={removeExercise} title="Delete" aria-label="Delete exercise">
+      <button class="header-btn danger" on:click={removeExercise} title={$_('common.delete')} aria-label={$_('exercise_detail.delete_exercise')}>
         <span class="material-symbols-rounded">delete</span>
       </button>
     {/if}

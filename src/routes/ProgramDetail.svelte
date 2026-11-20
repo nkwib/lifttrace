@@ -292,14 +292,14 @@
   let programMenuOpen = false;
   $: programMenuActions = (() => {
     const items = [];
-    if (isOwner)                items.push({ label: 'Rename',           icon: 'edit',           value: 'rename' });
-    if (isOwner)                items.push({ label: 'Duration & progression', icon: 'tune',     value: 'settings' });
+    if (isOwner)                items.push({ label: $_('programs.rename'),           icon: 'edit',           value: 'rename' });
+    if (isOwner)                items.push({ label: $_('program_detail.duration_progression'), icon: 'tune',     value: 'settings' });
     /* Duplicate is available to anyone viewing the program (matches
        the previous unconditional Duplicate icon behaviour). */
-                                items.push({ label: 'Duplicate',        icon: 'content_copy',   value: 'duplicate' });
+                                items.push({ label: $_('programs.duplicate'),        icon: 'content_copy',   value: 'duplicate' });
                                 items.push({ label: $_('program_detail.share_file'), icon: 'ios_share', value: 'share_file' });
     if (isCoach && isOwner)     items.push({ label: $_('program_detail.assign_to_client'), icon: 'person_add', value: 'assign' });
-    if (isOwner)                items.push({ label: 'Delete Program',   icon: 'delete',         value: 'delete',    danger: true });
+    if (isOwner)                items.push({ label: $_('program_detail.delete_program'),   icon: 'delete',         value: 'delete',    danger: true });
     return items;
   })();
   function onProgramMenuSelect(e) {
@@ -365,12 +365,12 @@
         {#if program.is_active}
           <button class="active-badge" on:click={deactivate} title={$_('program_detail.tap_to_deactivate')}>
             <span class="material-symbols-rounded" style="font-size:14px">check_circle</span>
-            Active
+            {$_('programs.active')}
           </button>
         {:else}
           <button class="activate-btn" on:click={activate}>
             <span class="material-symbols-rounded" style="font-size:16px">play_arrow</span>
-            Set Active
+            {$_('programs.set_active')}
           </button>
         {/if}
         <!-- Excused days push a calendar program back a day each (#121). -->
@@ -491,7 +491,7 @@
             <div class="ptp-empty">
               <span class="material-symbols-rounded ptp-empty-icon">list_alt</span>
               <p class="ptp-empty-title">{$_('program_detail.select_workout')}</p>
-              <p class="ptp-empty-desc">Tap any workout on the left to see its exercises here.</p>
+              <p class="ptp-empty-desc">{$_('program_detail.select_workout_hint')}</p>
             </div>
           {/if}
         </aside>
@@ -554,7 +554,7 @@
     <div class="form-actions">
       <button class="btn btn-secondary" on:click={() => showSettings = false}>{$_('program_detail.cancel')}</button>
       <button class="btn btn-primary" on:click={saveSettings} disabled={savingSettings}>
-        {savingSettings ? 'Saving...' : 'Save'}
+        {savingSettings ? $_('common.saving') : $_('common.save')}
       </button>
     </div>
   </div>

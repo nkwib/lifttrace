@@ -117,7 +117,7 @@
               <span class="nav-update-dot" aria-label={$_('coaching.badge_aria')}></span>
             {/if}
             {#if item.path === '/settings' && ($updateAvailable.available || $pwaUpdateReady)}
-              <span class="nav-update-dot" aria-label="Update available"></span>
+              <span class="nav-update-dot" aria-label={$_('nav.update_available')}></span>
             {/if}
           </span>
           <span class="sidebar-label">{item.label}</span>
