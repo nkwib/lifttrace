@@ -1,4 +1,5 @@
 <script>
+  import { _ } from 'svelte-i18n';
   import { fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { currentTrack, isPlaying, progress, volume, miniPlayerVisible, isBuffering, togglePlay, next, prev, stop, setVolume, streamNowPlaying, streamArtwork } from '../../stores/player.js';
@@ -39,21 +40,21 @@
       <span class="mini-artist">{$streamNowPlaying ? `♪ ${$streamNowPlaying}` : $currentTrack.artist}</span>
     </div>
     <div class="mini-controls" on:click|stopPropagation>
-      <button class="mini-btn" on:click={prev}>
+      <button class="mini-btn" on:click={prev} title={$_('radio.prev')} aria-label={$_('radio.prev')}>
         <span class="material-symbols-rounded">skip_previous</span>
       </button>
-      <button class="mini-btn play" on:click={togglePlay}>
+      <button class="mini-btn play" on:click={togglePlay} title={$isPlaying ? $_('radio.pause') : $_('radio.play')} aria-label={$isPlaying ? $_('radio.pause') : $_('radio.play')}>
         <span class="material-symbols-rounded">{$isPlaying ? 'pause' : 'play_arrow'}</span>
       </button>
-      <button class="mini-btn" on:click={next}>
+      <button class="mini-btn" on:click={next} title={$_('radio.next')} aria-label={$_('radio.next')}>
         <span class="material-symbols-rounded">skip_next</span>
       </button>
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div class="mini-vol" on:click|stopPropagation>
         <input type="range" min="0" max="1" step="0.05" value={$volume}
-          on:input={e => setVolume(parseFloat(e.target.value))} class="mini-vol-slider" />
+          on:input={e => setVolume(parseFloat(e.target.value))} class="mini-vol-slider" aria-label={$_('radio.volume')} />
       </div>
-      <button class="mini-btn close" on:click={stop} title="Stop">
+      <button class="mini-btn close" on:click={stop} title={$_('radio.stop')} aria-label={$_('radio.stop')}>
         <span class="material-symbols-rounded">close</span>
       </button>
     </div>

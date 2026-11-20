@@ -835,7 +835,7 @@
 
 <div class="page">
   <header class="page-header">
-    <button class="back-btn" on:click={() => push(`/programs/${params.programId}`)}>
+    <button class="back-btn" on:click={() => push(`/programs/${params.programId}`)} aria-label={$_('common.back')}>
       <span class="material-symbols-rounded">arrow_back</span>
     </button>
     {#if template}

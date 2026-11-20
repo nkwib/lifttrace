@@ -3638,7 +3638,7 @@
         on:click|stopPropagation>
         <div class="dp-handle"></div>
         <div class="dp-nav">
-          <button class="btn-icon dp-nav-btn" on:click={calPrevMonth}>
+          <button class="btn-icon dp-nav-btn" on:click={calPrevMonth} title={$_('diary.prev_month')} aria-label={$_('diary.prev_month')}>
             <span class="material-symbols-rounded">chevron_left</span>
           </button>
           <div class="dp-month-year">
@@ -3649,7 +3649,7 @@
               {calYear}<span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;margin-left:2px">{showYearPicker ? 'expand_less' : 'expand_more'}</span>
             </button>
           </div>
-          <button class="btn-icon dp-nav-btn" on:click={calNextMonth}>
+          <button class="btn-icon dp-nav-btn" on:click={calNextMonth} title={$_('diary.next_month')} aria-label={$_('diary.next_month')}>
             <span class="material-symbols-rounded">chevron_right</span>
           </button>
         </div>

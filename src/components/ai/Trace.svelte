@@ -951,7 +951,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
             {#each pendingImages as img, i}
               <div class="lb-preview-thumb">
                 <img src={img.dataUrl} alt="" />
-                <button class="lb-img-remove" on:click={() => removeImage(i)}>
+                <button class="lb-img-remove" on:click={() => removeImage(i)} title={$_('coaching.chat.remove_photo')} aria-label={$_('coaching.chat.remove_photo')}>
                   <span class="material-symbols-rounded" style="font-size:14px">close</span>
                 </button>
               </div>
@@ -974,6 +974,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
           <button
             class="lb-send-btn"
             on:click={send}
+            title={$_('trace.send')} aria-label={$_('trace.send')}
             disabled={sending || (!input.trim() && pendingImages.length === 0)}
           >
             <span class="material-symbols-rounded" style="font-size:20px">send</span>

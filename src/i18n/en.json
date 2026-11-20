@@ -194,6 +194,13 @@
     }
   },
   "diary": {
+    "prev_month": "Previous month",
+    "next_month": "Next month",
+    "view_exercise_details": "View exercise details",
+    "more_options": "More options",
+    "remove_exercise": "Remove exercise",
+    "remove_set": "Remove set",
+    "remove_item": "Remove",
     "shortcut": {
       "weight_hidden": "Weight is hidden in Body Stats. Turn it on under Body Measurements to log it."
     },
@@ -340,6 +347,7 @@
     "legend_excused":   "Excused"
   },
   "trace": {
+    "send": "Send",
     "fab_label":          "Open Trace (hold to voice-log a workout)",
     "fab_tooltip":        "Tap to chat · hold to voice-log",
     "ask_placeholder":    "Ask me anything…",
@@ -1325,6 +1333,7 @@
     }
   },
   "exercise_editor": {
+    "apply_url": "Apply URL",
     "toast": {
       "updated":              "Exercise updated",
       "added":                "Added \"{name}\""
@@ -1437,6 +1446,16 @@
     "or":                      "or"
   },
   "radio": {
+    "prev": "Previous",
+    "play": "Play",
+    "pause": "Pause",
+    "next": "Next",
+    "stop": "Stop",
+    "volume": "Volume",
+    "shuffle": "Shuffle",
+    "repeat_off": "Repeat off",
+    "repeat_all": "Repeat all",
+    "repeat_one": "Repeat one",
     "toast": {
       "name_url_required":     "Name and URL are required",
       "station_added":         "Station added",

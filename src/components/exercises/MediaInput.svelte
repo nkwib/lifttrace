@@ -1,4 +1,5 @@
 <script>
+  import { _ } from 'svelte-i18n';
   import { resolveAssetUrl } from '../../lib/platform.js';
   import { LtApi } from '../../lib/api.js';
   import { showError } from '../../stores/toast.js';
@@ -102,7 +103,7 @@
         bind:value={urlInput}
         on:keydown={onUrlKey}
       />
-      <button type="button" class="apply-btn" on:click={applyUrl} disabled={!urlInput.trim()}>
+      <button type="button" class="apply-btn" on:click={applyUrl} disabled={!urlInput.trim()} title={$_('exercise_editor.apply_url')} aria-label={$_('exercise_editor.apply_url')}>
         <span class="material-symbols-rounded">check</span>
       </button>
     </div>

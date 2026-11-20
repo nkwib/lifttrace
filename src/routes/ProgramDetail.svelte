@@ -306,7 +306,7 @@
 
 <div class="page">
   <header class="page-header">
-    <button class="back-btn" on:click={() => push('/programs')}>
+    <button class="back-btn" on:click={() => push('/programs')} aria-label={$_('common.back')}>
       <span class="material-symbols-rounded">arrow_back</span>
     </button>
     {#if editingName}

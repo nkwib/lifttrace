@@ -166,7 +166,7 @@
       <div class="sl-header">
         <span class="material-symbols-rounded sl-header-icon">auto_awesome</span>
         <h3 class="sl-title">{$_('smart_log.title')}</h3>
-        <button class="sl-close" on:click={closeAndReset} title="Close">
+        <button class="sl-close" on:click={closeAndReset} title={$_('common.close')} aria-label={$_('common.close')}>
           <span class="material-symbols-rounded">close</span>
         </button>
       </div>
@@ -223,7 +223,7 @@
                   <span class="sl-item-name sl-unmatched">"{item.raw}"</span>
                   <span class="sl-unmatched-badge">not in library</span>
                 {/if}
-                <button class="sl-item-remove" on:click={() => removeItem(i)} title="Remove">
+                <button class="sl-item-remove" on:click={() => removeItem(i)} title={$_('diary.remove_item')} aria-label={$_('diary.remove_item')}>
                   <span class="material-symbols-rounded">close</span>
                 </button>
               </div>
@@ -257,7 +257,7 @@
                     {#if set.bodyweight}<span class="sl-tag">BW</span>{/if}
                     {#if set.rpe != null}<span class="sl-tag">RPE {set.rpe}</span>{/if}
                     {#if item.sets.length > 1}
-                      <button class="sl-set-remove" on:click={() => removeSetFrom(i, si)} title="Remove set">
+                      <button class="sl-set-remove" on:click={() => removeSetFrom(i, si)} title={$_('diary.remove_set')} aria-label={$_('diary.remove_set')}>
                         <span class="material-symbols-rounded" style="font-size:16px">close</span>
                       </button>
                     {/if}

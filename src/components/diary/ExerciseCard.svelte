@@ -443,22 +443,22 @@
     </div>
     <div class="ex-actions">
       {#if canMoveUp}
-        <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('moveUp')} title="Move up">
+        <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('moveUp')} title={$_('radio.move_up')} aria-label={$_('radio.move_up')}>
           <span class="material-symbols-rounded">keyboard_double_arrow_up</span>
         </button>
       {/if}
       {#if canMoveDown}
-        <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('moveDown')} title="Move down">
+        <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('moveDown')} title={$_('radio.move_down')} aria-label={$_('radio.move_down')}>
           <span class="material-symbols-rounded">keyboard_double_arrow_down</span>
         </button>
       {/if}
-      <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('info')} title="View exercise details" aria-label="View exercise details">
+      <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('info')} title={$_('diary.view_exercise_details')} aria-label={$_('diary.view_exercise_details')}>
         <span class="material-symbols-rounded">info</span>
       </button>
-      <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('menu')} title="More options">
+      <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('menu')} title={$_('diary.more_options')} aria-label={$_('diary.more_options')}>
         <span class="material-symbols-rounded">more_vert</span>
       </button>
-      <button class="btn-icon tap" on:click|stopPropagation={remove} title="Remove exercise">
+      <button class="btn-icon tap" on:click|stopPropagation={remove} title={$_('diary.remove_exercise')} aria-label={$_('diary.remove_exercise')}>
         <span class="material-symbols-rounded">close</span>
       </button>
       <span class="material-symbols-rounded expand-icon" class:rotated={!expanded}>expand_more</span>

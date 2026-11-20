@@ -198,7 +198,7 @@
 
 <div class="page">
   <header class="page-header">
-    <button class="back-btn" on:click={() => window.history.length > 1 ? window.history.back() : push('/exercises')}>
+    <button class="back-btn" on:click={() => window.history.length > 1 ? window.history.back() : push('/exercises')} aria-label={$_('common.back')}>
       <span class="material-symbols-rounded">arrow_back</span>
     </button>
     <h1>{exercise?.name || 'Exercise'}</h1>

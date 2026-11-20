@@ -787,7 +787,7 @@
   <div class="sticky-top">
     <header class="page-header" class:banner-gradient={$bannerStyle === 'gradient'} class:banner-animated={$bannerStyle === 'animated'}>
       {#if showBack}
-        <button class="back-btn" on:click={back}>
+        <button class="back-btn" on:click={back} aria-label={$_('common.back')}>
           <span class="material-symbols-rounded">arrow_back</span>
         </button>
       {/if}

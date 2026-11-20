@@ -1,4 +1,5 @@
 <script>
+  import { _ } from 'svelte-i18n';
   import { closeOnBack } from '../../lib/back-stack.js';
   import { fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
@@ -141,19 +142,19 @@
 
       <!-- Controls -->
       <div class="fp-controls">
-        <button class="fp-ctrl" class:active={$shuffle} on:click={toggleShuffle}>
+        <button class="fp-ctrl" class:active={$shuffle} on:click={toggleShuffle} aria-pressed={$shuffle} title={$_('radio.shuffle')} aria-label={$_('radio.shuffle')}>
           <span class="material-symbols-rounded">shuffle</span>
         </button>
-        <button class="fp-ctrl" on:click={prev}>
+        <button class="fp-ctrl" on:click={prev} title={$_('radio.prev')} aria-label={$_('radio.prev')}>
           <span class="material-symbols-rounded" style="font-size:32px">skip_previous</span>
         </button>
-        <button class="fp-play" on:click={togglePlay}>
+        <button class="fp-play" on:click={togglePlay} aria-label={$isPlaying ? $_('radio.pause') : $_('radio.play')}>
           <span class="material-symbols-rounded">{$isPlaying ? 'pause' : 'play_arrow'}</span>
         </button>
-        <button class="fp-ctrl" on:click={next}>
+        <button class="fp-ctrl" on:click={next} title={$_('radio.next')} aria-label={$_('radio.next')}>
           <span class="material-symbols-rounded" style="font-size:32px">skip_next</span>
         </button>
-        <button class="fp-ctrl" class:active={repeatActive} on:click={cycleRepeat}>
+        <button class="fp-ctrl" class:active={repeatActive} on:click={cycleRepeat} aria-pressed={repeatActive} aria-label={$repeat === 'one' ? $_('radio.repeat_one') : repeatActive ? $_('radio.repeat_all') : $_('radio.repeat_off')}>
           <span class="material-symbols-rounded">{repeatIcon}</span>
         </button>
       </div>
