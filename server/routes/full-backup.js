@@ -446,7 +446,7 @@ function restoreFromZip(zip) {
     for (const s of data.user_settings || []) insSettings.run(_withField(s, 'field_times'));
 
     const insConfig = db.prepare(`INSERT OR REPLACE INTO app_config (key,value) VALUES (@key,@value)`);
-    for (const c of data.app_config || []) insConfig.run(c);
+    for (const c of data.app_config || []) if (!String(c.key).startsWith('sched:')) insConfig.run(c);
 
     db.prepare('DELETE FROM ai_chat_history').run();
     const insChat = db.prepare(`INSERT OR IGNORE INTO ai_chat_history (id,user_id,role,content,created_at,deleted_at) VALUES (@id,@user_id,@role,@content,@created_at,@deleted_at)`);
@@ -693,7 +693,7 @@ function dumpDatabase() {
     cardio_log:          safe('SELECT * FROM cardio_log'),
     excused_days:        safe('SELECT * FROM excused_days'),
     user_settings:       db.prepare('SELECT * FROM user_settings').all(),
-    app_config:          db.prepare('SELECT * FROM app_config').all(),
+    app_config:          db.prepare("SELECT * FROM app_config WHERE key NOT LIKE 'sched:%'").all(),
     ai_chat_history:     db.prepare('SELECT * FROM ai_chat_history').all(),
     password_reset_tokens: db.prepare('SELECT * FROM password_reset_tokens').all(),
     invite_tokens:       db.prepare('SELECT * FROM invite_tokens').all(),

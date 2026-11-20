@@ -1,4 +1,5 @@
 import db from '../db.js';
+import { createRanRecently, dbStore, pruneMarkers } from './sched-dedupe.js';
 import { linkBase } from './public-url.js';
 import { logger } from '../logger.js';
 import { pushNotify } from './push-notify.js';
@@ -19,15 +20,7 @@ import { readSettingRaw } from './secret-settings.js';
  */
 
 const TICK_MS = 15 * 60 * 1000;
-const _recentlyRan = {};
-
-function _ranRecently(userId, task, windowMs) {
-  const key = `${userId}:${task}`;
-  const last = _recentlyRan[key];
-  if (last && Date.now() - last < windowMs) return true;
-  _recentlyRan[key] = Date.now();
-  return false;
-}
+const _ranRecently = createRanRecently(dbStore(db));
 
 function _getUserSetting(userId, key, defaultVal) {
   const row = userId
@@ -310,6 +303,7 @@ function _exerciseLibrary() {
 
 export function startScheduler() {
   logger.info('[scheduler] Starting 15-minute tick loop');
+  pruneMarkers(db);
   // Run first tick after 30s (let server finish startup)
   setTimeout(() => {
     _tick();

@@ -49,7 +49,7 @@ router.get('/env-locks', requireAuth, wrap(async (req, res) => {
 }));
 
 router.get('/', requireAuth, requireAdmin, wrap((req, res) => {
-  const rows = db.prepare('SELECT key, value FROM app_config').all();
+  const rows = db.prepare("SELECT key, value FROM app_config WHERE key NOT LIKE 'sched:%'").all();
   const out = {};
   for (const { key, value } of rows) {
     const redacted = key === 'smtp_pass' || key === 'ai_api_key';
