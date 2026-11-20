@@ -877,6 +877,24 @@ db.exec(`
   END;
 `);
 
+// /sync/pull reads every table above by `updated_at >= ?`, per account where
+// the table has one (routes/sync.js). Without these each delta pull walked
+// all of an account's rows (or the whole table) to find the few that changed.
+// user_settings is left out: its primary key already narrows to one account's
+// few dozen keys.
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_exercises_updated ON exercises(updated_at);
+  CREATE INDEX IF NOT EXISTS idx_programs_updated ON programs(updated_at);
+  CREATE INDEX IF NOT EXISTS idx_templates_updated ON workout_templates(updated_at);
+  CREATE INDEX IF NOT EXISTS idx_program_assignments_user_updated ON program_assignments(assigned_to, updated_at);
+  CREATE INDEX IF NOT EXISTS idx_workout_log_user_updated ON workout_log(user_id, updated_at);
+  CREATE INDEX IF NOT EXISTS idx_body_stats_log_user_updated ON body_stats_log(user_id, updated_at);
+  CREATE INDEX IF NOT EXISTS idx_body_stat_media_user_updated ON body_stat_media(user_id, updated_at);
+  CREATE INDEX IF NOT EXISTS idx_set_media_user_updated ON set_media(user_id, updated_at);
+  CREATE INDEX IF NOT EXISTS idx_ai_chat_history_user_updated ON ai_chat_history(user_id, updated_at);
+  CREATE INDEX IF NOT EXISTS idx_excused_days_user_updated ON excused_days(user_id, updated_at);
+`);
+
 // When each field of a row last changed (lib/newer-wins.js), so an edit made
 // offline never overwrites a later one made elsewhere.
 for (const t of ['programs', 'workout_templates', 'exercises', 'workout_log', 'body_stats_log', 'user_settings']) {
