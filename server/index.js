@@ -175,15 +175,6 @@ router.use((req, res, next) => {
 // page on the same site could do it with the sign-in cookie.
 router.use(crossSiteGuard({ appOrigins: ['https://app.lifttrace.local', 'https://localhost'], warn: (m) => logger.warn(m) }));
 
-router.use(authenticate);
-// Remember the address an admin uses, so emailed links (password reset,
-// invite, sharing) go there instead of to whatever Host a request claims.
-router.use((req, res, next) => {
-  if (req.user?.role === 'admin') rememberAdminOrigin(req);
-  next();
-});
-
-
 // Request logging
 router.use((req, res, next) => {
   const start = Date.now();
@@ -195,8 +186,10 @@ router.use((req, res, next) => {
   next();
 });
 
-// Static uploads — kept BEFORE auth so images are publicly readable
-// (Android WebView can't send Authorization headers on <img src> requests).
+// Static uploads, BEFORE auth so images are publicly readable
+// (Android WebView can't send Authorization headers on <img src> requests)
+// and an image costs no token check or session lookup. authenticate only
+// sets req.user (it refuses nothing), and nothing here reads it.
 const uploadsPath = process.env.UPLOADS_PATH || './uploads';
 // Progress photos are never public. They stay under UPLOADS_PATH so full
 // backup (which walks the whole tree) keeps picking them up, but the only
@@ -220,6 +213,14 @@ router.use('/uploads', (req, res, next) => {
 router.use('/uploads', express.static(uploadsPath, {
   setHeaders(res) { res.set('Cache-Control', 'public, max-age=3600'); res.set(UPLOAD_RESPONSE_HEADERS); }
 }));
+
+router.use(authenticate);
+// Remember the address an admin uses, so emailed links (password reset,
+// invite, sharing) go there instead of to whatever Host a request claims.
+router.use((req, res, next) => {
+  if (req.user?.role === 'admin') rememberAdminOrigin(req);
+  next();
+});
 
 // No-cache API responses
 router.use('/api', (req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
