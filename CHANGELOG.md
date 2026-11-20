@@ -13,6 +13,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **A collapsed exercise card shows its best set.** After the set count, e.g. `4/4 sets · 225×5`: heaviest for reps, longest for holds, farthest for distance, most for calories. Warm-ups and sets not done are ignored.
 - **1RM calculator in Gym Tools.** A new 1RM tab estimates your one-rep max from a weight and 1 to 12 reps (Epley), with a 50 to 100% table rounded to your plate step (2.5 kg / 5 lb).
 - **Export all workouts as one CSV.** Settings > Backup has a new Export all workouts row: one file, one row per set, oldest first, same columns as the single-workout export. Works on the Android app in Local mode too.
+- **Share a routine as a file.** A program's menu has Share as file, which saves its workouts as a `.lifttrace-program.json` (no ids, history or assignments). Import program on the Programs page reads one as a new inactive program, named with (Copy) if the name is taken. Exercises are matched by name; ones you don't have are added to your library.
 
 ### Fixed
 

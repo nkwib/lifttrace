@@ -8,6 +8,7 @@
   import { LtApi } from '../lib/api.js';
   import { onSyncChanges, newestRead } from '../lib/sync-refresh.js';
   import { duplicateProgram as duplicate } from '../lib/program-actions.js';
+  import { exportProgram } from '../lib/programShare.js';
   import { showSuccess, showError } from '../stores/toast.js';
   import { confirmDialog } from '../stores/confirmDialog.js';
   import { currentUser, userMgmtActive } from '../stores/auth.js';
@@ -242,6 +243,11 @@
     } catch(e) { showError(e.message); }
   }
 
+  async function shareProgramFile() {
+    try { await exportProgram(program); }
+    catch(e) { showError($_('program_detail.share_failed', { values: { error: e.message || '' } })); }
+  }
+
   // ── Rename ───────────────────────────────────────────────────────────
   // Menu-triggered (not tap-title): keeps the title unclickable so a
   // stray thumb near the header doesn't accidentally open an editor.
@@ -290,6 +296,7 @@
     /* Duplicate is available to anyone viewing the program (matches
        the previous unconditional Duplicate icon behaviour). */
                                 items.push({ label: 'Duplicate',        icon: 'content_copy',   value: 'duplicate' });
+                                items.push({ label: $_('program_detail.share_file'), icon: 'ios_share', value: 'share_file' });
     if (isCoach && isOwner)     items.push({ label: $_('program_detail.assign_to_client'), icon: 'person_add', value: 'assign' });
     if (isOwner)                items.push({ label: 'Delete Program',   icon: 'delete',         value: 'delete',    danger: true });
     return items;
@@ -299,6 +306,7 @@
     if      (v === 'rename')    startRename();
     else if (v === 'settings')  openSettings();
     else if (v === 'duplicate') duplicateProgram();
+    else if (v === 'share_file') shareProgramFile();
     else if (v === 'assign')    openAssign();
     else if (v === 'delete')    deleteProgram();
   }

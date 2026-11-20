@@ -13,6 +13,7 @@
   import Sheet from '../components/ui/Sheet.svelte';
   import ActionSheet from '../components/ui/ActionSheet.svelte';
   import { duplicateProgram, setActive, clearActive, renameProgram } from '../lib/program-actions.js';
+  import { readSharedProgramFile, importProgram } from '../lib/programShare.js';
   import CoachTabs from '../components/layout/CoachTabs.svelte';
   import { pageBanners, bannerStyle } from '../stores/settings.js';
 
@@ -64,6 +65,23 @@
       push(`/programs/${p.id}`);
     } catch(e) { showError(e.message); }
     creating = false;
+  }
+
+  let importInput;
+  let importing = false;
+  async function onImportFile(e) {
+    const f = e.target?.files?.[0];
+    if (importInput) importInput.value = '';
+    if (!f || importing) return;
+    importing = true;
+    try {
+      const { program, created } = await importProgram(await readSharedProgramFile(f));
+      showSuccess(created.length
+        ? $_('programs.import_created', { values: { name: program.name, count: created.length } })
+        : $_('programs.import_done', { values: { name: program.name } }));
+      await load();
+    } catch(err) { showError($_('programs.import_failed', { values: { error: err.message || '' } })); }
+    importing = false;
   }
 
   async function deleteProgram(e, id) {
@@ -184,6 +202,11 @@
   <header class="page-header" class:banner-gradient={$bannerStyle === 'gradient'} class:banner-animated={$bannerStyle === 'animated'}>
     <h1>{$_('routes.programs.title')}</h1>
     <div class="header-actions">
+      <button class="btn-primary-sm" on:click={() => importInput?.click()} disabled={importing}>
+        <span class="material-symbols-rounded">upload_file</span>
+        {$_('programs.import_program')}
+      </button>
+      <input type="file" accept="application/json,.json" bind:this={importInput} on:change={onImportFile} hidden />
       <button class="btn-primary-sm" on:click={() => showCreate = true}>
         <span class="material-symbols-rounded">add</span>
         New
@@ -393,7 +416,7 @@
   .page { min-height: 100dvh; background: var(--bg); padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + var(--mini-player-h, 0px) + 16px); }
 
   /* page-header styled globally in base.css */
-  .header-actions { display: flex; gap: 8px; align-items: center; }
+  .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; min-width: 0; }
   .btn-icon { background: none; border: none; cursor: pointer; color: var(--text-2); padding: 6px; border-radius: var(--radius-sm); display: flex; }
   .btn-icon:hover { background: var(--surface-2); }
   .btn-primary-sm {

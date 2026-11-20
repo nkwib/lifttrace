@@ -128,7 +128,7 @@ A program spans a block of weeks with a per-week Sets / Reps / Tempo / Rest / Lo
 Partly done. The API and MCP above pick the program's next day (the one after the last finished). The Diary does not suggest it yet: its active-program card opens the program's day list for you to pick.
 
 ### Share a routine as a file, and print it
-Not started. Export a program or template as a JSON file and import it, plus a print layout. Training-depth plan, item 12. Today single exercises can be shared as JSON.
+Export a program as a JSON file and import it is done (Share as file on a program, Import program on the list). The print layout is not started. Training-depth plan, item 12. Today single exercises can be shared as JSON.
 
 ---
 

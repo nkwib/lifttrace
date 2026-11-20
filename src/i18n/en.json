@@ -1098,6 +1098,10 @@
     "loading": "Loading programs…",
     "load_failed": "Couldn't load your programs.",
     "empty_desc": "Create a training program to organize your workout templates.",
+    "import_program":        "Import program",
+    "import_done":           "Imported \"{name}\"",
+    "import_created":        "Imported \"{name}\". Added {count} new exercises to your library.",
+    "import_failed":         "Import failed: {error}",
     "delete_title":          "Delete program?",
     "delete_message":        "Deletes the program and all of its workouts. This cannot be undone.",
     "delete_confirm":        "Delete",
@@ -1339,6 +1343,8 @@
     }
   },
   "program_detail": {
+    "share_file":            "Share as file",
+    "share_failed":          "Could not share: {error}",
     "toast": {
       "settings_saved":      "Program settings saved",
       "assigned_to":         "Assigned to {name}",
