@@ -50,3 +50,18 @@ test('both strings exist in English', () => {
   assert.equal(typeof en.updates.ready_cta, 'string');
   assert.ok(!/install/i.test(en.updates.ready_cta));
 });
+
+test('new service worker waits for the banner instead of skipping waiting at install', () => {
+  const cfg = read('../vite.config.js');
+  assert.doesNotMatch(cfg, /skipWaiting:\s*true/);
+  assert.match(cfg, /skipWaiting:\s*false/);
+});
+
+test('a stale lazy chunk reloads once on web, guarded against loops', () => {
+  const main = read('../src/main.js');
+  assert.match(main, /vite:preloadError/);
+  assert.match(main, /event\.preventDefault\(\)/);
+  assert.match(main, /!Capacitor\.isNativePlatform\(\)\) \{\n  window\.addEventListener\('vite:preloadError'/);
+  assert.match(main, /navigator\.onLine === false/);
+  assert.match(main, /sessionStorage/);
+});

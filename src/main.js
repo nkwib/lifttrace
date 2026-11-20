@@ -82,6 +82,24 @@ function followSystemTheme(e) {
 }
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', followSystemTheme);
 
+// A lazy chunk 404s when a deploy replaced it under an open tab. Reload once
+// to pick up the new bundle (web only; the APK ships its chunks). Skipped
+// offline (a reload would land on the offline page) and within 10 s of the
+// last try, so a real outage cannot loop.
+if (!Capacitor.isNativePlatform()) {
+  window.addEventListener('vite:preloadError', (event) => {
+    if (navigator.onLine === false) return;
+    const KEY = 'lt_preload_reload_at';
+    try {
+      const last = Number(sessionStorage.getItem(KEY)) || 0;
+      if (Date.now() - last < 10000) return;
+      sessionStorage.setItem(KEY, String(Date.now()));
+    } catch { return; }
+    event.preventDefault();
+    window.location.reload();
+  });
+}
+
 DB.init()
   .then(() => {
     new App({ target: document.getElementById('app') });

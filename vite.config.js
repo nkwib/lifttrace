@@ -46,8 +46,11 @@ export default defineConfig({
         navigateFallback: null,
         directoryIndex: null,
         cleanupOutdatedCaches: true,
-        // skipWaiting + clientsClaim ensure new SW activates immediately
-        skipWaiting: true,
+        // No skipWaiting at install: a new worker waits until the user takes
+        // the update (UpdateBanner -> SKIP_WAITING), so the open tab keeps the
+        // old precache its lazy chunks come from. clientsClaim only matters
+        // once the worker does activate.
+        skipWaiting: false,
         clientsClaim: true,
         runtimeCaching: [
           {
