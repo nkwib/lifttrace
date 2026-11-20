@@ -18,6 +18,7 @@ import { buildPlannedExercises, lastCompletedSession, logIntoSets, PLAN_SETTING_
 import { ensureExerciseUuids, withFreshIds } from './workout-uuid.js';
 import { currentDate, currentSessionId, showWorkout, loadWorkoutSessions, settlePendingSave } from '../stores/workout.js';
 import { foldText } from './search-text.js';
+import { normalizeSetValues } from './set-values.js';
 import { OFFLINE_HEADER } from './offline-edits.js';
 import { DB } from './db.js';
 import { fillWeeks } from './statsFormat.js';
@@ -1344,22 +1345,38 @@ async function _logWorkout({ date, name, duration_min, exercises }) {
   if (unknown.length) {
     throw new Error(`Unknown exercise(s): ${unknown.join(', ')}. Please confirm and I'll add as custom, or pick from get_exercises.`);
   }
+  // Validate every set before anything is written, so one bad value aborts
+  // the whole log (parity with the server's set-input rules).
+  for (const r of resolved) {
+    const { input } = r;
+    if (!Array.isArray(input.sets) || !input.sets.length) {
+      throw new Error(`${input.name}: sets[] must be a non-empty array.`);
+    }
+    const amount = !!_amountKind(input.sets);
+    r.values = input.sets.map((s, i) => {
+      try {
+        return normalizeSetValues(s || {}, { amount });
+      } catch (e) {
+        throw new Error(`${input.name}, set ${i + 1}: ${e.message}`);
+      }
+    });
+  }
 
   const existing = await _workoutForDate(date);
   const existingExs = existing?.workout?.exercises || [];
-  const newExs = resolved.map(({ lib, input }) => ({
+  const newExs = resolved.map(({ lib, input, values }) => ({
     exercise_id: lib.id,
     exercise_name: lib.name,
-    sets: (input.sets || []).map(s => ({
-      weight: Number(s.weight) || 0,
-      reps:   Number(s.reps)   || 0,
+    sets: input.sets.map((s, i) => ({
+      weight: values[i].weight ?? 0,
+      reps:   values[i].reps ?? 0,
       ...(Number(s.duration_sec) > 0 ? { duration_sec: Math.round(Number(s.duration_sec)) } : {}),
       ..._sidesOf(s),
       ...(Number(s.distance_m) > 0 ? { distance_m: Math.round(Number(s.distance_m) * 1000) / 1000 } : {}),
       ...(Number(s.calories) > 0 ? { calories: Math.round(Number(s.calories)) } : {}),
-      completed: s.completed !== false,
-      ...(s.warmup ? { warmup: true } : {}),
-      ...(s.rpe != null ? { rpe: Number(s.rpe) } : {}),
+      completed: values[i].completed !== false,
+      ...(values[i].warmup ? { warmup: true } : {}),
+      ...(values[i].rpe != null ? { rpe: values[i].rpe } : {}),
     })),
     // Stamp timed (issue #89), distance and calorie (issue #119) exercises
     // explicitly so the diary shows the right input even before anyone
@@ -1455,18 +1472,19 @@ async function _logSet({ workout_id, exercise_id, exercise_name, weight, reps, d
   if (idx == null) throw new Error('exercise_id (position) or exercise_name is required and must match a slot in the workout');
   const sides = _sidesOf({ duration_l_sec, duration_r_sec });
   const kind = _amountKind([{ duration_sec: sides.duration_sec ?? duration_sec, distance_m, calories }]);
+  const v = normalizeSetValues({ weight, reps: kind ? undefined : reps, rpe, warmup, completed }, { amount: !!kind });
   const field = kind ? SET_TYPE_FIELD[kind] : null;
   const amount = kind === 'distance' ? Math.round(Number(distance_m) * 1000) / 1000
     : kind === 'time' && sides.duration_sec ? sides.duration_sec
     : kind ? Math.round(Number(kind === 'time' ? duration_sec : calories)) : null;
   const newSet = {
-    weight: Number(weight) || 0,
-    reps:   kind ? 0 : (Number(reps) || 0),
+    weight: v.weight ?? 0,
+    reps:   kind ? 0 : v.reps,
     ...(kind ? { [field]: amount } : {}),
     ...(kind === 'time' ? sides : {}),
-    completed: completed !== false,
-    ...(warmup ? { warmup: true } : {}),
-    ...(rpe != null ? { rpe: Number(rpe) } : {}),
+    completed: v.completed !== false,
+    ...(v.warmup ? { warmup: true } : {}),
+    ...(v.rpe != null ? { rpe: v.rpe } : {}),
   };
   // Refuse to mix kinds on an exercise whose type was chosen explicitly; the
   // set would render and count as the wrong thing (issues #89, #119).
@@ -1479,19 +1497,19 @@ async function _logSet({ workout_id, exercise_id, exercise_name, weight, reps, d
   // workout, as ticking it in the Diary does (planned-workout.js, issue
   // #140); in a finished one, or with none left, it's added, as the server's
   // log_set does.
-  const given = (v) => v != null && v !== '';
+  const given = (x) => x != null && x !== '';
   const { sets, index: setIndex } = wRow.completed
     ? { sets: [...(exs[idx].sets || []), newSet], index: (exs[idx].sets || []).length }
     : logIntoSets(exs[idx].sets, {
         weight: given(weight) ? newSet.weight : undefined,
-        reps: !kind && given(reps) ? newSet.reps : undefined,
+        reps: kind ? undefined : newSet.reps,
         duration_sec: kind === 'time' ? newSet.duration_sec : undefined,
         duration_l_sec: newSet.duration_l_sec,
         duration_r_sec: newSet.duration_r_sec,
         distance_m: kind === 'distance' ? newSet.distance_m : undefined,
         calories: kind === 'calories' ? newSet.calories : undefined,
         rpe: given(rpe) ? newSet.rpe : undefined,
-        warmup: !!warmup,
+        warmup: !!v.warmup,
         completed: newSet.completed,
       }, newSet, { at: new Date().toISOString() });
   exs[idx] = { ...exs[idx], sets, ...(kind && !exs[idx].set_type ? { set_type: kind } : {}) };
