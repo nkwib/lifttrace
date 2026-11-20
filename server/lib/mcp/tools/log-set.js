@@ -27,6 +27,7 @@ import { DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
 import { logIntoSets } from '../../planned-workout.js';
 import { sideHoldSec } from '../../volume.js';
 import { toId } from '../../program-access.js';
+import { normalizeReps, normalizeWeight, normalizeRpe, normalizeFlag } from '../../set-input.js';
 
 /**
  * Core mutation, shared by the MCP tool below and the public REST API
@@ -78,10 +79,16 @@ const AMOUNTS = [
 ];
 const sentValue = (v) => v != null && v !== '';
 
-export function logSetCore(userId, { exercise_id: exerciseIdSent, reps, weight, duration_sec, duration_l_sec, duration_r_sec, distance_m, calories, rpe, warmup, completed, date, workout_id } = {}) {
+export function logSetCore(userId, { exercise_id: exerciseIdSent, reps: repsSent, weight: weightSent, duration_sec, duration_l_sec, duration_r_sec, distance_m, calories, rpe: rpeSent, warmup: warmupSent, completed: completedSent, date, workout_id } = {}) {
   // A number however it was sent: a Home Assistant template sends "12", and
   // a string id never matched the day's entry for that exercise.
   const exercise_id = toId(exerciseIdSent) ?? exerciseIdSent;
+  // Checked and coerced once, before anything is built from them: unsent
+  // values stay undefined (an unsent weight keeps a planned set's weight).
+  const weight = normalizeWeight(weightSent);
+  const rpe = normalizeRpe(rpeSent);
+  const warmup = normalizeFlag('warmup', warmupSent);
+  const completed = normalizeFlag('completed', completedSent);
   const day = date || todayLocal();
   if (!DATE_RE.test(day)) throw new Error(`Invalid date '${day}'; expected YYYY-MM-DD.`);
   const workoutId = workout_id == null || workout_id === '' ? null : toId(workout_id);
@@ -128,6 +135,8 @@ export function logSetCore(userId, { exercise_id: exerciseIdSent, reps, weight, 
     value = amount.whole ? Math.round(n) : Math.round(n * 1000) / 1000;
     if (!Number.isFinite(value) || value <= 0 || value > amount.max) throw new Error(amount.bad);
   }
+  // Reps are ignored (stored as 0) on a timed, distance or calorie set.
+  const reps = amount ? undefined : normalizeReps(repsSent);
   if (!amount && reps == null) {
     throw new Error('Send reps for a rep set, duration_sec for a timed set (plank, hold), distance_m for a distance set (row, sled, carry, run), or calories for a calorie set (air bike).');
   }
@@ -171,7 +180,7 @@ export function logSetCore(userId, { exercise_id: exerciseIdSent, reps, weight, 
     distance_m: kind === 'distance' ? value : undefined,
     calories: kind === 'calories' ? value : undefined,
     rpe: rpe ?? undefined,
-    warmup: !!warmup,
+    warmup: warmup === true,
     completed: newSet.completed,
   };
   const done = newSet.completed !== false;
@@ -211,7 +220,7 @@ export function logSetCore(userId, { exercise_id: exerciseIdSent, reps, weight, 
     return next;
   }, {
     pick: (live) => {
-      chosen = pickSession(live, { exerciseId: exercise_id, done, warmup: !!warmup, workoutId, day });
+      chosen = pickSession(live, { exerciseId: exercise_id, done, warmup: warmup === true, workoutId, day });
       return chosen;
     },
   });
