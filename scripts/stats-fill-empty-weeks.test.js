@@ -103,3 +103,20 @@ test('Statistics passes $weekStartsOn to fillWeeks and refetches on it', () => {
   assert.match(src, /fillWeeks\(frequencyRaw, startDate, endDate, \{ count: 0 \}, 520, \$weekStartsOn\)/);
   assert.match(src, /\$: range, \$cardioEnabled, \$weekStartsOn, loadRangeData\(\);/);
 });
+
+test('cardio weeks fill between first and last data week (not before the first)', () => {
+  const rows = [{ week: '2026-01-05', minutes: 60 }, { week: '2026-02-23', minutes: 60 }];
+  const r = fillWeeks(rows, '2025-12-01', '2026-02-25', { minutes: 0 }, 520, 'monday');
+  assert.equal(r.length, 8);
+  assert.equal(Math.round(r.reduce((s, x) => s + x.minutes, 0) / r.length), 15);
+  assert.equal(fillWeeks([], '2026-01-01', '2026-02-01', { minutes: 0 }).length, 0);
+});
+
+test('Statistics cardio block uses filled weeks, keeps thinned labels', () => {
+  const src = readFileSync(new URL('../src/routes/Statistics.svelte', import.meta.url), 'utf8');
+  assert.match(src, /cardioFilled = fillWeeks\(cardioWeekly, startDate, endDate, \{ minutes: 0 \}, 520, \$weekStartsOn\)/);
+  assert.match(src, /\{#each cardioFilled as w, i\}/);
+  assert.match(src, /cwAvg\s+= cardioFilled\.length \? Math\.round\(cwTotal \/ cardioFilled\.length\)/);
+  assert.match(src, /class="cw-label" class:shown=\{showBarLabel\(i, cardioFilled\.length\)\} aria-hidden="true"/);
+  assert.match(src, /\{#if cardioWeekly\.length === 0\}/);
+});

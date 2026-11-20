@@ -18,7 +18,7 @@ import { onMount, onDestroy } from 'svelte';
   import { currentUser } from '../stores/auth.js';
   import { DB } from '../lib/db.js';
   import { estimateWorkoutCalories, ageFromDob, isRepSet, fmtSetDuration, fmtDistance, fmtCalories, fromMeters, distanceUnitOf } from '../lib/workout.js';
-  import { fmtVol, fmtWeekLabel, fillWeeks, hasRecord, recordDate } from '../lib/statsFormat.js';
+  import { fmtVol, fmtWeekLabel, fillWeeks, showBarLabel, hasRecord, recordDate } from '../lib/statsFormat.js';
   import { localDateStr } from '../lib/db.js';
   import { weekdayOrder } from '../lib/week-start.js';
   import { trainedDates, weeklyGoal, weekStartOf, shiftDate, hasWorkingSet, exercisesOf, excusedOnly } from '../lib/trained-day.js';
@@ -103,6 +103,8 @@ import { onMount, onDestroy } from 'svelte';
   let muscleLoad = {};   // { [slug]: effectiveSets } for the body map
   let weekdayDist = [];
   let cardioWeekly = []; // [{ week, minutes }] for the Cardio metric
+  // Cardio weeks too, so layoffs count in the average and on-target ratio.
+  $: cardioFilled = fillWeeks(cardioWeekly, startDate, endDate, { minutes: 0 }, 520, $weekStartsOn);
   let cardioSessions = []; // individual sessions in range, newest first, for the session list under the chart
   let workoutDates = new Set();
   // Excused days (issue #121): their own mark on the heatmap, and off the
@@ -1358,10 +1360,10 @@ import { onMount, onDestroy } from 'svelte';
       {/if}
 
       {#if metric === 'cardio'}
-        {@const cwTotal = cardioWeekly.reduce((s, w) => s + (w.minutes || 0), 0)}
-        {@const cwMax   = cardioWeekly.reduce((s, w) => Math.max(s, w.minutes || 0), 0)}
-        {@const cwAvg   = cardioWeekly.length ? Math.round(cwTotal / cardioWeekly.length) : 0}
-        {@const cwHit   = $weeklyCardioMinutesGoal > 0 ? cardioWeekly.filter(w => w.minutes >= $weeklyCardioMinutesGoal).length : 0}
+        {@const cwTotal = cardioFilled.reduce((s, w) => s + (w.minutes || 0), 0)}
+        {@const cwMax   = cardioFilled.reduce((s, w) => Math.max(s, w.minutes || 0), 0)}
+        {@const cwAvg   = cardioFilled.length ? Math.round(cwTotal / cardioFilled.length) : 0}
+        {@const cwHit   = $weeklyCardioMinutesGoal > 0 ? cardioFilled.filter(w => w.minutes >= $weeklyCardioMinutesGoal).length : 0}
         {#if cardioWeekly.length === 0}
           <div class="empty-state">
             <span class="material-symbols-rounded">directions_run</span>
@@ -1383,7 +1385,7 @@ import { onMount, onDestroy } from 'svelte';
             </div>
             {#if $weeklyCardioMinutesGoal > 0}
               <div class="summary-card">
-                <span class="sc-value-sm">{cwHit}<span class="sc-sub">/{cardioWeekly.length}</span></span>
+                <span class="sc-value-sm">{cwHit}<span class="sc-sub">/{cardioFilled.length}</span></span>
                 <span class="sc-label">{$_('statistics.on_target')}</span>
               </div>
             {/if}
@@ -1391,14 +1393,14 @@ import { onMount, onDestroy } from 'svelte';
 
           <div class="chart-card">
             <h3 class="chart-title">{$_('statistics.weekly_minutes')}</h3>
-            <div class="cw-bars" style="--target-frac: {$weeklyCardioMinutesGoal > 0 && cwMax > 0 ? Math.min(1, $weeklyCardioMinutesGoal / Math.max(cwMax, $weeklyCardioMinutesGoal)) : 0}">
-              {#each cardioWeekly as w}
+            <div class="cw-bars" class:dense={cardioFilled.length > 12} style="--target-frac: {$weeklyCardioMinutesGoal > 0 && cwMax > 0 ? Math.min(1, $weeklyCardioMinutesGoal / Math.max(cwMax, $weeklyCardioMinutesGoal)) : 0}">
+              {#each cardioFilled as w, i}
                 {@const denom = Math.max(cwMax, $weeklyCardioMinutesGoal || 0)}
                 {@const pct = denom > 0 ? Math.round((w.minutes / denom) * 100) : 0}
                 {@const hitGoal = $weeklyCardioMinutesGoal > 0 && w.minutes >= $weeklyCardioMinutesGoal}
                 <div class="cw-col" title={$_('statistics.week_minutes', { values: { week: w.week, n: w.minutes } })}>
                   <div class="cw-fill" class:hit={hitGoal} style="height:{pct}%"></div>
-                  <span class="cw-label">{w.week.slice(5)}</span>
+                  <span class="cw-label" class:shown={showBarLabel(i, cardioFilled.length)} aria-hidden="true">{w.week.slice(5)}</span>
                 </div>
               {/each}
             </div>
@@ -2243,7 +2245,10 @@ import { onMount, onDestroy } from 'svelte';
     transition: height var(--dur-slow, 400ms);
   }
   .cw-fill.hit { background: linear-gradient(180deg, var(--success, #2FD66F), color-mix(in srgb, var(--success, #2FD66F) 60%, transparent)); }
-  .cw-label { font-size: 10px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+  .cw-bars.dense { gap: 1px; }
+  .cw-label { font-size: 10px; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; max-width: 100%; visibility: hidden; }
+  .cw-label.shown { visibility: visible; }
+  .cw-bars.dense .cw-label.shown { overflow: visible; max-width: 0; display: flex; justify-content: center; }
   .sc-sub { font-size: 13px; color: var(--text-3); font-weight: 600; }
 
   /* Cardio session list under the weekly chart. Compact rows, newest
