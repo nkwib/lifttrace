@@ -41,13 +41,51 @@ export function splitCsvLine(line, delim) {
   return out.map(s => s.trim());
 }
 
+/** Single-pass, quote-aware CSV reader (RFC 4180). Returns trimmed cell
+ *  arrays, one per record. Quoted fields may contain newlines and "" escapes;
+ *  a quote only opens at field start (so 5" stays literal). Records whose
+ *  cells are all empty are dropped. An unterminated quote ends at EOF. */
+export function readCsvRecords(text, delim) {
+  const s = String(text ?? '').replace(/^﻿/, '');
+  const records = [];
+  let row = [];
+  let cur = '';
+  let inQuote = false;
+  let fieldStart = true;
+  const endField = () => { row.push(cur.trim()); cur = ''; fieldStart = true; };
+  const endRecord = () => {
+    endField();
+    if (row.some(c => c !== '')) records.push(row);
+    row = [];
+  };
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (inQuote) {
+      if (c === '"' && s[i + 1] === '"') { cur += '"'; i++; }
+      else if (c === '"') inQuote = false;
+      else cur += c;
+    } else if (c === '"' && fieldStart) {
+      inQuote = true; fieldStart = false;
+    } else if (c === delim) {
+      endField();
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && s[i + 1] === '\n') i++;
+      endRecord();
+    } else {
+      cur += c;
+      if (c.trim() !== '') fieldStart = false;
+    }
+  }
+  if (cur !== '' || row.length > 0 || inQuote) endRecord();
+  return records;
+}
+
 /** Parse a CSV with a header row into array of keyed objects. */
 export function parseCsv(text, delim) {
-  const lines = text.replace(/\r\n?/g, '\n').split('\n').filter(l => l.trim());
-  if (lines.length === 0) return [];
-  const header = splitCsvLine(lines[0], delim).map(h => h.toLowerCase());
-  return lines.slice(1).map(line => {
-    const cols = splitCsvLine(line, delim);
+  const records = readCsvRecords(text, delim);
+  if (records.length === 0) return [];
+  const header = records[0].map(h => h.toLowerCase());
+  return records.slice(1).map(cols => {
     const row = {};
     for (let i = 0; i < header.length; i++) row[header[i]] = cols[i] ?? '';
     return row;

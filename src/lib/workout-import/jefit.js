@@ -1,4 +1,4 @@
-import { parseCsv, splitCsvLine, convertWeight } from './common.js';
+import { readCsvRecords, convertWeight } from './common.js';
 
 /**
  * Jefit exports a few different formats. The one we target is the "Workout
@@ -18,9 +18,8 @@ import { parseCsv, splitCsvLine, convertWeight } from './common.js';
  */
 export function parseJefit(csvText, userUnit) {
   // Peek at the header to decide which flavor we're in.
-  const raw = csvText.replace(/\r\n?/g, '\n');
-  const firstLine = raw.split('\n', 1)[0];
-  const headerCells = splitCsvLine(firstLine, ',').map(s => s.toLowerCase());
+  const records = readCsvRecords(csvText, ',');
+  const headerCells = (records[0] || []).map(s => s.toLowerCase());
 
   // Build a field index
   const idx = (names) => {
@@ -51,7 +50,7 @@ export function parseJefit(csvText, userUnit) {
     : null;
 
   // Parse each row positionally to sidestep duplicate header names
-  const rows = raw.split('\n').slice(1).filter(l => l.trim()).map(l => splitCsvLine(l, ','));
+  const rows = records.slice(1);
 
   const byKey = new Map();
   for (const cols of rows) {
