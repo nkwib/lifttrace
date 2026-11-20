@@ -5,8 +5,9 @@
  * kept it used to fall back to UTC, so on a server whose zone isn't UTC a
  * reminder went out at the wrong hour.
  *
- * And a reminder names the first day of the program being followed, never
- * one of a program deleted elsewhere (a third-party client's push).
+ * And a reminder names the next day of the program being followed (the one
+ * after the last finished, the first with none), never one of a program
+ * deleted elsewhere (a third-party client's push).
  *
  * The real server and scheduler (first pass 30 s in), on a clock at 12:05
  * UTC, which is 02:05 the next day in the server's zone (Kiritimati, UTC+14)
@@ -47,6 +48,10 @@ const PEOPLE = {
   kept0200: ['02:00', 'Pacific/Pago_Pago', null], // the server's hour, not its own
   followed: ['02:00', null, 'live'],
   deleted: ['02:00', null, 'deleted'],
+  // 3-day program, the number is the day last finished (0: none yet)
+  ppl1: ['02:00', null, 'ppl1'],
+  ppl3: ['02:00', null, 'ppl3'],
+  ppl0: ['02:00', null, 'ppl0'],
 };
 let proc, dir, ntfy, started;
 const pushes = [];
@@ -93,8 +98,22 @@ test.before(async () => {
     if (zone) await j('GET', `/api/programs?tz=${encodeURIComponent(zone)}`, null, t);
     if (program) {
       const p = await j('POST', '/api/programs', { name: `${program} plan` }, t);
-      await j('POST', '/api/templates', { program_id: p.id, name: program === 'live' ? 'Push Day' : 'Leg Day', exercises: [] }, t);
+      const days = program.startsWith('ppl') ? ['Day 1', 'Day 2', 'Day 3'] : [program === 'live' ? 'Push Day' : 'Leg Day'];
+      const tpls = [];
+      for (const name of days) tpls.push(await j('POST', '/api/templates', { program_id: p.id, name, exercises: [] }, t));
       await j('POST', `/api/programs/${p.id}/activate`, null, t);
+      if (program.startsWith('ppl')) {
+        // A finished workout of that day before the reminder's day, in a
+        // program started earlier (the fake clock is behind SQLite's).
+        const finished = Number(program.slice(3));
+        const D = serverRequire('better-sqlite3');
+        const db = new D(join(dir, 'lt.db'));
+        try {
+          db.prepare("UPDATE program_assignments SET assigned_at = '2026-01-01 00:00:00' WHERE program_id = ?").run(p.id);
+          const uid = db.prepare('SELECT assigned_to AS user_id FROM program_assignments WHERE program_id = ?').get(p.id).user_id;
+          if (finished) db.prepare("INSERT INTO workout_log (user_id, date, template_id, program_id, name, completed) VALUES (?, '2026-10-10', ?, ?, 'x', 1)").run(uid, tpls[finished - 1].id, p.id);
+        } finally { db.close(); }
+      }
       if (program === 'deleted') {
         // Deleted elsewhere, as a restored backup holds it (a third-party
         // client's push is scripts/deleted-programs-server.test.js; here the
@@ -122,6 +141,11 @@ test("no zone kept: a reminder goes at its hour on the server's clock, not UTC's
 test("a zone kept: the account's own clock, as before", { skip }, () => {
   assert.equal(got('kept0100').length, 1);
   assert.equal(got('kept0200').length, 0);
+});
+test("a reminder names the program's next day: after the last finished, wrapping, the first with none", { skip }, () => {
+  assert.deepEqual(got('ppl1').map((p) => p.body), ["Time to train! Today's workout: Day 2"]);
+  assert.deepEqual(got('ppl3').map((p) => p.body), ["Time to train! Today's workout: Day 1"]);
+  assert.deepEqual(got('ppl0').map((p) => p.body), ["Time to train! Today's workout: Day 1"]);
 });
 test("a reminder names the program followed, never one deleted elsewhere", { skip }, () => {
   assert.deepEqual(got('followed').map((p) => p.body), ["Time to train! Today's workout: Push Day"]);

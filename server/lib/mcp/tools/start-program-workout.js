@@ -36,6 +36,7 @@ import { cleanWorkoutRefs, programFor, templateFor, toId } from '../../program-a
 import { ensureExerciseUuids } from '../../workout-merge.js';
 import { exerciseHistory } from '../../exercise-history.js';
 import { fieldTimes } from '../../newer-wins.js';
+import { activeAssignment as _activeAssignment, programTemplates as _programTemplates, nextDay as _nextDay } from '../../program-next-day.js';
 import { buildPlannedExercises, lastCompletedSession, PLAN_SETTING_DEFAULTS } from '../../planned-workout.js';
 
 /** A synced setting as the account has it, else what every device starts with. */
@@ -60,34 +61,6 @@ function _freshIds(exercises) {
 const _programGone = (programId) => !!db.prepare('SELECT deleted_at FROM programs WHERE id = ?').get(programId)?.deleted_at;
 
 const _exercisesOf = (row) => { try { return JSON.parse(row.exercises || '[]') || []; } catch { return []; } };
-
-/** The account's active program (its assignment and program row), or null. */
-function _activeAssignment(userId) {
-  return db.prepare(
-    `SELECT pa.program_id, pa.assigned_at, p.name, p.duration_weeks FROM program_assignments pa
-       JOIN programs p ON p.id = pa.program_id
-      WHERE pa.assigned_to = ? AND pa.active = 1 AND p.deleted_at IS NULL`
-  ).get(userId) || null;
-}
-
-/**
- * The active program's next workout day for `day`: the one after the last
- * one finished before that date since the program was started (the same
- * workouts that move its week on), wrapping to the first; the first when
- * none was.
- */
-function _nextDay(userId, assignment, templates, day) {
-  const ids = templates.map(t => t.id);
-  const last = db.prepare(
-    `SELECT template_id FROM workout_log
-      WHERE user_id = ? AND completed = 1 AND deleted_at IS NULL AND date < ?
-        AND template_id IN (${ids.map(() => '?').join(',')})
-        ${assignment.assigned_at ? 'AND date >= date(?)' : ''}
-      ORDER BY date DESC, session_seq DESC, id DESC LIMIT 1`
-  ).get(userId, day, ...ids, ...(assignment.assigned_at ? [assignment.assigned_at] : []));
-  const at = last ? ids.indexOf(last.template_id) : -1;
-  return templates[at < 0 ? 0 : (at + 1) % templates.length];
-}
 
 /** The answer: the workout, with what it was started from. The program's
  *  name only for a program this account sees (a coach's prescribed day can
@@ -132,9 +105,7 @@ export function startProgramWorkoutCore(userId, { date, template_id } = {}) {
       template = access.template;
     } else {
       if (!assignment) throw new Error('No active program. Activate one in the app, or send template_id.');
-      programTemplates = db.prepare(
-        'SELECT * FROM workout_templates WHERE program_id = ? AND deleted_at IS NULL ORDER BY order_index ASC, id ASC'
-      ).all(assignment.program_id);
+      programTemplates = _programTemplates(assignment.program_id);
       if (!programTemplates.length) throw new Error(`Your active program, ${assignment.name}, has no workout days yet.`);
     }
 

@@ -9,6 +9,7 @@ import { isBackupDue } from './backup-schedule.js';
 import { trainedDateSet, cardioCounts } from './trained-days.js';
 import { getExcusedDay, listExcusedDays } from './excused-days.js';
 import { zoneFor } from './user-zone.js';
+import { nextProgramDay } from './program-next-day.js';
 import { readSettingRaw } from './secret-settings.js';
 
 /**
@@ -165,10 +166,16 @@ async function _processUser(userId) {
       if (!logged && !getExcusedDay(userId, day)) {
         // Get active program template name
         let templateName = '';
+        // An account's next day by the program's order; a failure or no
+        // answer degrades to the generic message.
+        if (userId) {
+          try { templateName = nextProgramDay(userId, day)?.name || ''; }
+          catch (e) { logger.debug(`[scheduler] next program day error: ${e.message}`); }
+        }
         const activeRow = userId
           ? db.prepare('SELECT program_id FROM program_assignments WHERE assigned_to = ? AND active = 1').get(userId)
           : db.prepare("SELECT value FROM app_config WHERE key = 'active_program'").get();
-        if (activeRow) {
+        if (!userId && activeRow) {
           const progId = activeRow.program_id || activeRow.value;
           // Not a day deleted elsewhere, nor one of a program deleted elsewhere.
           const template = db.prepare(
