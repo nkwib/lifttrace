@@ -35,6 +35,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Escape and Tab behave in more popups.** The time picker, full radio player, sign-in verification, setup skip prompt and test-email dialog now close on Escape, keep Tab inside, and return focus when closed.
 - **Workout names are trimmed and can't be blank.** Saving a workout with an empty name now shows an error instead of reporting success, on the server and in Local mode. Menus, badges and labels in the workout editor, program and exercise pages are translatable.
 - **Move up/down no longer splits supersets.** A single exercise jumps over a whole superset; members reorder only within their group (use Remove from superset to leave it).
+- **Progress photos older than 12 months.** The timeline has a "Last 12 months" / "All time" switch, so older photos can be viewed, compared and deleted.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added

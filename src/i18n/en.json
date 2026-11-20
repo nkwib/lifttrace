@@ -1898,6 +1898,11 @@
     "adding":         "Adding…",
     "view_timeline":  "View Timeline",
     "compare_ends":   "Compare First and Latest",
+    "range": {
+      "label":  "Photo range",
+      "recent": "Last {n} months",
+      "all":    "All time"
+    },
     "compare_pick":   "Compare Two",
     "compare_cancel": "Cancel",
     "compare_hint":   "Pick two photos to compare ({n}/2 selected)",

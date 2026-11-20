@@ -31,6 +31,11 @@
 
   export let months = 12;
 
+  // The window shown: the `months` prop to start with, 'all' on request. The
+  // quiet refreshes read startStr() too, so they keep to the chosen window.
+  let range = months;
+  const ALL_FROM = '2000-01-01';
+
   let photos = [];
   let statsByDate = new Map();
   let loading = true;
@@ -54,8 +59,9 @@
   // only free to collect while you are standing there.
   let weightPromptDate = null;
   function startStr() {
+    if (range === 'all') return ALL_FROM;
     const d = new Date();
-    d.setMonth(d.getMonth() - months);
+    d.setMonth(d.getMonth() - range);
     return d.toLocaleDateString('sv-SE');
   }
 
@@ -86,6 +92,14 @@
   }
 
   onMount(load);
+
+  function setRange(next) {
+    if (next === range) return;
+    range = next;
+    compareMode = false;
+    picked = [];
+    load();
+  }
 
   // A sync that brought body stats (a weight logged on the web) shows on the
   // photos at once: only the weights are read again, quietly; a read that
@@ -244,6 +258,14 @@
 />
 
 <div class="pp-wrap">
+  <div class="pp-range" role="group" aria-label={$_('progress.range.label')}>
+    <button class="pp-rangechip" aria-pressed={range !== 'all'} on:click={() => setRange(months)}>
+      {$_('progress.range.recent', { values: { n: months } })}
+    </button>
+    <button class="pp-rangechip" aria-pressed={range === 'all'} on:click={() => setRange('all')}>
+      {$_('progress.range.all')}
+    </button>
+  </div>
   {#if loading}
     <Spinner block />
   {:else if photos.length === 0}
@@ -354,6 +376,22 @@
   .pp-empty-icon { font-size: 44px; color: var(--text-3); }
   .pp-empty h3 { margin: 4px 0 0; font-size: 16px; color: var(--text-1); }
   .pp-empty p { margin: 0 0 12px; font-size: 13px; color: var(--text-3); max-width: 40ch; }
+
+  .pp-range { display: flex; gap: 8px; padding: 0 4px 12px; }
+  .pp-rangechip {
+    min-height: 44px; padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-2);
+    color: var(--text-2);
+    font-size: 13px; font-weight: 600; font-family: inherit;
+    cursor: pointer;
+  }
+  .pp-rangechip[aria-pressed='true'] {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    color: var(--accent);
+  }
 
   .pp-toolbar { padding: 0 4px 12px; }
   .pp-actions { display: flex; gap: 8px; flex-wrap: wrap; }
