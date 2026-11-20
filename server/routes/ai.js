@@ -58,7 +58,7 @@ router.get('/history', wrap((req, res) => {
 // POST /api/ai/history — save a message
 router.post('/history', wrap((req, res) => {
   const { role, content } = req.body;
-  if (!role || !content) return res.status(400).json({ error: 'role and content required' });
+  if (!role || !content || typeof content !== 'string') return res.status(400).json({ error: 'role and content required' });
   db.prepare('INSERT INTO ai_chat_history (user_id, role, content) VALUES (?, ?, ?)').run(uid(req), role, content);
   res.json({ ok: true });
 }));

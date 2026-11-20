@@ -18,6 +18,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Diary progression chip uses the exercise's equipment.** Cable and machine lifts now suggest +5 kg / +10 lb and dumbbells +2 kg, read from the library (it was always the flat 2.5 kg / 5 lb). Assisted exercises no longer get a "Try more weight" chip.
 - **RIR/RPE chips readable on the light theme.** Chip text uses the darker status text colours (new hard and danger text tokens); borders keep the vivid hues.
 - **Cardio statistics count empty weeks.** The weekly average and "on target" ratio include layoff weeks, and long ranges thin the week labels.
+- **Trace remembers photo questions and times.** Messages sent with photos are now saved to chat history (as text plus a photo marker, never the image), and reloaded messages show their time again.
 - **Weekly charts for Sunday-start users.** Volume and frequency charts no longer show zero bars when the week starts on Sunday, and Statistics reloads when the setting changes.
 
 ### Added

@@ -9,7 +9,7 @@
   import { _ } from 'svelte-i18n';
   import { activateOnKey } from '../../lib/a11y.js';
   import { portal } from '../../lib/portal.js';
-  import { callAI, callAIProxy, AI_DEFAULT_MODELS } from '../../lib/aiChat.js';
+  import { callAI, callAIProxy, AI_DEFAULT_MODELS, persistable, mapHistoryRows } from '../../lib/aiChat.js';
   import { TOOLS, runTool, forgetToolReads } from '../../lib/aiTools.js';
   import { aiEnabled, aiEffectivelyEnabled, envLocks, aiProvider, aiApiKey, aiModel, aiBaseUrl, aiAssistantName, dateFormat, weightUnit, weeklyWorkoutGoal, quickLogEnabled, smartLogVoiceLang } from '../../stores/settings.js';
 
@@ -66,7 +66,7 @@
   onMount(async () => {
     try {
       const res = await fetch('/api/ai/history', { credentials: 'include' });
-      if (res.ok) messages = await res.json();
+      if (res.ok) messages = mapHistoryRows(await res.json());
     } catch {}
   });
 
@@ -648,7 +648,7 @@
     if (persist) fetch('/api/ai/history', {
       method: 'POST', credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userMsg),
+      body: JSON.stringify({ role: 'user', content: persistable(userMsg.content) }),
     }).catch(() => {});
 
     try {

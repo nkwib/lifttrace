@@ -707,3 +707,30 @@ function _safeJsonParse(s, fallback) {
   if (typeof s !== 'string') return fallback;
   try { return JSON.parse(s); } catch { return fallback; }
 }
+
+// Chat history is stored as plain text. Image bytes are never saved: a
+// message with photos keeps its text parts plus one marker per photo.
+// The marker is stored data, not UI, so it is not localized.
+export function persistable(content) {
+  if (typeof content === 'string') return content;
+  if (!Array.isArray(content)) return '';
+  const text = content.filter(p => p && p.type === 'text' && p.text).map(p => p.text).join('\n');
+  const n = content.filter(p => p && p.type === 'image').length;
+  const marker = n === 0 ? '' : n === 1 ? '[photo]' : `[${n} photos]`;
+  return [text, marker].filter(Boolean).join('\n');
+}
+
+// Saved rows -> chat messages. created_at is 'YYYY-MM-DD HH:MM:SS' UTC
+// (server and Local mode); values already ISO pass through.
+export function historyTime(createdAt) {
+  if (typeof createdAt !== 'string' || !createdAt) return null;
+  let s = createdAt;
+  if (!s.includes('T')) s = s.replace(' ', 'T') + 'Z';
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+export function mapHistoryRows(rows) {
+  if (!Array.isArray(rows)) return [];
+  return rows.map(r => ({ role: r.role, content: r.content, time: historyTime(r.created_at) }));
+}
