@@ -28,9 +28,11 @@ test('the server signs sessions in known places only, each past the two-step che
   const login = auth.slice(auth.indexOf("router.post('/login'"), auth.indexOf("router.post('/logout'"));
   assert.match(login, /const kind = challengeFor\(user\);\s*if \(kind\) return sendTwoStepChallenge\(res, user, kind\);\s*finishSignIn\(req, res, user\);/);
   const reset = auth.slice(auth.indexOf("router.post('/reset-password'"), auth.indexOf('function _chosenCoach('));
-  assert.ok(reset.indexOf('challengeFor(user)') > 0 && reset.indexOf('challengeFor(user)') < reset.indexOf("res.cookie('lt_token'"), 'a reset link asks first');
+  // The session cookie is set through setSessionCookie (or res.cookie directly).
+  const cookieAt = (src) => { const i = src.search(/setSessionCookie\(res|res\.cookie\('lt_token'/); return i < 0 ? Infinity : i; };
+  assert.ok(reset.indexOf('challengeFor(user)') > 0 && reset.indexOf('challengeFor(user)') < cookieAt(reset) && cookieAt(reset) < Infinity, 'a reset link asks first');
   const invite = auth.slice(auth.indexOf("router.post('/accept-invite'"), auth.indexOf("router.get('/validate-token'"));
-  assert.ok(invite.indexOf('challengeFor(user)') > 0 && invite.indexOf('challengeFor(user)') < invite.indexOf("res.cookie('lt_token'"), 'an invite asks first');
+  assert.ok(invite.indexOf('challengeFor(user)') > 0 && invite.indexOf('challengeFor(user)') < cookieAt(invite) && cookieAt(invite) < Infinity, 'an invite asks first');
   // The second step signs in only through finishSignIn, after a right code.
   const routes = read('../server/routes/two-step.js');
   assert.equal([...routes.matchAll(/finishSignIn\(/g)].length, 2, 'verify, and setup during sign-in');

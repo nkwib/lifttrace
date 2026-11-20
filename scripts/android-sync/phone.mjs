@@ -1199,7 +1199,7 @@ const scenarios = {
     const srv = process.env.LT_SERVER;
     process.env.LT_SERVER = '';
     await api.saveBodyStats('2026-10-01', { stats: { weight: 77, waist: 81 } });
-    await api.saveBodyStats('2026-10-02', { stats: { arms: 35 } });
+    await api.saveBodyStats('2026-10-02', { stats: { biceps: 35 } });
     process.env.LT_SERVER = srv;
     await syncNow(); await syncNow();
     const stats = async (d) => { const r = (await q(`SELECT stats FROM body_stats_log WHERE date = ?`, [d]))[0]; return r ? JSON.parse(r.stats) : null; };

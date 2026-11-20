@@ -366,7 +366,7 @@ test('body stats only this phone has are kept and merged, never written over', {
   const { out } = await scenario('bodyStats');
   assert.deepEqual(out.phone01, { weight: 79, waist: 81 }, 'same date: the server\'s weight stands, the phone\'s waist stays');
   assert.deepEqual(out.server01, { weight: 79, waist: 81 }, 'and goes up');
-  assert.deepEqual(out.phone02, { arms: 35 }, 'another date under an id the server uses: kept');
+  assert.deepEqual(out.phone02, { biceps: 35 }, 'another date under an id the server uses: kept');
   assert.deepEqual(out.phone0901, { weight: 80 });
 });
 
