@@ -315,3 +315,22 @@ test("the Diary's Finish says Workout Complete and sends calories only for a fin
   const server = readFileSync(new URL('../server/routes/workout.js', import.meta.url), 'utf8');
   assert.match(server, /finished: !!\(workout\?\.completed && !wasCompleted\)/);
 });
+
+test('calories: lbs volume is converted to kg before the 200/min threshold, on both sides', () => {
+  const mk = (w) => ({ duration_min: 10, exercises: [{ sets: [{ weight: w, reps: 10, completed: true }] }] });
+  const p = { weight_kg: 80, height_cm: 180, age: 34, sex: 'male' };
+  const both = (w, unit) => {
+    const pr = unit ? { ...p, weight_unit: unit } : p;
+    const c = client.estimateWorkoutCalories(w, pr);
+    assert.equal(serverCalories.estimateWorkoutCalories(w, pr), c);
+    return c;
+  };
+  // 250/min raw: vigorous as kg, 113 kg/min as lbs
+  const borderline = mk(250);
+  assert.ok(both(borderline, 'lbs') < both(borderline, 'kg'));
+  assert.equal(both(borderline, 'kg'), both(borderline, undefined));
+  assert.equal(both(borderline, 'kg'), both(borderline, 'KG'));
+  // 1000/min raw is 454 kg/min: vigorous in either unit
+  const heavy = mk(1000);
+  assert.equal(both(heavy, 'lbs'), both(heavy, 'kg'));
+});

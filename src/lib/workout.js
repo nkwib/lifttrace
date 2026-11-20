@@ -479,7 +479,7 @@ export function calc1RM(weight, reps) {
  *   2. Multiply by hours × MET to get the active-energy delta. Default MET
  *      for resistance training is 5.0 (per the Compendium of Physical
  *      Activities, code 02050). Bumped to 6.0 when intensity is high
- *      (>= 200 kg-min/min — heuristic for "vigorous" training density).
+ *      (>= 200 kg×reps/min — heuristic for "vigorous" training density).
  *
  * Returns null if any required input is missing — caller should hide the
  * UI rather than show a junk number. The estimate has roughly ±25% error
@@ -487,12 +487,13 @@ export function calc1RM(weight, reps) {
  * by nature); the UI tags it with "~est" so users don't take it as gospel.
  *
  * @param {object} workout - workout_log row { exercises, duration_min }
- * @param {object} profile - { weight_kg, height_cm, age, sex }
+ * @param {object} profile - { weight_kg, height_cm, age, sex, weight_unit? }
+ *   weight_unit 'lbs' means logged weights are lbs; anything else is kg
  * @returns {number|null} estimated kcal or null if inputs are missing
  */
 export function estimateWorkoutCalories(workout, profile) {
   if (!workout || !profile) return null;
-  const { weight_kg, height_cm, age, sex } = profile;
+  const { weight_kg, height_cm, age, sex, weight_unit } = profile;
   if (!weight_kg || !height_cm || !age) return null;
   let duration_min = workout.duration_min || 0;
   if (duration_min <= 0) {
@@ -522,13 +523,10 @@ export function estimateWorkoutCalories(workout, profile) {
   // Intensity heuristic: total volume per minute. Above 200 kg×reps / min
   // we treat the workout as vigorous (heavy compound lifts at short rest);
   // below that, default MET. The cutoff is a best-guess from typical
-  // hypertrophy session loads — refine later if real data warrants.
-  const totalVolume = calcVolume(workout.exercises || [], 'kg');
-  // calcVolume is unit-agnostic; convert lbs → kg if the data was logged in
-  // lbs by detecting magnitude (a typical kg session caps around 5000;
-  // anything well above suggests lbs and needs ÷2.2046).
-  // Caller should pass volume in kg explicitly via profile.weightUnit if
-  // they want determinism — but the heuristic is fine for the MET bump.
+  // hypertrophy session loads. Logged weights are in the user's unit, so
+  // lbs volume is converted to kg first (unset unit means kg).
+  let totalVolume = calcVolume(workout.exercises || []);
+  if (weight_unit === 'lbs') totalVolume *= 0.45359237;
   const intensity = duration_min > 0 ? totalVolume / duration_min : 0;
   const met = intensity >= 200 ? 6.0 : 5.0;
 

@@ -56,7 +56,7 @@
     const age = ageFromDob(dob);
     return estimateWorkoutCalories(
       { ...workout, duration_min: effectiveDurationMin },
-      { weight_kg: $currentWeightKg, height_cm: $heightCm, age, sex },
+      { weight_kg: $currentWeightKg, height_cm: $heightCm, age, sex, weight_unit: $weightUnit },
     );
   })();
 

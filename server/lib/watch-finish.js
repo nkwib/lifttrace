@@ -58,6 +58,8 @@ export async function afterWatchFinish(userId, workout) {
       height_cm: Number(_setting(userId, 'heightCm')) || null,
       age: ageFromDob(user?.birthday || null),
       sex: user?.gender || null,
+      // The app's default unit is lbs when the setting was never saved.
+      weight_unit: _setting(userId, 'weightUnit') === 'kg' ? 'kg' : 'lbs',
     },
   );
   if (!Number.isFinite(kcal) || kcal <= 0) return;

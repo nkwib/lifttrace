@@ -351,6 +351,7 @@
       height_cm: $heightCm,
       age: ageFromDob(dob),
       sex,
+      weight_unit: $weightUnit,
     };
     if (!profile.weight_kg || !profile.height_cm || !profile.age) return null;
     const inRange = recentWorkouts.filter(w => w.date >= startDate && w.date <= endDate);

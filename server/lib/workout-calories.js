@@ -13,14 +13,16 @@
 import { exerciseVolume } from './volume.js';
 
 /**
- * Mifflin-St Jeor BMR times a MET of 5.0, or 6.0 above 200 volume a minute,
+ * Mifflin-St Jeor BMR times a MET of 5.0, or 6.0 above 200 kg of volume a
+ * minute (profile.weight_unit 'lbs' converts the logged volume to kg; absent
+ * means kg),
  * over the workout's length (or about 3 minutes a completed working set
  * when no length was recorded). Null when the profile is missing a weight,
  * a height or an age.
  */
 export function estimateWorkoutCalories(workout, profile) {
   if (!workout || !profile) return null;
-  const { weight_kg, height_cm, age, sex } = profile;
+  const { weight_kg, height_cm, age, sex, weight_unit } = profile;
   if (!weight_kg || !height_cm || !age) return null;
   let duration_min = workout.duration_min || 0;
   if (duration_min <= 0) {
@@ -38,6 +40,7 @@ export function estimateWorkoutCalories(workout, profile) {
   else                       bmr = base - 78;
   let totalVolume = 0;
   for (const ex of workout.exercises || []) totalVolume += exerciseVolume(ex);
+  if (weight_unit === 'lbs') totalVolume *= 0.45359237;
   const intensity = duration_min > 0 ? totalVolume / duration_min : 0;
   const met = intensity >= 200 ? 6.0 : 5.0;
   const kcal = (bmr / 24) * met * (duration_min / 60);

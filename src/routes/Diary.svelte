@@ -1901,7 +1901,7 @@
     const age = ageFromDob(dob);
     const kcal = estimateWorkoutCalories(
       { ...($todayLog || {}), exercises, duration_min: finalDuration },
-      { weight_kg: $currentWeightKg, height_cm: $heightCm, age, sex },
+      { weight_kg: $currentWeightKg, height_cm: $heightCm, age, sex, weight_unit: $weightUnit },
     );
     if (!Number.isFinite(kcal) || kcal <= 0) return;
     try {
