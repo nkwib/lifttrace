@@ -3,6 +3,7 @@ import db from '../db.js';
 import { wrap } from '../logger.js';
 import { requireAuth, uid } from '../middleware/auth.js';
 import { normalizeCardioInput, normalizeExternalId } from '../lib/cardio-log.js';
+import { checkedCardioDate } from '../lib/cardio-log.js';
 import { saveCardioSession } from '../lib/mcp/tools/log-cardio.js';
 import { isHistoryUpload } from '../lib/log-webhooks.js';
 import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/create-keys.js';
@@ -103,6 +104,9 @@ router.put('/:id', wrap((req, res) => {
     notes:        notes === '' ? null : (notes != null ? String(notes).trim() : existing.notes),
     is_template:  is_template === undefined ? existing.is_template : (is_template ? 1 : 0),
   };
+  if (date != null) {
+    try { next.date = checkedCardioDate(date); } catch (e) { return res.status(400).json({ error: e.message }); }
+  }
   if (!next.activity) return res.status(400).json({ error: 'activity required' });
   if (!Number.isFinite(next.duration_min) || next.duration_min <= 0) {
     return res.status(400).json({ error: 'duration_min must be a positive integer' });

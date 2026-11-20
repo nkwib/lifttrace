@@ -10,6 +10,7 @@ import { addProgressPhotoCore } from '../lib/mcp/tools/add-progress-photo.js';
 import { localizeDataUrl } from '../lib/image-localizer.js';
 import { applyToBody, editBringsBack, stampMerged } from '../lib/newer-wins.js';
 import { revivedDay, isStatsObject, onlyMeasurements } from '../lib/body-stats-day.js';
+import { isCalendarDate } from '../../src/lib/trained-day.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -127,6 +128,7 @@ router.get('/:date', wrap((req, res) => {
 // existing, so a missing key was never meant to signal "clear this".
 router.put('/:date', wrap((req, res) => {
   const { date } = req.params;
+  if (!isCalendarDate(date)) return res.status(400).json({ error: 'date must be a calendar date, YYYY-MM-DD' });
   const userId = uid(req);
   const { stats } = req.body;
 

@@ -15,6 +15,7 @@ import { answerGone, createdBefore, rememberCreated, rowForKey } from '../lib/cr
 import { applyToBody, deleteLoses, refuseDelete, stampMerged, createdTimes, editBringsBack, deletedTimes } from '../lib/newer-wins.js';
 import { syncOf } from '../lib/sync-fields.js';
 import { timesAtDelete } from '../lib/deleted-rows.js';
+import { isCalendarDate } from '../../src/lib/trained-day.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -206,6 +207,7 @@ function _loadTombstones(u, date, workoutId) {
 // project_traceapps_diary_merge_port for the shared design.
 router.put('/:date', wrap((req, res) => {
   const { date } = req.params;
+  if (!isCalendarDate(date)) return res.status(400).json({ error: 'date must be a calendar date, YYYY-MM-DD' });
   const userId = uid(req);
   const { id: bodyId, new_session } = req.body;
 
@@ -437,6 +439,7 @@ router.put('/:date', wrap((req, res) => {
 // from an accidentally-empty payload.
 router.delete('/:date', wrap((req, res) => {
   const { date } = req.params;
+  if (!isCalendarDate(date)) return res.status(400).json({ error: 'date must be a calendar date, YYYY-MM-DD' });
   const userId = uid(req);
   const explicitId = req.query.id != null ? parseInt(req.query.id) : null;
   // Without an id, delete the first LIVE session: the first row overall can
