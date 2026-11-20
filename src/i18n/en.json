@@ -720,7 +720,21 @@
     "set_type_distance_hint": "how far you go, with or without a load: rower, SkiErg, sled, carries, runs",
     "set_type_calories":     "Calories",
     "set_type_calories_hint": "the calories a machine shows: air bike, echo bike",
-    "distance_unit":         "Distance Unit"
+    "distance_unit":         "Distance Unit",
+    "duration":              "Duration",
+    "watch_set":             "Watch this set",
+    "new_pr":                "New personal record!",
+    "set_number_hint":       "Set number: tap to reassign for asymmetric supersets",
+    "edit_set_number":       "Edit set number",
+    "decrease_weight":       "Decrease weight",
+    "increase_weight":       "Increase weight",
+    "merge_reps":            "Merge L/R",
+    "split_reps":            "Split L/R reps",
+    "mark_complete":         "Mark complete",
+    "mark_incomplete":       "Mark incomplete",
+    "rpe_title":             "Rate of Perceived Exertion",
+    "clear":                 "Clear",
+    "remove_set":            "Remove set"
   },
   "set_video": {
     "title":             "Film a Set",
@@ -860,7 +874,9 @@
   "superset_card": {
     "superset":              "Superset",
     "delete":                "Delete",
-    "cancel":                "Cancel"
+    "cancel":                "Cancel",
+    "sets_progress":         "{done}/{total} sets",
+    "remove":                "Remove entire superset"
   },
   "muscle_recovery": {
     "title":                 "Muscle Recovery",
@@ -1075,7 +1091,8 @@
     "title":                 "Smart Add",
     "cancel":                "Cancel",
     "back":                  "Back",
-    "amrap":                 "AMRAP"
+    "amrap":                 "AMRAP",
+    "added":                 "{count, plural, one {Added # exercise} other {Added # exercises}}"
   },
   "programs": {
     "loading": "Loading programs…",
@@ -1405,7 +1422,9 @@
     "auto":                    "Auto",
     "mark_all_seen":           "Mark All Seen",
     "add_menu_title":          "Add",
-    "add_exercise_action":     "Add Exercise"
+    "add_exercise_action":     "Add Exercise",
+    "body_stats_saved":        "Body stats saved",
+    "body_stats_save_failed":  "Save failed"
   },
   "native_setup": {
     "toast": {

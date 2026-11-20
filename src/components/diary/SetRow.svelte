@@ -309,12 +309,12 @@
   class:rpe={$trackRpe} class:wide={shape.wide} class:hold={shape.hold} class:uni={shape.uni} class:sides={shape.sides}>
   {#if media}
     <button type="button" class="clip-badge" on:click|stopPropagation={() => dispatch('openMedia', media)}
-      title="Watch this set" aria-label="Watch this set">
+      title={$_('exercise_card.watch_set')} aria-label={$_('exercise_card.watch_set')}>
       <span class="material-symbols-rounded">play_circle</span>
     </button>
   {/if}
   {#if isPR}
-    <span class="pr-badge" title="New personal record!">🔥 PR</span>
+    <span class="pr-badge" title={$_('exercise_card.new_pr')}>🔥 PR</span>
   {/if}
   {#if showAsWarmup}
     <span class="set-num">W</span>
@@ -323,7 +323,7 @@
       <button class="set-num set-num-btn tap" class:custom={set.number != null}
         bind:this={numTriggerEl}
         on:click={() => numOpen ? (numOpen = false) : openNumPicker()}
-        title="Set number — tap to reassign for asymmetric supersets" aria-label="Edit set number">
+        title={$_('exercise_card.set_number_hint')} aria-label={$_('exercise_card.edit_set_number')}>
         <span class="set-num-value">{displayNum}</span>
         <span class="material-symbols-rounded set-num-caret" aria-hidden="true">arrow_drop_down</span>
       </button>
@@ -339,7 +339,7 @@
             <button class="num-opt" class:active={displayNum === n} on:click|stopPropagation={() => pickNum(n)}>{n}</button>
           {/each}
           {#if set.number != null}
-            <button class="num-opt clear" on:click|stopPropagation={clearNum}>Auto</button>
+            <button class="num-opt clear" on:click|stopPropagation={clearNum}>{$_('diary_extra.auto')}</button>
           {/if}
         </div>
       {/if}
@@ -347,7 +347,7 @@
   {/if}
 
   <div class="set-field weight-field">
-    <button class="step-btn tap" on:click={() => bumpWeight(-step)} aria-label="Decrease weight" tabindex="-1">−</button>
+    <button class="step-btn tap" on:click={() => bumpWeight(-step)} aria-label={$_('exercise_card.decrease_weight')} tabindex="-1">−</button>
     <input
       type="number"
       class="set-input"
@@ -359,7 +359,7 @@
       placeholder="0"
       inputmode="decimal"
     />
-    <button class="step-btn tap" on:click={() => bumpWeight(step)} aria-label="Increase weight" tabindex="-1">+</button>
+    <button class="step-btn tap" on:click={() => bumpWeight(step)} aria-label={$_('exercise_card.increase_weight')} tabindex="-1">+</button>
     <!-- Per hand: "lbs ea". In the narrowest field the unit goes and "ea"
          stays, since a weight per hand is not the same number. -->
     <span class="set-unit" class:each={loadType === 'paired'}>{#if loadType === 'paired'}<span class="unit-word">{unit}</span> ea{:else}{weightHint}{/if}</span>
@@ -393,7 +393,7 @@
         placeholder="0"
         inputmode="numeric"
       />
-      <button class="split-btn tap active" on:click={toggleSplit} title="Merge L/R" aria-label="Merge L/R">
+      <button class="split-btn tap active" on:click={toggleSplit} title={$_('exercise_card.merge_reps')} aria-label={$_('exercise_card.merge_reps')}>
         <span class="material-symbols-rounded">link_off</span>
       </button>
     </div>
@@ -464,7 +464,7 @@
         placeholder="0:00"
         inputmode="numeric"
         autocomplete="off"
-        aria-label="Duration"
+        aria-label={$_('exercise_card.duration')}
       />
       <!-- An Alternating exercise can be timed per side by hand too. -->
       {#if perSide && !holdRunning}
@@ -539,14 +539,14 @@
            the RPE chip's auto column, and the label's own width +
            gap was routinely eating the entire input (issue #75). -->
       {#if loadType === 'unilateral'}
-        <button class="split-btn tap" on:click={toggleSplit} title="Split L/R reps" aria-label="Split L/R reps">
+        <button class="split-btn tap" on:click={toggleSplit} title={$_('exercise_card.split_reps')} aria-label={$_('exercise_card.split_reps')}>
           <span class="material-symbols-rounded">add_link</span>
         </button>
       {/if}
     </div>
   {/if}
 
-  <button class="check-btn tap" class:checked={set.completed} on:click={toggleComplete} aria-label={set.completed ? 'Mark incomplete' : 'Mark complete'}>
+  <button class="check-btn tap" class:checked={set.completed} on:click={toggleComplete} aria-label={set.completed ? $_('exercise_card.mark_incomplete') : $_('exercise_card.mark_complete')}>
     <span class="material-symbols-rounded">
       {set.completed ? 'check_circle' : 'radio_button_unchecked'}
     </span>
@@ -557,7 +557,7 @@
       <button class="rpe-chip tap" class:set={set.rpe != null}
         bind:this={rpeTriggerEl}
         on:click={() => rpeOpen ? (rpeOpen = false) : openRpePicker()}
-        title="Rate of Perceived Exertion">
+        title={$_('exercise_card.rpe_title')}>
         {set.rpe != null ? `@${set.rpe}` : 'RPE'}
       </button>
       {#if rpeOpen}
@@ -569,7 +569,7 @@
             <button class="rpe-opt" class:active={set.rpe === v} on:click|stopPropagation={() => pickRpe(v)}>@{v}</button>
           {/each}
           {#if set.rpe != null}
-            <button class="rpe-opt clear" on:click|stopPropagation={clearRpe}>Clear</button>
+            <button class="rpe-opt clear" on:click|stopPropagation={clearRpe}>{$_('exercise_card.clear')}</button>
           {/if}
         </div>
       {/if}
@@ -579,7 +579,7 @@
     <span class="rpe-slot" aria-hidden="true"></span>
   {/if}
 
-  <button class="remove-btn tap" on:click={() => dispatch('remove')} title="Remove set" aria-label="Remove set">
+  <button class="remove-btn tap" on:click={() => dispatch('remove')} title={$_('exercise_card.remove_set')} aria-label={$_('exercise_card.remove_set')}>
     <span class="material-symbols-rounded">close</span>
   </button>
 </div>

@@ -171,7 +171,7 @@
     <div class="ws-sheet" on:click|stopPropagation on:keydown={() => {}}>
       <div class="sheet-handle"></div>
       <button class="ws-close-btn" on:click={() => open = false}
-              aria-label="Close" title="Close">
+              aria-label={$_('common.close')} title={$_('common.close')}>
         <span class="material-symbols-rounded">close</span>
       </button>
 

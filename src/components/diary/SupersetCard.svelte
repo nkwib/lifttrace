@@ -116,11 +116,11 @@
       <div class="superset-badge">
         <span class="material-symbols-rounded ss-icon">link</span>
         <span class="ss-label">{$_('superset_card.superset')}</span>
-        <span class="ss-count">{exercises.length} exercises</span>
+        <span class="ss-count">{$_('diary_extra.exercise_count', { values: { count: exercises.length } })}</span>
       </div>
       <div class="ss-meta">
-        <span class="ss-progress">{completedSets}/{totalSets} sets</span>
-        <button class="ss-remove-btn tap" on:click|stopPropagation={() => dispatch('removeSuperset', supersetId)} title="Remove entire superset">
+        <span class="ss-progress">{$_('superset_card.sets_progress', { values: { done: completedSets, total: totalSets } })}</span>
+        <button class="ss-remove-btn tap" on:click|stopPropagation={() => dispatch('removeSuperset', supersetId)} title={$_('superset_card.remove')}>
           <span class="material-symbols-rounded">close</span>
         </button>
         <span class="material-symbols-rounded ss-chevron" class:rotated={!expanded}>expand_more</span>

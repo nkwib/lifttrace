@@ -132,7 +132,7 @@
     try {
       const merged = mergeIntoWorkout(matched, existingLog);
       if (onSave) await onSave(merged);
-      showSuccess(`Added ${matched.length} exercise${matched.length > 1 ? 's' : ''}`);
+      showSuccess($_('smart_log.added', { values: { count: matched.length } }));
       open = false;
       phase = 'input';
       inputText = '';

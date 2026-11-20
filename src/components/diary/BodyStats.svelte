@@ -116,8 +116,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stats }),
       });
-      if (!res.ok) throw new Error('Save failed');
-      showSuccess('Body stats saved');
+      if (!res.ok) throw new Error($_('diary_extra.body_stats_save_failed'));
+      showSuccess($_('diary_extra.body_stats_saved'));
       // Notify the desktop rail widget so it can reload its summary
       // view without a page nav.
       if (typeof window !== 'undefined') {
