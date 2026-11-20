@@ -18,6 +18,7 @@
   import { readSharedExerciseFile, fetchSharedExerciseUrl, importSharedExercise } from '../lib/exerciseShare.js';
   import { portal } from '../lib/portal.js';
   import { foldText } from '../lib/search-text.js';
+  import { matchesSearch, filterExercises, groupExercises, capGroups } from '../lib/exercise-list.js';
 
 
   let showEditor = false;
@@ -283,10 +284,11 @@
   // Count exercises per category. Filters stack: selecting equipment narrows
   // the visible categories, and search further narrows both. Matches the
   // AND-able filter behaviour in Diary's picker.
+  $: _q = foldText(search);
   $: categoryCounts = (() => {
     const counts = {};
     for (const ex of exercises) {
-      if (search && !foldText(ex.name).includes(foldText(search))) continue;
+      if (!matchesSearch(exercises, ex, _q)) continue;
       if (!_eqMatch(ex, selectedEquipment)) continue;
       const cat = ex.category || 'other';
       counts[cat] = (counts[cat] || 0) + 1;
@@ -305,11 +307,7 @@
 
   $: isFav = (id) => ($favoriteExercises || []).includes(id);
 
-  $: filtered = exercises.filter(ex => {
-    const matchSearch = !search || foldText(ex.name).includes(foldText(search));
-    const matchCat = !selectedCategory || ex.category === selectedCategory;
-    return matchSearch && matchCat && _eqMatch(ex, selectedEquipment);
-  });
+  $: filtered = filterExercises(exercises, { q: _q, category: selectedCategory, eqMatch: ex => _eqMatch(ex, selectedEquipment) });
 
   // Equipment is consolidated into 6 major buckets so the filter row
   // stays readable across sources. Logic shared with ExercisePicker via
@@ -321,7 +319,7 @@
   // up alongside the built-in buckets when at least one exercise uses it.
   $: availableEquipment = (() => {
     const catFiltered = exercises.filter(ex => {
-      const matchSearch = !search || foldText(ex.name).includes(foldText(search));
+      const matchSearch = matchesSearch(exercises, ex, _q);
       const matchCat = !selectedCategory || ex.category === selectedCategory;
       return matchSearch && matchCat;
     });
@@ -348,43 +346,15 @@
     return [...out, ...customs];
   })();
 
-  // Sort comparator factory keyed by sortMode. Favorites always rise to
-  // the top within each group regardless of mode.
-  function _sortFn() {
-    const favSet = new Set($favoriteExercises || []);
-    return (a, b) => {
-      const favDiff = (favSet.has(b.id) ? 1 : 0) - (favSet.has(a.id) ? 1 : 0);
-      if (favDiff) return favDiff;
-      if (sortMode === 'used') {
-        const cb = usage[b.id]?.count || 0;
-        const ca = usage[a.id]?.count || 0;
-        if (cb !== ca) return cb - ca;
-      } else if (sortMode === 'recent') {
-        const lb = usage[b.id]?.last_date || '';
-        const la = usage[a.id]?.last_date || '';
-        if (lb !== la) return lb < la ? -1 : 1;
-      }
-      return a.name.localeCompare(b.name);
-    };
-  }
+  // Rendered-row cap (100 mobile / 300 wide, as ExercisePicker), raised by
+  // 'Show more'. Reset whenever the filters or sort change.
+  let _extra = 0;
+  $: (search, selectedCategory, selectedEquipment, sortMode, _extra = 0);
+  $: _rowLimit = (_wideMode ? 300 : 100) + _extra;
 
-  $: grouped = (() => {
-    // "Most used" + "Recent" sort flatten into a single section so the
-    // ordering is global, not per-category. Alpha keeps the category
-    // grouping the user has had since day one.
-    if (sortMode === 'used' || sortMode === 'recent') {
-      const sorted = [...filtered].sort(_sortFn());
-      return { '': sorted };
-    }
-    if (selectedCategory) return { [selectedCategory]: filtered };
-    const g = {};
-    for (const ex of filtered) {
-      const cat = ex.category || 'other';
-      if (!g[cat]) g[cat] = [];
-      g[cat].push(ex);
-    }
-    return g;
-  })();
+  $: _sorted = groupExercises(filtered, { sortMode, selectedCategory, favorites: $favoriteExercises, usage });
+  $: grouped = capGroups(_sorted, _rowLimit, _wideMode ? _detailSelected?.id : null);
+  $: _hiddenCount = filtered.length - Object.values(grouped).reduce((n, l) => n + l.length, 0);
 
   async function syncWger() {
     loading = true;
@@ -560,7 +530,7 @@
         <div class="group">
           {#if category}<h3 class="group-title">{category}</h3>{/if}
           <div class="group-list" class:comfortable={_wideMode && $exerciseBrowserDensity === 'comfortable'}>
-            {#each exs.sort(_sortFn()) as ex}
+            {#each exs as ex (ex.id)}
               {@const u = usage[ex.id]}
               <div class="exercise-row" class:selected-for-detail={_wideMode && _detailSelected?.id === ex.id}>
                 <button class="fav-btn" on:click|stopPropagation={() => toggleFavorite(ex.id)} title={isFav(ex.id) ? 'Remove from Favorites' : 'Add to Favorites'}>
@@ -597,6 +567,11 @@
           </div>
         </div>
       {/each}
+      {#if _hiddenCount > 0}
+        <button class="btn btn-secondary show-more-btn" on:click={() => _extra += (_wideMode ? 300 : 100)}>
+          {$_('exercises_page.show_more', { values: { count: _hiddenCount } })}
+        </button>
+      {/if}
     {/if}
     </div>
 
@@ -898,6 +873,7 @@
   .arrow { color: var(--text-3); }
 
   .loading, .empty { text-align: center; padding: 48px 24px; color: var(--text-3); }
+  .show-more-btn { display: block; margin: 12px auto; }
   .empty .material-symbols-rounded { font-size: 48px; display: block; margin-bottom: 12px; }
   .empty .btn-primary { margin-top: 16px; }
 

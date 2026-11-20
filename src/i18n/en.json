@@ -827,7 +827,8 @@
     "go_to_settings":        "Go to Settings",
     "custom":                "Custom",
     "density_compact":       "Compact",
-    "density_comfortable":   "Comfortable"
+    "density_comfortable":   "Comfortable",
+    "show_more":             "Show more ({count} left)"
   },
   "coaching_dialogs": {
     "cancel":                "Cancel"
