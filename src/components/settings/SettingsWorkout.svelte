@@ -13,6 +13,7 @@
   import { isNative } from '../../lib/platform.js';
   import { REST_TONES } from '../../lib/restTones.js';
   import { LtApi } from '../../lib/api.js';
+  import { localDateStr, monthsAgo } from '../../lib/date-local.js';
   import { showError, showSuccess } from '../../stores/toast.js';
   import { confirmDialog } from '../../stores/confirmDialog.js';
   import { previewRestTone } from '../../stores/restTimer.js';
@@ -37,9 +38,7 @@
   };
 
   async function clearOldClips(months) {
-    const cutoff = new Date();
-    cutoff.setMonth(cutoff.getMonth() - months);
-    const before = cutoff.toISOString().slice(0, 10);
+    const before = localDateStr(monthsAgo(new Date(), months));
     if (!await confirmDialog({
       title: $_('settings_workout.clips.confirm_title'),
       message: $_('settings_workout.clips.confirm_msg', { values: { date: before } }),

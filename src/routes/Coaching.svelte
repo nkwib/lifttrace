@@ -4,6 +4,7 @@
   import { push } from 'svelte-spa-router';
   import { _ } from 'svelte-i18n';
   import { LtApi } from '../lib/api.js';
+  import { localDateStr } from '../lib/date-local.js';
   import SetVideoPlayer from '../components/diary/SetVideoPlayer.svelte';
   import { currentUser } from '../stores/auth.js';
   import { showError, showSuccess } from '../stores/toast.js';
@@ -29,6 +30,7 @@
 
   $: memberId = params.memberId ? parseInt(params.memberId) : null;
 
+  const today = localDateStr();
   let members = [];
   let loadingList = true;
 
@@ -881,7 +883,7 @@
                     {#if p.completed === 1} · <span style="color:var(--success)">{$_('coaching.completed')}</span>{/if}
                     <!-- Excused by the client (issue #121): why, instead of "missed". -->
                     {#if p.completed !== 1 && p.status !== 'declined' && p.excused_reason}{' · '}<span class="px-excused">{$_('excused.banner', { values: { reason: $_(`excused.reason.${p.excused_reason}`) } })}</span>{#if p.excused_note}{' '}({p.excused_note}){/if}
-                    {:else if p.completed === 0 && p.status !== 'declined' && p.date && p.date < new Date().toISOString().slice(0,10)} · <span style="color:var(--danger)">{$_('coaching.missed')}</span>{/if}
+                    {:else if p.completed === 0 && p.status !== 'declined' && p.date && p.date < today} · <span style="color:var(--danger)">{$_('coaching.missed')}</span>{/if}
                     {#if p.notes}{' · '}{p.notes}{/if}
                   </span>
                 </div>
