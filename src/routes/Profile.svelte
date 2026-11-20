@@ -192,7 +192,12 @@
     window.location.href = url;
   }
   async function unlink(linkId) {
-    if (!confirm('Unlink this provider? You won’t be able to sign in with it again until you re-link.')) return;
+    if (!await confirmDialog({
+      title: $_('profile.unlink_confirm_title'),
+      message: $_('profile.unlink_confirm_message'),
+      confirmText: $_('profile.unlink_confirm_confirm'),
+      dangerous: true,
+    })) return;
     unlinking = linkId;
     try {
       const r = await fetch(`/api/auth/oidc/unlink/${linkId}`, {

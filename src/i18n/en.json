@@ -468,6 +468,9 @@
     "link_with":             "Link with",
     "unlink":                "Unlink",
     "unlinked":              "Unlinked",
+    "unlink_confirm_title":  "Unlink provider?",
+    "unlink_confirm_message": "You won't be able to sign in with it again until you re-link.",
+    "unlink_confirm_confirm": "Unlink",
     "last_signin":           "last sign-in {date}",
     "danger_zone":           "Danger Zone",
     "delete_account":        "Delete My Account",
@@ -2269,6 +2272,10 @@
       "env_locked":                   "Locked by OIDC_ENABLE_EMAIL_PASSWORD_LOGIN environment variable."
     },
     "confirm": {
+      "delete_provider_title":        "Delete provider?",
+      "delete_provider_confirm":      "Delete",
+      "disable_password_title":       "Disable password login?",
+      "disable_password_confirm":     "Disable",
       "delete_provider":              "Delete provider \"{name}\"? Linked users will lose this sign-in option.",
       "disable_password":             "Disable password login? Users without an OIDC link will not be able to sign in until you re-enable it. RECOVERY_TOKEN will still work."
     },

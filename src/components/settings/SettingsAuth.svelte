@@ -2,6 +2,8 @@
   import { slide } from 'svelte/transition';
   import { _ } from 'svelte-i18n';
   import Toggle from './Toggle.svelte';
+  import { tick } from 'svelte';
+  import { confirmDialog } from '../../stores/confirmDialog.js';
   import { showSuccess, showError } from '../../stores/toast.js';
   import { currentUser, userMgmtActive } from '../../stores/auth.js';
   import { envLocks as envLocksStore } from '../../stores/settings.js';
@@ -288,7 +290,12 @@
   }
 
   async function deleteProvider(p) {
-    if (!confirm($_('settings_auth.confirm.delete_provider', { values: { name: p.display_name || p.issuer_url } }))) return;
+    if (!await confirmDialog({
+      title: $_('settings_auth.confirm.delete_provider_title'),
+      message: $_('settings_auth.confirm.delete_provider', { values: { name: p.display_name || p.issuer_url } }),
+      confirmText: $_('settings_auth.confirm.delete_provider_confirm'),
+      dangerous: true,
+    })) return;
     oidcBusy = true;
     try {
       const r = await fetch(apiUrl(`/api/admin/oidc/providers/${p.id}`), {
@@ -304,13 +311,24 @@
     finally { oidcBusy = false; }
   }
 
-  async function togglePasswordLogin() {
+  async function togglePasswordLogin(e) {
     const next = !enablePasswordLogin;
     if (!next && !oidcProviders.some(p => p.is_active)) {
       showError($_('settings_auth.toast.need_active_provider'));
       return;
     }
-    if (!next && !confirm($_('settings_auth.confirm.disable_password'))) return;
+    if (!next && !await confirmDialog({
+      title: $_('settings_auth.confirm.disable_password_title'),
+      message: $_('settings_auth.confirm.disable_password'),
+      confirmText: $_('settings_auth.confirm.disable_password_confirm'),
+      dangerous: true,
+    })) {
+      // Toggle flipped itself before the async dialog; force it back.
+      enablePasswordLogin = !!e?.detail;
+      await tick();
+      enablePasswordLogin = true;
+      return;
+    }
     try {
       const r = await fetch(apiUrl('/api/admin/oidc/password-login'), {
         method: 'PUT', credentials: 'include', headers: _csrfHeaders(),
