@@ -246,11 +246,17 @@ router.put('/:id', wrap((req, res) => {
     ...syncOf('exercises'),
     current: f => (JSON_FIELDS.has(f) ? JSON.parse(existing[f] || '[]') : existing[f]),
   });
-  const { name, category, primary_muscles, secondary_muscles, equipment, instructions, tips, video_url, load_type, set_type } = body;
+  const { name, primary_muscles, secondary_muscles, equipment, load_type, set_type } = body;
+  // Omitted keeps the stored value; an explicit null (or '') clears it, as in Local mode.
+  const next = (f, v = body[f]) => (v === undefined ? existing[f] : (v || null));
   // A picture chosen with no connection arrives embedded in the row; it
   // becomes a file here, so everything downstream sees an ordinary path.
-  const img_url = localizeDataUrl(body?.img_url);
-  const gif_url = localizeDataUrl(body?.gif_url);
+  const category = next('category');
+  const instructions = next('instructions');
+  const tips = next('tips');
+  const img_url = next('img_url', localizeDataUrl(body.img_url));
+  const gif_url = next('gif_url', localizeDataUrl(body.gif_url));
+  const video_url = next('video_url');
   // set_type follows the same omitted/null/explicit rules as load_type.
   const nextSetType = set_type === undefined
     ? existing.set_type
@@ -265,17 +271,18 @@ router.put('/:id', wrap((req, res) => {
     `UPDATE exercises SET name=?, category=?, primary_muscles=?, secondary_muscles=?, equipment=?,
      instructions=?, tips=?, img_url=?, gif_url=?, video_url=?, load_type=?, set_type=?, field_times=? WHERE id=?`
   ).run(
-    name || existing.name, category ?? existing.category,
+    name || existing.name, category,
     JSON.stringify(primary_muscles || JSON.parse(existing.primary_muscles || '[]')),
     JSON.stringify(secondary_muscles || JSON.parse(existing.secondary_muscles || '[]')),
     JSON.stringify(equipment || JSON.parse(existing.equipment || '[]')),
-    instructions ?? existing.instructions, tips ?? existing.tips,
-    img_url ?? existing.img_url, gif_url ?? existing.gif_url, video_url ?? existing.video_url,
+    instructions, tips, img_url, gif_url, video_url,
     nextLoadType,
     nextSetType,
     times,
     id
   );
+  // A removed or replaced upload is deleted unless another row still uses it.
+  unlinkOrphanedUploads(mediaUrls([existing]));
   const updated = db.prepare('SELECT * FROM exercises WHERE id = ?').get(id);
   updated.primary_muscles   = JSON.parse(updated.primary_muscles || '[]');
   updated.secondary_muscles = JSON.parse(updated.secondary_muscles || '[]');
