@@ -632,8 +632,16 @@
     await respondTo(note.retryMsg, false);
   }
 
-  // Only the latest error note offers Retry.
-  $: lastErrorNote = [...messages].reverse().find(m => m.role === 'note' && m.kind === 'error') || null;
+  // Only the latest error note offers Retry, and only while nothing was said
+  // after it: a Retry on an older note would resend its message out of order.
+  $: lastErrorNote = (() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.role === 'user' || m.role === 'assistant') return null;
+      if (m.role === 'note' && m.kind === 'error') return m;
+    }
+    return null;
+  })();
 
   async function respondTo(userMsg, persist) {
     const myEpoch = epoch;
