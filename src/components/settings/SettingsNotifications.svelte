@@ -127,7 +127,7 @@
         {#if $notifLocalEnabled && _permissionState !== 'granted'}
           <div class="setting-row">
             <div class="setting-label-group">
-              <span class="setting-hint" style="color:var(--warn,#FFB347)">
+              <span class="setting-hint" style="color:var(--warning-text)">
                 {isNative ? $_('settings_notifications.push.perm_hint_native') : $_('settings_notifications.push.perm_hint_web')}
               </span>
             </div>
