@@ -52,17 +52,21 @@ export function exerciseWeightPr(history, unit, fmtE1rm) {
   };
 }
 
+/** Assisted lifts are marked by equipment (string or array), not load_type. */
+export function isAssisted(exercise) {
+  return /assisted/i.test(String(exercise?.equipment ?? ''));
+}
+
 /**
  * Best Epley e1RM per session, oldest first, as [{ date, e1rm }] (1 decimal).
  * history is newest-first. Counts completed, non-warm-up rep sets only; sets
  * outside estimateOneRm's range (13+ reps, no weight) are skipped one by one.
- * L/R splits count at the weaker side (setReps). Assisted sessions are
- * skipped: their weight is help, not load.
+ * L/R splits count at the weaker side (setReps). Callers skip assisted
+ * exercises (isAssisted): their weight is help, not load.
  */
 export function sessionE1rms(history) {
   const out = [];
   for (const h of [...(history || [])].reverse()) {
-    if (h?.load_type === 'assisted') continue;
     let best = 0;
     for (const s of h.sets || []) {
       if (!s.completed || s.warmup || setKind({ set_type: h.set_type }, s) !== 'reps') continue;

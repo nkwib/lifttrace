@@ -30,9 +30,8 @@ test('warm-ups, incomplete, 13+ reps, no weight skipped', () => {
   assert.deepEqual(sessionE1rms([{ date: 'd', sets: [set(50, 13), set(50, 10)] }]), [{ date: 'd', e1rm: 67 }]);
 });
 
-test('timed sets and assisted sessions skipped; empty input', () => {
+test('timed sets skipped; empty input', () => {
   assert.deepEqual(sessionE1rms([{ date: 'd', sets: [{ duration_sec: 60, completed: true }] }]), []);
-  assert.deepEqual(sessionE1rms([{ date: 'd', load_type: 'assisted', sets: [set(40, 5)] }]), []);
   assert.deepEqual(sessionE1rms([]), []);
   assert.deepEqual(sessionE1rms(null), []);
 });

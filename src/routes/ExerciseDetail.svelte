@@ -9,7 +9,7 @@
   import { weightUnit, exerciseDistanceUnits } from '../stores/settings.js';
   import { setKind, SET_TYPE_FIELD, fmtSetAmount, fromMeters, distanceUnitOf, setReps } from '../lib/workout.js';
   import { detectStall } from '../lib/progression.js';
-  import { exerciseWeightPr, sessionE1rms } from '../lib/history-set.js';
+  import { exerciseWeightPr, isAssisted, sessionE1rms } from '../lib/history-set.js';
   import { showError, showSuccess } from '../stores/toast.js';
   import { confirmDialog } from '../stores/confirmDialog.js';
   import ExerciseInfo from '../components/exercises/ExerciseInfo.svelte';
@@ -162,7 +162,7 @@
   let chartMode = 'top';
   let _modeFor = params.id;
   $: if (params.id !== _modeFor) { _modeFor = params.id; chartMode = 'top'; }
-  $: e1rmSeries = detailTimed || exercise?.load_type === 'assisted' ? [] : sessionE1rms(history);
+  $: e1rmSeries = detailTimed || isAssisted(exercise) ? [] : sessionE1rms(history);
   $: canE1rm = e1rmSeries.length >= 2;
   $: showE1rm = canE1rm && chartMode === 'e1rm';
 

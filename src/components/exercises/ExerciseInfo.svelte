@@ -2,7 +2,7 @@
   import { resolveAssetUrl } from '../../lib/platform.js';
   import { failedMedia, mediaFailed } from '../../lib/media-fallback.js';
   import { _ } from 'svelte-i18n';
-  import { fmtHistorySet, historyHasRepSets, repMaxes } from '../../lib/history-set.js';
+  import { fmtHistorySet, historyHasRepSets, isAssisted, repMaxes } from '../../lib/history-set.js';
   import { onDestroy } from 'svelte';
   import { weightUnit, exerciseDistanceUnits, exerciseNotes } from '../../stores/settings.js';
   import { cleanNote, withNote, EXERCISE_NOTE_MAX } from '../../lib/exercise-notes.js';
@@ -34,7 +34,7 @@
   }
   onDestroy(saveNote);
   $: rows = history || [];
-  $: repMaxRows = repMaxes(history);
+  $: repMaxRows = isAssisted(exercise) ? [] : repMaxes(history);
   $: shown = showAll ? rows : rows.slice(0, 10);
   $: ctx = { exerciseId: exercise?.id, exerciseName: exercise?.name, imperial: $weightUnit === 'lbs', distanceUnits: $exerciseDistanceUnits };
 </script>
