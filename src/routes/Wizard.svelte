@@ -213,8 +213,20 @@
   // own. Skipping the wizard leaves it off too, and the app says so once.
   // An instance that already existed keeps checking (server/lib/update-check.js).
   let updateChecks = false;
+  // UPDATE_CHECK in the server environment pins the answer: no toggle, no PUT.
+  let updateEnvLocked = false;
+  let updateCfgLoaded = false;
+  $: if (step === 7 && !updateCfgLoaded) _loadUpdateCfg();
+
+  async function _loadUpdateCfg() {
+    updateCfgLoaded = true;
+    const { getServerUpdateConfig } = await import('../lib/updates.js');
+    const cfg = await getServerUpdateConfig();
+    updateEnvLocked = !!cfg?.envLocked;
+  }
 
   async function _saveUpdateChoice() {
+    if (updateEnvLocked) return;
     try {
       const { setAutoCheck, setServerUpdateCheck } = await import('../lib/updates.js');
       setAutoCheck(updateChecks);
@@ -618,6 +630,9 @@
       <div class="wizard-step">
         <h2 class="wizard-step-title">{$_('wizard.updates.title')}</h2>
         <p class="wizard-step-desc">{$_('wizard.updates.desc')}</p>
+        {#if updateEnvLocked}
+          <p class="upd-note">{$_('wizard.updates.env_locked')}</p>
+        {:else}
         <div class="upd-row">
           <div class="upd-text">
             <div class="upd-label">{$_('wizard.updates.toggle')}</div>
@@ -626,6 +641,7 @@
           <Toggle checked={updateChecks} on:change={e => updateChecks = e.detail} />
         </div>
         <p class="upd-note">{$_('wizard.updates.note')}</p>
+        {/if}
         <div class="wizard-nav">
           <button class="btn btn-secondary wizard-btn-sm" on:click={() => step = 6}>{$_('wizard.nav.back')}</button>
           <button class="btn btn-primary wizard-btn-sm" on:click={finish}>{$_('wizard.nav.lets_go')}</button>

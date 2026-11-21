@@ -615,6 +615,14 @@ export function formatAgo(dateOrIso) {
  * Tell the instance whether it may ask GitHub. Admin only; for anyone else
  * the call is refused and only this device's own answer applies.
  */
+export async function getServerUpdateConfig() {
+  try {
+    const { apiUrl } = await import('./platform.js');
+    const res = await fetch(apiUrl('/api/updates/config'), { credentials: 'include' });
+    return res.ok ? await res.json() : null;
+  } catch { return null; }
+}
+
 export async function setServerUpdateCheck(enabled) {
   try {
     const { apiUrl } = await import('./platform.js');

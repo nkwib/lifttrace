@@ -466,6 +466,7 @@
       "desc": "Your server can tell you when a new LiftTrace is out.",
       "toggle": "Check for updates automatically",
       "toggle_sub": "It's how you hear about new features, fixes and security updates",
+      "env_locked": "Update checks are set by the server's environment (UPDATE_CHECK), so there is nothing to choose here.",
       "note": "Your server asks GitHub every few hours whether a newer LiftTrace is out. Nothing about you or your data is sent. You can change this any time in Settings, Updates."
     },
     "appearance": {
