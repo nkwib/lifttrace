@@ -20,7 +20,8 @@
     "build:rest-tones": "node scripts/build-rest-tones.mjs",
     "i18n:check": "node scripts/i18n-check.cjs",
     "reset-2fa": "node scripts/reset-2fa.js",
-    "test": "node --test scripts/*.test.js"
+    "test": "node --test scripts/*.test.js",
+    "e2e": "node --test --test-concurrency=1 e2e/*.e2e.mjs"
   },
   "dependencies": {
     "@aparajita/capacitor-biometric-auth": "^10.0.0",
@@ -52,6 +53,8 @@
   "devDependencies": {
     "@capacitor/cli": "^8.3.1",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "axe-core": "^4.14.1",
+    "playwright-core": "^1.65.1",
     "svelte": "^5.0.0",
     "typescript": "^5.9.3",
     "vite": "^6.4.3",
