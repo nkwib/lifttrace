@@ -11,9 +11,19 @@ Args: `{ main, done, round, base, lenses: [{ key, prompt }] }`. `base` is the sh
 5. **Review:** ship, fix or drop. On fix: a fix agent amends, then a re-review.
 6. Returns `[{ slug, title, final, sha, reviews, ... }]`. Merge only `final == 'ship'`.
 
-## Smoke round (`tooling/smoke.js`)
+## E2E round (`tooling/e2e-round.js`, replaces `smoke.js`)
 
-Args: `{ main, pw, base, flows: [{ key, port, prompt }] }`. Each flow agent boots its own server (own port and temp DB) and drives the built app with Playwright. Findings are reproduced by an independent agent, then go through the same fix and review steps. Expect duplicate findings across flows; keep one fix each.
+The first smoke round spent most of its tokens on agents rediscovering how to boot the server, seed it and find selectors, writing throwaway Playwright scripts, reading screenshots, and an independent agent doing it all again to reproduce each finding. None of it was kept.
+
+Now the browser checks are code in `e2e/` (see `e2e/README.md`):
+
+1. **Run the specs yourself, no agents:** `npm run build && npm run e2e`, about 2 minutes for ~170 tests. `checkPage()` catches the usual smoke findings in code: uncaught errors, 5xx, raw i18n keys, leaked icon ligature names, overflow, clipping, axe names and contrast.
+2. **Fix only what is red.** A failing test is the reproduction, so there is no reproduce stage. Group failing lines by cause and hand each group to one fix agent whose acceptance check is the spec going green. Reviewers rerun the spec. Screenshots are saved on failure, but only opened when the text report is not enough.
+3. **New coverage is written once.** `e2e-round.js` gives each uncovered flow to one agent that commits `e2e/<flow>.e2e.mjs`; later rounds rerun it for free.
+
+Args for `e2e-round.js`: `{ main, base, flows: [{ key, prompt }], failing: [{ file, name, report }] }`.
+
+`smoke.js` is kept for reference only.
 
 ## Integration
 
@@ -40,6 +50,7 @@ Use `git config merge.conflictstyle diff3` and enable rerere.
 - **Full suite** takes about 10 minutes (2,591 tests). Run single files while iterating, and never two full runs at once.
 - **Usage limits** kill a whole workflow at once. Resume with `resumeFromRunId` from the same session; a new session cannot resume, so relaunch.
 - Don't `pkill -f 'node --test'`: it can kill the shell running it.
+- **macOS hosts:** `scripts/session-version.test.js` and `scripts/two-step-server.test.js` (34 tests) bind `127.0.0.10`, which macOS does not route by default (`EADDRNOTAVAIL`). They pass on Linux. To run them on a Mac: `sudo ifconfig lo0 alias 127.0.0.10 up`.
 
 ## Run state files (`tooling/run-state/`)
 

@@ -22,14 +22,16 @@ export const meta = {
 // Before launching: run `npm run build && npm run e2e` yourself (Bash, no
 // agents) and pass the failures, if any, in args.failing.
 //
-// args: { main, base, flows: [{ key, prompt }], failing: [{ file, name, report }] }
+// args: { main, base, flows: [{ key, prompt }], failing: [{ file, name, report }], known?: string }
+// known: problems already being fixed elsewhere (e.g. "icon-name lines: pass skip: ['icons']"),
+// so authors do not report them as new defects and spawn duplicate fix agents.
 const BASE = args.base
 const MAIN = args.main
 
 const HARNESS = `
 E2E harness: ${MAIN}/e2e/harness.mjs (read it first, it is short). startServer() boots the real server on a free port with a temp DB; api(server, {register:true}) creates the admin and returns a cookie client for seeding (client.call(method, path, body)); e2e/seed.mjs seeds 12 weeks of workouts; openPage(server, client, {view:'narrow'|'phone'|'desktop', theme}) gives a signed-in page with error capture; goto(page, '/route'); expectClean(page, label) runs every generic check and throws a compact report. See e2e/pages.e2e.mjs and e2e/flows.e2e.mjs for the pattern. Tests use node:test; run one file with \`node --test e2e/<file>.e2e.mjs\` after \`npm run build\` in your worktree (link ../dist to server/dist is done by the harness; never stage server/dist).
 Selectors: roles and visible English text (en.json strings). Read the Svelte source for behavior.
-Screenshots: expectClean saves one on failure and prints the path. Open it with Read only if the text report cannot explain the failure.`
+Screenshots: expectClean saves one on failure and prints the path. Open it with Read only if the text report cannot explain the failure.${args.known ? `\nAlready known and being fixed elsewhere, do NOT report or fix: ${args.known}` : ''}`
 
 const RULES = `
 Worktree: \`git checkout --detach ${BASE}\`, then \`ln -sfn ${MAIN}/node_modules node_modules && ln -sfn ${MAIN}/server/node_modules server/node_modules\`. Never stage symlinks. Stage by path, check \`git show --stat HEAD\`. One commit on detached HEAD; report the full sha.
