@@ -18,6 +18,7 @@ import { installOffline, offlineFetch } from './offline-api.js';
 import { newClientKey } from './offline-edits.js';
 import { isInterceptable, ownOrigins } from './api-route.js';
 import { accountGen, copyMoving } from './account-gen.js';
+import { checkTemplateWrite } from './template-write.js';
 
 // api-native pulls the whole local data layer; load it on first local use.
 let _nat;
@@ -321,6 +322,10 @@ async function _queueWrite(url, init, method, gen = accountGen()) {
     if (typeof init.body === 'string') {
       try { body = JSON.parse(init.body); } catch { body = init.body; }
     }
+    // A program workout's name is trimmed and never blank, as online.
+    const checked = checkTemplateWrite(method, _stripBase(url), body);
+    if (checked.error) return _jsonResponse(400, { error: checked.error });
+    body = checked.body;
     // When it was made and what it changes, before it changes this copy:
     // the server keeps the newer edit of each field.
     const edit = await describeEdit(method, _stripBase(url), body).catch(() => null);
