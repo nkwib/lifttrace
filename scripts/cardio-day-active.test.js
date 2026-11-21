@@ -43,7 +43,7 @@ test('the streak, week strip and calendar all read the trained days, not the lif
 });
 
 test('cardio is neither fetched nor counted while the setting is off', () => {
-  const body = code(diary).slice(code(diary).indexOf('async function loadWorkoutDates('));
+  const body = code(diary).slice(code(diary).indexOf('async function loadCardio('));
   const guard = body.indexOf('if (!$cardioEnabled)');
   const fetchAt = body.indexOf('LtApi.listCardio()');
   assert.ok(guard > -1, 'the load is gated on the setting');

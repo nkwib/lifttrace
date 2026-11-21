@@ -215,13 +215,15 @@
   let cardioRows = [];
   // Days excused (issue #121): one small row each, all of them at once.
   let excusedRows = [];
-  async function loadWorkoutDates() {
+  async function loadDateRows() {
     try {
       recentWorkoutRows = await LtApi.getRecentWorkouts(365);
     } catch {}
     try {
       excusedRows = await LtApi.listExcusedDays();
     } catch {}
+  }
+  async function loadCardio() {
     // Cardio is opt-in (settings.cardioEnabled, off by default), and turning
     // it on is what makes those days count. While it's off it isn't fetched,
     // and anything fetched earlier is dropped, so nobody gets streak credit
@@ -236,6 +238,10 @@
       // Bare GET (no start/end): cardio's recent rows, capped at 500.
       cardioRows = await LtApi.listCardio();
     } catch {}
+  }
+  // Both reads, for every caller that is not a sync handler.
+  async function loadWorkoutDates() {
+    await Promise.all([loadDateRows(), loadCardio()]);
   }
 
   // Every trained day: what the streak, the week strip and the calendar
@@ -1114,8 +1120,11 @@
       loadCoachFeedback($currentDate);
     }
     loadUnreadFeedback();
-    loadWorkoutDates();
-    loadPrevBests();
+    // Only what the sync touched is read again. Cardio has no sync kind, so
+    // it stays unconditional.
+    if (syncTouched(e?.detail, ['workouts', 'excusedDays'])) loadDateRows();
+    loadCardio();
+    if (syncTouched(e?.detail, ['workouts', 'exercises'])) loadPrevBests();
     loadSuggestedPrescriptions();
   }
 
