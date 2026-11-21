@@ -9,7 +9,7 @@
  */
 import { z } from 'zod';
 import db from '../../../db.js';
-import { toolResult } from '../_util.js';
+import { toolResult, clampLimit } from '../_util.js';
 import { foldText } from '../../search-text.js';
 
 const MAX_LIMIT = 25;
@@ -19,7 +19,7 @@ const MAX_LIMIT = 25;
  * (issue #77) at GET /api/v1/exercises.
  */
 export function searchExercisesCore(userId, { query, limit } = {}) {
-  const n = Math.min(Math.max(1, limit || 10), MAX_LIMIT);
+  const n = clampLimit(limit, 10, MAX_LIMIT);
   const folded = foldText(query);
   const rows = db.prepare(
     `SELECT id, name, category, equipment, load_type, set_type FROM exercises

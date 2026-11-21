@@ -27,6 +27,17 @@ export function safeJson(s, fallback) {
 }
 
 /**
+ * Integer LIMIT from untrusted input: truncate, clamp to [1, max]; missing or
+ * non-numeric input gives `def`. SQLite rejects fractional or NaN LIMIT binds.
+ */
+export function clampLimit(value, def, max) {
+  if (value == null || value === '') return def;
+  const n = Math.trunc(Number(value));
+  if (!Number.isFinite(n)) return def;
+  return Math.min(Math.max(1, n), max);
+}
+
+/**
  * YYYY-MM-DD in server-local time. Only the fallback for a caller with no
  * account (todayFor reads the account's own zone, the way the app does).
  */

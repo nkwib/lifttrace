@@ -115,6 +115,8 @@ function core(fn) {
     try {
       res.json(fn(req));
     } catch (e) {
+      // Driver errors (SQLITE_*) are server faults: 500 via wrap(), never echoed.
+      if (typeof e?.code === 'string' && e.code.startsWith('SQLITE_')) throw e;
       const code = errorCode(e);
       res.status(400).json(code ? { error: e.message, code } : { error: e.message });
     }

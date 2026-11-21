@@ -77,8 +77,14 @@ router.get('/', wrap((req, res) => {
   }
 
   sql += ' ORDER BY name ASC';
-  if (limit) { sql += ' LIMIT ?'; params.push(parseInt(limit)); }
-  if (offset) { sql += ' OFFSET ?'; params.push(parseInt(offset)); }
+  const lim = limit == null || limit === '' ? null : Number(limit);
+  const off = offset == null || offset === '' ? null : Number(offset);
+  if ((lim != null && !(Number.isInteger(lim) && lim >= 0)) || (off != null && !(Number.isInteger(off) && off >= 0))) {
+    return res.status(400).json({ error: 'limit and offset must be non-negative integers' });
+  }
+  // limit=0 or absent means no cap (as before); OFFSET needs a LIMIT in SQLite.
+  if (lim || off) { sql += ' LIMIT ?'; params.push(lim || -1); }
+  if (off) { sql += ' OFFSET ?'; params.push(off); }
 
   const rows = db.prepare(sql).all(...params);
   // Parse JSON fields

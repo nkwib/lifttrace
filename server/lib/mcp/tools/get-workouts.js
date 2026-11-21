@@ -18,6 +18,7 @@ import {
   toolResult,
   toolError,
   validateDateRange,
+  clampLimit,
 } from '../_util.js';
 import { formatWorkoutRow } from './get-workout.js';
 
@@ -34,7 +35,7 @@ export function getWorkoutsCore(userId, { start, end, limit } = {}) {
   const rangeError = validateDateRange(rangeStart, rangeEnd);
   if (rangeError) throw new Error(rangeError);
 
-  const n = Math.min(Math.max(1, Number(limit) || DEFAULT_LIMIT), MAX_LIMIT);
+  const n = clampLimit(limit, DEFAULT_LIMIT, MAX_LIMIT);
   const conditions = ['user_id = ?'];
   const params = [userId];
   if (rangeStart != null) {

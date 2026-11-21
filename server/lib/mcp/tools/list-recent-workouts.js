@@ -9,7 +9,7 @@
 import { z } from 'zod';
 import db from '../../../db.js';
 import { exerciseVolume } from '../../volume.js';
-import { DATE_RE, toolResult, toolError, validateDateRange } from '../_util.js';
+import { DATE_RE, toolResult, toolError, validateDateRange, clampLimit } from '../_util.js';
 
 const MAX_LIMIT = 50;
 
@@ -20,7 +20,7 @@ const MAX_LIMIT = 50;
  * callers get identical behavior for an out-of-range value.
  */
 export function listRecentWorkoutsCore(userId, { limit, start, end } = {}) {
-  const n = Math.min(Math.max(1, limit || 10), MAX_LIMIT);
+  const n = clampLimit(limit, 10, MAX_LIMIT);
   const rangeError = validateDateRange(start, end);
   if (rangeError) throw new Error(rangeError);
   const conditions = ['user_id = ?'];
