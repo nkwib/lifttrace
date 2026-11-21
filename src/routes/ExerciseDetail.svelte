@@ -152,7 +152,7 @@
     if (!top) return null;
     const amount = fmtSetAmount(detailKind, best, detailUnit);
     return { label: atWeight ? `${amount} @ ${atWeight} ${$weightUnit}` : amount, date: prDate };
-  })() : exerciseWeightPr(history, $weightUnit, (v, u) => $_('exercise_info.e1rm', { values: { value: v, unit: u } }));
+  })() : exerciseWeightPr(history, $weightUnit, isAssisted(exercise) ? null : (v, u) => $_('exercise_info.e1rm', { values: { value: v, unit: u } }));
 
   // Per-session top set for the inline progress chart. Oldest first so the
   // chart reads left-to-right chronologically. Limited to the last 24
