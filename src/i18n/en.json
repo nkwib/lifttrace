@@ -1451,6 +1451,7 @@
     }
   },
   "program_detail": {
+    "load_failed": "Couldn't load this program.",
     "program_name": "Program name",
     "duration_progression": "Duration & progression",
     "delete_program": "Delete Program",
@@ -1688,6 +1689,7 @@
     }
   },
   "workout_editor": {
+    "load_failed": "Couldn't load this workout.",
     "name_required": "Give the workout a name.",
     "loading": "Loading workout…",
     "actions": {

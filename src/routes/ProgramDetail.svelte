@@ -101,12 +101,13 @@
   // quiet: read again after a sync, without the loading state; a quiet read
   // that fails keeps what is shown. Only the newest read sets it.
   const newest = newestRead();
+  let loadError = false;
   async function load({ quiet = false } = {}) {
     const isNewest = newest();
     quiet = quiet && !loading; // the first read is still out: this one speaks if it fails
     if (!quiet) loading = true;
-    try { const got = await LtApi.getProgram(params.id); if (isNewest() && (got || !quiet)) program = got; }
-    catch(e) { if (isNewest() && !quiet) showError(e.message); }
+    try { const got = await LtApi.getProgram(params.id); if (isNewest() && (got || !quiet)) program = got; if (isNewest()) loadError = false; }
+    catch(e) { if (isNewest() && !quiet) { loadError = !program; showError(e.message); } }
     if (isNewest()) loading = false;
   }
   // A sync that changed this program, its days or who it is assigned to shows
@@ -381,6 +382,12 @@
 
   {#if loading}
     <Spinner block label="Loading program…" />
+  {:else if loadError && !program}
+    <div class="load-error" role="alert">
+      <span class="material-symbols-rounded">error_outline</span>
+      <p>{$_('program_detail.load_failed')}</p>
+      <button class="btn btn-primary" on:click={() => load()}>{$_('sync.retry')}</button>
+    </div>
   {:else if program}
     <div class="content">
       <!-- Info bar -->
@@ -622,6 +629,9 @@
 </Sheet>
 
 <style>
+  .load-error { text-align: center; padding: 48px 24px; color: var(--text-3); }
+  .load-error .material-symbols-rounded { font-size: 48px; display: block; margin-bottom: 12px; }
+  .load-error p { margin: 0 0 16px; font-size: 14px; }
   .page { min-height: 100dvh; background: var(--bg); padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + var(--mini-player-h, 0px) + 16px); }
 
   /* page-header styled globally in base.css */

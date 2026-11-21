@@ -108,16 +108,20 @@
   const _copy = v => JSON.parse(JSON.stringify(v ?? null));
   const newest = newestRead();
 
-  onMount(async () => {
+  let loadError = false;
+  async function loadTemplate() {
     const isNewest = newest();
+    loadError = false;
+    loading = true;
     try {
       const got = await LtApi.getTemplate(params.templateId);
       if (isNewest()) { template = got; _originalExercises = template?.exercises || []; _base = _copy(template); }
     }
-    catch(e) { showError(e.message); }
+    catch(e) { loadError = !template; showError(e.message); }
     loading = false;
     try { programMaker = (await LtApi.getProgram(params.programId))?.created_by ?? null; } catch {}
-  });
+  }
+  onMount(loadTemplate);
 
   // A sync that changed this workout (on the web, or by its coach) shows here
   // at once: each field you haven't changed in the editor takes the new
@@ -889,6 +893,12 @@
 
   {#if loading}
     <Spinner block label={$_('workout_editor.loading')} />
+  {:else if loadError && !template}
+    <div class="empty load-error" role="alert">
+      <span class="material-symbols-rounded">error_outline</span>
+      <p>{$_('workout_editor.load_failed')}</p>
+      <button class="btn btn-primary" on:click={loadTemplate}>{$_('sync.retry')}</button>
+    </div>
   {:else if template}
     <div class="content" on:focusin={e => inField = isField(e.target)} on:focusout={onFocusOut}>
       {#if gone}
@@ -1459,6 +1469,7 @@
 
   .empty { text-align: center; padding: 40px 24px; color: var(--text-3); }
   .empty .material-symbols-rounded { font-size: 48px; display: block; margin-bottom: 12px; }
+  .empty p { margin: 0 0 16px; font-size: 14px; }
   .loading { text-align: center; padding: 48px; color: var(--text-3); }
 
   /* ── Superset picker ──────────────────────────────────────────── */
