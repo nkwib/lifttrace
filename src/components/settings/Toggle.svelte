@@ -5,6 +5,8 @@
   // dimmed. Callers use this to convey "value controlled by environment"
   // for env-locked settings without also having to unmount the Toggle.
   export let disabled = false;
+  // Accessible name for callers without an adjacent <label>.
+  export let label = undefined;
   const dispatch = createEventDispatcher();
 
   function toggle() {
@@ -21,6 +23,7 @@
   role="switch"
   aria-checked={checked}
   aria-disabled={disabled}
+  aria-label={label}
   on:click={toggle}
   type="button"
 >

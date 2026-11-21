@@ -638,7 +638,7 @@
             <div class="upd-label">{$_('wizard.updates.toggle')}</div>
             <div class="upd-sub">{$_('wizard.updates.toggle_sub')}</div>
           </div>
-          <Toggle checked={updateChecks} on:change={e => updateChecks = e.detail} />
+          <Toggle label={$_('wizard.updates.toggle')} checked={updateChecks} on:change={e => updateChecks = e.detail} />
         </div>
         <p class="upd-note">{$_('wizard.updates.note')}</p>
         {/if}

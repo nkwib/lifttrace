@@ -66,6 +66,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Track Cardio flip refreshes Statistics days.** On 1Y and All, turning Track Cardio on or off kept the old trained days until the reload finished.
 - **Screen readers no longer read icon names.** Icon ligature text ("dashboard", "close", "arrow_back") inside buttons, links and tabs is now hidden from assistive tech, so controls are announced by their label only.
 - **Settings text meets contrast on the selected channel, the danger zone label and primary buttons.** The selected update channel, the Danger zone label (light theme) and the update button label (dark theme) were below 4.5:1.
+- **Setup wizard update-check switch has a name.** Screen readers now announce "Check for updates automatically" instead of a bare button.
 - **Empty Diary day refreshes its recent workouts after a sync.** Workouts synced for other dates now appear in the list without reopening the page.
 - **Statistics trained days count all cardio.** On 1Y and All, and in the year heatmap, only the newest 500 cardio sessions were counted, so older cardio days showed as rest days.
 - **Statistics after midnight loads the new day.** A page left open past midnight reloaded yesterday's range on sync or when the tab came back.
