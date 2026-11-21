@@ -1123,6 +1123,9 @@
     // Only what the sync touched is read again. Cardio has no sync kind, so
     // it stays unconditional.
     if (syncTouched(e?.detail, ['workouts', 'excusedDays'])) loadDateRows();
+    // The empty-day list of recent workouts reloads only when the day flips
+    // empty, so workouts a sync brought for other dates would not show.
+    if (isEmptyDay && syncTouched(e?.detail, ['workouts'])) loadRecentWorkouts();
     loadCardio();
     if (syncTouched(e?.detail, ['workouts', 'exercises'])) loadPrevBests();
     loadSuggestedPrescriptions();

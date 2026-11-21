@@ -14,6 +14,11 @@ test('recent workouts load is keyed on a derived isEmptyDay boolean', () => {
   assert.doesNotMatch(diary, /\$: if \(!loading && exercises\.length === 0\)/);
 });
 
+test('a sync that touched workouts reloads the recent list on an empty day', () => {
+  const h = diary.slice(diary.indexOf('function _onSyncComplete(e)'));
+  assert.match(h.slice(0, h.indexOf('onDestroy(')), /if \(isEmptyDay && syncTouched\(e\?\.detail, \['workouts'\]\)\) loadRecentWorkouts\(\);/);
+});
+
 test('onMount load stays for the rail during active sessions', () => {
   assert.match(diary, /onMount\(loadRecentWorkouts\)/);
 });
