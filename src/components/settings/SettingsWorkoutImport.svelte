@@ -72,8 +72,8 @@
       form.append('file', importFile);
       form.append('source', importSource);
       const res = await fetch('/api/workout-import/preview', { method: 'POST', credentials: 'include', body: form });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || $_('settings_workout_import.preview_failed'));
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || (res.status === 413 ? $_('settings_backup.toast.file_too_large') : $_('settings_workout_import.preview_failed')));
       importPreview = data;
     } catch(e) { showError(e.message); importPreview = null; importFile = null; }
     importBusy = false;
@@ -99,8 +99,8 @@
       form.append('source', importSource);
       form.append('onDuplicate', onDuplicate);
       const res = await fetch('/api/workout-import/commit', { method: 'POST', credentials: 'include', body: form });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || $_('settings_workout_import.import_failed'));
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || (res.status === 413 ? $_('settings_backup.toast.file_too_large') : $_('settings_workout_import.import_failed')));
       importResult = data;
       showSuccess($_('settings_workout_import.imported', { values: { count: data.imported } }));
     } catch(e) { showError(e.message); }

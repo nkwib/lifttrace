@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import db from '../db.js';
 import { wrap, logger } from '../logger.js';
+import { singleUpload } from '../lib/upload-error.js';
 import { requireAuth, uid } from '../middleware/auth.js';
 import { parseStrong }    from '../lib/workout-import/strong.js';
 import { parseHevy }      from '../lib/workout-import/hevy.js';
@@ -39,7 +40,7 @@ function _parse(source, buf, userUnit, zone) {
 // Parses the file, fuzzy-matches exercise names, and returns counts without
 // writing anything. Lets the user see what they're about to import before
 // committing (especially useful for multi-year files).
-router.post('/preview', upload.single('file'), wrap((req, res) => {
+router.post('/preview', singleUpload(upload, 'file', 25), wrap((req, res) => {
   const { source } = req.body || {};
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   if (!SUPPORTED_SOURCES.includes(source)) return res.status(400).json({ error: 'Unsupported source' });
@@ -87,7 +88,7 @@ router.post('/preview', upload.single('file'), wrap((req, res) => {
 // ── POST /api/workout-import/commit ─────────────────────────────────────────
 // Re-parses the file and writes every non-duplicate workout to workout_log.
 // We don't trust client-side state so we parse from scratch.
-router.post('/commit', upload.single('file'), wrap((req, res) => {
+router.post('/commit', singleUpload(upload, 'file', 25), wrap((req, res) => {
   const { source, onDuplicate } = req.body || {};
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   if (!SUPPORTED_SOURCES.includes(source)) return res.status(400).json({ error: 'Unsupported source' });

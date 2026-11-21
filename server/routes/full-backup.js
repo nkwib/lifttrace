@@ -5,6 +5,7 @@ import os from 'os';
 import { fileURLToPath } from 'url';
 import AdmZip from 'adm-zip';
 import multer from 'multer';
+import { singleUpload } from '../lib/upload-error.js';
 import db, { dedupeExercisesOnce } from '../db.js';
 import { logger } from '../logger.js';
 import { seedSmtpFromEnv } from '../email.js';
@@ -775,7 +776,7 @@ router.post('/:name/restore', requireAdmin, (req, res) => {
   catch (err) { res.status(err.status || 500).json({ error: err.message }); }
 });
 
-router.post('/upload-restore', requireAdmin, upload.single('backup'), (req, res) => {
+router.post('/upload-restore', requireAdmin, singleUpload(upload, 'backup', _backupMaxMB), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   try { restoreFromZip(openBackupZip(req.file.path)); res.json({ ok: true }); }
   catch (err) { res.status(err.status || 500).json({ error: err.message }); }

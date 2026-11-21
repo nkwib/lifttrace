@@ -363,7 +363,7 @@
     };
     xhr.onload = () => {
       if (xhr.status >= 400) {
-        const msg = xhr.status === 413 ? $_('settings_backup.toast.file_too_large') : (JSON.parse(xhr.responseText || '{}').error || $_('settings_backup.toast.restore_failed'));
+        const msg = xhr.status === 413 ? $_('settings_backup.toast.file_too_large') : ((() => { try { return JSON.parse(xhr.responseText || '{}').error; } catch { return null; } })() || $_('settings_backup.toast.restore_failed'));
         showError(msg);
         restoreStatus = null;
         return;

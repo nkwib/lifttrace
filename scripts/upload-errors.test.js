@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const src = readFileSync(new URL('../server/routes/upload.js', import.meta.url), 'utf8');
+const lib = readFileSync(new URL('../server/lib/upload-error.js', import.meta.url), 'utf8');
 const index = readFileSync(new URL('../server/lib/error-handler.js', import.meta.url), 'utf8');
 
 test('the error handler turns err.status into the response code', () => {
@@ -17,7 +18,7 @@ test('the error handler turns err.status into the response code', () => {
 
 test('a refused type carries 415 and an oversized file becomes 413', () => {
   assert.match(src, /function refusedType\(message\) \{\s*return Object\.assign\(new Error\(message\), \{ status: 415 \}\);/);
-  assert.match(src, /LIMIT_FILE_SIZE[\s\S]{0,200}status: 413/);
+  assert.match(lib, /LIMIT_FILE_SIZE[\s\S]{0,200}status: 413/);
 });
 
 test('no upload filter rejects with a bare Error that would answer 500', () => {

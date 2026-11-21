@@ -6,6 +6,7 @@ import fs from 'fs';
 import { safeUploadExtension } from '../lib/upload-paths.js';
 import { requireAuth } from '../middleware/auth.js';
 import { assertAllowedMedia } from '../lib/image-magic.js';
+import { uploadError } from '../lib/upload-error.js';
 
 const uploadsPath = process.env.UPLOADS_PATH || './uploads';
 fs.mkdirSync(uploadsPath, { recursive: true });
@@ -18,17 +19,9 @@ const storage = multer.diskStorage({
   },
 });
 
-// A refused or oversized file is the caller's mistake, not the server falling
-// over, so it answers 415 or 413 instead of reaching the error handler as a 500.
+// A refused type answers 415 (oversize is mapped to 413 by uploadError).
 function refusedType(message) {
   return Object.assign(new Error(message), { status: 415 });
-}
-function uploadError(err, next, maxMb) {
-  if (err?.code === 'LIMIT_FILE_SIZE') {
-    return next(Object.assign(new Error(`That file is larger than this server accepts (${maxMb} MB).`), { status: 413 }));
-  }
-  if (err?.name === 'MulterError' && !err.status) err.status = 400;
-  return next(err);
 }
 
 const upload = multer({
