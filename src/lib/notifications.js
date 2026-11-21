@@ -202,13 +202,19 @@ const _celebratedToday = new Set(
   (() => { try { return JSON.parse(localStorage.getItem('lt:celebratedToday') || '[]'); } catch { return []; } })()
 );
 
-const _lastDate = localStorage.getItem('lt:celebDate') || '';
-const _today = new Date().toDateString();
-if (_lastDate !== _today) {
+let _celebDate = localStorage.getItem('lt:celebDate') || '';
+
+// Clears the set when the local day changed since it was filled, in memory or
+// in storage. Called per use: a WebView or tab can outlive midnight.
+function _rollCelebrations() {
+  const today = new Date().toDateString();
+  if (_celebDate === today && localStorage.getItem('lt:celebDate') === today) return;
   _celebratedToday.clear();
-  localStorage.setItem('lt:celebDate', _today);
+  _celebDate = today;
+  localStorage.setItem('lt:celebDate', today);
   localStorage.setItem('lt:celebratedToday', '[]');
 }
+_rollCelebrations();
 
 function _saveCelebrated() {
   localStorage.setItem('lt:celebratedToday', JSON.stringify([..._celebratedToday]));
@@ -217,6 +223,7 @@ function _saveCelebrated() {
 
 export function celebrateWorkoutComplete(workoutName) {
   const key = `workout-complete`;
+  _rollCelebrations();
   if (_celebratedToday.has(key)) return;
   const enabled = DB.getSetting('notifWorkoutComplete', true);
   if (!enabled) return;
