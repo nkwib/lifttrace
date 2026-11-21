@@ -235,8 +235,8 @@
       return;
     }
     try {
-      // Bare GET (no start/end): cardio's recent rows, capped at 500.
-      cardioRows = await LtApi.listCardio();
+      // Explicit all-time range: a bare GET is capped at the newest 500.
+      cardioRows = await LtApi.listCardio('2000-01-01', '9999-12-31');
     } catch {}
   }
   // Both reads, for every caller that is not a sync handler.
