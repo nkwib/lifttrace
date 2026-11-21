@@ -199,11 +199,12 @@
 </script>
 
 <div class="page">
-  <header class="page-header">
+  <header class="page-header ed-header">
     <button class="back-btn" on:click={() => window.history.length > 1 ? window.history.back() : push('/exercises')} aria-label={$_('common.back')}>
       <span class="material-symbols-rounded">arrow_back</span>
     </button>
-    <h1>{exercise?.name || 'Exercise'}</h1>
+    <h1>{exercise?.name || $_('routes.exercise_detail.title')}</h1>
+    <div class="ed-actions">
     {#if exercise}
       <button class="header-btn" on:click={handleExport} disabled={exporting} title={$_('exercise_detail.share_json')} aria-label={$_('exercise_detail.share_json')}>
         <span class="material-symbols-rounded">{exporting ? 'hourglass_top' : 'share'}</span>
@@ -217,6 +218,7 @@
         <span class="material-symbols-rounded">delete</span>
       </button>
     {/if}
+    </div>
   </header>
 
   <ExerciseEditor bind:open={showEditor} {exercise} on:saved={onEditorSaved} />
@@ -303,6 +305,13 @@
   .header-btn {
     background: none; border: none; cursor: pointer; color: var(--text-3);
     padding: 6px; border-radius: var(--radius-sm); display: flex;
+  }
+  .ed-actions { display: contents; }
+  /* Narrow phones: back + title share row 1, actions drop to row 2 so the name stays readable. */
+  @media (max-width: 480px) {
+    .ed-header { flex-wrap: wrap; row-gap: 0; }
+    .ed-header h1 { flex: 1 1 calc(100% - 48px); }
+    .ed-actions { display: flex; gap: 8px; margin-left: auto; }
   }
   .header-btn:hover { color: var(--text-1); background: var(--surface-2); }
   .header-btn.danger:hover { color: var(--danger); background: rgba(255,92,92,0.1); }

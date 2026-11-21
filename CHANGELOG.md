@@ -64,6 +64,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Keyboard focus stays on the exercise after Remove from superset.** It used to drop to the top of the page; now it lands on that exercise's More options button (also after adding to a superset).
 - **Program and workout editor show an error with Retry when offline.** Opening a program or workout with no connection left a blank page; it now says it could not load and offers Retry.
 - **Saving the profile no longer nudges your height.** With ft/in shown, an untouched height was re-derived from rounded inches (172 cm became 173 cm).
+- **Long exercise names get an ellipsis in page headers.** The title was hard-clipped (e.g. "Zottm") on narrow phones; on the exercise page the actions now drop to a second row.
 - **Workout pill no longer shows a frozen ".00".** The floating timer pill now shows m:ss without the centisecond suffix.
 - **Fast day switching in the Diary.** Coach feedback and set videos from a day you already left no longer show up on the day you land on.
 - **Diary progression chip uses the exercise's equipment.** Cable and machine lifts now suggest +5 kg / +10 lb and dumbbells +2 kg, read from the library (it was always the flat 2.5 kg / 5 lb). Assisted exercises no longer get a "Try more weight" chip.
