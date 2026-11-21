@@ -1,5 +1,6 @@
 <script>
   import { closeOnBack } from '../../lib/back-stack.js';
+  import { trapFocus } from '../../lib/focus-trap.js';
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { _ } from 'svelte-i18n';
@@ -162,8 +163,8 @@
 {#if open}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div use:portal class="sheet-backdrop" on:click={() => close()} use:closeOnBack={() => close()}>
-    <div class="bs-sheet" on:click|stopPropagation on:keydown={() => {}}>
+  <div use:portal class="sheet-backdrop" on:click={() => close()} use:closeOnBack={() => close()} use:trapFocus={{ onEscape: () => close() }}>
+    <div class="bs-sheet" role="dialog" aria-modal="true" aria-label={$_('diary_extra.body_stats_title')} on:click|stopPropagation on:keydown={() => {}}>
       <div class="sheet-handle"></div>
       <div class="sheet-header-row">
         <h3 class="sheet-title">{$_('diary_extra.body_stats_title')}</h3>

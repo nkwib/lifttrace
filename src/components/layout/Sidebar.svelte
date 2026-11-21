@@ -2,6 +2,7 @@
   import { fly, fade } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { location } from 'svelte-spa-router';
+  import { trapFocus } from '../../lib/focus-trap.js';
   import { goTab } from '../../lib/tab-nav.js';
   import { createEventDispatcher } from 'svelte';
   import { _ } from 'svelte-i18n';
@@ -40,6 +41,17 @@
   function go(path) {
     goTab(path);
     if (!persistent) { open = false; dispatch('close'); }
+  }
+  // Focus trap only for the overlay drawer, never the persistent desktop rail.
+  function drawerTrap(node, opts) {
+    let inst = opts ? trapFocus(node, opts) : null;
+    return {
+      update(next) {
+        if (inst) { inst.destroy(); inst = null; }
+        if (next) inst = trapFocus(node, next);
+      },
+      destroy() { if (inst) inst.destroy(); },
+    };
   }
   function close() {
     if (!persistent) { open = false; dispatch('close'); }
@@ -93,6 +105,9 @@
     in:fly={{ x: -280, duration: persistent ? 0 : 280, easing: cubicOut }}
     out:fly={{ x: -280, duration: persistent ? 0 : 200 }}
     aria-label="Navigation menu"
+    role={persistent ? undefined : 'dialog'}
+    aria-modal={persistent ? undefined : 'true'}
+    use:drawerTrap={persistent ? null : { onEscape: close }}
   >
     <div class="sidebar-brand">
       <img class="brand-icon" src={iconUrl('/icons/icon-192.png')} alt="LiftTrace" />

@@ -26,6 +26,7 @@
   import { placeAnchoredMenu, keepOffCrease } from '../../lib/fold-core.js';
   import { _ } from 'svelte-i18n';
   import { closeOnBack } from '../../lib/back-stack.js';
+  import { trapFocus } from '../../lib/focus-trap.js';
   import { portal } from '../../lib/portal.js';
 
   /** The trigger's bounding rect, in viewport coordinates. */
@@ -106,7 +107,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div use:portal class="ltm-backdrop" on:click|stopPropagation={close} use:closeOnBack={close}></div>
-<div use:portal class="ltm" role="menu" bind:this={menuEl} on:click|stopPropagation
+<div use:portal use:trapFocus={{ onEscape: close, initial: '.ltm-item' }} class="ltm" role="menu" bind:this={menuEl} on:click|stopPropagation
      style="{pos.edge} left:{pos.left}px; width:{pos.width}px;
             {pos.maxHeight ? `max-height:${pos.maxHeight}px; overflow-y:auto;` : ''}
             visibility:{placed ? 'visible' : 'hidden'}">

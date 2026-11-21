@@ -58,3 +58,18 @@ test('remaining dismissable layers trap focus and share one close fn for Escape 
   assert.doesNotMatch(read('../src/components/ui/TimePicker.svelte'), /on:keydown=\{\(\) => \{\}\}/);
   assert.doesNotMatch(read('../src/components/settings/SettingsEmail.svelte'), /e\.key === 'Escape'/);
 });
+
+test('drawer, load type menu, gym tools and body stats trap focus with Escape', () => {
+  for (const f of ['diary/GymTools', 'diary/BodyStats', 'ui/LoadTypeMenu', 'layout/Sidebar']) {
+    assert.match(read(`../src/components/${f}.svelte`), /import \{ trapFocus \} from '[./]+\/lib\/focus-trap\.js'/, f);
+  }
+  for (const f of ['GymTools', 'BodyStats']) {
+    const s = read(`../src/components/diary/${f}.svelte`);
+    assert.match(s, /use:trapFocus=\{\{ onEscape: /, f);
+    assert.match(s, /role="dialog" aria-modal="true"/, f);
+  }
+  assert.match(read('../src/components/ui/LoadTypeMenu.svelte'), /use:trapFocus=\{\{ onEscape: close/);
+  const sb = read('../src/components/layout/Sidebar.svelte');
+  assert.match(sb, /use:drawerTrap=\{persistent \? null : \{ onEscape: close \}\}/);
+  assert.match(sb, /role=\{persistent \? undefined : 'dialog'\}/);
+});
