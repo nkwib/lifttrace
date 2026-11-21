@@ -10,6 +10,7 @@ import { parseJefit }     from '../lib/workout-import/jefit.js';
 import { parseGarminFit } from '../lib/workout-import/garmin-fit.js';
 import { matchExercise }  from '../lib/workout-import/common.js';
 import { importKeys, importKey, planImport } from '../../src/lib/import-match.js';
+import { userZone } from '../lib/user-zone.js';
 import { readTimes } from '../lib/field-sync.js';
 
 const router = Router();
@@ -25,12 +26,12 @@ const SUPPORTED_SOURCES = ['strong', 'hevy', 'fitnotes', 'jefit', 'garmin-fit'];
 // raw Buffer to the parser instead of decoding to string.
 const BINARY_SOURCES = new Set(['garmin-fit']);
 
-function _parse(source, buf, userUnit) {
+function _parse(source, buf, userUnit, zone) {
   if (source === 'strong')     return parseStrong(buf.toString('utf8'),   userUnit);
   if (source === 'hevy')       return parseHevy(buf.toString('utf8'),     userUnit);
   if (source === 'fitnotes')   return parseFitnotes(buf.toString('utf8'), userUnit);
   if (source === 'jefit')      return parseJefit(buf.toString('utf8'),    userUnit);
-  if (source === 'garmin-fit') return parseGarminFit(buf,                 userUnit);
+  if (source === 'garmin-fit') return parseGarminFit(buf,                 userUnit, zone);
   throw new Error(`Unsupported source: ${source}`);
 }
 
@@ -47,7 +48,7 @@ router.post('/preview', upload.single('file'), wrap((req, res) => {
   const userUnit = _getUserWeightUnit(userId);
 
   let workouts;
-  try { workouts = _parse(source, req.file.buffer, userUnit); }
+  try { workouts = _parse(source, req.file.buffer, userUnit, userZone(userId)); }
   catch(e) { return res.status(400).json({ error: `Parse failed: ${e.message}` }); }
 
   if (workouts.length === 0) return res.status(400).json({ error: 'No workouts found in file' });
@@ -97,7 +98,7 @@ router.post('/commit', upload.single('file'), wrap((req, res) => {
   const userUnit = _getUserWeightUnit(userId);
 
   let workouts;
-  try { workouts = _parse(source, req.file.buffer, userUnit); }
+  try { workouts = _parse(source, req.file.buffer, userUnit, userZone(userId)); }
   catch(e) { return res.status(400).json({ error: `Parse failed: ${e.message}` }); }
 
   const library = _loadLibraryForUser(userId);

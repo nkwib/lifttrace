@@ -41,6 +41,7 @@
 import { Decoder, Stream } from '@garmin/fitsdk';
 import { garminSetToExerciseName } from './garmin-exercise-map.js';
 import { convertWeight } from './common.js';
+import { dayOf } from '../programWeek.js';
 
 /**
  * Parse a .fit binary buffer. Returns an array of canonical workouts
@@ -49,7 +50,7 @@ import { convertWeight } from './common.js';
  * Throws if the file isn't a valid FIT, doesn't contain any SET
  * messages (i.e. isn't a strength workout), or fails integrity check.
  */
-export function parseGarminFit(buffer, userUnit) {
+export function parseGarminFit(buffer, userUnit, zone) {
   if (!buffer || !buffer.length) {
     throw new Error('Empty file');
   }
@@ -92,7 +93,7 @@ export function parseGarminFit(buffer, userUnit) {
     fileIdMesgs[0]?.timeCreated ||
     setMesgs[0]?.startTime ||
     new Date();
-  const date = _toIsoDate(rawDate);
+  const date = _toIsoDate(rawDate, zone);
 
   const durationSec =
     session.totalTimerTime ||
@@ -163,17 +164,18 @@ export function parseGarminFit(buffer, userUnit) {
 
 /** Extract a YYYY-MM-DD date string from a Date, epoch-ms number, or
  *  Garmin timestamp (seconds since 1989-12-31). SDK usually gives us
- *  a Date already; the fallbacks are defensive. */
-function _toIsoDate(v) {
-  if (v instanceof Date) return v.toISOString().slice(0, 10);
-  if (typeof v === 'number') {
-    const ms = v > 1e12 ? v : v * 1000;
-    return new Date(ms).toISOString().slice(0, 10);
-  }
-  if (typeof v === 'string') {
-    return v.slice(0, 10);
-  }
-  return new Date().toISOString().slice(0, 10);
+ *  a Date already; the fallbacks are defensive.
+ *  FIT times are UTC instants, so Date/number inputs are dated in `zone`
+ *  (an IANA name; unset or invalid means the server zone, see dayOf). Limit:
+ *  that is the user's stored current zone, not where the workout happened.
+ *  Strings are sliced as written. */
+export function _toIsoDate(v, zone) {
+  if (typeof v === 'string') return v.slice(0, 10);
+  let ms;
+  if (v instanceof Date) ms = v.getTime();
+  else if (typeof v === 'number') ms = v > 1e12 ? v : v * 1000;
+  else ms = Date.now();
+  return dayOf(ms, zone) ?? new Date().toISOString().slice(0, 10);
 }
 
 /** When no session totalTimerTime, sum the SET durations as a proxy. */
