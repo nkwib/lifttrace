@@ -57,6 +57,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Notification permission hint is readable in the light theme.** The "browser needs permission" hint used a missing color token and rendered pale amber on white; it now uses the warning text color.
 - **Setup wizard no longer errors when the server pins update checks.** With UPDATE_CHECK set, the updates step shows a note instead of a toggle and skips the refused save (it was a 409 in the console and a WARN in the server log).
 - **Narrow phones (320px) keep exercise names readable.** Exercise card icons wrap below the name instead of squeezing it, and the superset header text stays on one line.
+- **Superset sheet counts correctly.** "Create Superset (1 exercise)" instead of "1 exercises", and the superset remove button has an accessible name.
 - **Workout pill no longer shows a frozen ".00".** The floating timer pill now shows m:ss without the centisecond suffix.
 - **Fast day switching in the Diary.** Coach feedback and set videos from a day you already left no longer show up on the day you land on.
 - **Diary progression chip uses the exercise's equipment.** Cable and machine lifts now suggest +5 kg / +10 lb and dumbbells +2 kg, read from the library (it was always the flat 2.5 kg / 5 lb). Assisted exercises no longer get a "Try more weight" chip.

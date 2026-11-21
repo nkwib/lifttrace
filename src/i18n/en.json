@@ -694,7 +694,7 @@
     "create_hint":           "Select exercises to group with {name}:",
     "merge_into_superset":   "Merge Into Superset",
     "join_hint":             "Choose which superset to join:",
-    "create_confirm":        "Create Superset ({count} exercises)",
+    "create_confirm":        "Create Superset ({count, plural, one {# exercise} other {# exercises}})",
     "merge_hint":            "All exercises from both supersets will be combined:"
   },
   "time_picker": {

@@ -1528,7 +1528,7 @@
     "create_hint": "Seleziona gli esercizi da raggruppare con {name}:",
     "merge_into_superset": "Unisci in Superset",
     "join_hint": "Scegli a quale superset unirti:",
-    "create_confirm": "Crea Superset (esercizi {count})",
+    "create_confirm": "Crea Superset ({count, plural, one {# esercizio} other {# esercizi}})",
     "merge_hint": "Verranno combinati tutti gli esercizi di entrambi i superset:"
   },
   "settings_about": {

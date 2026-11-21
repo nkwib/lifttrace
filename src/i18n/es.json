@@ -554,7 +554,7 @@
     "create_hint": "Elige los ejercicios que quieres agrupar con {name}:",
     "merge_into_superset": "Combinar con una superserie",
     "join_hint": "Elige a qué superserie unirse:",
-    "create_confirm": "Crear la superserie ({count} ejercicios)",
+    "create_confirm": "Crear la superserie ({count, plural, one {# ejercicio} other {# ejercicios}})",
     "merge_hint": "Se combinarán todos los ejercicios de las dos superseries:"
   },
   "time_picker": {
