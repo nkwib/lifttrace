@@ -72,11 +72,17 @@ export async function _timed(signal, fn, ms = AI_DEADLINE_MS) {
   const timer = setTimeout(() => { timedOut = true; ctl.abort(); }, ms);
   const onAbort = () => ctl.abort();
   signal?.addEventListener('abort', onAbort, { once: true });
+  const timeoutError = () => _inLanguage(Object.assign(new Error("Trace didn't get an answer in time. Try again, or ask for less at once."), { code: 'trace_timed_out' }));
   try {
-    return await fn(ctl.signal);
+    const out = await fn(ctl.signal);
+    // apiFetch can answer the aborted request (a 503 "needs a connection")
+    // instead of throwing, so a deadline that fired is checked here too.
+    _throwIfAborted(signal);
+    if (timedOut) throw timeoutError();
+    return out;
   } catch (err) {
     _throwIfAborted(signal);
-    if (timedOut) throw _inLanguage(Object.assign(new Error("Trace didn't get an answer in time. Try again, or ask for less at once."), { code: 'trace_timed_out' }));
+    if (timedOut) throw timeoutError();
     throw err;
   } finally {
     clearTimeout(timer);
