@@ -206,6 +206,10 @@ class _Unsupported extends Error {
   constructor(msg) { super(msg); this.status = 501; }
 }
 
+class _BadRequest extends Error {
+  constructor(msg) { super(msg); this.status = 400; }
+}
+
 // ── handlers grouped by resource ─────────────────────────────────────────
 
 const Auth = {
@@ -1869,6 +1873,12 @@ async function handle(method, path, body, query) {
   // ── /api/ai/* ─────────────────────────────────────────────────────────
   if (r === 'ai') {
     if (id === 'history' && m === 'GET')    return AiChat.getHistory();
+    if (id === 'history' && m === 'POST') {
+      // Same checks as POST /api/ai/history on the server.
+      const { role, content } = body || {};
+      if (!role || !content || typeof content !== 'string') throw new _BadRequest('role and content required');
+      return AiChat.append(role, content).then(() => ({ ok: true }));
+    }
     if (id === 'history' && m === 'DELETE') return AiChat.clear();
     if (id === 'chat')                      return AiChat.proxy();
   }
