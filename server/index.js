@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { parseTrustProxy } from './lib/login-throttle.js';
 import { rememberAdminOrigin } from './lib/public-url.js';
 import { corsOrigin } from './lib/cors.js';
 import { framingHeaders, parseFrameAncestors } from './lib/frame-ancestors.js';
@@ -96,6 +97,14 @@ startScheduler();
 initUpdateCheckSetting();
 
 const app  = express();
+// Behind a reverse proxy every client shares its address unless Express is
+// told to read X-Forwarded-For. Off by default: trusting it blindly lets any
+// client spoof its address. Set before anything reads req.ip or req.secure.
+const TRUST_PROXY = parseTrustProxy(process.env.TRUST_PROXY);
+if (TRUST_PROXY !== undefined) {
+  app.set('trust proxy', TRUST_PROXY);
+  if (TRUST_PROXY === true) console.warn('[WARN] TRUST_PROXY=true trusts X-Forwarded-For from anyone, so it can be spoofed if the server is directly reachable. Prefer a hop count such as TRUST_PROXY=1.');
+}
 const PORT = process.env.PORT || 3002;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

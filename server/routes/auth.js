@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { createBucket, passwordBucket, startPruning } from '../lib/login-throttle.js';
 import { linkBase } from '../lib/public-url.js';
 import { localizeDataUrl } from '../lib/image-localizer.js';
 import bcrypt from 'bcryptjs';
@@ -56,38 +57,52 @@ const BCRYPT_COST = 12;
 // Two parallel buckets: per-IP (catches a single attacker hammering one
 // endpoint) AND per-username (catches credential-stuffing across IPs aimed
 // at one account). Both have to clear before the request proceeds.
-const _ipAttempts = new Map();
-const _userAttempts = new Map();
-const IP_LIMIT = 10, USER_LIMIT = 6, WINDOW_MS = 15 * 60 * 1000;
+const IP_LIMIT = 10, USER_LIMIT = 6;
+const _ipAttempts = createBucket({ limit: IP_LIMIT });
+const _userAttempts = createBucket({ limit: USER_LIMIT });
+startPruning([_ipAttempts, _userAttempts, passwordBucket]);
 
-function _bucketHit(map, key, limit) {
-  const now = Date.now();
-  let entry = map.get(key);
-  if (!entry || now > entry.resetAt) entry = { count: 0, resetAt: now + WINDOW_MS };
-  entry.count++;
-  map.set(key, entry);
-  return entry.count > limit;
+const TOO_MANY = { error: 'Too many attempts. Try again in 15 minutes.' };
+
+// One line, once: X-Forwarded-For arrives but TRUST_PROXY is off, so every
+// client behind the proxy shares one address for these limits.
+let _xffWarned = false;
+function warnIfUntrustedProxy(req) {
+  if (_xffWarned || process.env.TRUST_PROXY || !req.headers['x-forwarded-for']) return;
+  _xffWarned = true;
+  console.warn('[WARN] X-Forwarded-For seen on sign-in but TRUST_PROXY is unset: all clients share one address for rate limits. Set TRUST_PROXY to your proxy hop count (see README).');
 }
 
+// Counts every attempt (forgot-password, recover: they answer 200 or a generic
+// reply, so failures can't be told apart). A per-username lockout is
+// existing behaviour: anyone who knows a username can trip its bucket.
 export function rateLimitLogin(req, res, next) {
+  warnIfUntrustedProxy(req);
   const ip = req.ip || req.socket.remoteAddress || 'unknown';
-  if (_bucketHit(_ipAttempts, ip, IP_LIMIT)) {
-    return res.status(429).json({ error: 'Too many attempts. Try again in 15 minutes.' });
-  }
+  if (_ipAttempts.hit(ip)) return res.status(429).json(TOO_MANY);
   const username = (req.body?.username || '').toString().trim().toLowerCase();
-  if (username && _bucketHit(_userAttempts, `u:${username}`, USER_LIMIT)) {
-    // Generic message — don't confirm the username exists.
-    return res.status(429).json({ error: 'Too many attempts. Try again in 15 minutes.' });
-  }
+  // Generic message: don't confirm the username exists.
+  if (username && _userAttempts.hit(`u:${username}`)) return res.status(429).json(TOO_MANY);
   next();
 }
-// Cleanup stale entries every 30 min
-setInterval(() => {
-  const now = Date.now();
-  for (const m of [_ipAttempts, _userAttempts]) {
-    for (const [k, entry] of m) if (now > entry.resetAt) m.delete(k);
+
+// /login: check the limits up front (before bcrypt), count only 401s, so
+// successful sign-ins behind a shared address don't use up the budget.
+export function rateLimitLoginFailures(req, res, next) {
+  warnIfUntrustedProxy(req);
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  const username = (req.body?.username || '').toString().trim().toLowerCase();
+  const uKey = username ? `u:${username}` : null;
+  if (_ipAttempts.isLimited(ip) || (uKey && _userAttempts.isLimited(uKey))) {
+    return res.status(429).json(TOO_MANY);
   }
-}, 30 * 60 * 1000);
+  res.on('finish', () => {
+    if (res.statusCode !== 401) return;
+    _ipAttempts.hit(ip);
+    if (uKey) _userAttempts.hit(uKey);
+  });
+  next();
+}
 
 // Cookie security:
 //   - Default `secure: true` (HTTPS-only). Most self-hosters never set
@@ -234,7 +249,7 @@ router.get('/me', wrap((req, res) => {
   res.json({ user: user ? safeUser(user) : null, coaching });
 }));
 
-router.post('/login', rateLimitLogin, wrap((req, res) => {
+router.post('/login', rateLimitLoginFailures, wrap((req, res) => {
   // Block password login when admins have switched the instance to OIDC-only.
   if (!isPasswordLoginEnabled()) {
     return res.status(403).json({ error: 'Password login is disabled. Use Single Sign-On instead.' });
@@ -331,9 +346,13 @@ router.put('/password', requireAuth, wrap((req, res) => {
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
   if (user.password_hash) {
     if (!current_password) return res.status(400).json({ error: 'Current password required' });
+    // Wrong guesses per account, so a stolen session can't brute-force it.
+    if (passwordBucket.isLimited(user.id)) return res.status(429).json(TOO_MANY);
     if (!bcrypt.compareSync(current_password, user.password_hash)) {
+      passwordBucket.hit(user.id);
       return res.status(401).json({ error: 'Current password is incorrect' });
     }
+    passwordBucket.clear(user.id);
   } else if (!freshSignIn(req.user)) {
     // A first password for a single sign-on account: a sign-in this recent,
     // or a stolen session could give itself a password (nutritrace#222).

@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- **`TRUST_PROXY` for reverse proxies.** Opt-in (hop count, subnet list or `true`); off by default. Without it every client behind Traefik, Caddy or nginx shares the proxy's address for sign-in limits. When on, the client address also changes for the two-step and recovery limits, AI limits, and `req.secure`/`req.protocol`.
 - **Reorder program days on phones.** Each day in a program has up/down buttons, since drag-and-drop only worked with a mouse.
 - **Workout editor asks before discarding edits.** Back arrow and Android back confirm when there are unsaved changes. Closing the tab warns on the web; other web navigation is not intercepted.
 - **Duplicate a workout day.** A copy button on each day card in a program makes "Day (Copy)" with the same exercises, placed right after the original.
@@ -67,6 +68,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Long exercise names get an ellipsis in page headers.** The title was hard-clipped (e.g. "Zottm") on narrow phones; on the exercise page the actions now drop to a second row.
 - **Trace reply bubbles hug their text.** Assistant replies no longer have a blank line of extra space above the text.
 - **Webhook delivery pins the connection to the checked address.** A host could pass the private-address check and then resolve to an internal address when connecting (DNS rebinding).
+- **Successful sign-ins no longer use up the per-address limit.** Only wrong passwords count on `/login`, so the 11th sign-in from one address is no longer refused. Forgot-password and recovery still count every attempt.
+- **Changing your password rate-limits wrong current passwords.** 5 wrong tries in 15 minutes per account, then 429, so a stolen session can't brute-force it.
 - **Workout pill no longer shows a frozen ".00".** The floating timer pill now shows m:ss without the centisecond suffix.
 - **Fast day switching in the Diary.** Coach feedback and set videos from a day you already left no longer show up on the day you land on.
 - **Diary progression chip uses the exercise's equipment.** Cable and machine lifts now suggest +5 kg / +10 lb and dumbbells +2 kg, read from the library (it was always the flat 2.5 kg / 5 lb). Assisted exercises no longer get a "Try more weight" chip.
