@@ -101,6 +101,34 @@ router.get('/:id/file', wrap((req, res) => {
   });
 }));
 
+// PATCH /api/set-media/:id  { set_uuid?, exercise_uuid? }
+// App-internal (not in the public API). Undoing a removal re-keys the set and
+// exercise with new uuids, so the clip is moved onto them. updated_at is
+// bumped by the table trigger, which is what sync pulls on.
+router.patch('/:id', wrap((req, res) => {
+  const userId = uid(req);
+  const id = parseInt(req.params.id, 10);
+  if (!Number.isFinite(id)) return res.status(400).json({ error: 'Invalid id' });
+  const { set_uuid, exercise_uuid } = req.body || {};
+  const valid = (v) => typeof v === 'string' && v.trim() !== '' && v.length <= 100;
+  if (set_uuid === undefined && exercise_uuid === undefined) {
+    return res.status(400).json({ error: 'set_uuid or exercise_uuid required' });
+  }
+  if ((set_uuid !== undefined && !valid(set_uuid)) || (exercise_uuid !== undefined && !valid(exercise_uuid))) {
+    return res.status(400).json({ error: 'Invalid uuid' });
+  }
+  const row = userId != null
+    ? db.prepare('SELECT * FROM set_media WHERE id = ? AND user_id = ? AND deleted_at IS NULL').get(id, userId)
+    : db.prepare('SELECT * FROM set_media WHERE id = ? AND user_id IS NULL AND deleted_at IS NULL').get(id);
+  if (!row) return res.status(404).json({ error: 'Not found' });
+  db.prepare('UPDATE set_media SET set_uuid = ?, exercise_uuid = ? WHERE id = ?').run(
+    set_uuid !== undefined ? set_uuid : row.set_uuid,
+    exercise_uuid !== undefined ? exercise_uuid : row.exercise_uuid,
+    id
+  );
+  res.json({ ok: true });
+}));
+
 // DELETE /api/set-media/:id, soft-deletes the row so the removal reaches
 // other devices, and unlinks the file so it is not left as an orphan.
 router.delete('/:id', wrap((req, res) => {

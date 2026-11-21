@@ -23,7 +23,10 @@
   import BodyStats from '../components/diary/BodyStats.svelte';
   import GymTools from '../components/diary/GymTools.svelte';
   import { showSuccess, showError, showToast } from '../stores/toast.js';
-  import { reinsertSet, reinsertExercise, reinsertExercises } from '../lib/undoRemove.js';
+  import {
+    reinsertSetWithMap, reinsertExerciseWithMap, reinsertExercisesWithMap,
+    clipsForUuids, relinkPlan,
+  } from '../lib/undoRemove.js';
   import { localDateStr } from '../lib/db.js';
   import { trainedDates, excusedOnly, hasWorkingSet } from '../lib/trained-day.js';
   import { LtApi } from '../lib/api.js';
@@ -1962,6 +1965,7 @@
     const removed = exercises[idx];
     const date = $currentDate;
     const logId = $todayLog?.id;
+    const clips = clipsForUuids(setMedia, [removed?.uuid, ...(removed?.sets || []).map(s => s?.uuid)]);
     const updated = exercises.filter((_, i) => i !== idx);
     await saveWorkout(date, { ...($todayLog || {}), exercises: updated });
     // With the confirm dialog on, the user already confirmed: no undo.
@@ -1974,10 +1978,23 @@
           if ($currentDate !== date || !$todayLog || $todayLog.id !== logId || undone) return;
           undone = true;
           const cur = $todayLog.exercises || [];
-          await saveWorkout(date, { ...$todayLog, exercises: reinsertExercise(cur, removed, idx) });
+          const { list, uuidMap } = reinsertExerciseWithMap(cur, removed, idx);
+          await saveWorkout(date, { ...$todayLog, exercises: list });
+          await relinkClips(clips, uuidMap);
         },
       });
     }
+  }
+
+  // Undo mints new uuids, which would orphan a filmed set's clip: move the
+  // clips captured at removal onto them. Never blocks or fails the undo.
+  async function relinkClips(clips, uuidMap) {
+    const plan = relinkPlan(clips, uuidMap);
+    if (!plan.length) return;
+    try {
+      await Promise.all(plan.map(({ id, ...body }) => LtApi.relinkSetMedia(id, body)));
+    } catch { /* clip keeps its old uuids; the undo itself already saved */ }
+    loadSetMedia($currentDate);
   }
 
   // Undo for a removed set. Reads the current log at click time (never a
@@ -1987,6 +2004,7 @@
     if (!set) return;
     const date = $currentDate;
     const logId = $todayLog?.id;
+    const clips = clipsForUuids(setMedia, [set.uuid]);
     let undone = false;
     showToast($_('diary.toast.set_removed'), 6000, 'default', {
       label: $_('common.undo'),
@@ -1997,8 +2015,15 @@
         const at = exerciseUuid ? cur.findIndex(x => x.uuid === exerciseUuid) : exerciseIdx;
         const ex = cur[at];
         if (!ex) return;
-        const next = cur.map((x, i) => i === at ? { ...x, sets: reinsertSet(x.sets, set, setIdx) } : x);
+        let uuidMap = {};
+        const next = cur.map((x, i) => {
+          if (i !== at) return x;
+          const r = reinsertSetWithMap(x.sets, set, setIdx);
+          uuidMap = r.uuidMap;
+          return { ...x, sets: r.list };
+        });
         await saveWorkout(date, { ...$todayLog, exercises: next });
+        await relinkClips(clips, uuidMap);
       },
     });
   }
@@ -2211,6 +2236,7 @@
       .filter(r => String(r.ex.superset_id) === String(supersetId));
     const date = $currentDate;
     const logId = $todayLog?.id;
+    const clips = clipsForUuids(setMedia, removed.flatMap(r => [r.ex.uuid, ...(r.ex.sets || []).map(s => s?.uuid)]));
     const updated = exercises.filter(ex => String(ex.superset_id) !== String(supersetId));
     await saveWorkout(date, { ...($todayLog || {}), exercises: updated });
     // With the confirm dialog on, the user already confirmed: no undo.
@@ -2222,7 +2248,9 @@
           if ($currentDate !== date || !$todayLog || $todayLog.id !== logId || undone) return;
           undone = true;
           const cur = $todayLog.exercises || [];
-          await saveWorkout(date, { ...$todayLog, exercises: reinsertExercises(cur, removed) });
+          const { list, uuidMap } = reinsertExercisesWithMap(cur, removed);
+          await saveWorkout(date, { ...$todayLog, exercises: list });
+          await relinkClips(clips, uuidMap);
         },
       });
     } else {

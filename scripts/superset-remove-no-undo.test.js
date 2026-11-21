@@ -24,5 +24,5 @@ test('reinsertExercises tolerates short, empty and no removed', () => {
 });
 test('wiring: removeSuperset offers a guarded Undo', () => {
   const d = readFileSync(new URL('../src/routes/Diary.svelte', import.meta.url), 'utf8');
-  assert.match(d, /reinsertExercises\(cur, removed\)/);
+  assert.match(d, /reinsertExercisesWithMap\(cur, removed\)/);
 });

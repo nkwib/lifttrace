@@ -164,6 +164,8 @@ export const LtApi = {
     fetch(`/api/set-media?date=${encodeURIComponent(date)}`, opts).then(_json),
   getSetMediaForWorkout: (workoutId) =>
     fetch(`/api/set-media?workout_id=${encodeURIComponent(workoutId)}`, opts).then(_json),
+  relinkSetMedia: (id, body) =>
+    fetch(`/api/set-media/${id}`, { ...jsonOpts, method: 'PATCH', body: JSON.stringify(body) }).then(_json),
   deleteSetVideo: (id) =>
     fetch(`/api/set-media/${id}`, { ...opts, method: 'DELETE' }).then(_json),
   getSetMediaUsage: () => fetch('/api/set-media/usage', opts).then(_json),
