@@ -45,7 +45,7 @@ const AUTHORED = {
     commit: { type: 'string' },
     file: { type: 'string' },
     coverage: { type: 'string', description: 'what the spec exercises and what it cannot' },
-    failing: { type: 'array', description: 'tests in the spec that fail because the app is wrong (not the spec)', items: { type: 'object', properties: { name: { type: 'string' }, report: { type: 'string', description: 'the assertion output, trimmed' }, suspected_cause: { type: 'string' } }, required: ['name', 'report', 'suspected_cause'] } },
+    failing: { type: 'array', description: 'tests in the spec that fail because the app is wrong (not the spec)', items: { type: 'object', properties: { slug: { type: 'string', description: 'kebab-case id of the DEFECT (same slug for every test that fails for the same cause, across viewports)' }, name: { type: 'string' }, report: { type: 'string', description: 'the assertion output, trimmed' }, suspected_cause: { type: 'string' } }, required: ['slug', 'name', 'report', 'suspected_cause'] } },
   },
   required: ['status', 'commit', 'file', 'coverage', 'failing'],
 }
@@ -62,17 +62,26 @@ const REVIEW = {
 
 phase('Author')
 const authored = await parallel((args.flows || []).map((f) => () => agent(
-  `${HARNESS}\n${RULES}\nWrite e2e/${f.key}.e2e.mjs covering this flow, using the harness. Assert the CORRECT behavior. If a test fails because the app is wrong, keep the test, mark it with { todo: 'defect: <slug>' } so the file passes, and list it in failing. If it fails because your spec is wrong, fix the spec.\nFlow:\n${f.prompt}`,
+  `${HARNESS}\n${RULES}\nWrite e2e/${f.key}.e2e.mjs covering this flow, using the harness. Assert the CORRECT behavior. Before asserting a feature, check it is not in the Rejected lists of ${MAIN}/docs/handover/tooling/run-state/done.txt or ${MAIN}/docs/plans/improvement-backlog.md; if it is, do not test for it. If a test fails because the app is wrong, keep the test, mark it with { todo: 'defect: <slug>' } so the file passes, and list it in failing. If it fails because your spec is wrong, fix the spec.\nFlow:\n${f.prompt}`,
   { label: `author:${f.key}`, phase: 'Author', schema: AUTHORED, isolation: 'worktree' })))
 
-const failing = [
-  ...(args.failing || []),
-  ...authored.filter(Boolean).flatMap((a) => a.failing.map((x) => ({ ...x, file: a.file, specCommit: a.commit }))),
-]
-log(`${authored.filter(Boolean).length} specs written, ${failing.length} failing tests to fix`)
+// One fix agent per DEFECT, not per failing test: the same cause often
+// fails several tests (viewports, specs). Session 2 spent 2 fix agents on
+// one contrast bug before this dedupe existed.
+const bySlug = new Map()
+for (const x of [
+  ...(args.failing || []).map((f) => ({ slug: f.slug || f.name, ...f })),
+  ...authored.filter(Boolean).flatMap((a) => a.failing.map((f) => ({ ...f, file: a.file, specCommit: a.commit }))),
+]) {
+  const g = bySlug.get(x.slug)
+  if (g) { g.also.push(`${x.file} :: ${x.name}`); if (x.specCommit && !g.specCommits.includes(x.specCommit)) g.specCommits.push(x.specCommit) }
+  else bySlug.set(x.slug, { ...x, also: [], specCommits: x.specCommit ? [x.specCommit] : [] })
+}
+const failing = [...bySlug.values()]
+log(`${authored.filter(Boolean).length} specs written, ${failing.length} distinct defects to fix: ${failing.map((f) => f.slug).join(', ')}`)
 
 const fixed = await pipeline(failing,
-  (f) => agent(`${HARNESS}\n${RULES}\nThis E2E test fails because the app is wrong. Fix the app so it passes.\nFile: ${f.file}${f.specCommit ? ` (spec is on commit ${f.specCommit}: \`git cherry-pick ${f.specCommit}\` first, then make your fix a second commit and squash both into one)` : ''}\nTest: ${f.name}\nReport:\n${f.report}\n${f.suspected_cause ? `Suspected cause: ${f.suspected_cause}` : ''}\nRemove the { todo } marker. The test must pass: \`node --test --test-name-pattern=${JSON.stringify(f.name)} ${f.file}\`. User-visible fix: one CHANGELOG.md line under Unreleased > Fixed. Commit subject \`fix(area): ...\`.`,
+  (f) => agent(`${HARNESS}\n${RULES}\nThis E2E test fails because the app is wrong. Fix the app so it passes.\nFile: ${f.file}${f.specCommits.length ? ` (spec commits ${f.specCommits.join(', ')}: \`git cherry-pick\` them first, then make your fix a separate commit on top; do not squash, the orchestrator picks specs and fixes separately)` : ''}\nTest: ${f.name}${f.also.length ? `\nSame defect also fails: ${f.also.join('; ')}. Remove the todo marker from all of them.` : ''}\nReport:\n${f.report}\n${f.suspected_cause ? `Suspected cause: ${f.suspected_cause}` : ''}\nRemove the { todo } marker. The test must pass: \`node --test --test-name-pattern=${JSON.stringify(f.name)} ${f.file}\`. User-visible fix: one CHANGELOG.md line under Unreleased > Fixed. Commit subject \`fix(area): ...\`.`,
     { label: `fix:${f.name.slice(0, 40)}`, phase: 'Fix', schema: RESULT, isolation: 'worktree' }),
   (r, f) => (!r || r.status !== 'committed') ? { f, final: 'abandoned', r } : agent(
     `Review commit ${r.commit} (parent ${BASE}) in ${MAIN}: \`git -C ${MAIN} show ${r.commit}\`. It fixes the failing E2E test "${f.name}" in ${f.file}. Check out the commit in a temp worktree, build, rerun that spec file, and confirm it passes and the fix is the right one (not a test weakened to pass). Hunt for regressions, hardcoded English, em dashes, CRLF churn, committed symlinks. ship or drop.`,

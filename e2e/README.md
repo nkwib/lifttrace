@@ -5,7 +5,7 @@ Browser tests against the real server and the built app. Separate from `npm test
 ```sh
 npm run build                      # e2e serves dist/
 npx playwright-core install chromium-headless-shell   # once per machine
-npm run e2e                        # all specs, about a minute
+npm run e2e                        # all specs, about 3 minutes
 node --test e2e/pages.e2e.mjs      # one file
 ```
 
@@ -28,5 +28,7 @@ Each file boots its own server (free port, temp data dir), creates the admin thr
 - `pages.e2e.mjs`: every signed-in route at 320px, phone and desktop, dark and light.
 - `public.e2e.mjs`: wizard on a server with no accounts, sign-in, forgot and reset password, accept invite.
 - `flows.e2e.mjs`: every Settings section, every Statistics tab with 12 weeks of data, exercise detail `:id` change, drawer Escape and focus, server backup create and restore.
+
+- `wizard-steps`, `accept-invite`, `photo-compare`, `diary-logging`, `diary-supersets-nav`, `programs-editor`: one flow each, written by the E2E round (see `docs/handover/PROCESS.md`).
 
 Add a flow as `e2e/<flow>.e2e.mjs`: seed through `api()`, drive with role and text selectors, call `expectClean` after each step that changes the screen.

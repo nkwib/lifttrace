@@ -243,3 +243,7 @@ Done in session 2 (integration review, E2E, backlog gaps; do not propose):
 - fix(photos): name progress photo thumbnail buttons
 - Local clearData photos and media (checked: Local has no such tables, nothing to clear)
 - Android Local importer dedupe parity (checked: same import-match.js and session_seq rule as the server)
+- fix(programs): label the New program sheet fields
+- fix(diary): NOW badge meets AA contrast
+- fix(diary): selected calendar day passes contrast
+- fix(diary): superset sheet confirm uses the translated plural count

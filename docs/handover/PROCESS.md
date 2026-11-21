@@ -23,6 +23,8 @@ Now the browser checks are code in `e2e/` (see `e2e/README.md`):
 
 Args for `e2e-round.js`: `{ main, base, flows: [{ key, prompt }], failing: [{ file, name, report }] }`.
 
+Cost seen in session 2: authoring 3 small flows took 7 agents and about 360k tokens. 3 Diary and Programs flows took 17 agents, about 920k tokens and 2.4 h. Most of the difference was duplicate fix agents for one defect, now deduped by `slug`, and one fix for a feature the round table had rejected. Authors now check the Rejected lists first. Give authors narrow flows: one agent per flow writing a 150 to 250 line spec is the sweet spot.
+
 `smoke.js` is kept for reference only.
 
 ## Integration
