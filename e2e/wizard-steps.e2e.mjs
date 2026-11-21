@@ -6,7 +6,7 @@ import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { startServer, api, openPage, goto, expectClean, closeBrowser } from './harness.mjs';
 
-const ICONS = { skip: ['icons'] }; // known: icon ligatures not aria-hidden (app-wide codemod in progress)
+const ICONS = {};
 const PASSWORD = 'e2e-Admin-pass-0192';
 const servers = [];
 after(async () => { await closeBrowser(); await Promise.all(servers.map((s) => s.stop())); });

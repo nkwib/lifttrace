@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { startServer, api, openPage, goto, expectClean, closeBrowser } from './harness.mjs';
 
 const PASSWORD = 'Invite-pass-0192!';
-const skip = { skip: ['icons'] };
+const skip = {};
 
 let server, admin;
 before(async () => {

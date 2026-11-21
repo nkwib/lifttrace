@@ -4,8 +4,7 @@ import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { startServer, api, openPage, goto, expectClean, closeBrowser } from './harness.mjs';
 
-// Known issue tracked elsewhere: icon ligatures are not aria-hidden.
-const OPTS = { skip: ['icons'] };
+const OPTS = {};
 
 // 1x1 PNGs (red, blue). The API accepts an embedded data: URL and stores a file.
 const RED = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==';
