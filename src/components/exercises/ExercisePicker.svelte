@@ -1,4 +1,5 @@
 <script>
+  import { _ } from 'svelte-i18n';
   import { resolveAssetUrl } from '../../lib/platform.js';
   import { failedMedia, mediaFailed, workingMedia } from '../../lib/media-fallback.js';
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
@@ -178,7 +179,7 @@
       <input
         class="search-input"
         type="text"
-        placeholder="Search exercises..."
+        placeholder={$_('exercises_page.search_placeholder')}
         bind:value={search}
         autofocus
       />
@@ -270,12 +271,12 @@
                   Added
                 </span>
               {:else if alreadyAdded}
-                <span class="material-symbols-rounded already-added-icon" title="Already added this session">check_circle</span>
+                <span class="material-symbols-rounded already-added-icon" title={$_('exercise_picker.already_added')}>check_circle</span>
               {:else}
                 <span class="material-symbols-rounded add-icon">add_circle</span>
               {/if}
             </button>
-            <button class="info-btn" on:click|stopPropagation={() => openInfo(ex)} title="View details" aria-label="View details">
+            <button class="info-btn" on:click|stopPropagation={() => openInfo(ex)} title={$_('exercise_picker.view_details')} aria-label={$_('exercise_picker.view_details')}>
               <span class="material-symbols-rounded">info</span>
             </button>
           </div>
@@ -292,7 +293,7 @@
         <div class="pip-head">
           <h3 class="pip-title">{_infoSelected.name}</h3>
           <button class="pip-close" on:click={() => { _infoSelected = null; _infoHistory = []; }}
-                  aria-label="Close preview" title="Close preview">
+                  aria-label={$_('exercises_page.close_preview')} title={$_('exercises_page.close_preview')}>
             <span class="material-symbols-rounded">close</span>
           </button>
         </div>

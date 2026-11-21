@@ -903,6 +903,8 @@
     "add_favorite": "Add to Favorites",
     "custom_hint": "Custom exercise you created",
     "close_preview": "Close preview",
+    "preview_title": "Preview any exercise",
+    "preview_desc": "Tap any row to see its thumbnail, muscles, and history here without leaving the library.",
     "loading": "Loading exercises…",
     "load_failed": "Couldn't load the exercise library.",
     "refresh_failed": "Couldn't refresh the exercise list.",
@@ -995,7 +997,18 @@
     "exercises":             "Exercises",
     "duration":              "Duration",
     "custom":                "Custom",
-    "done":                  "Done"
+    "done":                  "Done",
+    "share_failed":          "Share failed",
+    "export_failed":         "Export failed",
+    "edit_duration":         "Tap to edit duration",
+    "export_csv":            "Export CSV",
+    "export_csv_aria":       "Export workout as CSV",
+    "calories_tip_met":      "MET-based estimate from BMR + duration",
+    "calories_tip_rough":    "Rough estimate based on set count, add a duration for a better number"
+  },
+  "exercise_picker": {
+    "already_added": "Already added this session",
+    "view_details":  "View details"
   },
   "exercise_detail": {
     "share_json": "Share exercise as JSON",

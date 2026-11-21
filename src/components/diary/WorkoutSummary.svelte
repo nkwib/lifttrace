@@ -65,7 +65,7 @@
     if (!workout || sharing) return;
     sharing = true;
     try { await shareWorkoutCard({ ...workout, duration_min: effectiveDurationMin }, $weightUnit); }
-    catch (e) { showError(e.message || 'Share failed'); }
+    catch (e) { showError(e.message || $_('workout_summary.share_failed')); }
     sharing = false;
   }
 
@@ -78,7 +78,7 @@
       const libLoadTypes = await loadLibraryLoadTypes(LtApi);
       await exportWorkoutCsv({ ...workout, duration_min: effectiveDurationMin }, $weightUnit, libLoadTypes);
     }
-    catch (e) { showError(e.message || 'Export failed'); }
+    catch (e) { showError(e.message || $_('workout_summary.export_failed')); }
     exportingCsv = false;
   }
 
@@ -201,7 +201,7 @@
           <span class="ws-stat-label">{$_('workout_summary.exercises')}</span>
         </div>
         <button class="ws-stat ws-stat-edit" on:click={openDurationEditor}
-                title="Tap to edit duration" type="button">
+                title={$_('workout_summary.edit_duration')} type="button">
           {#if effectiveDurationMin > 0}
             <span class="ws-stat-val">{fmtDuration(effectiveDurationMin)}</span>
             <span class="ws-stat-label">{$_('workout_summary.duration')}</span>
@@ -242,7 +242,7 @@
       {/if}
 
       {#if calorieEstimate != null}
-        <div class="ws-calorie-row" title={effectiveDurationMin > 0 ? 'MET-based estimate from BMR + duration' : 'Rough estimate based on set count — add a duration for a better number'}>
+        <div class="ws-calorie-row" title={effectiveDurationMin > 0 ? $_('workout_summary.calories_tip_met') : $_('workout_summary.calories_tip_rough')}>
           <span class="material-symbols-rounded ws-calorie-icon">local_fire_department</span>
           <span class="ws-calorie-val">~{calorieEstimate} kcal</span>
           <span class="ws-calorie-badge" class:rough={effectiveDurationMin <= 0}>
@@ -282,7 +282,7 @@
       </div>
 
       <div class="ws-footer">
-        <button class="btn btn-secondary ws-icon-btn" on:click={handleExportCsv} disabled={exportingCsv} title="Export CSV" aria-label="Export workout as CSV">
+        <button class="btn btn-secondary ws-icon-btn" on:click={handleExportCsv} disabled={exportingCsv} title={$_('workout_summary.export_csv')} aria-label={$_('workout_summary.export_csv_aria')}>
           <span class="material-symbols-rounded">{exportingCsv ? 'hourglass_top' : 'download'}</span>
         </button>
         <button class="btn btn-secondary ws-share-btn" on:click={handleShare} disabled={sharing}>

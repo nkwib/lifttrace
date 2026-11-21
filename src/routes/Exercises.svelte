@@ -618,8 +618,8 @@
       {:else}
         <div class="edp-empty">
           <span class="material-symbols-rounded edp-empty-icon">info</span>
-          <p class="edp-empty-title">Preview any exercise</p>
-          <p class="edp-empty-desc">Tap any row to see its thumbnail, muscles, and history here without leaving the library.</p>
+          <p class="edp-empty-title">{$_('exercises_page.preview_title')}</p>
+          <p class="edp-empty-desc">{$_('exercises_page.preview_desc')}</p>
         </div>
       {/if}
     </aside>
