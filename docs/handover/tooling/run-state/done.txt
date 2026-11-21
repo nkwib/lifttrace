@@ -216,3 +216,30 @@ Done in the browser smoke round (do not propose):
 
 Not reproduced (smoke round):
 - Set Active with the server down shows "Program set as active" but nothing is saved
+
+Done in session 2 (integration review, E2E, backlog gaps; do not propose):
+- fix(statistics): load the new day's range after midnight on sync or tab return
+- fix(statistics): fetch cardio with an explicit range for trained days
+- fix(diary): reload empty-day recent workouts when a sync brings workouts
+- fix(trace): a timed-out request says it timed out, not that it needs a connection
+- fix(trace): save Trace history in Android Local mode
+- fix(trace): offer Retry only when no message follows the error note
+- fix(mcp): get_workout description names the account timezone
+- fix(exercise): detect assisted lifts by equipment for e1RM and rep-max
+- fix(a11y): light accent ink, danger and chart toggle reach 4.5:1
+- fix(a11y): program day cards drop nested buttons
+- fix(a11y): name unlabeled selects and invite password fields
+- fix(exercises): keep long names from pushing the row off-screen
+- fix(local): a 4xx a Local handler throws answers as that status, not 500
+- fix(local-backup): restore safety snapshot includes uploads and is pruned
+- fix(local-backup): restore failure toast is translated only
+- fix(offline): trim template names and refuse blank ones before queueing
+- fix(statistics): drop stale wide trained days when Track Cardio flips
+- fix(diary): fetch cardio with an explicit range for trained days
+- fix(exercise): no e1RM sub-label on the PR card for assisted lifts
+- fix(a11y): hide icon ligature text from assistive tech app-wide
+- fix(settings): contrast for selected channel, danger zone label, primary button text
+- fix(wizard): name the updates toggle for screen readers
+- fix(photos): name progress photo thumbnail buttons
+- Local clearData photos and media (checked: Local has no such tables, nothing to clear)
+- Android Local importer dedupe parity (checked: same import-match.js and session_seq rule as the server)
