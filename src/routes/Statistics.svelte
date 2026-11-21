@@ -18,7 +18,7 @@ import { onMount, onDestroy, tick } from 'svelte';
   import { currentUser } from '../stores/auth.js';
   import { DB } from '../lib/db.js';
   import { estimateWorkoutCalories, ageFromDob, isRepSet, fmtSetDuration, fmtDistance, fmtCalories, fromMeters, distanceUnitOf } from '../lib/workout.js';
-  import { fmtVol, fmtWeekLabel, fillWeeks, showBarLabel, hasRecord, recordDate, workoutsLimitFor, recentTruncated } from '../lib/statsFormat.js';
+  import { fmtVol, fmtWeekLabel, fillWeeks, showBarLabel, hasRecord, recordDate, workoutsLimitFor, recentTruncated, wideReloadNeeded } from '../lib/statsFormat.js';
   import { localDateStr } from '../lib/db.js';
   import { weekdayOrder } from '../lib/week-start.js';
   import { trainedDates, weeklyGoal, weekStartOf, shiftDate, hasWorkingSet, exercisesOf, excusedOnly } from '../lib/trained-day.js';
@@ -340,25 +340,30 @@ import { onMount, onDestroy, tick } from 'svelte';
   let wideMeta = null;
   let _wideSeq = 0;
   let _wideLimit = 0;
+  let _wideCardio = null;
   async function loadWideData(force = false) {
     const limit = workoutsLimitFor(range);
-    if (limit === 365) { _wideSeq++; _wideLimit = 0; wideLogs = wideDates = wideMeta = null; return; }
-    if (!force && limit === _wideLimit) return;
+    if (limit === 365) { _wideSeq++; _wideLimit = 0; _wideCardio = null; wideLogs = wideDates = wideMeta = null; return; }
+    const cardio = !!$cardioEnabled;
+    if (!wideReloadNeeded({ limit, lastLimit: _wideLimit, cardio, lastCardio: _wideCardio, force })) return;
     const seq = ++_wideSeq;
+    // Only a range change clears: a sync or cardio refetch keeps the old set
+    // until the new one lands, so calories and deltas do not blink.
+    if (limit !== _wideLimit) wideLogs = wideDates = wideMeta = null;
     _wideLimit = limit;
-    wideLogs = wideDates = wideMeta = null;
+    _wideCardio = cardio;
     try {
       const raw = await fetchRecentLogs(limit);
-      if (seq !== _wideSeq || !raw) { if (seq === _wideSeq) _wideLimit = 0; return; }
+      if (seq !== _wideSeq || !raw) { if (seq === _wideSeq) { _wideLimit = 0; _wideCardio = null; } return; }
       const logs = raw.filter(l => exercisesOf(l).length > 0);
-      const cardioRows = $cardioEnabled ? await LtApi.listCardio().catch(() => []) : [];
+      const cardioRows = cardio ? await LtApi.listCardio().catch(() => []) : [];
       if (seq !== _wideSeq) return;
-      wideDates = trainedDates({ workouts: logs, cardio: cardioRows, cardioOn: $cardioEnabled });
+      wideDates = trainedDates({ workouts: logs, cardio: cardioRows, cardioOn: cardio });
       wideMeta = { raw, limit };
       wideLogs = logs;
     } catch (e) {
       console.error(e);
-      if (seq === _wideSeq) _wideLimit = 0;
+      if (seq === _wideSeq) { _wideLimit = 0; _wideCardio = null; }
     }
   }
 

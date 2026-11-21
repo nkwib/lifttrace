@@ -97,3 +97,9 @@ export function recentTruncated(rows, limit, date) {
   for (const r of rows) if (r?.date && (oldest === null || r.date < oldest)) oldest = r.date;
   return oldest !== null && oldest > date;
 }
+
+// Whether the wide (1Y/All) set must be refetched: a forced refresh, a new
+// limit, or a Track Cardio flip (trained days depend on it).
+export function wideReloadNeeded({ limit, lastLimit, cardio, lastCardio, force = false }) {
+  return !!force || limit !== lastLimit || cardio !== lastCardio;
+}
