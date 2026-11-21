@@ -23,7 +23,7 @@ test('refreshToday is a no-op when the date is unchanged', () => {
 });
 
 test('loadData rolls the date and awaits the reactive flush before fetching', () => {
-  assert.match(page, /async function loadData\(\) \{[\s\S]*?if \(refreshToday\(\)\) await tick\(\);[\s\S]*?loadRangeData\(\);/);
+  assert.match(page, /async function loadData\(\) \{[\s\S]*?refreshToday\(\);\s*await tick\(\);[\s\S]*?loadRangeData\(\);/);
 });
 
 test('sync handler rolls the date before the quiet-window return', () => {
@@ -36,4 +36,11 @@ test('visibilitychange listener is paired and reloads only on rollover', () => {
   assert.match(page, /document\.addEventListener\('visibilitychange', _onVisible\)/);
   assert.match(page, /document\.removeEventListener\('visibilitychange', _onVisible\)/);
   assert.match(page, /visibilityState === 'visible' && refreshToday\(\)\) loadData\(\)/);
+});
+
+test('loadData awaits tick unconditionally (callers roll today before it)', () => {
+  const body = page.slice(page.indexOf('async function loadData()'));
+  const head = body.slice(0, body.indexOf('loadRangeData();'));
+  assert.doesNotMatch(head, /if \(refreshToday\(\)\)/);
+  assert.match(head, /await tick\(\);/);
 });

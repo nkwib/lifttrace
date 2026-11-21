@@ -58,6 +58,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- **Statistics after midnight loads the new day.** A page left open past midnight reloaded yesterday's range on sync or when the tab came back.
 - **Exercise page follows the URL.** Going from one exercise to another (link or back/forward) now loads the new exercise instead of keeping the old one.
 - **Add Exercise picker opens again.** It crashed with "_ is not defined" because of a missing i18n import, so exercises could not be added from the Diary.
 - **Workout editor header fits phones.** The title no longer pushes Save off-screen and widens the page.

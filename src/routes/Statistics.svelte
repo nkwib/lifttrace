@@ -286,8 +286,11 @@ import { onMount, onDestroy, tick } from 'svelte';
   // Sync and Retry: everything, progress included.
   async function loadData() {
     // The startDate/endDate statements only flush on the next tick; wait so
-    // the first fetch after midnight uses the new date.
-    if (refreshToday()) await tick();
+    // the first fetch after midnight uses the new date. Always: a caller
+    // (sync, visibility) may already have rolled today, so refreshToday()
+    // here returns false while the dates are still yesterday's.
+    refreshToday();
+    await tick();
     loadRangeData();
     loadBaseData();
     loadWideData(true);
