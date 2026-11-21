@@ -85,7 +85,7 @@
   --warning:       #E09400;
   --success-text:  #00704A;
   --warning-text:  #7A5000;
-  --danger:        #D93025;
+  --danger:        #C5221F;
   --danger-text:   #C5221F;
   --hard-text:     #9A4A00;
   --info:          #0277BD;
@@ -106,9 +106,9 @@
 }
 
 /* Light + default orange (and not a custom hex, which sets --accent-ink inline):
-   #E65100 is 3.79:1 on white, #BF360C is 5.6:1. */
+   #E65100 is 3.79:1 on white, #B33209 is 6.2:1 and holds 4.5:1 on the accent tint. */
 [data-theme="light"]:not([data-accent]) {
-  --accent-ink:    #BF360C;
+  --accent-ink:    #B33209;
   --accent-ink-2:  #C8400D;
 }
 

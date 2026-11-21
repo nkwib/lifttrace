@@ -407,7 +407,7 @@
   }
   .chart-mode { display: inline-flex; gap: 2px; padding: 2px; margin-bottom: 8px; background: var(--surface-2); border-radius: var(--radius-md, 8px); }
   .chart-mode-btn { border: 0; background: transparent; color: var(--text-3); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
-  .chart-mode-btn.active { background: var(--accent); color: var(--on-accent, #fff); }
+  .chart-mode-btn.active { background: var(--accent-ink); color: var(--accent-text); }
   .chart-hint { font-size: 11px; color: var(--text-3); margin: 6px 0 0; }
   .loading { text-align: center; padding: 48px; color: var(--text-3); }
   .load-error { text-align: center; padding: 48px 24px; color: var(--text-3); }
