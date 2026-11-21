@@ -401,19 +401,19 @@
   <div class="form-sheet">
     <h3 class="form-title">{$_('programs.new_program')}</h3>
     <div class="form-group">
-      <label class="form-label">{$_('programs.name')}</label>
-      <input class="form-input" type="text" bind:value={newName} placeholder={$_('programs.name_placeholder')} autofocus
+      <label class="form-label" for="new-program-name">{$_('programs.name')}</label>
+      <input id="new-program-name" class="form-input" type="text" bind:value={newName} placeholder={$_('programs.name_placeholder')} autofocus
         on:keydown={e => e.key === 'Enter' && createProgram()} />
     </div>
     <div class="form-group">
-      <label class="form-label">{$_('programs.goal')}</label>
-      <select class="form-select" bind:value={newGoal}>
+      <label class="form-label" for="new-program-goal">{$_('programs.goal')}</label>
+      <select id="new-program-goal" class="form-select" bind:value={newGoal}>
         {#each GOALS as g}<option value={g.id}>{goalLabel(g.id, $_)}</option>{/each}
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">{$_('programs.duration_weeks')}</label>
-      <input class="form-input" type="number" min="1" max="52" bind:value={newDurationWeeks}
+      <label class="form-label" for="new-program-weeks">{$_('programs.duration_weeks')}</label>
+      <input id="new-program-weeks" class="form-input" type="number" min="1" max="52" bind:value={newDurationWeeks}
         placeholder="1" />
       <p class="form-hint">{$_('programs.duration_hint')}</p>
     </div>
