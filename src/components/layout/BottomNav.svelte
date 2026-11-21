@@ -30,6 +30,7 @@
     let normalized = base;
     if (base.startsWith('/coach')) normalized = '/programs';
     else if (base.startsWith('/progress')) normalized = '/statistics';
+    else if (base.startsWith('/exercise/')) normalized = '/exercises';
     // exact match first
     const exact = TABS.findIndex(t => t.path === normalized);
     if (exact >= 0) return exact;
