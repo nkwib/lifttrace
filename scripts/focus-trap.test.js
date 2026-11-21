@@ -73,3 +73,11 @@ test('drawer, load type menu, gym tools and body stats trap focus with Escape', 
   assert.match(sb, /use:drawerTrap=\{persistent \? null : \{ onEscape: close \}\}/);
   assert.match(sb, /role=\{persistent \? undefined : 'dialog'\}/);
 });
+
+test('superset actions that reorder cards refocus the moved exercise menu button', () => {
+  const d = read('../src/routes/Diary.svelte');
+  assert.match(d, /async function focusExMenu\(idx\) \{\s+await tick\(\);\s+document\.querySelector\(`\[data-ex-menu="\$\{idx\}"\]`\)/);
+  assert.match(d, /focusExMenu\(landAt\)/);
+  assert.match(d, /focusExMenu\(insertAt\)/);
+  assert.match(read('../src/components/diary/ExerciseCard.svelte'), /data-ex-menu=\{idx\}/);
+});

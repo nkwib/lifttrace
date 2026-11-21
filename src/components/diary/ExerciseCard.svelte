@@ -504,7 +504,7 @@
       <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('info')} title={$_('diary.view_exercise_details')} aria-label={$_('diary.view_exercise_details')}>
         <span class="material-symbols-rounded" aria-hidden="true">info</span>
       </button>
-      <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('menu')} title={$_('diary.more_options')} aria-label={$_('diary.more_options')}>
+      <button class="btn-icon-sm tap" data-ex-menu={idx} on:click|stopPropagation={() => dispatch('menu')} title={$_('diary.more_options')} aria-label={$_('diary.more_options')}>
         <span class="material-symbols-rounded" aria-hidden="true">more_vert</span>
       </button>
       <button class="btn-icon tap" on:click|stopPropagation={remove} title={$_('diary.remove_exercise')} aria-label={$_('diary.remove_exercise')}>

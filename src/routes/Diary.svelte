@@ -2293,6 +2293,7 @@
     _recalcSuperset(arr, targetSsId);
     await saveWorkout($currentDate, { ...($todayLog || {}), exercises: arr });
     showSuccess($_('diary.toast.added_to_superset'));
+    focusExMenu(insertAt);
   }
 
   async function leaveSuperset(idx) {
@@ -2310,10 +2311,20 @@
     const remaining = [];
     if (ssId) arr.forEach((e, i) => { if (e.superset_id === ssId) remaining.push(i); });
     const splitsGroup = remaining.some(i => i < idx) && remaining.some(i => i >= idx);
-    arr.splice(splitsGroup ? remaining[remaining.length - 1] + 1 : idx, 0, leaving);
+    const landAt = splitsGroup ? remaining[remaining.length - 1] + 1 : idx;
+    arr.splice(landAt, 0, leaving);
     if (ssId) _recalcSuperset(arr, ssId);
     await saveWorkout($currentDate, { ...($todayLog || {}), exercises: arr });
     showSuccess($_('diary.toast.removed_from_superset'));
+    focusExMenu(landAt);
+  }
+
+  // The cards re-render when an action reorders exercises, so the "More
+  // options" button that opened the sheet is gone and focus would fall to
+  // <body>. Put it on the moved exercise's new button instead.
+  async function focusExMenu(idx) {
+    await tick();
+    document.querySelector(`[data-ex-menu="${idx}"]`)?.focus({ preventScroll: true });
   }
 
   // ── Exercise action sheet ───────────────────────────────────────────
