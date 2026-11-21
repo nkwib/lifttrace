@@ -29,6 +29,7 @@ import { checkedCardioDate, normalizeCardioInput } from './cardio-input.js';
 import { newTempId } from './offline-edits.js';
 import { planImport, importKeys, importKey } from './import-match.js';
 import { weekStart, normalizeWeekStart } from './week-start.js';
+import { localDateStr } from './date-local.js';
 import { trainedDates, currentStreak, longestStreak, trainedDaysByWeek, weekdayCounts, hasWorkingSet, cleanExcuse, isCalendarDate, isDateShape } from './trained-day.js';
 
 const ME = 1; // single-user id in standalone mode
@@ -1346,7 +1347,7 @@ const Stats = {
     // Mirror of GET /api/stats/streaks: trained days, counted back from
     // today, or from yesterday while today isn't trained yet.
     const dates = await Stats._trained(cardio);
-    const today = new Date().toLocaleDateString('sv-SE');
+    const today = localDateStr();
     const sessions = (await Stats._allWorkouts()).filter(w => hasWorkingSet(w.exercises)).length;
     return { currentStreak: currentStreak(dates, today), longestStreak: longestStreak(dates), totalWorkouts: dates.size, totalSessions: sessions };
   },

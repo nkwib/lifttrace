@@ -26,6 +26,7 @@
   import DatePicker from '../ui/DatePicker.svelte';
   import WeightQuickLog from './WeightQuickLog.svelte';
   import PhotoImage from './PhotoImage.svelte';
+  import { localDateStr, monthsAgo } from '../../lib/date-local.js';
 
   const dispatch = createEventDispatcher();
 
@@ -45,7 +46,7 @@
   let fileInput;
 
   function todayStr() {
-    return new Date().toLocaleDateString('sv-SE');
+    return localDateStr();
   }
 
   // The date the next capture attaches to. Defaults to today, which is the
@@ -60,9 +61,7 @@
   let weightPromptDate = null;
   function startStr() {
     if (range === 'all') return ALL_FROM;
-    const d = new Date();
-    d.setMonth(d.getMonth() - range);
-    return d.toLocaleDateString('sv-SE');
+    return localDateStr(monthsAgo(new Date(), range));
   }
 
   // The weights come from the phone's copy, which a sync changes (the photos

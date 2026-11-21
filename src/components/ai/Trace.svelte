@@ -661,7 +661,7 @@
       // telling the model "today" is a browsed-to day last month is exactly
       // how it ends up querying the wrong period.
       const _realNow = new Date();
-      const _realToday = _realNow.toLocaleDateString('sv-SE');
+      const _realToday = localDateStr(_realNow);
       const _realDow = _realNow.toLocaleDateString(undefined, { weekday: 'long' });
       const systemPrompt = `You are ${botName}, an AI weightlifting coach inside LiftTrace.
 

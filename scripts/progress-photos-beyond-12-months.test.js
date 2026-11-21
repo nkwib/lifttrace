@@ -10,7 +10,7 @@ test('startStr follows the chosen range, All uses a fixed early date', () => {
   assert.match(src, /let range = months;/);
   assert.match(src, /if \(range === 'all'\) return ALL_FROM;/);
   assert.match(src, /ALL_FROM = '2000-01-01'/);
-  assert.match(src, /getMonth\(\) - range/);
+  assert.match(src, /monthsAgo\(new Date\(\), range\)/);
 });
 
 test('range change resets compare state and reloads through load()', () => {
