@@ -670,7 +670,7 @@
   .load-chip:hover { color: var(--text-1); border-color: var(--text-2); }
   .load-chip .material-symbols-rounded { font-size: 12px; }
   .load-chip.non-default {
-    background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent);
+    background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent-ink);
     border-style: solid;
   }
 
@@ -684,7 +684,7 @@
     flex: 0 0 auto;
     display: inline-flex; align-items: center; gap: 2px;
     padding: 2px 6px;
-    border-radius: 999px; background: var(--accent-dim); color: var(--accent);
+    border-radius: 999px; background: var(--accent-dim); color: var(--accent-ink);
     font-size: 11px; font-weight: 700;
   }
   .ex-clip .material-symbols-rounded { font-size: 15px; }
@@ -726,7 +726,7 @@
 
   .progression-chip {
     display: inline-flex; align-items: center; gap: 4px;
-    font-size: 11px; font-weight: 700; color: var(--accent);
+    font-size: 11px; font-weight: 700; color: var(--accent-ink);
     background: var(--accent-dim);
     padding: 3px 9px; border-radius: var(--radius-full);
     border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
@@ -802,13 +802,13 @@
     cursor: pointer; font-family: inherit;
     transition: all var(--dur-fast);
   }
-  .add-set-btn:hover { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+  .add-set-btn:hover { background: var(--accent-dim); color: var(--accent-ink); border-color: var(--accent); }
   .add-warmup-btn {
     display: flex; align-items: center; justify-content: center; gap: 4px;
     padding: 10px 14px;
     background: var(--surface-2); border: 1px dashed var(--border);
     border-radius: var(--radius-md);
-    color: var(--accent); font-size: 12px; font-weight: 700;
+    color: var(--accent-ink); font-size: 12px; font-weight: 700;
     cursor: pointer; font-family: inherit; flex-shrink: 0;
     transition: all var(--dur-fast);
   }
@@ -839,7 +839,7 @@
   /* The load chip sits 3px above the clip chip's row: with a clip there,
      its area reaches up into the card's top padding instead of down. */
   .ex-info:has(.ex-clip) .load-chip { --tap-h: 34px; --tap-dy: -8px; }
-  .btn-icon-sm:hover { color: var(--accent); background: var(--surface-2); }
+  .btn-icon-sm:hover { color: var(--accent-ink); background: var(--surface-2); }
   .btn-icon-sm .material-symbols-rounded { font-size: 20px; }
   .plate-split { padding: 2px 14px 0; font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>

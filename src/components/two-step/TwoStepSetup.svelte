@@ -113,7 +113,7 @@
     background: #fff; border-radius: 8px; padding: 0; image-rendering: pixelated;
     border: 1px solid var(--border);
   }
-  .ts-open-app { display: inline-block; margin-top: 8px; font-size: 13px; color: var(--accent); }
+  .ts-open-app { display: inline-block; margin-top: 8px; font-size: 13px; color: var(--accent-ink); }
   .ts-key-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .ts-key {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px;

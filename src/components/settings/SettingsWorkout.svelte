@@ -418,9 +418,9 @@
   }
   .tone-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .tone-name { font-size: 13px; font-weight: 700; color: var(--text-1); }
-  .tone-row.active .tone-name { color: var(--accent); }
+  .tone-row.active .tone-name { color: var(--accent-ink); }
   .tone-desc { font-size: 11px; color: var(--text-3); line-height: 1.35; }
-  .tone-selected { font-size: 18px; color: var(--accent); flex-shrink: 0; }
+  .tone-selected { font-size: 18px; color: var(--accent-ink); flex-shrink: 0; }
   .tone-preview {
     width: 42px; border: none; border-left: 1px solid var(--border);
     background: none; color: var(--text-2);
@@ -428,6 +428,6 @@
     display: flex; align-items: center; justify-content: center;
     transition: background var(--dur-fast), color var(--dur-fast);
   }
-  .tone-preview:hover { background: var(--surface-3); color: var(--accent); }
+  .tone-preview:hover { background: var(--surface-3); color: var(--accent-ink); }
   .tone-preview .material-symbols-rounded { font-size: 18px; }
 </style>

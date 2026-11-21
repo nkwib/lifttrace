@@ -56,7 +56,7 @@
   }
   .orm-input:focus { border-color: var(--accent); }
   .orm-result { display: flex; align-items: baseline; gap: 8px; justify-content: center; flex-wrap: wrap; padding: 8px 0 14px; }
-  .orm-val { font-size: 36px; font-weight: 800; color: var(--accent); }
+  .orm-val { font-size: 36px; font-weight: 800; color: var(--accent-ink); }
   .orm-unit { font-size: 18px; color: var(--text-3); font-weight: 600; }
   .orm-cap { width: 100%; text-align: center; font-size: 12px; color: var(--text-3); }
   .orm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }

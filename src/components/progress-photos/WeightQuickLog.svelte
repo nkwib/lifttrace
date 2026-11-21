@@ -117,7 +117,7 @@
   .wql-input:focus { border-color: var(--accent); }
 
   .wql-save {
-    background: var(--accent); color: #fff;
+    background: var(--accent-ink); color: #fff;
     border: none; border-radius: var(--radius-md);
     padding: 7px 12px;
     font-size: 12px; font-weight: 600; font-family: inherit;

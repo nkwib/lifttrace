@@ -137,8 +137,8 @@
     background: var(--surface-2); border: 1px solid var(--border);
     font-size: 12px; color: var(--text-2); text-transform: capitalize;
   }
-  .tag.cat { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 600; }
-  .tag.muscle { background: rgba(206,147,216,0.15); border-color: rgba(206,147,216,0.3); color: #CE93D8; }
+  .tag.cat { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  .tag.muscle { background: color-mix(in srgb, var(--lift-sets) 15%, transparent); border-color: color-mix(in srgb, var(--lift-sets) 30%, transparent); color: var(--lift-sets); }
 
   .section { margin-bottom: 20px; }
   .section-title { font-size: 13px; font-weight: 700; color: var(--text-2); margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -171,7 +171,7 @@
   .sep, .unit { color: var(--text-3); }
   .show-all {
     background: none; border: 1px solid var(--border); border-radius: var(--radius-md);
-    color: var(--accent); padding: 8px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    color: var(--accent-ink); padding: 8px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
   }
   .hist-sets { font-size: 13px; color: var(--text-1); font-variant-numeric: tabular-nums; }
 

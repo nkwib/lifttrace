@@ -73,7 +73,7 @@
     padding: 0 12px;
     background: none;
     border: none;
-    color: var(--accent);
+    color: var(--accent-ink);
     font: inherit;
     font-weight: 700;
     cursor: pointer;

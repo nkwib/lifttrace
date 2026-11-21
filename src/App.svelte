@@ -1129,7 +1129,7 @@
     transition: color 120ms, border-color 120ms;
   }
   .pull-sync-indicator.ready-to-sync {
-    color: var(--accent);
+    color: var(--accent-ink);
     border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
   }
   .pull-sync-indicator .material-symbols-rounded {

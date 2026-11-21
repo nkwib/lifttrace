@@ -427,7 +427,7 @@
     transition: color var(--dur-fast), background var(--dur-fast);
   }
   .btn-icon-toggle:hover { color: var(--text-1); background: var(--surface-2); }
-  .about-link { color: var(--accent); text-decoration: underline; }
+  .about-link { color: var(--accent-ink); text-decoration: underline; }
   /* Same look as NutriTrace's Trace settings. */
   .env-lock-banner {
     display: flex; align-items: center; gap: 8px;
@@ -437,6 +437,6 @@
     border-radius: var(--radius-lg);
     font-size: 13px; color: var(--text-3);
   }
-  .env-lock-banner .material-symbols-rounded { font-size: 16px; color: var(--accent); flex-shrink: 0; }
+  .env-lock-banner .material-symbols-rounded { font-size: 16px; color: var(--accent-ink); flex-shrink: 0; }
   .setting-desc { font-size: 12px; color: var(--text-3); padding: 0 16px; }
 </style>

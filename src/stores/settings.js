@@ -497,7 +497,7 @@ export function applyAccentColor(value) {
   if (value === _lastAppliedAccent) return;
   _lastAppliedAccent = value;
   const isHex = /^#[0-9a-fA-F]{6}$/.test(value);
-  ['--accent','--accent-2','--accent-dim','--accent-text'].forEach(v =>
+  ['--accent','--accent-2','--accent-dim','--accent-text','--accent-ink','--accent-ink-2'].forEach(v =>
     document.documentElement.style.removeProperty(v));
   if (value === 'orange') {
     document.documentElement.removeAttribute('data-accent');
@@ -509,6 +509,8 @@ export function applyAccentColor(value) {
     const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     document.documentElement.style.setProperty('--accent',      value);
     document.documentElement.style.setProperty('--accent-2',    value);
+    document.documentElement.style.setProperty('--accent-ink',  value);
+    document.documentElement.style.setProperty('--accent-ink-2', value);
     document.documentElement.style.setProperty('--accent-dim',  `rgba(${r},${g},${b},0.15)`);
     document.documentElement.style.setProperty('--accent-text', lum > 0.55 ? '#0A0B0F' : '#FFFFFF');
   } else {

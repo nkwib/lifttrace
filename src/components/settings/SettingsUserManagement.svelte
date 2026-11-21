@@ -639,7 +639,7 @@
             <Toggle checked={passwordPolicy === 'strong'} on:change={e => savePasswordPolicy(e.detail ? 'strong' : 'standard')} />
           </div>
           {#if passwordPolicySaved}
-            <p class="setting-desc" style="padding:0 16px 8px;color:var(--accent)">{$_('settings.users.policy_saved')}</p>
+            <p class="setting-desc" style="padding:0 16px 8px;color:var(--accent-ink)">{$_('settings.users.policy_saved')}</p>
           {/if}
 
           <div class="setting-divider"></div>
@@ -805,7 +805,7 @@
   .my-profile-name { font-size: 15px; font-weight: 700; color: var(--text-1); }
   .my-profile-role {
     font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--accent); background: var(--accent-dim);
+    color: var(--accent-ink); background: var(--accent-dim);
     padding: 2px 8px; border-radius: var(--radius-full);
     align-self: flex-start;
   }
@@ -819,7 +819,7 @@
   .user-row-mgmt:last-child { border-bottom: none; }
   .user-row-avatar {
     width: 36px; height: 36px; border-radius: 50%;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 15px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -830,7 +830,7 @@
   .user-row-selects { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
   .um-coach-hint { margin: 0; font-size: 12px; }
   .user-row-pending { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--text-3); margin-top: 4px; }
-  .user-row-pending .btn-link { background: none; border: none; padding: 2px 6px; border-radius: var(--radius-sm); color: var(--accent); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .user-row-pending .btn-link { background: none; border: none; padding: 2px 6px; border-radius: var(--radius-sm); color: var(--accent-ink); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
   .user-row-pending .btn-link:hover { background: var(--accent-dim); }
   .user-role-badge {
     font-size: 11px; font-weight: 600; color: var(--text-3);

@@ -175,7 +175,7 @@
 
   .tp-preview {
     text-align: center; font-size: 32px; font-weight: 800;
-    color: var(--accent); padding: 8px 0 16px;
+    color: var(--accent-ink); padding: 8px 0 16px;
     font-variant-numeric: tabular-nums;
   }
 
@@ -198,7 +198,7 @@
   .tp-cell:hover { border-color: var(--accent); color: var(--text-1); }
   .tp-sel {
     border-color: var(--accent); background: var(--accent-dim);
-    color: var(--accent); font-weight: 700;
+    color: var(--accent-ink); font-weight: 700;
   }
 
   .tp-ampm { display: flex; flex-direction: column; gap: 4px; }

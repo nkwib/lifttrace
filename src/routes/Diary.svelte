@@ -3812,7 +3812,7 @@
     background: var(--surface-1); border: 1px solid var(--border);
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     display: flex; align-items: center; justify-content: center;
-    color: var(--accent);
+    color: var(--accent-ink);
     z-index: 200;
     pointer-events: none;
     transition: transform 0.15s ease-out, opacity 0.15s ease-out;
@@ -3894,10 +3894,10 @@
   }
   .date-label {
     display: flex; flex-direction: column; align-items: center; gap: 0;
-    background: none; border: none; cursor: pointer; color: var(--accent);
+    background: none; border: none; cursor: pointer; color: var(--accent-ink);
     padding: 0;
   }
-  .date-text { font-size: 17px; font-weight: 700; color: var(--accent); line-height: 1.15; }
+  .date-text { font-size: 17px; font-weight: 700; color: var(--accent-ink); line-height: 1.15; }
   .date-sub  { font-size: 12px; color: var(--text-3); line-height: 1.1; }
 
   .today-pill {
@@ -3906,7 +3906,7 @@
     border-radius: var(--radius-full);
     background: var(--accent-dim);
     border: 1px solid var(--accent);
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: 10px; font-weight: 700;
     cursor: pointer;
     transition: all var(--dur-fast);
@@ -3939,8 +3939,8 @@
     background: var(--accent-dim);
     border-bottom: 1px solid var(--border);
   }
-  .wn-icon { font-size: 18px; color: var(--accent); }
-  .wn-text { font-size: 13px; font-weight: 600; color: var(--accent); }
+  .wn-icon { font-size: 18px; color: var(--accent-ink); }
+  .wn-text { font-size: 13px; font-weight: 600; color: var(--accent-ink); }
 
   /* Session switcher (issue #76) — only rendered once a date has more
      than one session, so a single-session day's layout is unaffected. */
@@ -3973,11 +3973,11 @@
     font-size: 12px; font-weight: 600;
     white-space: nowrap;
   }
-  .session-tab-wrap.active .session-tab { color: var(--accent); }
+  .session-tab-wrap.active .session-tab { color: var(--accent-ink); }
   .session-tab-name {
     max-width: 140px; overflow: hidden; text-overflow: ellipsis;
   }
-  .session-tab-check { font-size: 14px; color: var(--accent); }
+  .session-tab-check { font-size: 14px; color: var(--accent-ink); }
   .session-tab-delete {
     display: flex; align-items: center; justify-content: center;
     width: 22px; height: 22px;
@@ -3987,7 +3987,7 @@
     color: var(--text-3);
     flex: 0 0 auto;
   }
-  .session-tab-wrap.active .session-tab-delete { color: var(--accent); }
+  .session-tab-wrap.active .session-tab-delete { color: var(--accent-ink); }
   .session-tab-delete:hover { background: var(--danger); color: #fff; }
   .session-tab-delete .material-symbols-rounded { font-size: 14px; }
   .session-tab-add {
@@ -4075,28 +4075,28 @@
   .now-strip:hover  { background: color-mix(in srgb, var(--accent) 20%, var(--surface-1)); }
   .now-strip:active { transform: scale(0.99); }
   .now-icon {
-    font-size: 22px; color: var(--accent); flex-shrink: 0;
+    font-size: 22px; color: var(--accent-ink); flex-shrink: 0;
     background: var(--surface-1); border-radius: 50%;
     padding: 2px;
   }
   .now-info { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
   .now-label {
     font-size: 9px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .now-exercise {
     font-size: 14px; font-weight: 700; color: var(--text-1);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .now-set {
-    font-size: 12px; font-weight: 700; color: var(--accent);
+    font-size: 12px; font-weight: 700; color: var(--accent-ink);
     padding: 3px 10px; border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--accent) 18%, transparent);
     flex-shrink: 0;
     font-variant-numeric: tabular-nums;
   }
-  .now-chev { color: var(--accent); opacity: 0.6; flex-shrink: 0; }
-  .stat-icon { font-size: 18px; color: var(--accent); }
+  .now-chev { color: var(--accent-ink); opacity: 0.6; flex-shrink: 0; }
+  .stat-icon { font-size: 18px; color: var(--accent-ink); }
   .stat-val  { font-size: 15px; font-weight: 700; color: var(--text-1); }
   .stat-label { font-size: 12px; color: var(--text-3); }
 
@@ -4114,7 +4114,7 @@
   .wake-toggle.active {
     background: var(--accent-dim);
     border-color: var(--accent);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .wake-toggle:active { transform: scale(0.92); }
 
@@ -4125,7 +4125,7 @@
   .week-chip {
     flex-shrink: 0;
     padding: 3px 10px;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     border-radius: var(--radius-full);
     font-size: 12px; font-weight: 800; white-space: nowrap;
     font-variant-numeric: tabular-nums;
@@ -4142,7 +4142,7 @@
   }
   .workout-title:hover { background: var(--surface-2); }
   .title-edit-icon { font-size: 14px; color: var(--text-3); opacity: 0.5; transition: opacity var(--dur-fast); }
-  .workout-title:hover .title-edit-icon { opacity: 1; color: var(--accent); }
+  .workout-title:hover .title-edit-icon { opacity: 1; color: var(--accent-ink); }
   .workout-title-input {
     width: 100%;
     background: var(--surface-2); border: 1px solid var(--accent);
@@ -4182,7 +4182,7 @@
   .finish-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     width: 100%; padding: 16px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    background: linear-gradient(135deg, var(--accent-ink), var(--accent-ink-2));
     border: none; border-radius: var(--radius-lg);
     color: var(--accent-text, #fff); font-size: 15px; font-weight: 700;
     cursor: pointer;
@@ -4228,7 +4228,7 @@
     border-radius: var(--radius-sm);
   }
   .ex-feedback-text { flex: 1; min-width: 0; font-size: 13px; color: var(--text-1); line-height: 1.4; white-space: pre-wrap; }
-  .ex-feedback-text strong { color: var(--accent); font-weight: 700; margin-right: 2px; }
+  .ex-feedback-text strong { color: var(--accent-ink); font-weight: 700; margin-right: 2px; }
   .ex-feedback-target { color: var(--text-2); font-weight: 600; }
   :global(.ex-feedback-body) { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   :global(.ex-feedback-time) { font-size: 11px; color: var(--text-3); }
@@ -4254,7 +4254,7 @@
   :global(.reply-link.danger) { color: var(--danger); }
   :global(.reply-link.danger:hover) { background: color-mix(in srgb, var(--danger) 12%, transparent); }
   :global(.reply-save) {
-    background: var(--accent); color: var(--accent-text);
+    background: var(--accent-ink); color: var(--accent-text);
     border: none; cursor: pointer;
     font-size: 12px; font-weight: 700;
     padding: 6px 12px; border-radius: var(--radius-sm); font-family: inherit;
@@ -4284,7 +4284,7 @@
     padding: 4px 10px; border-radius: var(--radius-sm); cursor: pointer;
     align-self: flex-start; font-family: inherit;
   }
-  :global(.reply-add:hover) { color: var(--accent); border-color: var(--accent); }
+  :global(.reply-add:hover) { color: var(--accent-ink); border-color: var(--accent); }
   /* Member's reply bubble — right-aligned + accent-tinted so the coach
      note (left, accent border) + member reply read as a conversation
      instead of two stacked records. Indent from the left to leave
@@ -4300,7 +4300,7 @@
     font-size: 12px; color: var(--text-1);
     cursor: pointer; text-align: left; font-family: inherit;
   }
-  :global(.my-reply-label) { font-weight: 700; color: var(--accent); flex-shrink: 0; }
+  :global(.my-reply-label) { font-weight: 700; color: var(--accent-ink); flex-shrink: 0; }
   :global(.my-reply-text) { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   :global(.my-reply-edit-icon) { font-size: 14px; color: var(--text-3); flex-shrink: 0; }
   :global(.my-reply:hover) { background: color-mix(in srgb, var(--accent) 22%, transparent); }
@@ -4316,7 +4316,7 @@
     color: var(--text-2); cursor: pointer;
     display: flex; align-items: center; gap: 4px;
   }
-  .diary-header-action:hover { color: var(--accent); border-color: var(--accent); }
+  .diary-header-action:hover { color: var(--accent-ink); border-color: var(--accent); }
   /* Full strength like its neighbors, not dimmed as in the header: a dim
      icon in this row reads as disabled. The icon and badge carry unread. */
   .diary-topbar-coach { position: relative; }
@@ -4326,7 +4326,7 @@
     box-sizing: border-box;
     border-radius: var(--radius-full);
     border: 2px solid var(--bg);
-    background: var(--accent); color: white;
+    background: var(--accent-ink); color: white;
     font-size: 10px; font-weight: 700; line-height: 14px;
     text-align: center;
     pointer-events: none;
@@ -4338,12 +4338,12 @@
   /* Accent variant for the Add-exercise header button so it reads as
      the primary action in the group; the Coach Feedback button stays
      in its default surface-2 look next to it. */
-  .diary-header-add { color: var(--accent); }
+  .diary-header-add { color: var(--accent-ink); }
   .diary-header-add:hover { background: var(--accent-dim); }
   .diary-header-action.dim { opacity: 0.55; }
   .diary-header-action.dim:hover { opacity: 1; }
   .diary-header-badge {
-    background: var(--accent); color: white;
+    background: var(--accent-ink); color: white;
     font-size: 11px; font-weight: 700;
     padding: 1px 7px; border-radius: var(--radius-full);
     line-height: 1.4; min-width: 18px; text-align: center;
@@ -4355,7 +4355,7 @@
   .inbox-toolbar { display: flex; justify-content: flex-end; padding: 0 8px 4px; }
   .btn-link {
     background: none; border: none; cursor: pointer;
-    color: var(--accent); font-size: 12px; font-weight: 600;
+    color: var(--accent-ink); font-size: 12px; font-weight: 600;
     padding: 4px 8px; border-radius: var(--radius-sm);
   }
   .btn-link:hover { background: var(--accent-dim); }
@@ -4368,7 +4368,7 @@
   }
   .inbox-row:hover { background: var(--surface-2); }
   .inbox-row.unread { background: color-mix(in srgb, var(--accent) 8%, transparent); }
-  .inbox-icon { color: var(--accent); font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .inbox-icon { color: var(--accent-ink); font-size: 20px; flex-shrink: 0; margin-top: 2px; }
   .inbox-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .inbox-title { font-size: 13px; font-weight: 600; color: var(--text-1); }
   .inbox-note { font-size: 13px; color: var(--text-2); line-height: 1.35; white-space: pre-wrap; }
@@ -4396,10 +4396,10 @@
     flex-shrink: 0;
     font-size: 12px; font-weight: 700;
     overflow: hidden;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
   }
   :global(.avatar-chip.sm) { width: 22px; height: 22px; font-size: 10px; }
-  :global(.avatar-chip.coach) { background: var(--accent-dim); color: var(--accent); }
+  :global(.avatar-chip.coach) { background: var(--accent-dim); color: var(--accent-ink); }
   :global(.avatar-chip.member) {
     background: color-mix(in srgb, var(--text-2) 18%, transparent);
     color: var(--text-2);
@@ -4417,7 +4417,7 @@
     border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
     border-radius: var(--radius-lg);
   }
-  .coach-feedback-icon { font-size: 22px; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+  .coach-feedback-icon { font-size: 22px; color: var(--accent-ink); flex-shrink: 0; margin-top: 1px; }
   .coach-feedback-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
   .coach-feedback-head {
     font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
@@ -4442,7 +4442,7 @@
     text-transform: uppercase; color: var(--text-3);
     border-bottom: 1px solid var(--border);
   }
-  .suggested-icon { font-size: 18px; color: var(--accent); }
+  .suggested-icon { font-size: 18px; color: var(--accent-ink); }
   .suggested-row {
     display: flex; align-items: center; gap: 12px;
     width: 100%; padding: 12px 14px;
@@ -4467,7 +4467,7 @@
     border-radius: var(--radius-lg);
   }
   .coach-banner.loaded { border-color: var(--success); background: linear-gradient(135deg, color-mix(in srgb, var(--success) 14%, transparent), transparent); }
-  .coach-icon { font-size: 22px; color: var(--accent); flex-shrink: 0; }
+  .coach-icon { font-size: 22px; color: var(--accent-ink); flex-shrink: 0; }
   .coach-banner.loaded .coach-icon { color: var(--success-text); }
   .coach-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .coach-title { font-size: 13px; color: var(--text-1); line-height: 1.4; }
@@ -4523,7 +4523,7 @@
   .qc-tag {
     font-size: 10px; font-weight: 700;
     letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .qc-title { font-size: 15px; font-weight: 700; color: var(--text-1); }
   .qc-meta  { font-size: 12px; color: var(--text-3); }
@@ -4578,7 +4578,7 @@
     transition: color var(--dur-fast), border-color var(--dur-fast);
     align-self: flex-start;
   }
-  .notes-trigger:hover { color: var(--accent); border-color: var(--accent); }
+  .notes-trigger:hover { color: var(--accent-ink); border-color: var(--accent); }
   .notes-trigger .material-symbols-rounded { font-size: 16px; }
 
   /* FABs */
@@ -4608,12 +4608,12 @@
   .fab:active { cursor: grabbing; }
   .fab:active { transform: scale(0.9); }
   .fab .material-symbols-rounded { font-size: 24px; }
-  .fab-primary { background: var(--accent); color: var(--accent-text); }
+  .fab-primary { background: var(--accent-ink); color: var(--accent-text); }
   .fab-primary .material-symbols-rounded { font-size: 28px; }
   .fab-secondary {
     width: 44px; height: 44px;
     background: var(--surface-1); border: 1px solid var(--border);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .fab-secondary .material-symbols-rounded { font-size: 22px; }
 
@@ -4635,7 +4635,7 @@
     cursor: pointer; flex-shrink: 0;
     transition: all var(--dur-fast);
   }
-  .lw-program-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .lw-program-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
   .lw-active-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
   /* Current plan week + repeat/regress controls (issue #13) */
@@ -4696,12 +4696,12 @@
     transition: background var(--dur-fast), color var(--dur-fast);
   }
   .lw-tpl-info-badge:hover {
-    background: var(--surface-2); color: var(--accent);
+    background: var(--surface-2); color: var(--accent-ink);
   }
   .lw-tpl-info-badge .material-symbols-rounded { font-size: 20px; }
   .lw-tpl-num {
     width: 28px; height: 28px; border-radius: var(--radius-sm);
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 12px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -4724,7 +4724,7 @@
   .tpl-info-ss-header {
     display: flex; align-items: center; gap: 4px;
     font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--accent);
+    text-transform: uppercase; color: var(--accent-ink);
     padding: 8px 8px 2px;
   }
   .tpl-info-row {
@@ -4737,7 +4737,7 @@
   .tpl-info-row.in-superset { border-left: 3px solid var(--accent); }
   .tpl-info-row-num {
     flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 11px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
   }
@@ -4775,22 +4775,22 @@
   .dp-month-year { display: flex; align-items: center; gap: 6px; }
   .dp-month-btn { font-size: 16px; font-weight: 700; color: var(--text-1); background: var(--surface-2); border: none; cursor: pointer; border-radius: var(--radius-sm); padding: 2px 8px; display: flex; align-items: center; transition: background var(--dur-fast); }
   .dp-month-btn:hover { background: var(--surface-3); }
-  .dp-year-btn { font-size: 16px; font-weight: 700; color: var(--accent); background: var(--accent-dim); border: none; cursor: pointer; border-radius: var(--radius-sm); padding: 2px 8px; display: flex; align-items: center; transition: background var(--dur-fast); }
+  .dp-year-btn { font-size: 16px; font-weight: 700; color: var(--accent-ink); background: var(--accent-dim); border: none; cursor: pointer; border-radius: var(--radius-sm); padding: 2px 8px; display: flex; align-items: center; transition: background var(--dur-fast); }
   .dp-year-btn:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); }
   .dp-year-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px 8px 8px; max-height: 220px; overflow-y: auto; }
   .dp-yr-btn { padding: 8px 4px; font-size: 14px; font-weight: 500; border-radius: var(--radius-sm); background: none; border: none; cursor: pointer; color: var(--text-1); transition: background var(--dur-fast); text-align: center; }
   .dp-yr-btn:hover { background: var(--surface-2); }
-  .dp-yr-btn.dp-yr-sel { background: var(--accent); color: #fff; font-weight: 700; }
+  .dp-yr-btn.dp-yr-sel { background: var(--accent-ink); color: #fff; font-weight: 700; }
   .dp-month-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px 8px 8px; }
   .dp-mo-btn { padding: 10px 4px; font-size: 14px; font-weight: 500; border-radius: var(--radius-sm); background: none; border: none; cursor: pointer; color: var(--text-1); transition: background var(--dur-fast); text-align: center; }
   .dp-mo-btn:hover { background: var(--surface-2); }
-  .dp-mo-btn.dp-mo-sel { background: var(--accent); color: #fff; font-weight: 700; }
+  .dp-mo-btn.dp-mo-sel { background: var(--accent-ink); color: #fff; font-weight: 700; }
   .dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 0 8px 4px; }
   .dp-dh { text-align: center; font-size: 11px; font-weight: 600; color: var(--text-3); padding: 4px 0; }
   .dp-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 14px; border-radius: var(--radius-full); background: none; border: none; cursor: pointer; color: var(--text-1); transition: background var(--dur-fast); -webkit-tap-highlight-color: transparent; position: relative; }
   .dp-day:hover:not(:disabled) { background: var(--surface-2); }
-  .dp-day.dp-today { color: var(--accent); font-weight: 700; }
-  .dp-day.dp-sel { background: var(--accent) !important; color: #fff; font-weight: 600; }
+  .dp-day.dp-today { color: var(--accent-ink); font-weight: 700; }
+  .dp-day.dp-sel { background: var(--accent-ink) !important; color: #fff; font-weight: 600; }
   .dp-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
   .dp-day.dp-sel .dp-dot { background: #fff; }
   /* Excused (issue #121): a ring, not a dot, so it never reads as a
@@ -4810,7 +4810,7 @@
     transition: all var(--dur-fast);
   }
   .ss-option:hover { background: var(--accent-dim); border-color: var(--accent); }
-  .ss-option-icon { color: var(--accent); font-size: 20px; }
+  .ss-option-icon { color: var(--accent-ink); font-size: 20px; }
   .ss-option-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .ss-option-count { font-size: 13px; font-weight: 600; color: var(--text-1); }
   .ss-option-names { font-size: 12px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -4833,7 +4833,7 @@
     background: var(--accent-dim);
     border: 1px solid var(--accent);
     border-radius: var(--radius-md);
-    font-size: 13px; font-weight: 500; color: var(--accent);
+    font-size: 13px; font-weight: 500; color: var(--accent-ink);
   }
   .planning-badge .material-symbols-rounded { font-size: 18px; }
 
@@ -4931,7 +4931,7 @@
   }
   .rail-card-head .material-symbols-rounded {
     font-size: 18px;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .rail-card-title { flex: 1; min-width: 0; }
   .rail-card-meta {
@@ -5062,7 +5062,7 @@
     gap: 8px;
     padding: 10px 14px;
     background: color-mix(in srgb, var(--accent) 15%, transparent);
-    color: var(--accent);
+    color: var(--accent-ink);
     border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
     border-radius: var(--radius-md);
     font-size: 13px;
@@ -5347,7 +5347,7 @@
     }
     :global(html.wide-content) .diary-body > .diary-hud-col > .hud-empty-card > .hud-empty-icon {
       font-size: 22px;
-      color: var(--accent);
+      color: var(--accent-ink);
       opacity: 0.85;
     }
     :global(html.wide-content) .diary-body > .diary-hud-col > .hud-empty-card > .hud-empty-title {
@@ -5388,7 +5388,7 @@
     }
     :global(html.wide-content) .diary-body > .diary-hud-col > .hud-notes-card > .hud-notes-head > .material-symbols-rounded {
       font-size: 18px;
-      color: var(--accent);
+      color: var(--accent-ink);
     }
     :global(html.wide-content) .diary-body > .diary-hud-col > .hud-notes-card > .hud-notes-input {
       width: 100%;
@@ -5443,7 +5443,7 @@
     }
     :global(html.wide-content) .diary-body > .diary-hud-col > .hud-finish-btn.reopen {
       background: transparent;
-      color: var(--accent);
+      color: var(--accent-ink);
     }
     :global(html.wide-content) .diary-body > .diary-hud-col > .hud-finish-btn .material-symbols-rounded {
       font-size: 20px;
@@ -5499,7 +5499,7 @@
     }
     :global(html.wide-content) .rail-action-row .material-symbols-rounded {
       font-size: 18px;
-      color: var(--accent);
+      color: var(--accent-ink);
       flex-shrink: 0;
     }
     :global(html.wide-content) .rail-action-row-label { flex: 1; min-width: 0; }

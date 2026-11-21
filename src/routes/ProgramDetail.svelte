@@ -648,7 +648,7 @@
   .assign-row:disabled { opacity: 0.5; cursor: not-allowed; }
   .assign-row .avatar {
     width: 36px; height: 36px; border-radius: 50%;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 15px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -672,16 +672,16 @@
   .active-badge {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 4px 12px; border-radius: var(--radius-full);
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     border: 1px solid var(--accent);
     font-size: 12px; font-weight: 700;
     cursor: pointer; transition: all var(--dur-fast);
   }
-  .active-badge:hover { background: var(--accent); color: var(--accent-text); }
+  .active-badge:hover { background: var(--accent-ink); color: var(--accent-text); }
   .activate-btn {
     display: flex; align-items: center; gap: 4px;
     padding: 6px 14px; border-radius: var(--radius-full);
-    background: var(--accent); color: var(--accent-text);
+    background: var(--accent-ink); color: var(--accent-text);
     border: none; font-size: 12px; font-weight: 700; cursor: pointer;
     transition: opacity var(--dur-fast);
   }
@@ -695,7 +695,7 @@
   .btn-primary-sm {
     display: flex; align-items: center; gap: 4px;
     padding: 6px 12px; font-size: 12px; font-weight: 600;
-    background: var(--accent); color: var(--accent-text);
+    background: var(--accent-ink); color: var(--accent-text);
     border: none; border-radius: var(--radius-md); cursor: pointer;
   }
   .btn-primary-sm .material-symbols-rounded { font-size: 16px; }
@@ -734,7 +734,7 @@
   .tpl-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
   .tpl-num {
     width: 28px; height: 28px; border-radius: var(--radius-sm);
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 13px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -910,7 +910,7 @@
       height: 22px;
       border-radius: 50%;
       background: var(--accent-dim);
-      color: var(--accent);
+      color: var(--accent-ink);
       font-size: 11px;
       font-weight: 700;
       flex-shrink: 0;

@@ -440,7 +440,7 @@
   .btn-primary-sm {
     display: flex; align-items: center; gap: 4px;
     padding: 8px 14px; font-size: 13px; font-weight: 600;
-    background: var(--accent); color: var(--accent-text);
+    background: var(--accent-ink); color: var(--accent-text);
     border: none; border-radius: var(--radius-md); cursor: pointer;
   }
   .btn-primary-sm .material-symbols-rounded { font-size: 18px; }
@@ -462,14 +462,14 @@
   .program-name { font-size: 16px; font-weight: 700; color: var(--text-1); }
   .active-badge {
     padding: 3px 10px; border-radius: var(--radius-full);
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 11px; font-weight: 700; text-transform: uppercase;
   }
   .card-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .coach-badge {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 10px; border-radius: var(--radius-full);
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 11px; font-weight: 600;
   }
   .goal-tag {
@@ -485,7 +485,7 @@
   /* Active-program progress chip — Week 3 · 12 sessions */
   .card-progress {
     display: flex; align-items: center; gap: 6px;
-    font-size: 11px; font-weight: 700; color: var(--accent);
+    font-size: 11px; font-weight: 700; color: var(--accent-ink);
     margin-top: 2px;
   }
   .progress-sep { color: var(--text-3); font-weight: 500; }
@@ -659,7 +659,7 @@
       height: 22px;
       border-radius: 50%;
       background: var(--accent-dim);
-      color: var(--accent);
+      color: var(--accent-ink);
       font-size: 11px;
       font-weight: 700;
       flex-shrink: 0;

@@ -955,7 +955,7 @@
         <p class="result-label">{$_('radio.artists')}</p>
         {#each searchResults.artists as artist}
           <button class="artist-row" on:click={() => openArtist(artist)}>
-            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent)">person</span>
+            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)">person</span>
             <span class="artist-name">{artist.name}</span>
           </button>
         {/each}
@@ -1081,7 +1081,7 @@
       {#each artists as group}
         {#each group.artist || [] as artist}
           <button class="artist-row" on:click={() => openArtist(artist)}>
-            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent)">person</span>
+            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)">person</span>
             <span class="artist-name">{artist.name}</span>
             <span class="artist-count">{artist.albumCount || ''}</span>
           </button>
@@ -1108,7 +1108,7 @@
     {:else if tab === 'playlists'}
       {#each playlists as pl}
         <button class="artist-row" on:click={() => openPlaylist(pl)}>
-          <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent)">queue_music</span>
+          <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)">queue_music</span>
           <span class="artist-name">{pl.name}</span>
           <span class="artist-count">{pl.songCount || ''} tracks</span>
         </button>
@@ -1148,7 +1148,7 @@
         <p class="result-label">{$_('radio.artists')}</p>
         {#each starredArtists as artist (artist.id)}
           <div class="artist-row" on:click={() => openArtist(artist)} on:keydown={e => activateOnKey(e, () => openArtist(artist))} role="button" tabindex="0">
-            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent)">person</span>
+            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)">person</span>
             <span class="artist-name">{artist.name}</span>
             <button class="star-btn" on:click|stopPropagation={() => toggleStar('artist', artist)} title={$_('radio.unstar')}>
               <span class="material-symbols-rounded filled">star</span>
@@ -1600,7 +1600,7 @@
     color: var(--text-2); font-size: 12px; font-weight: 600;
     cursor: pointer; transition: all var(--dur-fast);
   }
-  .radio-tab.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .radio-tab.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
   .radio-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .icon-btn {
     width: 34px; height: 34px;
@@ -1612,7 +1612,7 @@
     padding: 0;
   }
   .icon-btn:hover { background: var(--surface-2); color: var(--text-1); }
-  .icon-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .icon-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
   .icon-btn .material-symbols-rounded { font-size: 18px; }
   /* Outline by default to match the tab pills — fills with accent on
      hover/active so the button signals tappability without dominating
@@ -1626,7 +1626,7 @@
   }
   .shuffle-btn:hover:not(:disabled),
   .shuffle-btn:active:not(:disabled) {
-    background: var(--accent-dim); border-color: var(--accent); color: var(--accent);
+    background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink);
   }
   .shuffle-btn:disabled { opacity: 0.4; cursor: default; }
   .shuffle-btn .material-symbols-rounded { font-size: 16px; }
@@ -1715,7 +1715,7 @@
     position: absolute;
     top: 4px; left: 4px;
     width: calc(50% - 4px); height: calc(100% - 8px);
-    background: var(--accent);
+    background: var(--accent-ink);
     border-radius: var(--radius-full);
     transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 0;
@@ -1739,7 +1739,7 @@
   .auto-btn {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 4px 10px; border-radius: var(--radius-full);
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     border: 1px solid var(--accent); font-size: 11px; font-weight: 600;
     cursor: pointer; font-family: inherit;
   }
@@ -1762,14 +1762,14 @@
   }
   .station-group-header.drag-over-group {
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
     border-radius: var(--radius-md);
     padding: 6px 8px;
   }
   @media (hover: none) { .drag-handle { display: none; } }
 
   /* Now-playing (pulses) */
-  .now-playing { color: var(--accent); font-weight: 600; animation: np-pulse 2.5s ease-in-out infinite; }
+  .now-playing { color: var(--accent-ink); font-weight: 600; animation: np-pulse 2.5s ease-in-out infinite; }
   @keyframes np-pulse { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
 
   /* Radio-Browser search — native pill-style */
@@ -1822,13 +1822,13 @@
     margin: 0 0 14px 4px;
   }
   .rb-attribution a { color: var(--text-3); text-decoration: underline; }
-  .rb-attribution a:hover { color: var(--accent); }
+  .rb-attribution a:hover { color: var(--accent-ink); }
 
   .loading-inline {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 24px; color: var(--text-3); font-size: 13px;
   }
-  .loading-inline .material-symbols-rounded { font-size: 18px; color: var(--accent); }
+  .loading-inline .material-symbols-rounded { font-size: 18px; color: var(--accent-ink); }
   .station-main {
     flex: 1; display: flex; align-items: center; gap: 12px;
     background: none; border: none; cursor: pointer;
@@ -1840,7 +1840,7 @@
   }
   .station-icon-fallback {
     width: 44px; height: 44px; border-radius: 8px;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     display: flex; align-items: center; justify-content: center;
     font-size: 22px; flex-shrink: 0;
   }
@@ -1975,15 +1975,15 @@
 
   /* Now playing indicator */
   .track-row.now-playing { background: var(--accent-dim); }
-  .track-row.now-playing .track-title { color: var(--accent); }
+  .track-row.now-playing .track-title { color: var(--accent-ink); }
   .station-row.now-playing-row {
     background: var(--accent-dim);
     border-radius: var(--radius-md);
     box-shadow: inset 2px 0 0 var(--accent);
   }
-  .station-row.now-playing-row .track-title { color: var(--accent); }
+  .station-row.now-playing-row .track-title { color: var(--accent-ink); }
   .np-icon {
-    font-size: 20px; color: var(--accent);
+    font-size: 20px; color: var(--accent-ink);
     width: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
 
@@ -2153,9 +2153,9 @@
     .rsr-btn:hover { background: var(--surface-2); }
     .rsr-btn.active {
       background: color-mix(in srgb, var(--accent) 15%, transparent);
-      color: var(--accent);
+      color: var(--accent-ink);
     }
-    .rsr-btn.active .material-symbols-rounded { color: var(--accent); }
+    .rsr-btn.active .material-symbols-rounded { color: var(--accent-ink); }
     .rsr-btn:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: -2px;

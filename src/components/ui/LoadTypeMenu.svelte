@@ -181,7 +181,7 @@
   .ltm-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
   .ltm-label { font-size: 14px; font-weight: 700; color: var(--text-1); }
   .ltm-hint  { font-size: 11px; color: var(--text-3); line-height: 1.35; }
-  .ltm-check { font-size: 18px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+  .ltm-check { font-size: 18px; color: var(--accent-ink); flex-shrink: 0; margin-top: 2px; }
   .ltm-units { display: flex; gap: 6px; padding: 2px 10px 6px; }
   .ltm-unit {
     flex: 1; min-height: 32px; padding: 4px 0;

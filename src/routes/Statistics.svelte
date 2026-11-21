@@ -1636,7 +1636,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     white-space: nowrap;
     font-family: inherit;
   }
-  .metric-pill.active { border-color: var(--accent); color: var(--accent); }
+  .metric-pill.active { border-color: var(--accent); color: var(--accent-ink); }
   .metric-icon { font-size: 16px; }
 
   /* Range pills */
@@ -1652,7 +1652,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     color: var(--text-2); font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0;
     transition: all var(--dur-fast);
   }
-  .range-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .range-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
 
   .content { padding: 16px var(--page-px) 16px; display: flex; flex-direction: column; gap: 16px; }
 
@@ -1683,7 +1683,7 @@ import { onMount, onDestroy, tick } from 'svelte';
   .goal-ring-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; }
   .goal-ring-num { font-size: 22px; font-weight: 800; color: var(--text-1); font-variant-numeric: tabular-nums; }
   .goal-ring-of  { font-size: 13px; color: var(--text-3); font-weight: 500; }
-  .goal-ring-pct { font-size: 12px; font-weight: 700; color: var(--accent); }
+  .goal-ring-pct { font-size: 12px; font-weight: 700; color: var(--accent-ink); }
   .goal-ring-card.hit .goal-ring-pct { color: var(--success-text); }
   /* Excused (issue #121): days off the goal, and a fully excused week. */
   .goal-ring-excused { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--text-2); }
@@ -1709,7 +1709,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     display: flex; flex-direction: column; align-items: center; gap: 2px;
     text-align: center;
   }
-  .sc-icon { font-size: 22px; color: var(--accent); margin-bottom: 2px; }
+  .sc-icon { font-size: 22px; color: var(--accent-ink); margin-bottom: 2px; }
   .sc-value { font-size: 22px; font-weight: 800; color: var(--text-1); line-height: 1; }
   .sc-value-sm { font-size: 18px; font-weight: 700; color: var(--text-1); line-height: 1.2; }
   .sc-value-sm.gain { color: var(--warning-text); }
@@ -1727,7 +1727,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
     border-radius: var(--radius-md);
   }
-  .cal-icon  { font-size: 20px; color: var(--accent); }
+  .cal-icon  { font-size: 20px; color: var(--accent-ink); }
   .cal-val   { font-size: 16px; font-weight: 800; color: var(--text-1); font-variant-numeric: tabular-nums; }
   .cal-label { font-size: 12px; color: var(--text-3); margin-right: auto; }
   .cal-badge {
@@ -1766,7 +1766,7 @@ import { onMount, onDestroy, tick } from 'svelte';
   .chart-wrap { position: relative; }
   .overlay-axis { position: absolute; inset: 0; pointer-events: none; }
   .overlay-axis span { position: absolute; right: 2px; transform: translateY(-50%); font-size: 11px; line-height: 1; color: var(--warning-text, #7A5000); padding: 1px 5px; border-radius: 4px; background: var(--surface-1); }
-  .overlay-axis span.w { left: 2px; right: auto; color: var(--accent); }
+  .overlay-axis span.w { left: 2px; right: auto; color: var(--accent-ink); }
   .overlay-axis .mark-max { top: 8.3%; }  /* band top edge, y=10 of the 120 viewBox */
   .overlay-axis .mark-min { top: 83.3%; } /* band bottom edge, y=100 */
   .overlay-axis .mark-solo { top: 45.8%; } /* flat series: the single point renders mid-band, y=55 */
@@ -1782,7 +1782,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     border-radius: var(--radius-md);
     gap: 6px;
   }
-  .solo-value { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums; }
+  .solo-value { font-size: 28px; font-weight: 800; color: var(--accent-ink); line-height: 1; font-variant-numeric: tabular-nums; }
   .solo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); font-weight: 600; }
 
   /* Bar chart */
@@ -1834,7 +1834,7 @@ import { onMount, onDestroy, tick } from 'svelte';
   /* Records */
   .section { display: flex; flex-direction: column; gap: 8px; }
   .section-title { font-size: 14px; font-weight: 700; color: var(--text-1); margin: 0; display: flex; align-items: center; gap: 6px; }
-  .section-title .material-symbols-rounded { font-size: 18px; color: var(--accent); }
+  .section-title .material-symbols-rounded { font-size: 18px; color: var(--accent-ink); }
 
   .records-list { display: flex; flex-direction: column; gap: 6px; }
   .record-row {
@@ -1851,7 +1851,7 @@ import { onMount, onDestroy, tick } from 'svelte';
   .record-chev { color: var(--text-3); font-size: 18px; flex-shrink: 0; }
   .record-name { font-size: 14px; font-weight: 600; color: var(--text-1); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .record-data { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0; }
-  .record-weight { font-size: 14px; font-weight: 700; color: var(--accent); }
+  .record-weight { font-size: 14px; font-weight: 700; color: var(--accent-ink); }
   .record-meta { font-size: 11px; color: var(--text-3); }
 
   /* Body-map legend + not-trained chip row (rendered inside .chart-card
@@ -1954,7 +1954,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     text-align: left; cursor: pointer;
   }
   .progress-link:hover { background: var(--surface-2); }
-  .progress-link > .material-symbols-rounded { font-size: 24px; color: var(--accent); }
+  .progress-link > .material-symbols-rounded { font-size: 24px; color: var(--accent-ink); }
   .pl-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
   .pl-title { font-size: 14px; font-weight: 600; color: var(--text-1); }
   .pl-sub { font-size: 12px; color: var(--text-3); }
@@ -2084,10 +2084,10 @@ import { onMount, onDestroy, tick } from 'svelte';
     }
     :global(html:not(.force-mobile-layout)) .stats-metric-rail .mr-btn.active {
       background: color-mix(in srgb, var(--accent) 15%, transparent);
-      color: var(--accent);
+      color: var(--accent-ink);
     }
     :global(html:not(.force-mobile-layout)) .stats-metric-rail .mr-btn.active .mr-icon {
-      color: var(--accent);
+      color: var(--accent-ink);
     }
     :global(html:not(.force-mobile-layout)) .stats-metric-rail .mr-btn:focus-visible {
       outline: 2px solid var(--accent);
@@ -2164,7 +2164,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     }
     :global(html:not(.force-mobile-layout)) .stats-body > .stats-rail > .rail-card > .rail-card-head > .material-symbols-rounded {
       font-size: 18px;
-      color: var(--accent);
+      color: var(--accent-ink);
     }
     :global(html:not(.force-mobile-layout)) .stats-body > .stats-rail > .rail-card > .rail-card-head > .rail-card-title {
       flex: 1;

@@ -199,12 +199,12 @@
     color: var(--text-1);
     transition: left 0.25s ease;
   }
-  .icon { color: var(--accent); flex-shrink: 0; }
+  .icon { color: var(--accent-ink); flex-shrink: 0; }
   .body { flex: 1; min-width: 0; }
   .title { font-weight: 600; font-size: 14px; }
   .sub   { font-size: 12px; color: var(--text-2); }
   .btn.primary {
-    background: var(--accent); color: white; border: none;
+    background: var(--accent-ink); color: white; border: none;
     padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
     flex-shrink: 0;
   }

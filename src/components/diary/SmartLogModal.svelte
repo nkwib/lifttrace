@@ -319,7 +319,7 @@
     padding: 12px 20px 8px;
     position: sticky; top: 0; background: var(--surface-1); z-index: 1;
   }
-  .sl-header-icon { font-size: 22px; color: var(--accent); }
+  .sl-header-icon { font-size: 22px; color: var(--accent-ink); }
   .sl-title { flex: 1; font-size: 18px; font-weight: 800; color: var(--text-1); margin: 0; }
   .sl-close {
     background: none; border: none; cursor: pointer; color: var(--text-3);
@@ -348,12 +348,12 @@
   .sl-mic {
     position: absolute; bottom: 10px; right: 10px;
     width: 36px; height: 36px; border-radius: 50%;
-    background: var(--accent-dim); border: 1px solid var(--accent);
-    color: var(--accent); cursor: pointer;
+    background: var(--accent-dim); border: 1px solid var(--accent-ink);
+    color: var(--accent-ink); cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all var(--dur-fast);
   }
-  .sl-mic:hover { background: var(--accent); color: var(--accent-text); }
+  .sl-mic:hover { background: var(--accent-ink); color: var(--accent-text); }
   .sl-mic.listening {
     background: var(--danger); border-color: var(--danger); color: #fff;
     animation: sl-pulse 1.2s ease-in-out infinite;
@@ -368,7 +368,7 @@
   .sl-actions .btn-primary { display: flex; align-items: center; justify-content: center; gap: 6px; }
 
   .sl-center { text-align: center; padding: 48px 20px; }
-  .sl-spin { font-size: 48px; color: var(--accent); animation: sl-rot 0.8s linear infinite; display: inline-block; }
+  .sl-spin { font-size: 48px; color: var(--accent-ink); animation: sl-rot 0.8s linear infinite; display: inline-block; }
   @keyframes sl-rot { to { transform: rotate(360deg); } }
   .sl-center-msg { font-size: 14px; color: var(--text-2); margin: 12px 0 0; }
 
@@ -388,7 +388,7 @@
   }
   .sl-ss-badge {
     font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     padding: 2px 6px; border-radius: var(--radius-sm);
   }
   .sl-item-remove {
@@ -410,8 +410,8 @@
     color: var(--text-2); cursor: pointer;
     transition: all var(--dur-fast);
   }
-  .sl-chip:hover { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
-  .sl-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .sl-chip:hover { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
+  .sl-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
 
   .sl-sets-list { display: flex; flex-direction: column; gap: 4px; }
   .sl-set-row {
@@ -448,5 +448,5 @@
     font-size: 12px; font-family: inherit;
     align-self: flex-start; margin-top: 4px;
   }
-  .sl-add-set:hover { color: var(--accent); border-color: var(--accent); }
+  .sl-add-set:hover { color: var(--accent-ink); border-color: var(--accent); }
 </style>

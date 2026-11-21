@@ -353,7 +353,7 @@
     cursor: pointer; transition: all var(--dur-fast);
     flex-shrink: 0;
   }
-  .chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
 
   .equipment-chips {
     display: flex; gap: 5px; padding: 0 16px 10px;
@@ -369,7 +369,7 @@
     cursor: pointer; flex-shrink: 0;
     transition: all var(--dur-fast);
   }
-  .eq-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .eq-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
   .eq-count { font-size: 10px; opacity: 0.6; }
 
   .exercise-list { flex: 1; overflow-y: auto; padding: 0 16px 16px; }
@@ -393,9 +393,9 @@
     transition: background var(--dur-fast);
   }
   .create-from-search:hover { background: color-mix(in srgb, var(--accent) 18%, var(--surface-1)); }
-  .create-from-search .material-symbols-rounded { font-size: 22px; color: var(--accent); flex-shrink: 0; }
+  .create-from-search .material-symbols-rounded { font-size: 22px; color: var(--accent-ink); flex-shrink: 0; }
   .cfs-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-  .cfs-title { font-size: 14px; font-weight: 700; color: var(--accent); }
+  .cfs-title { font-size: 14px; font-weight: 700; color: var(--accent-ink); }
   .cfs-sub   { font-size: 11px; color: var(--text-3); }
 
   .exercise-row {
@@ -437,7 +437,7 @@
   .ex-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
   .ex-name { font-size: 14px; font-weight: 600; color: var(--text-1); }
   .ex-meta { font-size: 12px; color: var(--text-3); text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .add-icon { color: var(--accent); font-size: 24px; flex-shrink: 0; margin-left: 8px; }
+  .add-icon { color: var(--accent-ink); font-size: 24px; flex-shrink: 0; margin-left: 8px; }
 
   .info-btn {
     display: flex; align-items: center; justify-content: center;
@@ -447,7 +447,7 @@
     flex-shrink: 0;
     transition: color var(--dur-fast), background var(--dur-fast);
   }
-  .info-btn:hover { color: var(--accent); background: var(--surface-2); }
+  .info-btn:hover { color: var(--accent-ink); background: var(--surface-2); }
   .info-btn .material-symbols-rounded { font-size: 20px; }
 
   .loading { text-align: center; padding: 32px; color: var(--text-3); }
@@ -471,7 +471,7 @@
   }
   .already-added-icon {
     font-size: 22px;
-    color: var(--accent);
+    color: var(--accent-ink);
     flex-shrink: 0;
     margin-left: 8px;
     opacity: 0.7;

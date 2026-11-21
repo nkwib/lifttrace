@@ -70,7 +70,7 @@
     display: flex; align-items: flex-start; gap: 12px;
     padding: 16px 16px 4px;
   }
-  .support-hero-icon { color: var(--accent); font-size: 28px; flex-shrink: 0; }
+  .support-hero-icon { color: var(--accent-ink); font-size: 28px; flex-shrink: 0; }
   .support-lead { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-1); }
   .support-actions {
     display: flex; flex-wrap: wrap; gap: 8px;
@@ -86,8 +86,8 @@
     display: flex; align-items: center; gap: 12px;
     padding: 12px 16px; color: var(--text-1); text-decoration: none;
   }
-  .support-row:hover .support-row-title { color: var(--accent); }
-  .support-row-icon { color: var(--accent); font-size: 22px; flex-shrink: 0; }
+  .support-row:hover .support-row-title { color: var(--accent-ink); }
+  .support-row-icon { color: var(--accent-ink); font-size: 22px; flex-shrink: 0; }
   .support-row-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
   .support-row-title { font-size: 14px; font-weight: 600; }
   .support-row-desc { font-size: 12px; color: var(--text-3); line-height: 1.4; }

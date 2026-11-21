@@ -29,7 +29,7 @@ body {
   position: relative;
 }
 
-a { color: var(--accent); text-decoration: none; }
+a { color: var(--accent-ink); text-decoration: none; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 input, select, textarea { font-family: inherit; }
 
@@ -377,7 +377,7 @@ html.banner-animated-mode .diary-topbar-actions .btn-icon .material-symbols-roun
 }
 .chip.accent {
   background: var(--accent-dim);
-  color: var(--accent);
+  color: var(--accent-ink);
   border-color: transparent;
 }
 .chip.mealie-chip {

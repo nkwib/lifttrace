@@ -121,7 +121,7 @@
           <span class="setting-label">{$_('settings_diagnostics.view_logs')}</span>
           <p class="setting-hint" style="line-height:1.5;margin:0">
             {$_('settings_diagnostics.view_logs_hint_prefix')}
-            <a href="https://github.com/TraceApps/lifttrace/issues" target="_blank" rel="noopener" style="color:var(--accent)">{$_('settings_diagnostics.github_issue')}</a>{$_('settings_diagnostics.view_logs_hint_suffix')}
+            <a href="https://github.com/TraceApps/lifttrace/issues" target="_blank" rel="noopener" style="color:var(--accent-ink)">{$_('settings_diagnostics.github_issue')}</a>{$_('settings_diagnostics.view_logs_hint_suffix')}
           </p>
           <button class="btn btn-secondary" style="height:40px;font-size:13px" on:click={openLogsSheet}>
             <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px">terminal</span>

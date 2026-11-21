@@ -1773,21 +1773,21 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
       {/if}
       <div style="display:flex;flex-direction:column;gap:8px">
         <button class="merge-option" on:click={() => _mergeAndConnect('upload')}>
-          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent)">cloud_upload</span>
+          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent-ink)">cloud_upload</span>
           <div>
             <div class="merge-option-title">{$_('settings_main.merge.upload')}</div>
             <div class="merge-option-desc">{$_('settings_main.merge.upload_desc')}</div>
           </div>
         </button>
         <button class="merge-option" on:click={() => _mergeAndConnect('download')}>
-          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent)">cloud_download</span>
+          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent-ink)">cloud_download</span>
           <div>
             <div class="merge-option-title">{$_('settings_main.merge.download')}</div>
             <div class="merge-option-desc">{$_('settings_main.merge.download_desc')}</div>
           </div>
         </button>
         <button class="merge-option" on:click={() => _mergeAndConnect('merge')}>
-          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent)">sync</span>
+          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent-ink)">sync</span>
           <div>
             <div class="merge-option-title">{$_('settings_main.merge.merge')}</div>
             <div class="merge-option-desc">{$_('settings_main.merge.merge_desc')}</div>
@@ -1800,7 +1800,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
 {:else if mergeStep === 'syncing'}
   <div class="merge-overlay" use:portal use:closeOnBack={() => {}} transition:fade={{ duration: 150 }}>
     <div class="merge-dialog" style="text-align:center">
-      <span class="material-symbols-rounded" style="font-size:36px;color:var(--accent);animation:settings-spin 1.2s linear infinite">sync</span>
+      <span class="material-symbols-rounded" style="font-size:36px;color:var(--accent-ink);animation:settings-spin 1.2s linear infinite">sync</span>
       <p style="font-size:15px;color:var(--text-1);margin:12px 0 4px;font-weight:600">{$_('sync.syncing')}</p>
       <p style="font-size:13px;color:var(--text-3);margin:0">{mergeProgress || $_('settings_main.merge.preparing')}</p>
       {#if mergeProgressPct > 0}
@@ -1976,7 +1976,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
   .profile-hero-role {
     align-self: flex-start;
     font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--accent); background: var(--accent-dim);
+    color: var(--accent-ink); background: var(--accent-dim);
     padding: 2px 8px; border-radius: var(--radius-full, 999px);
   }
   .profile-hero-sub { font-size: 13px; color: var(--text-3); }
@@ -2139,7 +2139,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
   :global(.section-name) { flex: 1; }
   :global(.si) {
     width: 32px; height: 32px; border-radius: 8px;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
@@ -2188,7 +2188,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
     color: var(--text-2); font-size: 12px; font-weight: 600; cursor: pointer;
     transition: all var(--dur-fast);
   }
-  .theme-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .theme-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
 
   .accent-grid { display: flex; gap: 8px; flex-wrap: wrap; }
   .accent-swatch {
@@ -2242,7 +2242,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
   .about-version { margin-top: 2px; font-size: 13px; color: var(--text-3); }
   .about-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; padding: 12px 16px; }
   .about-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; font-size: 14px; color: var(--text-1); }
-  .about-feat-icon { font-size: 20px; color: var(--accent); flex-shrink: 0; }
+  .about-feat-icon { font-size: 20px; color: var(--accent-ink); flex-shrink: 0; }
   .form-group { display: flex; flex-direction: column; gap: 6px; }
   .form-label { font-size: 13px; font-weight: 600; color: var(--text-2); }
   .form-input {
@@ -2266,7 +2266,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
     padding: 6px; display: flex; border-radius: var(--radius-sm);
   }
   .btn-icon-toggle:hover { color: var(--text-1); background: var(--surface-2); }
-  .about-link { color: var(--accent); text-decoration: underline; }
+  .about-link { color: var(--accent-ink); text-decoration: underline; }
   .about-link:hover { opacity: 0.8; }
 
   /* ── User management rows ──────────────────────────────────────────── */
@@ -2278,7 +2278,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
   .user-row-mgmt:last-child { border-bottom: none; }
   .user-row-avatar {
     width: 36px; height: 36px; border-radius: 50%;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 15px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -2322,7 +2322,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
   .src-head { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
   .src-name { font-size: 14px; font-weight: 700; color: var(--text-1); }
   .src-count {
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 11px; font-weight: 700;
     padding: 1px 8px; border-radius: var(--radius-full);
   }
@@ -2349,7 +2349,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    background: linear-gradient(135deg, var(--accent-ink), var(--accent-ink-2));
     color: var(--accent-text); border: none; border-radius: var(--radius-md);
     padding: 0 14px;
     cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px;
@@ -2666,7 +2666,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
       /* Background comes from .rail-active-pill (slides in from prior
          active item). Only the text/icon color flips here. */
       background: transparent;
-      color: var(--accent);
+      color: var(--accent-ink);
     }
     /* Sliding highlight pill — the shared background element that
        animates its transform + height to the active rail button. */
@@ -2746,7 +2746,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
     :global(html.wide-content) .settings-nav-rail .settings-nav-clear {
       margin-top: 4px;
       background: var(--surface-2);
-      color: var(--accent);
+      color: var(--accent-ink);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 4px 10px;
@@ -2884,7 +2884,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
     }
     :global(html.wide-content) .settings-onboarding-card :global(.material-symbols-rounded) {
       font-size: 22px;
-      color: var(--accent);
+      color: var(--accent-ink);
       flex-shrink: 0;
     }
     :global(html.wide-content) .settings-onboarding-copy {

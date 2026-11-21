@@ -702,7 +702,7 @@
     width: 24px; height: 24px; padding: 0;
     display: flex; align-items: center; justify-content: center;
     border-radius: 50%; border: 1px solid var(--accent);
-    background: var(--surface-1); color: var(--accent);
+    background: var(--surface-1); color: var(--accent-ink);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   }
   .clip-badge .material-symbols-rounded { font-size: 18px; }
@@ -721,7 +721,7 @@
     position: absolute;
     top: -10px; right: 6px;
     z-index: 1;
-    background: var(--accent);
+    background: var(--accent-ink);
     color: var(--accent-text, white);
     font-size: 10px; font-weight: 800;
     padding: 2px 8px;
@@ -738,7 +738,7 @@
   }
   .set-row.warmup { opacity: 0.72; }
   .set-row.warmup .set-num {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: 11px;
   }
   /* "You are here" — the first incomplete working set gets a subtle
@@ -755,7 +755,7 @@
     width: 3px; border-radius: 2px;
     background: var(--accent);
   }
-  .set-row.is-next .set-num { color: var(--accent); }
+  .set-row.is-next .set-num { color: var(--accent-ink); }
   .set-row.pulse { animation: set-complete-pulse 0.6s ease-out; }
   @keyframes set-complete-pulse {
     0%   { background: color-mix(in srgb, var(--success) 45%, transparent); }
@@ -788,7 +788,7 @@
   }
   .set-num-btn:hover { background: var(--surface-3); color: var(--text-1); }
   .set-num-btn.custom {
-    color: var(--accent);
+    color: var(--accent-ink);
     border-color: var(--accent);
     background: var(--accent-dim);
   }
@@ -824,7 +824,7 @@
     display: flex; align-items: center; justify-content: center;
   }
   .num-opt:hover { background: var(--surface-3); }
-  .num-opt.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .num-opt.active { background: var(--accent-ink); color: var(--accent-text); border-color: var(--accent-ink); }
   .num-opt.clear {
     grid-column: span 4; color: var(--text-3); background: transparent;
     border: 1px dashed var(--border); margin-top: 2px;
@@ -862,7 +862,7 @@
     transition: background var(--dur-fast), color var(--dur-fast);
     flex-shrink: 0;
   }
-  .step-btn:hover { background: var(--surface-3); color: var(--accent); }
+  .step-btn:hover { background: var(--surface-3); color: var(--accent-ink); }
   .step-btn:active { transform: scale(0.9); }
   .set-input {
     width: 100%;
@@ -894,7 +894,7 @@
      labels. The chain icon at the end toggles split-mode on/off. */
   .set-field.reps-split { gap: 4px; padding: 0 2px; }
   .lr-label {
-    font-size: 10px; font-weight: 800; color: var(--accent);
+    font-size: 10px; font-weight: 800; color: var(--accent-ink);
     letter-spacing: 0.04em;
     padding-right: 2px;
   }
@@ -904,7 +904,7 @@
     display: flex; align-items: center; justify-content: center;
     border-radius: var(--radius-sm);
   }
-  .split-btn:hover { color: var(--accent); background: var(--surface-2); }
+  .split-btn:hover { color: var(--accent-ink); background: var(--surface-2); }
   .split-btn .material-symbols-rounded { font-size: 16px; }
   /* Two times side by side (issue #143): a little smaller than one, so
      0:45 and 0:40 both show beside the button on a 320px phone. */
@@ -913,7 +913,7 @@
   /* 10:00 and longer: smaller again, so a side up to 59:59 still shows
      whole on a 320px phone with RPE on. */
   .time-split .duration-input.long { font-size: 10px; }
-  .split-btn.active { color: var(--accent); }
+  .split-btn.active { color: var(--accent-ink); }
 
   .check-btn {
     display: flex; align-items: center; justify-content: center;
@@ -946,7 +946,7 @@
     font-family: inherit; cursor: pointer;
     min-width: 34px; text-align: center;
   }
-  .rpe-chip.set { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+  .rpe-chip.set { background: var(--accent-dim); color: var(--accent-ink); border-color: var(--accent); }
   .rpe-chip:hover { border-color: var(--text-2); }
   /* Portaled to document.body — matches .num-picker treatment. */
   :global(.rpe-backdrop) { position: fixed; inset: 0; z-index: 200; }
@@ -968,7 +968,7 @@
     display: flex; align-items: center; justify-content: center;
   }
   .rpe-opt:hover { background: var(--surface-3); }
-  .rpe-opt.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .rpe-opt.active { background: var(--accent-ink); color: var(--accent-text); border-color: var(--accent-ink); }
   .rpe-chip.set.lvl-easy, .rpe-opt.lvl-easy { --lvl: var(--success, #3fb950); --lvl-text: var(--success-text); }
   .rpe-chip.set.lvl-moderate, .rpe-opt.lvl-moderate { --lvl: var(--warning, #d29922); --lvl-text: var(--warning-text); }
   .rpe-chip.set.lvl-hard, .rpe-opt.lvl-hard { --lvl: #e8833a; --lvl-text: var(--hard-text); }

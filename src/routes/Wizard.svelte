@@ -696,7 +696,7 @@
   }
   .wizard-done-icon {
     font-size: 72px;
-    color: var(--accent);
+    color: var(--accent-ink);
     filter: drop-shadow(0 2px 14px color-mix(in srgb, var(--accent) 40%, transparent));
     animation: wizard-done-pop 0.5s var(--ease-out, cubic-bezier(0.34, 1.56, 0.64, 1)) both;
   }
@@ -756,7 +756,7 @@
     width: 80px; height: 80px;
     border-radius: var(--radius-xl);
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 24px;
   }
@@ -826,14 +826,14 @@
     transition: all var(--dur-fast);
     font-family: inherit;
   }
-  .unit-card.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+  .unit-card.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--accent-ink); }
   .unit-card-icon  { font-size: 40px; color: inherit; }
   .unit-card-label { font-size: 18px; font-weight: 700; }
   .unit-card-sub   { font-size: 12px; color: var(--text-3); }
-  .unit-card.selected .unit-card-sub { color: var(--accent); opacity: 0.85; }
+  .unit-card.selected .unit-card-sub { color: var(--accent-ink); opacity: 0.85; }
   .unit-card-check {
     position: absolute; top: 8px; right: 8px;
-    font-size: 20px; color: var(--accent);
+    font-size: 20px; color: var(--accent-ink);
   }
 
   /* Goal selection */
@@ -846,7 +846,7 @@
     cursor: pointer; color: var(--text-2);
     transition: all var(--dur-fast); min-width: 60px;
   }
-  .goal-btn.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+  .goal-btn.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent-ink); }
   .goal-num { font-size: 22px; font-weight: 700; }
   .goal-sub { font-size: 11px; }
 
@@ -860,7 +860,7 @@
     cursor: pointer; color: var(--text-2);
     transition: all var(--dur-fast); font-size: 13px;
   }
-  .theme-btn.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+  .theme-btn.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent-ink); }
   .theme-icon { font-size: 24px; }
 
   .wizard-nav { display: flex; gap: 10px; }
@@ -884,7 +884,7 @@
     flex-shrink: 0;
     transition: all var(--dur-fast);
   }
-  .lib-check.checked { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .lib-check.checked { background: var(--accent-ink); border-color: var(--accent-ink); color: #fff; }
   .lib-check .material-symbols-rounded { font-size: 16px; }
   .lib-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .lib-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -901,7 +901,7 @@
     padding: 10px 12px; margin-bottom: 10px;
     background: var(--accent-dim); border: 1px solid var(--accent);
     border-radius: var(--radius-md);
-    font-size: 12px; color: var(--accent); font-weight: 600;
+    font-size: 12px; color: var(--accent-ink); font-weight: 600;
   }
 
   .wizard-dots { display: flex; gap: 8px; justify-content: center; margin-top: 24px; }

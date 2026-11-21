@@ -91,7 +91,7 @@
     background: linear-gradient(135deg, var(--accent-dim), transparent);
     border-radius: var(--radius-md); gap: 6px;
   }
-  .solo-value { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums; }
+  .solo-value { font-size: 28px; font-weight: 800; color: var(--accent-ink); line-height: 1; font-variant-numeric: tabular-nums; }
   .solo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); font-weight: 600; }
 
   .bar-chart { position: relative; display: flex; align-items: flex-end; gap: 4px; height: 120px; padding: 0 2px; }

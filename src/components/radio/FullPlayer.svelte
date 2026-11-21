@@ -223,7 +223,7 @@
               on:keydown={e => activateOnKey(e, () => { queueIndex.set(i); playTrack(track); })} role="button" tabindex="0">
               <span class="fp-queue-play">
                 {#if i === $queueIndex}
-                  <span class="material-symbols-rounded" style="font-size:16px;color:var(--accent)">equalizer</span>
+                  <span class="material-symbols-rounded" style="font-size:16px;color:var(--accent-ink)">equalizer</span>
                 {:else}
                   <span class="fp-queue-num">{i + 1}</span>
                 {/if}
@@ -344,7 +344,7 @@
     gap: 8px;
   }
   .fp-loading-icon {
-    font-size: 48px; color: var(--accent);
+    font-size: 48px; color: var(--accent-ink);
     animation: fp-spin 1s linear infinite;
   }
   .fp-loading-text {
@@ -395,10 +395,10 @@
     display: flex; align-items: center; justify-content: center;
   }
   .fp-ctrl:hover { color: var(--text-1); }
-  .fp-ctrl.active { color: var(--accent); }
+  .fp-ctrl.active { color: var(--accent-ink); }
   .fp-play {
     width: 64px; height: 64px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2, var(--accent)));
+    background: linear-gradient(135deg, var(--accent-ink), var(--accent-2, var(--accent-ink)));
     color: var(--accent-text, #fff);
     border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;

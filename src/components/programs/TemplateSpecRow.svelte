@@ -297,7 +297,7 @@
   }
   .spec-num-btn:hover { background: var(--surface-3); color: var(--text-1); }
   .spec-num-btn.custom {
-    color: var(--accent);
+    color: var(--accent-ink);
     border-color: var(--accent);
     background: var(--accent-dim);
   }
@@ -307,7 +307,7 @@
     opacity: 0.7;
     margin-left: -2px;
   }
-  .warmup-badge { color: var(--accent); }
+  .warmup-badge { color: var(--accent-ink); }
 
   .ps-input {
     flex: 1 1 0; min-width: 0;
@@ -328,7 +328,7 @@
     flex: 1 1 0; min-width: 0;
   }
   .lr-label {
-    font-size: 10px; font-weight: 800; color: var(--accent);
+    font-size: 10px; font-weight: 800; color: var(--accent-ink);
     letter-spacing: 0.04em;
     flex-shrink: 0;
   }
@@ -343,8 +343,8 @@
     transition: background var(--dur-fast), color var(--dur-fast);
   }
   .spec-icon-btn:hover { background: var(--surface-2); color: var(--text-1); }
-  .spec-icon-btn.active { color: var(--accent); }
-  .spec-icon-btn.warmup-on { color: var(--accent); }
+  .spec-icon-btn.active { color: var(--accent-ink); }
+  .spec-icon-btn.warmup-on { color: var(--accent-ink); }
   .spec-icon-btn .material-symbols-rounded { font-size: 16px; }
 
   .rpe-chip {
@@ -358,7 +358,7 @@
     transition: all var(--dur-fast);
   }
   .rpe-chip:hover { border-color: var(--text-2); }
-  .rpe-chip.set { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+  .rpe-chip.set { background: var(--accent-dim); color: var(--accent-ink); border-color: var(--accent); }
 
   /* Portaled pickers — same z-index tier used by SetRow's set-number
      and RPE pickers so they sit above sticky headers + rest bar. */
@@ -383,7 +383,7 @@
     display: flex; align-items: center; justify-content: center;
   }
   :global(.num-picker .num-opt:hover) { background: var(--surface-3); }
-  :global(.num-picker .num-opt.active) { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  :global(.num-picker .num-opt.active) { background: var(--accent-ink); color: var(--accent-text); border-color: var(--accent-ink); }
   :global(.num-picker .num-opt.clear) {
     grid-column: span 4; color: var(--text-3); background: transparent;
     border: 1px dashed var(--border); margin-top: 2px;
@@ -407,7 +407,7 @@
     display: flex; align-items: center; justify-content: center;
   }
   :global(.rpe-picker .rpe-opt:hover) { background: var(--surface-3); }
-  :global(.rpe-picker .rpe-opt.active) { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  :global(.rpe-picker .rpe-opt.active) { background: var(--accent-ink); color: var(--accent-text); border-color: var(--accent-ink); }
   :global(.rpe-picker .rpe-opt.clear) {
     grid-column: span 4; color: var(--danger); background: transparent;
     border: 1px dashed var(--border); margin-top: 2px;

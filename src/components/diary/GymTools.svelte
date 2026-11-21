@@ -265,7 +265,7 @@
     border-bottom: 2px solid transparent;
     transition: all var(--dur-fast);
   }
-  .gt-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .gt-tab.active { color: var(--accent-ink); border-bottom-color: var(--accent); }
 
   .gt-body { padding: 16px 20px 20px; }
 
@@ -323,7 +323,7 @@
     display: flex; align-items: baseline; gap: 8px;
     padding: 20px 0; text-align: center; justify-content: center;
   }
-  .gt-convert-val { font-size: 36px; font-weight: 800; color: var(--accent); }
+  .gt-convert-val { font-size: 36px; font-weight: 800; color: var(--accent-ink); }
   .gt-convert-unit { font-size: 18px; color: var(--text-3); font-weight: 600; }
 
   /* Embed (rail-widget) layout — matches the other rail cards. Tab
@@ -346,7 +346,7 @@
     font-weight: 600;
     color: var(--text-1);
   }
-  .gt-embed-icon { font-size: 18px; color: var(--accent); flex-shrink: 0; }
+  .gt-embed-icon { font-size: 18px; color: var(--accent-ink); flex-shrink: 0; }
   .gt-embed-title { flex: 1; min-width: 0; }
   .gt-tabs-embed {
     padding: 0;

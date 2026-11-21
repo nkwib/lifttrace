@@ -172,7 +172,7 @@
   .coach-page { max-width: 720px; }
   .card { border-left: 3px solid var(--accent); padding: 16px; }
   .consent-head { display: flex; align-items: center; gap: 12px; }
-  .consent-icon { font-size: 28px; color: var(--accent); flex-shrink: 0; }
+  .consent-icon { font-size: 28px; color: var(--accent-ink); flex-shrink: 0; }
   .consent-title { font-size: 17px; font-weight: 700; margin: 0; }
   .consent-body { margin: 12px 0 0; color: var(--text-2); line-height: 1.45; }
   .consent-note {
@@ -185,7 +185,7 @@
   .coach-avatar {
     width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
     display: grid; place-items: center; font-size: 20px; font-weight: 700;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
   }
   .coach-info { min-width: 0; flex: 1 1 160px; }
   .coach-label { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
@@ -195,12 +195,12 @@
   .leave-btn { margin-left: auto; color: var(--danger); display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
   .leave-btn .material-symbols-rounded { font-size: 18px; }
   .consent-blocked { display: flex; gap: 8px; align-items: flex-start; margin: 12px 0 0; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface-2); color: var(--text-2); font-size: 13px; line-height: 1.45; }
-  .consent-blocked .material-symbols-rounded { font-size: 18px; color: var(--accent); flex-shrink: 0; }
+  .consent-blocked .material-symbols-rounded { font-size: 18px; color: var(--accent-ink); flex-shrink: 0; }
   .coach-empty { color: var(--text-3); margin-top: 24px; text-align: center; }
   .past { margin-top: 8px; }
   .past-title { font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-3); margin: 0 0 8px; font-weight: 700; }
   .past-pick { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
   .past-chip { border: 1px solid var(--border); background: var(--surface-1); color: var(--text-2); border-radius: var(--radius-full); padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
-  .past-chip.active { border-color: var(--accent); color: var(--accent); }
-  .unread-pill { display: inline-block; min-width: 18px; padding: 0 6px; border-radius: var(--radius-full); background: var(--accent); color: var(--accent-text, #fff); font-size: 11px; font-weight: 700; text-align: center; }
+  .past-chip.active { border-color: var(--accent); color: var(--accent-ink); }
+  .unread-pill { display: inline-block; min-width: 18px; padding: 0 6px; border-radius: var(--radius-full); background: var(--accent-ink); color: var(--accent-text, #fff); font-size: 11px; font-weight: 700; text-align: center; }
 </style>

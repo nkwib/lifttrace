@@ -66,9 +66,9 @@
   .tab:active { transform: scale(0.98); }
   .tab.active {
     background: var(--surface-1);
-    color: var(--accent);
+    color: var(--accent-ink);
     box-shadow: 0 1px 3px rgba(0,0,0,0.25), inset 0 0 0 1px var(--border);
   }
   .icon { font-size: 18px; }
-  .tab-unread { min-width: 18px; padding: 0 6px; border-radius: var(--radius-full); background: var(--accent); color: var(--accent-text, #fff); font-size: 11px; font-weight: 700; line-height: 18px; }
+  .tab-unread { min-width: 18px; padding: 0 6px; border-radius: var(--radius-full); background: var(--accent-ink); color: var(--accent-text, #fff); font-size: 11px; font-weight: 700; line-height: 18px; }
 </style>

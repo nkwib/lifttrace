@@ -281,7 +281,7 @@
     border-radius: var(--radius-md); border: 1px solid var(--border);
     background: var(--surface-2); color: var(--text-1); font-size: 15px; font-weight: 600;
   }
-  .sv-chip.on { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+  .sv-chip.on { border-color: var(--accent); background: var(--accent-dim); color: var(--accent-ink); }
   .sv-chip .tick { font-size: 14px; opacity: 0.7; }
 
   .sv-actions { display: flex; flex-direction: column; gap: 10px; }
@@ -292,7 +292,7 @@
     cursor: pointer;
   }
   .sv-big.secondary { border-color: var(--border); background: var(--surface-2); }
-  .sv-big .material-symbols-rounded { font-size: 28px; color: var(--accent); }
+  .sv-big .material-symbols-rounded { font-size: 28px; color: var(--accent-ink); }
   .sv-big-label { font-size: 16px; font-weight: 600; }
   .sv-big-sub { font-size: 12px; color: var(--text-3); }
 

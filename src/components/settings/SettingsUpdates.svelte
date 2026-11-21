@@ -523,7 +523,7 @@
     align-items: flex-start;
     gap: 2px;
   }
-  .row-icon { color: var(--accent); font-size: 20px; flex-shrink: 0; }
+  .row-icon { color: var(--accent-ink); font-size: 20px; flex-shrink: 0; }
   .label-main { font-size: 14px; font-weight: 600; color: var(--text-1); }
   .label-desc { font-size: 12px; color: var(--text-2); line-height: 1.35; }
   .row-value { flex-shrink: 0; }
@@ -536,7 +536,7 @@
     font-size: 13px; font-weight: 600;
     padding: 4px 10px; border-radius: 999px;
     background: color-mix(in srgb, var(--accent) 15%, transparent);
-    color: var(--accent);
+    color: var(--accent-ink);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .version-chip.chip-warn {
@@ -580,7 +580,7 @@
   .channel-opt input { display: none; }
   .channel-opt.selected {
     background: color-mix(in srgb, var(--accent) 20%, transparent);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .channel-opt:hover:not(.selected) { color: var(--text-1); }
 
@@ -595,7 +595,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     padding: 14px 16px; margin-top: 12px;
     border-radius: 10px; border: none; cursor: pointer;
-    background: var(--accent); color: white;
+    background: var(--accent-ink); color: white;
     font-size: 14px; font-weight: 600;
     overflow: hidden;
     transition: background 160ms ease, opacity 120ms ease, transform 120ms ease;
@@ -604,7 +604,7 @@
     background: var(--surface-2); color: var(--text-1);
   }
   .btn-primary-action.is-install {
-    background: var(--accent); color: white;
+    background: var(--accent-ink); color: white;
   }
   .btn-primary-action:not(:disabled):hover { opacity: 0.92; }
   .btn-primary-action:not(:disabled):active { transform: scale(0.98); }
@@ -688,7 +688,7 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 12px;
   }
-  .whats-new-md a { color: var(--accent); }
+  .whats-new-md a { color: var(--accent-ink); }
   .whats-new-md strong { font-weight: 700; }
 
   .btn {
@@ -717,14 +717,14 @@
   }
   .update-avail-head {
     display: flex; align-items: flex-start; gap: 10px;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .update-avail-headings { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
   .update-avail-title { font-size: 15px; font-weight: 700; }
   .update-avail-sub { font-size: 12px; color: var(--text-2); font-weight: 500; }
 
   .update-notes summary {
-    cursor: pointer; font-size: 13px; color: var(--accent); font-weight: 600;
+    cursor: pointer; font-size: 13px; color: var(--accent-ink); font-weight: 600;
     padding: 6px 0;
   }
   .update-notes pre {
@@ -738,7 +738,7 @@
 
   .update-link {
     display: inline-flex; align-items: center; gap: 4px;
-    color: var(--accent); font-size: 13px; text-decoration: none; font-weight: 500;
+    color: var(--accent-ink); font-size: 13px; text-decoration: none; font-weight: 500;
   }
   .update-link:hover { text-decoration: underline; }
 

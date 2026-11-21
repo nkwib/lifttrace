@@ -668,6 +668,6 @@
   }
   .oidc-preset-logo, .oidc-preset-icon { width: 28px; height: 28px; }
   .oidc-preset-icon { font-size: 28px !important; color: var(--text-3); }
-  .oidc-preset-card.selected .oidc-preset-icon { color: var(--accent); }
+  .oidc-preset-card.selected .oidc-preset-icon { color: var(--accent-ink); }
   .oidc-preset-name { font-size: 12px; font-weight: 600; text-align: center; }
 </style>

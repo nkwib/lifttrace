@@ -277,7 +277,7 @@
     display: flex; align-items: center; gap: 8px;
     font-size: 14px; font-weight: 700; color: var(--text-1);
   }
-  .cardio-icon { font-size: 18px; color: var(--accent); }
+  .cardio-icon { font-size: 18px; color: var(--accent-ink); }
   .cardio-total {
     font-size: 11px; font-weight: 700; color: var(--text-3);
     margin-left: 4px; font-variant-numeric: tabular-nums;
@@ -323,7 +323,7 @@
     background: none; border: none; padding: 0;
     text-align: left; color: inherit; font: inherit; cursor: pointer;
   }
-  .cardio-row-main:hover .cardio-activity { color: var(--accent); }
+  .cardio-row-main:hover .cardio-activity { color: var(--accent-ink); }
   .cardio-activity { font-size: 13px; font-weight: 700; color: var(--text-1); }
   .cardio-meta { font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; }
   .cardio-notes { font-size: 11px; color: var(--text-3); font-style: italic; }
@@ -352,7 +352,7 @@
     cursor: pointer;
   }
   .tpl-chip:hover { background: var(--surface-3); border-color: var(--accent); }
-  .tpl-chip .material-symbols-rounded { font-size: 15px; color: var(--accent); }
+  .tpl-chip .material-symbols-rounded { font-size: 15px; color: var(--accent-ink); }
   .tpl-label { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .tpl-meta { color: var(--text-3); font-variant-numeric: tabular-nums; }
 
@@ -364,6 +364,6 @@
     flex-shrink: 0;
   }
   .cardio-pin:hover { color: var(--text-1); background: var(--surface-3); }
-  .cardio-pin.pinned { color: var(--accent); }
+  .cardio-pin.pinned { color: var(--accent-ink); }
   .cardio-pin .material-symbols-rounded { font-size: 15px; }
 </style>

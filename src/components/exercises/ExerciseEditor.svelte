@@ -297,18 +297,18 @@
   }
   .chip:hover { border-color: var(--text-2); }
   .chip.primary.active {
-    background: var(--accent);
+    background: var(--accent-ink);
     color: var(--accent-text, #fff);
     border-color: var(--accent);
   }
   .chip.secondary.active {
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
     border-color: var(--accent);
   }
   .chip.active:not(.primary):not(.secondary) {
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
     border-color: var(--accent);
   }
   .chip-add { padding: 6px 10px; }

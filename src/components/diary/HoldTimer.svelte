@@ -179,7 +179,7 @@
     padding: 12px 16px 14px;
   }
   .hold-head { display: flex; align-items: baseline; gap: 8px; max-width: 100%; }
-  .hold-label { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; color: var(--accent); }
+  .hold-label { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; color: var(--accent-ink); }
   .past-target .hold-label { color: var(--success-text); }
   .hold-exercise {
     font-size: 12px; color: var(--text-2);
@@ -193,7 +193,7 @@
     font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
     background: none; border: none; padding: 0; font-family: inherit;
   }
-  .hold-clock.lead { color: var(--accent); cursor: pointer; }
+  .hold-clock.lead { color: var(--accent-ink); cursor: pointer; }
   .hold-sub { font-size: 12px; color: var(--text-3); }
   .past-target .hold-sub { color: var(--success-text); font-weight: 600; }
 
@@ -211,7 +211,7 @@
   }
   .hold-btn.primary {
     flex: 2;
-    background: var(--accent); border-color: var(--accent); color: #fff;
+    background: var(--accent-ink); border-color: var(--accent-ink); color: #fff;
   }
   .hold-content > .hold-btn.primary { width: 100%; margin-top: 8px; }
   .hold-btn .material-symbols-rounded { font-size: 22px; }

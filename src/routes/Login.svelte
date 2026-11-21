@@ -469,7 +469,7 @@
       {/if}
     {:else}
       <div style="text-align:center;padding:8px 0">
-        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent)">check_circle</span>
+        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)">check_circle</span>
         <p style="margin-top:8px;color:var(--text-2)">{@html $_('login.recovery.done')}</p>
       </div>
     {/if}
@@ -567,5 +567,5 @@
     border-left: 3px solid var(--accent); border-radius: 4px;
     font-size: 13px; line-height: 1.5; color: var(--text-2);
   }
-  .session-ended .material-symbols-rounded { font-size: 20px; color: var(--accent); flex-shrink: 0; }
+  .session-ended .material-symbols-rounded { font-size: 20px; color: var(--accent-ink); flex-shrink: 0; }
 </style>

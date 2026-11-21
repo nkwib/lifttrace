@@ -181,7 +181,7 @@
   }
   .dp-month-btn:hover { background: var(--surface-3); }
   .dp-year-btn {
-    font-size: 16px; font-weight: 700; color: var(--accent);
+    font-size: 16px; font-weight: 700; color: var(--accent-ink);
     background: var(--accent-dim); border: none; cursor: pointer;
     border-radius: var(--radius-sm); padding: 2px 8px;
     display: flex; align-items: center;
@@ -199,7 +199,7 @@
     text-align: center;
   }
   .dp-yr-btn:hover { background: var(--surface-2); }
-  .dp-yr-btn.dp-yr-sel { background: var(--accent); color: #fff; font-weight: 700; }
+  .dp-yr-btn.dp-yr-sel { background: var(--accent-ink); color: #fff; font-weight: 700; }
   .dp-month-grid {
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 4px; padding: 4px 8px 8px;
@@ -211,7 +211,7 @@
     text-align: center;
   }
   .dp-mo-btn:hover { background: var(--surface-2); }
-  .dp-mo-btn.dp-mo-sel { background: var(--accent); color: #fff; font-weight: 700; }
+  .dp-mo-btn.dp-mo-sel { background: var(--accent-ink); color: #fff; font-weight: 700; }
   .dp-grid {
     display: grid; grid-template-columns: repeat(7, 1fr);
     gap: 2px; padding: 0 8px 4px;
@@ -231,6 +231,6 @@
   .dp-day:disabled { color: var(--text-3); opacity: 0.35; cursor: default; }
   .dp-day.dp-future { color: var(--text-3); }
   .dp-day.dp-future:hover { background: var(--surface-2); color: var(--text-2); }
-  .dp-day.dp-today { color: var(--accent); font-weight: 700; }
-  .dp-day.dp-sel { background: var(--accent) !important; color: #fff; font-weight: 600; }
+  .dp-day.dp-today { color: var(--accent-ink); font-weight: 700; }
+  .dp-day.dp-sel { background: var(--accent-ink) !important; color: #fff; font-weight: 600; }
 </style>

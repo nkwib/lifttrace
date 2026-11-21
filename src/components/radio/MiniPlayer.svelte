@@ -113,7 +113,7 @@
     display: flex; align-items: center; justify-content: center;
   }
   .mini-loading-icon {
-    font-size: 22px; color: var(--accent);
+    font-size: 22px; color: var(--accent-ink);
     animation: mini-spin 1s linear infinite;
   }
   @keyframes mini-spin { to { transform: rotate(360deg); } }
@@ -139,7 +139,7 @@
     transition: color var(--dur-fast);
   }
   .mini-btn:hover { color: var(--text-1); }
-  .mini-btn.play { color: var(--accent); }
+  .mini-btn.play { color: var(--accent-ink); }
   .mini-btn .material-symbols-rounded { font-size: 24px; }
   .mini-btn.play .material-symbols-rounded { font-size: 28px; }
   .mini-btn.close { color: var(--text-3); }

@@ -313,7 +313,7 @@
   .log-today-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     width: 100%; padding: 12px 16px;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     border: 1px solid var(--accent);
     border-radius: var(--radius-md);
     font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;

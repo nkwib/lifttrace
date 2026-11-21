@@ -391,7 +391,7 @@
   .pp-rangechip[aria-pressed='true'] {
     border-color: var(--accent);
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .pp-toolbar { padding: 0 4px 12px; }
@@ -412,7 +412,7 @@
   .pp-datechip.changed {
     border-color: var(--accent);
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .pp-weight-prompt {
@@ -468,7 +468,7 @@
      which is the part being compared. */
   .pp-check {
     position: absolute; top: 8px; right: 8px;
-    color: var(--accent); font-size: 24px;
+    color: var(--accent-ink); font-size: 24px;
     background: var(--surface-1); border-radius: var(--radius-full);
   }
 

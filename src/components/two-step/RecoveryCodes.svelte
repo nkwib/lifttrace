@@ -57,7 +57,7 @@
 <style>
   .rc { display: flex; flex-direction: column; gap: 12px; }
   .rc-head { display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--text-1); }
-  .rc-head .material-symbols-rounded { color: var(--accent); font-size: 22px; }
+  .rc-head .material-symbols-rounded { color: var(--accent-ink); font-size: 22px; }
   .rc-text { margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-2); }
   .rc-list {
     list-style: none; margin: 0; padding: 12px;

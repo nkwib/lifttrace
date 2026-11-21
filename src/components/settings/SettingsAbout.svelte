@@ -91,13 +91,13 @@
   .platform-tag {
     font-size: 10px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--accent); background: var(--accent-dim);
+    color: var(--accent-ink); background: var(--accent-dim);
     padding: 2px 8px;
     border-radius: var(--radius-full, 999px);
   }
   .about-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; padding: 12px 16px; }
   .about-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; font-size: 14px; color: var(--text-1); }
-  .about-feat-icon { font-size: 20px; color: var(--accent); flex-shrink: 0; }
-  .about-link { color: var(--accent); text-decoration: underline; }
+  .about-feat-icon { font-size: 20px; color: var(--accent-ink); flex-shrink: 0; }
+  .about-link { color: var(--accent-ink); text-decoration: underline; }
   .about-link:hover { opacity: 0.8; }
 </style>

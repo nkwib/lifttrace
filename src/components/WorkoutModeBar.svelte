@@ -84,7 +84,7 @@
 
   .wm-toggle {
     display: flex; align-items: center; justify-content: center;
-    background: var(--accent); color: var(--accent-text);
+    background: var(--accent-ink); color: var(--accent-text);
     border: 1px solid var(--accent);
     border-radius: 50%;
     width: 36px; height: 36px;
@@ -92,7 +92,7 @@
     transition: all var(--dur-fast);
   }
   .wm-toggle.paused {
-    background: var(--surface-2); color: var(--accent);
+    background: var(--surface-2); color: var(--accent-ink);
     border-color: var(--accent);
   }
   .wm-toggle:hover { transform: scale(1.05); }
@@ -105,7 +105,7 @@
     border: 1px solid var(--accent);
     border-radius: var(--radius-full);
     padding: 6px 14px 6px 12px;
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: 14px; font-weight: 700;
     cursor: pointer;
     font-variant-numeric: tabular-nums;
@@ -157,7 +157,7 @@
   .wm-wake.on {
     background: var(--accent-dim);
     border-color: var(--accent);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .wm-wake:hover { transform: scale(1.05); }
   .wm-wake:active { transform: scale(0.95); }

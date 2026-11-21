@@ -648,7 +648,7 @@
   .exercise-count-total { opacity: 0.6; font-size: 12px; }
   .create-btn {
     width: 36px; height: 36px; border-radius: 50%;
-    background: var(--accent); color: var(--accent-text, #fff);
+    background: var(--accent-ink); color: var(--accent-text, #fff);
     border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 2px 8px var(--accent-dim);
@@ -711,7 +711,7 @@
     color: var(--text-2); font-size: 13px; font-weight: 500; cursor: pointer; flex-shrink: 0;
     transition: all var(--dur-fast);
   }
-  .chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
   .chip-icon { font-size: 16px; }
 
   /* Display density toggle (issue #74). Icon-only two-up segmented
@@ -735,7 +735,7 @@
   }
   .density-btn:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
   .density-btn:not(:first-child) { margin-left: -1px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
-  .density-btn.active { position: relative; z-index: 1; background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .density-btn.active { position: relative; z-index: 1; background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
   .density-btn .material-symbols-rounded { font-size: 18px; }
 
   /* Wrapper exists so the fade gradients can sit outside the scrolling
@@ -779,7 +779,7 @@
     color: var(--text-3); font-size: 11px; font-weight: 500; cursor: pointer; flex-shrink: 0;
     transition: all var(--dur-fast);
   }
-  .eq-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .eq-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
   /* Custom (user-added) equipment chips read with a dashed border so
      they stand apart from the six normalized buckets — same accent
      when active so the multi-select still feels uniform. */
@@ -788,7 +788,7 @@
 
   .content { padding: 0 var(--page-px) 16px; }
   .group { margin-bottom: 20px; }
-  .group-title { font-size: 13px; font-weight: 700; color: var(--accent); text-transform: capitalize; margin: 0 0 8px; letter-spacing: 0.04em; }
+  .group-title { font-size: 13px; font-weight: 700; color: var(--accent-ink); text-transform: capitalize; margin: 0 0 8px; letter-spacing: 0.04em; }
   .group-list { display: flex; flex-direction: column; gap: 4px; }
 
   .exercise-row { display: flex; align-items: center; gap: 0; border-bottom: 1px solid var(--border); min-width: 0; }
@@ -843,7 +843,7 @@
     transition: color var(--dur-fast), background var(--dur-fast);
   }
   .sort-icon-btn:hover { color: var(--text-1); background: var(--surface-2); }
-  .sort-icon-btn.active { color: var(--accent); }
+  .sort-icon-btn.active { color: var(--accent-ink); }
   .sort-icon-btn .material-symbols-rounded { font-size: 20px; }
   .sort-menu {
     position: absolute; top: calc(100% + 6px); right: 0;
@@ -865,8 +865,8 @@
     text-align: left;
   }
   .sort-menu-item:hover { background: var(--surface-2); }
-  .sort-menu-item.active { color: var(--accent); font-weight: 700; }
-  .sort-menu-item.active .sort-check { color: var(--accent); }
+  .sort-menu-item.active { color: var(--accent-ink); font-weight: 700; }
+  .sort-menu-item.active .sort-check { color: var(--accent-ink); }
   .sort-check { font-size: 18px; }
   .exercise-row:hover { background: var(--surface-2); }
   .ex-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
@@ -876,7 +876,7 @@
     flex-shrink: 0;
     font-size: 9px; font-weight: 800; letter-spacing: 0.05em;
     padding: 2px 7px; border-radius: var(--radius-full);
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     text-transform: uppercase;
   }
   .ex-meta { font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

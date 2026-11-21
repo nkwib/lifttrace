@@ -1069,7 +1069,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
     bottom: calc(var(--nav-h) + var(--safe-bottom, 0px) + 20px);
     width: 60px; height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2, var(--accent)));
+    background: linear-gradient(135deg, var(--accent-ink), var(--accent-2, var(--accent-ink)));
     background-size: 300% 300%;
     animation: lb-gradient-shift 8s ease infinite, lb-ring-pulse 2.6s ease-in-out infinite;
     color: var(--accent-text, #fff);
@@ -1148,7 +1148,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
     pointer-events: none;
     z-index: 0;
     overflow: visible;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   /* FAB robot wrapper */
@@ -1232,7 +1232,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
   .lb-avatar {
     width: 40px; height: 40px; border-radius: 50%;
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
@@ -1265,7 +1265,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
   .lb-welcome-avatar {
     width: 80px; height: 80px; border-radius: 50%;
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 8px;
   }
@@ -1282,7 +1282,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
     font-size: 12px; font-weight: 500;
     cursor: pointer; transition: all var(--dur-fast);
   }
-  .lb-chip:hover { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+  .lb-chip:hover { background: var(--accent-dim); color: var(--accent-ink); border-color: var(--accent); }
 
   /* Messages */
   .lb-msg {
@@ -1295,7 +1295,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
   .lb-msg-avatar {
     width: 32px; height: 32px; border-radius: 50%;
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
@@ -1318,7 +1318,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
   }
   /* User bubble */
   .lb-msg.user .lb-bubble {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2, var(--accent)));
+    background: linear-gradient(135deg, var(--accent-ink), var(--accent-2, var(--accent-ink)));
     color: var(--accent-text, #fff);
     border-bottom-right-radius: 6px;
   }
@@ -1347,7 +1347,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
     border-radius: 10px; overflow-x: auto;
   }
   .lb-md :global(pre code) { background: none; padding: 0; }
-  .lb-md :global(a) { color: var(--accent); }
+  .lb-md :global(a) { color: var(--accent-ink); }
   .lb-md :global(blockquote) {
     border-left: 3px solid var(--border);
     padding-left: 10px; color: var(--text-2);
@@ -1374,10 +1374,10 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
   .lb-note-retry {
     margin-left: auto; flex-shrink: 0;
     background: none; border: 1px solid var(--border); border-radius: var(--radius-md);
-    padding: 2px 10px; font-size: 12px; color: var(--accent); cursor: pointer;
+    padding: 2px 10px; font-size: 12px; color: var(--accent-ink); cursor: pointer;
   }
   .lb-note-retry:disabled { opacity: 0.5; cursor: default; }
-  .lb-note .material-symbols-rounded { font-size: 18px; color: var(--accent); flex-shrink: 0; }
+  .lb-note .material-symbols-rounded { font-size: 18px; color: var(--accent-ink); flex-shrink: 0; }
   .lb-plan-apply {
     align-self: flex-start;
     display: inline-flex; align-items: center; gap: 6px;
@@ -1386,12 +1386,12 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
     border-radius: var(--radius-full);
     background: var(--accent-dim);
     border: 1px solid var(--accent);
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: 12px; font-weight: 600;
     cursor: pointer; font-family: inherit;
     transition: all var(--dur-fast);
   }
-  .lb-plan-apply:hover { background: var(--accent); color: var(--accent-text, #fff); }
+  .lb-plan-apply:hover { background: var(--accent-ink); color: var(--accent-text, #fff); }
   .lb-plan-apply .material-symbols-rounded { font-size: 16px; }
 
   .lb-msg-img {
@@ -1465,7 +1465,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
   .lb-send-btn {
     width: 40px; height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2, var(--accent)));
+    background: linear-gradient(135deg, var(--accent-ink), var(--accent-2, var(--accent-ink)));
     color: var(--accent-text, #fff);
     border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;

@@ -39,7 +39,7 @@
 
     {#if sent}
       <div style="text-align:center;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:12px">
-        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent)">mark_email_read</span>
+        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)">mark_email_read</span>
         <p style="color:var(--text-2);font-size:14px;line-height:1.5">
           {@html $_('forgot_password.sent', { values: { email } })}
         </p>

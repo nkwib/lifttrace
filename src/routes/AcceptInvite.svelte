@@ -109,7 +109,7 @@
 
     {:else if done}
       <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
-        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent)">check_circle</span>
+        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)">check_circle</span>
         <p style="color:var(--text-2);font-size:14px">{$_('accept_invite.success')}</p>
       </div>
 

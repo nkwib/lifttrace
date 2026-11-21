@@ -31,7 +31,7 @@
 
 /* Primary — gradient accent */
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background: linear-gradient(135deg, var(--accent-ink), var(--accent-ink-2));
   color: var(--accent-text);
   box-shadow: 0 2px 12px var(--accent-dim);
 }
@@ -48,7 +48,7 @@
 /* Ghost — transparent */
 .btn-ghost {
   background: transparent;
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 .btn-ghost:hover { background: var(--accent-dim); }
 
@@ -74,14 +74,14 @@
   font-size: 20px;
 }
 .btn-icon:hover { background: var(--surface-3); }
-.btn-icon.accent { background: var(--accent-dim); color: var(--accent); border-color: transparent; }
+.btn-icon.accent { background: var(--accent-dim); color: var(--accent-ink); border-color: transparent; }
 
 /* FAB */
 .fab {
   width: 56px;
   height: 56px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background: linear-gradient(135deg, var(--accent-ink), var(--accent-ink-2));
   color: var(--accent-text);
   box-shadow: var(--shadow-lg), 0 0 0 0 var(--accent-dim);
   display: flex;

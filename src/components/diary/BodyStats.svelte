@@ -257,7 +257,7 @@
   .bs-photo-btn { flex: 1; min-width: 160px; }
   .bs-photo-link {
     background: none; border: none; padding: 4px 2px;
-    font-size: 12px; color: var(--accent); cursor: pointer;
+    font-size: 12px; color: var(--accent-ink); cursor: pointer;
   }
   .bs-sheet-footer { padding: 16px 20px; }
   .bs-grid {

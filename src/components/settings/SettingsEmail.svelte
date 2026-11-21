@@ -344,7 +344,7 @@
   .btn-icon-toggle.change-btn {
     padding: 8px 12px; min-width: 0;
     font-size: 12px; font-weight: 700; font-family: inherit;
-    color: var(--accent);
+    color: var(--accent-ink);
     border-color: var(--accent);
   }
   .pass-hint {

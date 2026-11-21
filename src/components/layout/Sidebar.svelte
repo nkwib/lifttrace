@@ -251,7 +251,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   .sidebar-item:hover  { background: var(--surface-2); color: var(--text-1); }
-  .sidebar-item.active { background: var(--accent-dim); color: var(--accent); }
+  .sidebar-item.active { background: var(--accent-dim); color: var(--accent-ink); }
   .sidebar-item:active { transform: scale(0.98); }
 
   .sidebar-icon { font-size: 22px; flex-shrink: 0; position: relative; }
@@ -299,7 +299,7 @@
     width: 34px; height: 34px;
     border-radius: 50%;
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: 14px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;

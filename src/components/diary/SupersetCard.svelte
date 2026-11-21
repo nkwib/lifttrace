@@ -257,8 +257,8 @@
   .ss-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .superset-header:hover { background: linear-gradient(135deg, var(--accent-dim), var(--surface-2)); }
   .superset-badge { display: flex; align-items: center; gap: 6px; }
-  .ss-icon { font-size: 16px; color: var(--accent); }
-  .ss-label { white-space: nowrap; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+  .ss-icon { font-size: 16px; color: var(--accent-ink); }
+  .ss-label { white-space: nowrap; font-size: 12px; font-weight: 700; color: var(--accent-ink); text-transform: uppercase; letter-spacing: 0.06em; }
   .ss-count { white-space: nowrap; font-size: 11px; color: var(--text-3); }
 
   .ss-meta { display: flex; align-items: center; gap: 8px; }
@@ -299,7 +299,7 @@
     font-size: 13px; color: var(--text-1); line-height: 1.4;
     white-space: pre-wrap;
   }
-  .ss-ex-feedback-text strong { color: var(--accent); font-weight: 700; margin-right: 2px; }
+  .ss-ex-feedback-text strong { color: var(--accent-ink); font-weight: 700; margin-right: 2px; }
   .ss-ex-feedback-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   /* Reply controls re-use the global classes defined in Diary.svelte so
      styles stay consistent without re-declaring them here. */
@@ -350,7 +350,7 @@
     width: calc(100% - 10px); margin: 6px 0 6px 10px; padding: 10px;
     background: var(--surface-2); border: 1px dashed var(--accent-dim);
     border-radius: var(--radius-md);
-    color: var(--accent); font-size: 13px; font-weight: 600;
+    color: var(--accent-ink); font-size: 13px; font-weight: 600;
     cursor: pointer; transition: all var(--dur-fast);
   }
   .ss-add-exercise:hover { background: var(--accent-dim); border-color: var(--accent); }

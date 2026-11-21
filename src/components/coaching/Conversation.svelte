@@ -245,7 +245,7 @@
   .msg-del { background: none; border: none; padding: 0 2px; color: var(--text-3); cursor: pointer; display: inline-flex; }
   .msg-del .material-symbols-rounded { font-size: 15px; }
   .msg-del:hover { color: var(--danger); }
-  .msg-retry { background: none; border: none; padding: 0 2px; color: var(--accent); font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; }
+  .msg-retry { background: none; border: none; padding: 0 2px; color: var(--accent-ink); font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; }
   .composer { display: flex; align-items: flex-end; gap: 8px; }
   .composer-input { flex: 1; min-width: 0; resize: none; min-height: 40px; max-height: 140px; font: inherit; field-sizing: content; }
   .composer-send { width: 44px; height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }

@@ -323,19 +323,19 @@
   .stamp-sub  { font-size: 11px; color: rgba(255, 255, 255, 0.75); }
   .stamp-delta {
     font-size: 11px; font-weight: 600;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .stamp-add {
     background: none; border: none; padding: 0;
     font-size: 11px; font-weight: 600; font-family: inherit;
-    color: var(--accent);
+    color: var(--accent-ink);
     cursor: pointer;
     text-decoration: underline;
   }
 
   .controls { display: flex; align-items: center; gap: 10px; padding: 0 4px; }
   .play { flex-shrink: 0; }
-  .play .material-symbols-rounded { font-size: 26px; color: var(--accent); }
+  .play .material-symbols-rounded { font-size: 26px; color: var(--accent-ink); }
   .play:disabled { opacity: 0.4; cursor: default; }
 
   /* The rail is thin but the grab area is not: a 2px line is an unusable

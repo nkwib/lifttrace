@@ -536,7 +536,7 @@
   .src-name { font-size: 14px; font-weight: 600; color: var(--text-1); }
   .src-count {
     font-size: 11px; font-weight: 700; padding: 2px 8px;
-    background: var(--accent-dim); color: var(--accent); border-radius: var(--radius-sm);
+    background: var(--accent-dim); color: var(--accent-ink); border-radius: var(--radius-sm);
   }
   .src-desc { font-size: 12px; color: var(--text-3); line-height: 1.4; }
   .src-key { margin-top: 6px; width: 100%; }

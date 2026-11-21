@@ -237,7 +237,7 @@
     border-color: var(--accent);
   }
   .source-name { font-size: 14px; font-weight: 700; color: var(--text-1); }
-  .source-btn.active .source-name { color: var(--accent); }
+  .source-btn.active .source-name { color: var(--accent-ink); }
   .source-hint { font-size: 11px; color: var(--text-3); }
 
   .import-btn { display: inline-flex; align-items: center; gap: 8px; justify-content: center; }

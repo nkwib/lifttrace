@@ -122,7 +122,7 @@
     display: flex; align-items: center; justify-content: center;
     transition: color var(--dur-fast), border-color var(--dur-fast);
   }
-  .attach-image-btn:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+  .attach-image-btn:hover:not(:disabled) { color: var(--accent-ink); border-color: var(--accent); }
   .attach-image-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .attach-image-btn:disabled { opacity: 0.4; cursor: default; }
   .attach-image-btn .material-symbols-rounded { font-size: 20px; }

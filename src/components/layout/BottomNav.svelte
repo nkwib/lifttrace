@@ -119,7 +119,7 @@
     color: var(--text-3);
     -webkit-tap-highlight-color: transparent;
   }
-  .nav-tab.active  { color: var(--accent); }
+  .nav-tab.active  { color: var(--accent-ink); }
   .nav-tab:active  { transform: scale(0.92); }
 
   .nav-icon {

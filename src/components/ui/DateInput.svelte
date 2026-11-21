@@ -130,7 +130,7 @@
   }
   .date-input-calendar {
     flex-shrink: 0;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .date-input-calendar:hover { background: var(--accent-dim); }
   .date-input-sheet-body {

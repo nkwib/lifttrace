@@ -95,7 +95,7 @@
   .rq-person.picked { background: var(--accent-dim); }
   .rq-avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-3); font-weight: 700; flex-shrink: 0; }
   .rq-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-  .rq-check { color: var(--accent); }
+  .rq-check { color: var(--accent-ink); }
   .rq-label { font-size: 13px; font-weight: 600; color: var(--text-2); }
   .rq-note { resize: vertical; min-height: 72px; font: inherit; }
   .rq-send { width: 100%; }

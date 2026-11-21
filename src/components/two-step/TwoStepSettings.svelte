@@ -201,7 +201,7 @@
     font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
     padding: 3px 8px; border-radius: 999px; color: var(--text-3); background: var(--surface-2); border: 1px solid var(--border);
   }
-  .ts-badge.on { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .ts-badge.on { color: var(--accent-ink); border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
   .ts-desc { margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-2); }
   .ts-meta { margin: 0; font-size: 13px; color: var(--text-2); }
   .ts-note { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-3); }
@@ -225,7 +225,7 @@
   }
   .security-row:hover { background: var(--surface-2); }
   .security-row:disabled { opacity: 0.5; cursor: default; }
-  .security-icon { font-size: 20px; color: var(--accent); flex-shrink: 0; }
+  .security-icon { font-size: 20px; color: var(--accent-ink); flex-shrink: 0; }
   .security-icon.ts-danger { color: var(--danger); }
   .security-label { flex: 1; font-weight: 500; }
   .security-chev { font-size: 20px; color: var(--text-3); flex-shrink: 0; }

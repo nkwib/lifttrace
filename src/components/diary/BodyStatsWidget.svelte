@@ -203,7 +203,7 @@
     align-items: center;
     gap: 6px;
   }
-  .bs-icon { color: var(--accent); font-size: 20px; }
+  .bs-icon { color: var(--accent-ink); font-size: 20px; }
   .bs-title {
     font-size: 14px;
     font-weight: 700;
@@ -270,7 +270,7 @@
   .bs-edit-inline .material-symbols-rounded { font-size: 14px; }
   .bs-quick-log {
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
     border: 1px solid var(--accent);
     border-radius: var(--radius-sm);
     padding: 4px 10px;

@@ -230,12 +230,12 @@
     display: flex; flex-direction: column; gap: 8px;
   }
   .vp-note-head { display: flex; align-items: center; gap: 8px; }
-  .vp-note-head .material-symbols-rounded { font-size: 18px; color: var(--accent); }
+  .vp-note-head .material-symbols-rounded { font-size: 18px; color: var(--accent-ink); }
   .vp-note-who { font-size: 13px; font-weight: 600; color: var(--text-2); }
   .vp-stamp {
     margin-left: auto; display: inline-flex; align-items: center; gap: 2px;
     padding: 4px 10px 4px 6px; border-radius: 999px;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums;
   }
   .vp-stamp .material-symbols-rounded { font-size: 16px; color: inherit; }
@@ -249,7 +249,7 @@
   .vp-send {
     flex: 0 0 auto; padding: 0 16px;
     border-radius: var(--radius-md);
-    background: var(--accent); color: var(--accent-text);
+    background: var(--accent-ink); color: var(--accent-text);
     font-size: 14px; font-weight: 600; white-space: nowrap;
   }
   .vp-send:disabled { opacity: 0.45; }

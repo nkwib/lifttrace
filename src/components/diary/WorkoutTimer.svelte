@@ -49,7 +49,7 @@
     transition: all var(--dur-fast);
   }
   .timer.running .timer-btn {
-    background: var(--accent-dim); border-color: var(--accent); color: var(--accent);
+    background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink);
     min-width: 100px; justify-content: center;
   }
   .timer.paused .timer-btn {

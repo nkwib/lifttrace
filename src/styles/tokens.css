@@ -26,6 +26,9 @@
   --accent-2:      #FFAB40;
   --accent-dim:    rgba(255, 116, 51, 0.15);
   --accent-text:   #0A0B0F;
+  /* Accent as small text, and as the fill behind accent-text. Equals the accent except in light orange. */
+  --accent-ink:    var(--accent);
+  --accent-ink-2:  var(--accent-2);
 
   --success:       #4FFFB0;
   --warning:       #FFB547;
@@ -100,6 +103,13 @@
   --glass-surface: rgba(255, 255, 255, 0.88);
 
   --theme-chrome:  #F5F7FA;
+}
+
+/* Light + default orange (and not a custom hex, which sets --accent-ink inline):
+   #E65100 is 3.79:1 on white, #BF360C is 5.6:1. */
+[data-theme="light"]:not([data-accent]) {
+  --accent-ink:    #BF360C;
+  --accent-ink-2:  #C8400D;
 }
 
 /* --- Spacing & Shape --- */

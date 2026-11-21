@@ -333,7 +333,7 @@
   }
   .ws-hero-icon { font-size: 48px; color: var(--lift-pr, #FFD54F); display: block; margin-bottom: 8px; }
   .ws-title { font-size: 22px; font-weight: 800; color: var(--text-1); margin: 0; }
-  .ws-name { font-size: 14px; color: var(--accent); font-weight: 600; margin-top: 4px; display: block; }
+  .ws-name { font-size: 14px; color: var(--accent-ink); font-weight: 600; margin-top: 4px; display: block; }
 
   .ws-celebration-row {
     display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: center;
@@ -418,7 +418,7 @@
     position: absolute; top: 6px; right: 6px;
     font-size: 14px;
     color: var(--accent-text, #0A0B0F);
-    background: var(--accent);
+    background: var(--accent-ink);
     border-radius: 50%;
     padding: 3px;
     line-height: 1;
@@ -448,7 +448,7 @@
   .ws-duration-chip.active {
     background: color-mix(in srgb, var(--accent) 14%, transparent);
     border-color: var(--accent);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .ws-duration-custom {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
@@ -471,7 +471,7 @@
     border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
     border-radius: var(--radius-md);
   }
-  .ws-calorie-icon { font-size: 20px; color: var(--accent); }
+  .ws-calorie-icon { font-size: 20px; color: var(--accent-ink); }
   .ws-calorie-val  { font-size: 16px; font-weight: 700; color: var(--text-1); font-variant-numeric: tabular-nums; }
   .ws-calorie-badge {
     font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
@@ -507,7 +507,7 @@
   .ws-superset-label {
     display: flex; align-items: center; gap: 4px;
     font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--accent);
+    text-transform: uppercase; color: var(--accent-ink);
     margin-bottom: 4px;
   }
   .ws-superset-label .ss-icon { font-size: 14px; }

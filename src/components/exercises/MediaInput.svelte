@@ -142,7 +142,7 @@
   .kind-pill {
     position: absolute; top: 8px; left: 8px;
     padding: 2px 8px; border-radius: var(--radius-full);
-    background: var(--accent); color: var(--accent-text, #fff);
+    background: var(--accent-ink); color: var(--accent-text, #fff);
     font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
   }
 
@@ -181,7 +181,7 @@
   .url-input:focus { border-color: var(--accent); }
   .apply-btn {
     width: 36px; height: 36px; border-radius: var(--radius-md);
-    background: var(--accent);
+    background: var(--accent-ink);
     color: var(--accent-text, #fff);
     border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;

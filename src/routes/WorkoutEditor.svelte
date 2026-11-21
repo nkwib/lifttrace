@@ -1252,7 +1252,7 @@
       <p class="picker-hint">{$_('workout_editor_ss.join_hint')}</p>
       {#each existingSupersets as ss}
         <button class="ss-option" on:click={() => handleJoinSuperset(ss.id)}>
-          <span class="material-symbols-rounded" style="color:var(--accent)">link</span>
+          <span class="material-symbols-rounded" style="color:var(--accent-ink)">link</span>
           <div class="ss-option-info">
             {#each ss.names as name, i}
               <span class="ss-option-name">{name}{i < ss.names.length - 1 ? ' + ' : ''}</span>
@@ -1288,7 +1288,7 @@
     <p class="picker-hint">{$_('workout_editor_ss.merge_hint')}</p>
     {#each existingSupersets.filter(s => String(s.id) !== String(ssAsTargetId)) as ss}
       <button class="ss-option" on:click={() => handleMerge(ss.id)}>
-        <span class="material-symbols-rounded" style="color:var(--accent)">merge</span>
+        <span class="material-symbols-rounded" style="color:var(--accent-ink)">merge</span>
         <div class="ss-option-info">
           {#each ss.names as name, i}
             <span class="ss-option-name">{name}{i < ss.names.length - 1 ? ' + ' : ''}</span>
@@ -1327,8 +1327,8 @@
     background: linear-gradient(135deg, var(--accent-dim), transparent);
     border-bottom: 1px solid var(--border);
   }
-  .ss-icon { font-size: 16px; color: var(--accent); }
-  .ss-label { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+  .ss-icon { font-size: 16px; color: var(--accent-ink); }
+  .ss-label { font-size: 12px; font-weight: 700; color: var(--accent-ink); text-transform: uppercase; letter-spacing: 0.06em; }
   .ss-count { font-size: 11px; color: var(--text-3); flex: 1; }
   .ss-menu { margin-left: auto; }
 
@@ -1359,7 +1359,7 @@
   .load-chip:hover { color: var(--text-1); border-color: var(--text-2); }
   .load-chip .material-symbols-rounded { font-size: 12px; }
   .load-chip.non-default {
-    background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent);
+    background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent-ink);
     border-style: solid;
   }
   .reorder-btns { display: flex; flex-direction: column; gap: 0; flex-shrink: 0; }
@@ -1370,11 +1370,11 @@
     border-radius: var(--radius-xs); padding: 0;
     transition: color var(--dur-fast);
   }
-  .btn-icon-xs:hover { color: var(--accent); }
+  .btn-icon-xs:hover { color: var(--accent-ink); }
   .btn-icon-xs .material-symbols-rounded { font-size: 20px; }
 
   .ex-sets-badge {
-    font-size: 13px; font-weight: 800; color: var(--accent);
+    font-size: 13px; font-weight: 800; color: var(--accent-ink);
     background: var(--accent-dim); padding: 2px 8px; border-radius: var(--radius-sm);
     font-variant-numeric: tabular-nums; flex-shrink: 0;
   }
@@ -1389,12 +1389,12 @@
     display: inline-flex; align-items: center; gap: 1px;
     flex-shrink: 0; padding: 3px 9px 3px 4px;
     background: var(--accent-dim); border: none;
-    border-radius: var(--radius-full); color: var(--accent);
+    border-radius: var(--radius-full); color: var(--accent-ink);
     font-size: 12px; font-weight: 800; font-family: inherit;
     font-variant-numeric: tabular-nums; cursor: pointer;
     transition: background var(--dur-fast), color var(--dur-fast), opacity var(--dur-fast);
   }
-  .ex-week-copy:hover:not(:disabled) { background: var(--accent); color: var(--accent-text); }
+  .ex-week-copy:hover:not(:disabled) { background: var(--accent-ink); color: var(--accent-text); }
   .ex-week-copy:disabled { opacity: 0.35; cursor: default; }
   .ex-week-copy .material-symbols-rounded { font-size: 16px; }
 
@@ -1418,13 +1418,13 @@
     transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast);
   }
   .week-tab:hover { color: var(--text-1); }
-  .week-tab.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .week-tab.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-ink); }
   /* Copy arrow sits inline between the active week chip and the next one. */
   .week-copy-arrow {
     flex-shrink: 0; width: 28px; height: 28px; padding: 0;
     display: flex; align-items: center; justify-content: center;
     background: none; border: none; cursor: pointer;
-    color: var(--accent);
+    color: var(--accent-ink);
     transition: color var(--dur-fast), opacity var(--dur-fast), transform var(--dur-fast);
   }
   .week-copy-arrow:hover:not(:disabled) { transform: translateX(1px); }
@@ -1455,7 +1455,7 @@
     border-radius: var(--radius-lg); color: var(--text-2); font-size: 14px; font-weight: 600;
     cursor: pointer; transition: all var(--dur-fast);
   }
-  .add-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .add-btn:hover { border-color: var(--accent); color: var(--accent-ink); background: var(--accent-dim); }
 
   .empty { text-align: center; padding: 40px 24px; color: var(--text-3); }
   .empty .material-symbols-rounded { font-size: 48px; display: block; margin-bottom: 12px; }
@@ -1492,7 +1492,7 @@
   .per-set-link {
     display: inline-flex; align-items: center; gap: 4px;
     background: none; border: none; cursor: pointer;
-    color: var(--accent); font-size: 12px; font-weight: 600;
+    color: var(--accent-ink); font-size: 12px; font-weight: 600;
     padding: 4px 0; margin-top: 6px;
     text-decoration: none;
   }
@@ -1522,7 +1522,7 @@
   }
   .per-set-num-input::-webkit-outer-spin-button,
   .per-set-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .per-set-num-input.custom { color: var(--accent); border-color: var(--accent); }
+  .per-set-num-input.custom { color: var(--accent-ink); border-color: var(--accent); }
   .ps-input {
     background: var(--surface-2); border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -1545,6 +1545,6 @@
     color: var(--text-2); font-size: 12px; font-weight: 600;
     cursor: pointer; transition: all var(--dur-fast);
   }
-  .per-set-add:hover { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+  .per-set-add:hover { background: var(--accent-dim); color: var(--accent-ink); border-color: var(--accent); }
   .per-set-add .material-symbols-rounded { font-size: 14px; }
 </style>

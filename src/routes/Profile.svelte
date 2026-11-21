@@ -732,7 +732,7 @@
     background: none; border: none; cursor: pointer;
     color: var(--text-1); font: inherit; text-align: left;
   }
-  .security-row:hover .security-label { color: var(--accent); }
+  .security-row:hover .security-label { color: var(--accent-ink); }
   .security-row[disabled] { opacity: 0.5; cursor: not-allowed; }
   .security-icon { color: var(--text-3); }
   .security-label { flex: 1; font-size: 14px; font-weight: 600; }

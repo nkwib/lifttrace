@@ -41,7 +41,7 @@
   }
   .spinner-icon {
     display: inline-block;
-    color: var(--accent);
+    color: var(--accent-ink);
     animation: spinner-rot 1.2s linear infinite;
     transform-origin: center;
   }

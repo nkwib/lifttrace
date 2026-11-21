@@ -1068,7 +1068,7 @@
           </button>
         {:else}
           <div class="wd-feedback-head">
-            <span class="material-symbols-rounded" style="font-size:16px;color:var(--accent)">comment</span>
+            <span class="material-symbols-rounded" style="font-size:16px;color:var(--accent-ink)">comment</span>
             <span>Note for {memberLabel(overview?.user)}</span>
           </div>
           <textarea class="wd-feedback-input" rows="2"
@@ -1198,7 +1198,7 @@
               </div>
             {:else if myFb}
               <button class="wd-ex-feedback-mine" on:click={() => editingExerciseIdx = idx}>
-                <span class="material-symbols-rounded" style="font-size:14px;color:var(--accent)">comment</span>
+                <span class="material-symbols-rounded" style="font-size:14px;color:var(--accent-ink)">comment</span>
                 <span class="wd-ex-feedback-text">{myFb.note}</span>
                 <span class="material-symbols-rounded wd-edit-icon">edit</span>
               </button>
@@ -1343,7 +1343,7 @@
   .member-card:hover { background: var(--surface-2); }
   .avatar {
     width: 44px; height: 44px; border-radius: 50%;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 17px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -1353,7 +1353,7 @@
   .member-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .member-name { font-size: 15px; font-weight: 600; color: var(--text-1); }
   .member-sub { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--text-3); }
-  .tag { background: var(--accent-dim); color: var(--accent); padding: 2px 8px; border-radius: var(--radius-sm); font-weight: 600; }
+  .tag { background: var(--accent-dim); color: var(--accent-ink); padding: 2px 8px; border-radius: var(--radius-sm); font-weight: 600; }
   .muted { color: var(--text-3); }
   .chev { color: var(--text-3); }
 
@@ -1383,7 +1383,7 @@
   .row-paused .material-symbols-rounded { font-size: 14px; color: var(--excused); }
 
   .badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-sm); text-transform: uppercase; letter-spacing: 0.05em; }
-  .active-badge { background: var(--accent-dim); color: var(--accent); }
+  .active-badge { background: var(--accent-dim); color: var(--accent-ink); }
 
   .btn-icon-sm {
     background: none; border: none; cursor: pointer; color: var(--text-3);
@@ -1418,18 +1418,18 @@
   .workout-row:hover { background: var(--surface-2); }
   .workout-volume {
     padding: 3px 10px; border-radius: var(--radius-full);
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums;
     flex-shrink: 0;
   }
   .workout-feedback-marker {
     display: inline-flex; align-items: center; justify-content: center;
-    color: var(--accent); flex-shrink: 0;
+    color: var(--accent-ink); flex-shrink: 0;
   }
   .workout-feedback-marker .material-symbols-rounded { font-size: 18px; }
   .workout-feedback-marker.faint { color: var(--text-3); }
   .workout-feedback-marker.has-reply {
-    color: var(--accent);
+    color: var(--accent-ink);
     /* Subtle pulse so a fresh reply pulls the eye without being noisy. */
     animation: marker-pulse 2.5s ease-in-out infinite;
   }
@@ -1459,7 +1459,7 @@
   .wd-ex-clip {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 10px 3px 6px; border-radius: 999px;
-    background: var(--accent-dim); color: var(--accent);
+    background: var(--accent-dim); color: var(--accent-ink);
     font-size: 12px; font-weight: 700;
   }
   .wd-ex-clip .material-symbols-rounded { font-size: 16px; }
@@ -1483,7 +1483,7 @@
   .wd-set.warmup { color: var(--text-3); font-style: italic; }
   .wd-set-n { color: var(--text-3); min-width: 32px; }
   .wd-set-detail { color: var(--text-1); font-weight: 600; }
-  .wd-set-rpe { color: var(--accent); font-weight: 600; font-size: 12px; }
+  .wd-set-rpe { color: var(--accent-ink); font-weight: 600; font-size: 12px; }
   .wd-ex-notes {
     margin-top: 8px; padding-top: 8px;
     border-top: 1px solid var(--border);
@@ -1523,7 +1523,7 @@
     padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer;
     align-self: flex-start; font-family: inherit;
   }
-  .wd-add-workout-note:hover { color: var(--accent); border-color: var(--accent); }
+  .wd-add-workout-note:hover { color: var(--accent-ink); border-color: var(--accent); }
   .wd-feedback-other {
     margin-top: 6px; padding: 8px 10px;
     background: var(--surface-1); border-radius: var(--radius-sm);
@@ -1553,7 +1553,7 @@
     font-size: 11px; color: var(--text-3);
     padding-left: 2px;
   }
-  .wd-receipt .material-symbols-rounded { color: var(--accent); }
+  .wd-receipt .material-symbols-rounded { color: var(--accent-ink); }
 
   /* Danger variant for the secondary delete button in feedback editors */
   .btn-secondary.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); }
@@ -1600,7 +1600,7 @@
   .btn-primary-sm {
     display: flex; align-items: center; gap: 4px;
     padding: 8px 14px; font-size: 13px; font-weight: 600;
-    background: var(--accent); color: var(--accent-text);
+    background: var(--accent-ink); color: var(--accent-text);
     border: none; border-radius: var(--radius-md); cursor: pointer;
   }
   .btn-primary-sm .material-symbols-rounded { font-size: 18px; }
@@ -1620,7 +1620,7 @@
   .activity-row .row-action { color: var(--text-3); font-weight: 500; }
   .unread-pill {
     display: inline-block; margin-left: 6px;
-    background: var(--accent); color: white;
+    background: var(--accent-ink); color: white;
     font-size: 11px; font-weight: 700;
     padding: 1px 7px; border-radius: var(--radius-full);
     line-height: 1.4;
@@ -1629,7 +1629,7 @@
     width: 8px; height: 8px; border-radius: 50%;
     background: var(--accent); flex-shrink: 0;
   }
-  .px-waiting { color: var(--accent); }
+  .px-waiting { color: var(--accent-ink); }
   .px-excused { color: var(--excused); font-weight: 600; }
   .wd-excused {
     display: flex; align-items: flex-start; gap: 8px; margin: 0 0 12px;
@@ -1642,7 +1642,7 @@
   .excused-row .row-sub { white-space: normal; overflow-wrap: anywhere; }
   .btn-link {
     background: none; border: none; cursor: pointer;
-    color: var(--accent); font-size: 12px; font-weight: 600;
+    color: var(--accent-ink); font-size: 12px; font-weight: 600;
     padding: 4px 6px; border-radius: var(--radius-sm);
   }
   .btn-link:hover { background: var(--accent-dim); }
@@ -1660,7 +1660,7 @@
   .avatar-wrap { position: relative; flex-shrink: 0; }
   .avatar-badge {
     position: absolute; top: -4px; right: -4px;
-    background: var(--accent); color: white;
+    background: var(--accent-ink); color: white;
     font-size: 10px; font-weight: 700;
     min-width: 18px; height: 18px;
     border-radius: 50%;

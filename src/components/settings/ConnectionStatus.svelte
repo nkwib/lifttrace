@@ -150,7 +150,7 @@
   .status-main { display: flex; align-items: center; gap: 8px; }
   .status-pill .material-symbols-rounded { font-size: 18px; }
   .status-pill.ok      { background: color-mix(in srgb, var(--accent) 12%, transparent); }
-  .status-pill.ok      .material-symbols-rounded { color: var(--accent); }
+  .status-pill.ok      .material-symbols-rounded { color: var(--accent-ink); }
   .status-pill.warn    { background: color-mix(in srgb, #d68a00 12%, transparent); }
   .status-pill.warn    .material-symbols-rounded { color: #d68a00; }
   .status-pill.fail    { background: color-mix(in srgb, var(--danger) 10%, transparent); }
@@ -174,7 +174,7 @@
     padding: 3px 8px;
     border-radius: var(--radius-sm);
     background: var(--accent-dim);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .status-actions {

@@ -111,7 +111,7 @@
 <style>
   .tsc { display: flex; flex-direction: column; gap: 14px; }
   .tsc-head { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
-  .tsc-icon { font-size: 36px; color: var(--accent); }
+  .tsc-icon { font-size: 36px; color: var(--accent-ink); }
   .tsc-title { font-size: 1.2rem; font-weight: 700; margin: 0; }
   .tsc-text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-2); text-align: center; }
   .tsc-code { font-size: 22px; letter-spacing: 0.25em; text-align: center; font-variant-numeric: tabular-nums; }
