@@ -465,6 +465,8 @@ async function _dispatchLocal(url, init) {
     if (e instanceof LtApiNative._Unsupported) {
       return _jsonResponse(501, { error: e.message, offline: true });
     }
+    // A request the handler refuses (400) answers as the server would.
+    if (e?.status >= 400 && e.status < 500) return _jsonResponse(e.status, { error: e.message });
     return _jsonResponse(500, { error: e.message || 'Local handler failed' });
   }
 }

@@ -20,3 +20,10 @@ test('POST history rejects a missing role or non-string content like the server'
   assert.match(ai, /throw new _BadRequest\(/);
   assert.match(src, /class _BadRequest extends Error[\s\S]*?this\.status = 400/);
 });
+
+test('a 4xx a Local handler throws reaches the page as that status, not 500', () => {
+  const fetchSrc = readFileSync(new URL('../src/lib/apiFetch.js', import.meta.url), 'utf8');
+  const local = fetchSrc.slice(fetchSrc.indexOf('async function _dispatchLocal'), fetchSrc.indexOf('function _jsonResponse'));
+  assert.match(local, /e\?\.status >= 400 && e\.status < 500\) return _jsonResponse\(e\.status/);
+  assert.ok(local.indexOf('e.status < 500') < local.lastIndexOf('_jsonResponse(500'), 'checked before the 500 fallback');
+});
