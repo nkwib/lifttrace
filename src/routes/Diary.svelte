@@ -3713,7 +3713,7 @@
         {/each}
       </div>
       <button class="btn btn-primary ss-confirm" disabled={newSsPicks.length === 0} on:click={handleCreateSs}>
-        Create superset ({newSsPicks.length + 1} exercises)
+        {$_('workout_editor_ss.create_confirm', { values: { count: newSsPicks.length + 1 } })}
       </button>
     </div>
   </Sheet>

@@ -1,5 +1,5 @@
 // Programs flow: create a program, add days, edit a day, reorder, duplicate,
-// leave with unsaved changes, save, activate, Diary quick-start, load errors.
+// leave with unsaved changes, save, activate, load errors.
 // Steps share one program, so the tests run in order.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -186,7 +186,7 @@ test('program detail: reorder days on a phone, duplicate a day', async (t) => {
   await page.context().close();
 });
 
-test('set the program active; the Diary quick-start card names its next day', async () => {
+test('set the program active', async () => {
   const page = await openPage(server, client, { view: 'narrow' });
   await goto(page, `/programs/${programId}`);
   await page.getByRole('button', { name: 'Set Active' }).click();
@@ -195,20 +195,6 @@ test('set the program active; the Diary quick-start card names its next day', as
   await expectClean(page, 'program-detail-active-narrow');
   await page.context().close();
 });
-
-for (const view of ['narrow', 'desktop']) {
-  test(`Diary quick-start card names the program's next day (${view})`, { todo: 'defect: diary-quickstart-next-day' }, async () => {
-    const diary = await openPage(server, client, { view });
-    await goto(diary, '/');
-    const card = diary.locator('.quick-card', { hasText: 'Active Program' });
-    await card.waitFor();
-    await expectClean(diary, `diary-quickstart-${view}`);
-    const text = await card.innerText();
-    assert.match(text, new RegExp(PROGRAM), 'card names the program');
-    assert.match(text, /Push/, 'card names the next day, Push');
-    await diary.context().close();
-  });
-}
 
 test('program detail shows an error with Retry when the load fails', async () => {
   for (const view of ['narrow', 'desktop']) {

@@ -58,6 +58,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- **Diary superset sheet is translated and counts correctly.** Its confirm button was hardcoded English and said "(1 exercises)".
 - **New program sheet fields are labelled for screen readers.** Name, Goal and Weeks now have linked labels.
 - **The Diary NOW badge is readable.** The set label on the next-set strip had 4.2:1 contrast; it now meets the 4.5:1 AA minimum.
 - **Diary calendar selected day is readable.** The selected day (today included) is a darker orange so its white number passes contrast.

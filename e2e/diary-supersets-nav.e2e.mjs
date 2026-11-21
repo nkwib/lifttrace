@@ -77,7 +77,7 @@ for (const view of ['narrow', 'desktop']) {
     await dialog.waitFor();
     const confirm = dialog.getByRole('button', { name: /Create superset/i });
 
-    await t.test('create sheet label is never "(1 exercises)" before a pick', { todo: 'defect: superset-sheet-1-exercises' }, async () => {
+    await t.test('create sheet label is never "(1 exercises)" before a pick', async () => {
       assert.doesNotMatch(await confirm.innerText(), /\(1 exercises\)/, 'no "(1 exercises)" before a pick');
     });
 
@@ -131,7 +131,7 @@ for (const view of ['narrow', 'desktop']) {
     await t.test('diary passes the generic checks (contrast of the next-set chip excluded)', async () => {
       await expectClean(page, `diary-superset-${view}`, { axeExclude: ['.now-set'] });
     });
-    await t.test('diary passes the generic checks including contrast', { todo: 'defect: now-set-contrast' }, async () => {
+    await t.test('diary passes the generic checks including contrast', async () => {
       await expectClean(page, `diary-superset-contrast-${view}`);
     });
     await page.context().close();
