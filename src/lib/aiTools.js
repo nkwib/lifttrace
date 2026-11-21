@@ -25,6 +25,7 @@ import { fillWeeks } from './statsFormat.js';
 import { normalizeWeekStart } from './week-start.js';
 import { BODY_STAT_KEYS } from './workout-merge.js';
 import { planWeekQuery } from './plan-week-query.js';
+import { adoptLoggedWeight } from './profile-weight.js';
 
 // ── Small helpers ──────────────────────────────────────────────────────────
 
@@ -1561,6 +1562,10 @@ async function _logBodyStat({ stat, value, date }) {
   const d = date || _today();
   // The server merges per key, so send only this one.
   const saved = await _put(`/api/body-stats/${d}`, { stats: { [key]: n } });
+  // Same as the Diary weigh-in: today's weight feeds calorie burn. Best effort.
+  if (key === 'weight') {
+    try { await adoptLoggedWeight(d, n, _defaultUnit('weight')); } catch { /* weigh-in already saved */ }
+  }
   return {
     id: saved?.stats?.id,
     stat: key,
