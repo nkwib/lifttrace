@@ -59,6 +59,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - **New program sheet fields are labelled for screen readers.** Name, Goal and Weeks now have linked labels.
+- **The Diary NOW badge is readable.** The set label on the next-set strip had 4.2:1 contrast; it now meets the 4.5:1 AA minimum.
 - **Android Local restore errors are translated.** A failed restore shows only the translated message instead of appending the raw English parser error.
 - **Android Local restore keeps a full safety copy.** The snapshot taken before a restore now includes photos and media, and old ones are pruned to your backup retention.
 - **A program day saved offline keeps a trimmed name and can't be blank.** A blank name was queued and refused on every sync; it is now refused on the spot, as online.

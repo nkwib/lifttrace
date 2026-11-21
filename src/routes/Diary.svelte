@@ -4141,9 +4141,10 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .now-set {
-    font-size: 12px; font-weight: 700; color: var(--accent-ink);
+    font-size: 12px; font-weight: 700;
+    color: color-mix(in srgb, var(--accent-ink) 70%, var(--text-1));
     padding: 3px 10px; border-radius: var(--radius-full);
-    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
     flex-shrink: 0;
     font-variant-numeric: tabular-nums;
   }
