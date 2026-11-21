@@ -95,7 +95,13 @@
     if (isNewest()) loading = false;
   }
 
-  onMount(() => { load(); });
+  // The router keeps this component when only :id changes: reload for the new one.
+  let loadedId;
+  function showId() {
+    exercise = null; history = []; similar = []; showEditor = false; syncWaiting = false;
+    load();
+  }
+  $: if (params.id !== loadedId) { loadedId = params.id; showId(); }
   // A sync that changed this exercise, or the workouts its history is made
   // of, shows here at once. Not under the editor: opening it fills it from
   // the exercise, so a new copy would wipe what you've typed; the page reads
