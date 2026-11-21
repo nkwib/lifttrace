@@ -141,7 +141,7 @@
             <span class="setting-label">{$_('settings_notifications.push.push_service')}</span>
             <span class="setting-hint">{$_('settings_notifications.push.push_service_desc')}</span>
           </div>
-          <select class="form-select-sm" bind:value={$notifPushService}>
+          <select aria-label={$_('settings_notifications.push.push_service')} class="form-select-sm" bind:value={$notifPushService}>
             <option value="none">{$_('settings_notifications.push.option_none')}</option>
             <option value="apprise">{$_('settings_notifications.push.option_apprise')}</option>
             <option value="gotify">{$_('settings_notifications.push.option_gotify')}</option>
@@ -355,7 +355,7 @@
             </div>
             <div class="setting-row">
               <span class="setting-label">{$_('settings_notifications.summaries.delivery_day')}</span>
-              <select class="form-select-sm" bind:value={$weeklySummaryDay}>
+              <select aria-label={$_('settings_notifications.summaries.delivery_day')} class="form-select-sm" bind:value={$weeklySummaryDay}>
                 {#each [$_('settings_notifications.summaries.day_sun'), $_('settings_notifications.summaries.day_mon'), $_('settings_notifications.summaries.day_tue'), $_('settings_notifications.summaries.day_wed'), $_('settings_notifications.summaries.day_thu'), $_('settings_notifications.summaries.day_fri'), $_('settings_notifications.summaries.day_sat')] as d, i}
                   <option value={i}>{d}</option>
                 {/each}

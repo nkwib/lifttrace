@@ -20,7 +20,7 @@
       <div class="card">
         <div class="setting-row">
           <span class="setting-label">{$_('settings_statistics.default_chart_type')}</span>
-          <select class="form-select-sm" bind:value={$statsChartType}>
+          <select aria-label={$_('settings_statistics.default_chart_type')} class="form-select-sm" bind:value={$statsChartType}>
             <option value="bar">{$_('settings_statistics.type_bar')}</option>
             <option value="line">{$_('settings_statistics.type_line')}</option>
           </select>

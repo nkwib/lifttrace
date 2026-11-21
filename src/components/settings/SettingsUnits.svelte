@@ -20,14 +20,14 @@
       <div class="card">
         <div class="setting-row">
           <span class="setting-label">{$_('settings.units.language')}</span>
-          <select class="form-select-sm" bind:value={$language}>
+          <select aria-label={$_('settings.units.language')} class="form-select-sm" bind:value={$language}>
             {#each AVAILABLE_LOCALES as l}<option value={l.code}>{l.label}</option>{/each}
           </select>
         </div>
         <div class="setting-divider"></div>
         <div class="setting-row">
           <span class="setting-label">{$_('settings_units.weight_unit')}</span>
-          <select class="form-select-sm" bind:value={$weightUnit}>
+          <select aria-label={$_('settings_units.weight_unit')} class="form-select-sm" bind:value={$weightUnit}>
             <option value="lbs">lbs</option>
             <option value="kg">kg</option>
           </select>
@@ -35,7 +35,7 @@
         <div class="setting-divider"></div>
         <div class="setting-row">
           <span class="setting-label">{$_('settings_units.date_format')}</span>
-          <select class="form-select-sm" bind:value={$dateFormat}>
+          <select aria-label={$_('settings_units.date_format')} class="form-select-sm" bind:value={$dateFormat}>
             <option value="US">{$_('settings_units.date_us')}</option>
             <option value="EU">{$_('settings_units.date_eu')}</option>
             <option value="ISO">{$_('settings_units.date_iso')}</option>
@@ -43,14 +43,14 @@
         </div>
         <div class="setting-row">
           <span class="setting-label">{$_('settings_units.week_starts_on')}</span>
-          <select class="form-select-sm" bind:value={$weekStartsOn}>
+          <select aria-label={$_('settings_units.week_starts_on')} class="form-select-sm" bind:value={$weekStartsOn}>
             <option value="monday">{$_('settings_units.week_monday')}</option>
             <option value="sunday">{$_('settings_units.week_sunday')}</option>
           </select>
         </div>
         <div class="setting-row">
           <span class="setting-label">{$_('settings_units.time_format')}</span>
-          <select class="form-select-sm" bind:value={$timeFormat}>
+          <select aria-label={$_('settings_units.time_format')} class="form-select-sm" bind:value={$timeFormat}>
             <option value="12h">{$_('settings_units.time_12h')}</option>
             <option value="24h">{$_('settings_units.time_24h')}</option>
           </select>

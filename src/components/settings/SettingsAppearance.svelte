@@ -65,7 +65,7 @@
              (Chicago — every word capitalized except small connectors). -->
         <div class="setting-row">
           <span class="setting-label">{$_('settings_appearance.theme')}</span>
-          <select class="form-select-sm" value={$appearance} on:change={e => applyAppearance(e.target.value)}>
+          <select aria-label={$_('settings_appearance.theme')} class="form-select-sm" value={$appearance} on:change={e => applyAppearance(e.target.value)}>
             <option value="system">{$_('settings_appearance.theme_system')}</option>
             <option value="dark">{$_('settings_appearance.theme_dark')}</option>
             <option value="light">{$_('settings_appearance.theme_light')}</option>
@@ -99,7 +99,7 @@
           </div>
         </div>
         <SettingRow label={$_('settings_appearance.nav_style')}>
-          <select class="form-select-sm" bind:value={$navStyle}>
+          <select aria-label={$_('settings_appearance.nav_style')} class="form-select-sm" bind:value={$navStyle}>
             <option value="bottom">{$_('settings_appearance.nav_bottom')}</option>
             <option value="sidebar">{$_('settings_appearance.nav_sidebar')}</option>
             <option value="both">{$_('settings_appearance.nav_both')}</option>
@@ -112,7 +112,7 @@
           </SettingRow>
         {/if}
         <SettingRow label={$_('settings_appearance.start_page')}>
-          <select class="form-select-sm" bind:value={$startPage}>
+          <select aria-label={$_('settings_appearance.start_page')} class="form-select-sm" bind:value={$startPage}>
             {#each START_PAGES as sp}
               <option value={sp.value}>{sp.label}</option>
             {/each}
@@ -131,7 +131,7 @@
         </SettingRow>
         <SettingRow label={$_('settings_appearance.page_banners')}
                     desc={$_('settings_appearance.page_banners_desc')}>
-          <select class="form-select-sm" value={$bannerStyle} on:change={e => bannerStyle.set(e.target.value)}>
+          <select aria-label={$_('settings_appearance.page_banners')} class="form-select-sm" value={$bannerStyle} on:change={e => bannerStyle.set(e.target.value)}>
             <option value="animated">{$_('settings_appearance.banner_animated')}</option>
             <option value="gradient">{$_('settings_appearance.banner_gradient')}</option>
             <option value="off">{$_('settings_appearance.banner_off')}</option>
@@ -141,7 +141,7 @@
           <SettingRow divider={false}
                       label={$_('settings_appearance.anim_style')}
                       desc={$_('settings_appearance.anim_style_desc')}>
-            <select class="form-select-sm" value={$bannerAnimation} on:change={e => bannerAnimation.set(e.target.value)}>
+            <select aria-label={$_('settings_appearance.anim_style')} class="form-select-sm" value={$bannerAnimation} on:change={e => bannerAnimation.set(e.target.value)}>
               <option value="shimmer">{$_('settings_appearance.anim_shimmer')}</option>
               <option value="drift">{$_('settings_appearance.anim_drift')}</option>
               <option value="pulse">{$_('settings_appearance.anim_pulse')}</option>

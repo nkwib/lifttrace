@@ -119,7 +119,7 @@
             <span class="setting-label">{$_('settings_workout.goals.weekly')}</span>
             <span class="setting-hint">{$_('settings_workout.goals.weekly_desc')}</span>
           </div>
-          <select class="form-select-sm" bind:value={$weeklyWorkoutGoal}>
+          <select aria-label={$_('settings_workout.goals.weekly')} class="form-select-sm" bind:value={$weeklyWorkoutGoal}>
             {#each [2,3,4,5,6,7] as n}
               <option value={n}>{$_('settings_workout.goals.weekly_option', { values: { n } })}</option>
             {/each}
@@ -201,7 +201,7 @@
             <span class="setting-label">{$_('settings_workout.logging.reorder')}</span>
             <span class="setting-hint">{$_('settings_workout.logging.reorder_desc')}</span>
           </div>
-          <select class="form-select-sm" bind:value={$exerciseReorderMethod}>
+          <select aria-label={$_('settings_workout.logging.reorder')} class="form-select-sm" bind:value={$exerciseReorderMethod}>
             <option value="both">{$_('settings_workout.logging.reorder_both')}</option>
             <option value="drag">{$_('settings_workout.logging.reorder_drag')}</option>
             <option value="buttons">{$_('settings_workout.logging.reorder_buttons')}</option>
@@ -241,7 +241,7 @@
               <span class="setting-label">{$_('settings_workout.logging.effort_scale')}</span>
               <span class="setting-hint">{$_('settings_workout.logging.effort_scale_desc')}</span>
             </div>
-            <select class="form-select-sm" bind:value={$effortScale}>
+            <select aria-label={$_('settings_workout.logging.effort_scale')} class="form-select-sm" bind:value={$effortScale}>
               <option value="rpe">{$_('settings_workout.logging.effort_rpe')}</option>
               <option value="rir">{$_('settings_workout.logging.effort_rir')}</option>
             </select>
@@ -264,7 +264,7 @@
               <span class="setting-label">{$_('settings_workout.rest.duration')}</span>
               <span class="setting-hint">{$_('settings_workout.rest.duration_desc')}</span>
             </div>
-            <select class="form-select-sm" bind:value={$restDuration}>
+            <select aria-label={$_('settings_workout.rest.duration')} class="form-select-sm" bind:value={$restDuration}>
               {#each [30,45,60,75,90,120,150,180,240,300] as s}
                 <option value={s}>{s >= 60 ? `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}` : $_('settings_workout.rest.duration_seconds', { values: { s } })}</option>
               {/each}

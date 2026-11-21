@@ -102,7 +102,7 @@
           <div class="setting-divider"></div>
           <div class="setting-row">
             <span class="setting-label">{$_('settings_radio.provider')}</span>
-            <select class="form-select-sm" bind:value={$radioProvider}>
+            <select aria-label={$_('settings_radio.provider')} class="form-select-sm" bind:value={$radioProvider}>
               <option value="emby">{$_('settings_radio.emby')}</option>
               <option value="jellyfin">{$_('settings_radio.jellyfin')}</option>
               <option value="plex">{$_('settings_radio.plex')}</option>
@@ -132,7 +132,7 @@
               <span class="setting-label">{$_('settings_radio.crossfade')}</span>
               <span class="setting-hint">{$_('settings_radio.crossfade_hint')}</span>
             </div>
-            <select class="form-select-sm" bind:value={$radioCrossfade}>
+            <select aria-label={$_('settings_radio.crossfade')} class="form-select-sm" bind:value={$radioCrossfade}>
               <option value={0}>{$_('settings_radio.off')}</option>
               {#each [1,2,3,4,5,6,8,10,12] as s}
                 <option value={s}>{$_('settings_radio.crossfade_seconds', { values: { s } })}</option>
