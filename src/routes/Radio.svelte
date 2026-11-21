@@ -922,7 +922,7 @@
             on:pointerdown={_recordPointer} on:contextmenu={e => showCtx(e, track)}
             role="button" tabindex="0">
             {#if isNowPlaying(song.id)}<span class="now-eq" aria-hidden="true"><span></span><span></span><span></span></span>
-            {:else}<img class="track-art" src={resolveAssetUrl(sub.getCoverArtUrl(song.coverArt || song.albumId, 80))} alt="" />{/if}
+            {:else}<img class="track-art" src={resolveAssetUrl(sub.getCoverArtUrl(song.coverArt || song.albumId, 80))} alt="" loading="lazy" decoding="async" />{/if}
             <div class="track-info">
               <span class="track-title">{song.title}</span>
               <span class="track-meta">{song.artist} · {fmtDuration(song.duration)}</span>
@@ -944,7 +944,7 @@
         <div class="album-grid">
           {#each searchResults.albums as album}
             <button class="album-card" on:click={() => openAlbum(album)}>
-              <img class="album-art" src={resolveAssetUrl(sub.getCoverArtUrl(album.coverArt || album.id, 300))} alt="" />
+              <img class="album-art" src={resolveAssetUrl(sub.getCoverArtUrl(album.coverArt || album.id, 300))} alt="" loading="lazy" decoding="async" />
               <span class="album-name">{album.name}</span>
               <span class="album-artist">{album.artist}</span>
             </button>
@@ -1007,7 +1007,7 @@
       <div class="album-grid">
         {#each artistAlbums as album}
           <button class="album-card" on:click={() => openAlbum(album)}>
-            <img class="album-art" src={resolveAssetUrl(sub.getCoverArtUrl(album.coverArt || album.id, 300))} alt="" />
+            <img class="album-art" src={resolveAssetUrl(sub.getCoverArtUrl(album.coverArt || album.id, 300))} alt="" loading="lazy" decoding="async" />
             <span class="album-name">{album.name}</span>
             <span class="album-artist">{album.year || ''}</span>
           </button>
@@ -1031,7 +1031,7 @@
           on:pointerdown={_recordPointer} on:contextmenu={e => showCtx(e, track)}
           role="button" tabindex="0">
           {#if isNowPlaying(track.id)}<span class="now-eq" aria-hidden="true"><span></span><span></span><span></span></span>
-          {:else}<img class="track-art" src={resolveAssetUrl(track.coverUrl)} alt="" />{/if}
+          {:else}<img class="track-art" src={resolveAssetUrl(track.coverUrl)} alt="" loading="lazy" decoding="async" />{/if}
           <div class="track-info">
             <span class="track-title">{track.title}</span>
             <span class="track-meta">{track.artist} · {fmtDuration(track.duration)}</span>
@@ -1053,7 +1053,7 @@
       <div class="album-grid">
         {#each albums as album}
           <button class="album-card" on:click={() => openAlbum(album)}>
-            <img class="album-art" src={resolveAssetUrl(sub.getCoverArtUrl(album.coverArt || album.id, 300))} alt="" />
+            <img class="album-art" src={resolveAssetUrl(sub.getCoverArtUrl(album.coverArt || album.id, 300))} alt="" loading="lazy" decoding="async" />
             <span class="album-name">{album.name}</span>
             <span class="album-artist">{album.artist}</span>
           </button>
@@ -1137,7 +1137,7 @@
         <div class="album-grid">
           {#each starredAlbums as album (album.id)}
             <button class="album-card" on:click={() => openAlbum(album)}>
-              <img class="album-art" src={resolveAssetUrl(sub.getCoverArtUrl(album.coverArt || album.id, 300))} alt="" loading="lazy" />
+              <img class="album-art" src={resolveAssetUrl(sub.getCoverArtUrl(album.coverArt || album.id, 300))} alt="" loading="lazy" decoding="async" />
               <span class="album-name">{album.name}</span>
               <span class="album-artist">{album.artist}</span>
             </button>
@@ -1166,7 +1166,7 @@
             on:pointerdown={_recordPointer} on:contextmenu={e => showCtx(e, track)}
             role="button" tabindex="0">
             {#if isNowPlaying(song.id)}<span class="now-eq" aria-hidden="true"><span></span><span></span><span></span></span>
-            {:else}<img class="track-art" src={resolveAssetUrl(sub.getCoverArtUrl(song.coverArt || song.albumId, 80))} alt="" loading="lazy" />{/if}
+            {:else}<img class="track-art" src={resolveAssetUrl(sub.getCoverArtUrl(song.coverArt || song.albumId, 80))} alt="" loading="lazy" decoding="async" />{/if}
             <div class="track-info">
               <span class="track-title">{song.title}</span>
               <span class="track-meta">{song.artist} · {fmtDuration(song.duration)}</span>
@@ -1248,7 +1248,7 @@
               </div>
               <button class="station-main" on:click={() => playStation(s)}>
                 {#if s.iconUrl}
-                  <img class="station-icon" src={s.iconUrl} alt="" />
+                  <img class="station-icon" src={s.iconUrl} alt="" loading="lazy" decoding="async" />
                 {:else}
                   <span class="station-icon-fallback material-symbols-rounded">radio</span>
                 {/if}
@@ -1313,7 +1313,7 @@
           <div class="station-row" class:rb-already={already}>
             <button class="station-main" on:click={() => !already && addFromRadioBrowser(r)} disabled={already}>
               {#if r.favicon}
-                <img class="station-icon" src={r.favicon} alt="" on:error={e => e.currentTarget.style.display = 'none'} />
+                <img class="station-icon" src={r.favicon} alt="" loading="lazy" decoding="async" on:error={e => e.currentTarget.style.display = 'none'} />
               {:else}
                 <span class="station-icon-fallback material-symbols-rounded">radio</span>
               {/if}
@@ -1408,7 +1408,7 @@
                         on:click={() => playTrack(t, $queue, _qi + 1 + i)}
                         title="Play now">
                   {#if t.coverUrl}
-                    <img class="rnp-queue-cover" src={resolveAssetUrl(t.coverUrl)} alt="" />
+                    <img class="rnp-queue-cover" src={resolveAssetUrl(t.coverUrl)} alt="" loading="lazy" decoding="async" />
                   {:else}
                     <span class="material-symbols-rounded rnp-queue-cover-fallback">music_note</span>
                   {/if}
