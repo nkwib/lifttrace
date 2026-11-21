@@ -4843,7 +4843,7 @@
   .dp-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 14px; border-radius: var(--radius-full); background: none; border: none; cursor: pointer; color: var(--text-1); transition: background var(--dur-fast); -webkit-tap-highlight-color: transparent; position: relative; }
   .dp-day:hover:not(:disabled) { background: var(--surface-2); }
   .dp-day.dp-today { color: var(--accent-ink); font-weight: 700; }
-  .dp-day.dp-sel { background: var(--accent-ink) !important; color: #fff; font-weight: 600; }
+  .dp-day.dp-sel { background: color-mix(in srgb, var(--accent-ink) 70%, #000) !important; color: #fff; font-weight: 600; }
   .dp-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
   .dp-day.dp-sel .dp-dot { background: #fff; }
   /* Excused (issue #121): a ring, not a dot, so it never reads as a
