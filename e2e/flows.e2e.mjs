@@ -72,9 +72,9 @@ test('server backup: create one, then restore it', async () => {
   await page.getByRole('button', { name: 'Create Backup' }).click();
   await page.getByText('Backup created').first().waitFor({ timeout: 15000 });
   await expectClean(page, 'backup-created');
-  const restore = page.getByRole('button', { name: /Restore$/ }).first();
+  const restore = page.getByRole('button', { name: 'Restore', exact: true }).first();
   await restore.click();
-  await page.getByRole('dialog').getByRole('button', { name: /Restore$/ }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Restore', exact: true }).click();
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1500);
   await goto(page, '/statistics');
