@@ -156,3 +156,63 @@ Rejected by round table earlier (do not re-propose unless you have NEW evidence 
 - Visible focus indicators for custom widgets that suppress outlines :: skeptic: The named candidates are wrong. FullPlayer.svelte and ActionSheet.svelte have no `outline` rules at all. MiniPlayer.svelte has one hit (line 152), on the volume range slider, not on `mini-btn`. Wizard.svelte has `.bp-input:focus` at line 786 with a border-color change, and no `wiz-input` exists. A grep for `fp-ctrl` and `as-btn` finds nothing relevant, so the claimed round icon buttons cl
 
 Done earlier on the lab branch (do not propose): lazy-loading routes other than Diary, response compression, uploads served before auth, sync updated_at indexes, Statistics reading only range workouts, Diary reading trained days, session tabs from save answer, sequential workout saves, reminders rescheduled only on training sync, superset round-by-round layout.
+
+Done in round 5 (do not propose):
+- Android Local: list, back up now, share and restore on-device backups
+- Statistics 1Y/All: Track Cardio toggle leaves stale wide set; sync blanks calories and deltas
+- Trace log_body_stat weigh-in should update the profile weight used for calorie burn
+- Diary and DatePicker month calendars ignore the week-start setting
+- Undo after removing a filmed set loses its clip (and removal orphans the file)
+- MCP and REST v1 default 'today' uses the server's zone, not the account's
+- Garmin FIT import dates workouts in UTC, so evening sessions land on the wrong day
+- Workout-complete celebration stays muted after midnight while the app process stays alive
+- Replace sv-SE toLocaleDateString 'today' idiom with localDateStr; fix monthsAgo overflow
+- get_exercise_progress: prefer an exact name match so a name never dead-ends as ambiguous
+- get_workout / GET /api/v1/workouts/:date hide extra same-day sessions and never expose workout_id
+- REST: fractional or NaN limit/offset crash with 'datatype mismatch'; /api/exercises offset without limit is a SQL syntax error
+- Progress photo and set video URLs: reject ../ so members cannot read or delete backups and other users' files
+- Login throttle: trust-proxy support, count only failures; rate-limit current-password checks
+- Webhook delivery: use fetchChecked so the connection is pinned to the checked IP (DNS rebinding)
+- Per-exercise notes that carry to every future session (seat height, grip, cues)
+- Warm-up generator ignores equipment: dumbbell and machine lifts start from a 45 lb or 20 kg barbell
+- Estimated 1RM trend line on exercise detail
+- Flag a stalled lift and suggest a deload on exercise detail
+- Best weight at each rep count (rep-max table) on exercise detail
+- Workout import and backup restore: oversize file says 'Internal server error' instead of 'too large'
+- Diary: Finish workout button, empty states, widget and week-nav labels are hardcoded English
+- Programs page: New/Create sheet, duration hint and preview pane are hardcoded English; goal labels never translated
+- Workout summary, exercise preview pane and picker: hardcoded English toasts, tooltips and aria-labels
+- Subset the 5.3 MB Material Symbols font to the glyphs the app uses
+- Diary: after a sync, reread workout dates and exercise histories only when workouts changed
+- Radio: lazy-load and async-decode cover art and station icons in long lists
+
+Rejected:
+- GET /api/cardio ignores a lone start or end and returns the last 500 sessions
+- Records scans parse every workout row; prefilter rows with no completed set in SQL
+
+Done in the browser smoke round (do not propose):
+- Users settings: Session Duration row overflows the card; Save button clipped or off-screen on phones
+- Wizard finish: PUT /api/updates/config returns 409 when UPDATE_CHECK is set in the environment
+- Add Exercise picker crashes: ReferenceError _ is not defined, so exercises cannot be added
+- At 320px the rest bar's 'REST' label overlaps the countdown digits
+- At 320px the exercise name truncates to 'Overhe ad...' and the superset header wraps and breaks
+- Superset sheet says 'Create superset (1 exercises)'. The superset remove button has no usable accessible name.
+- Workout editor header overflows on phones: Save button clipped and the whole page scrolls horizontally
+- Program detail and workout editor show a blank body with no message or Retry when the load fails
+- Exercise detail page keeps showing the previous exercise when only the :id route param changes
+- Profile save without touching height silently changes height when the unit is ft/in
+- Exercise detail header title hard-clipped at 320px (no ellipsis)
+- Sidebar drawer, Load type menu, Gym Tools sheet and Body Stats sheet ignore Escape and have no focus trap
+- Settings switches and selects have no accessible name
+- Diary: icon ligature text leaks into names, nested button inside role=button, set inputs unnamed
+- Profile back button and password show/hide toggle have no accessible name
+- Notifications 'browser needs permission' hint uses nonexistent --warn token, so it renders amber on white (1.78:1)
+- Light theme: accent text and white-on-accent buttons below 4.5:1, muscle tag chip about 2:1
+- Bottom nav highlights Diary (aria-current=page) on the exercise detail page
+- Exercise editor chips (load type, tracked-by, equipment, muscles) expose no selected state; primary and secondary muscles are indistinguishable
+- Focus drops to body after choosing 'Remove from superset' in the exercise More options sheet
+- Assistant reply bubble has a blank line of extra space above the text
+- Programs page title clipped or collapsed to zero width at 320px and 390px
+
+Not reproduced (smoke round):
+- Set Active with the server down shows "Program set as active" but nothing is saved

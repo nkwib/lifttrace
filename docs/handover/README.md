@@ -36,4 +36,4 @@ Yield is falling. Round 5 scouts found fewer real defects, and reviewer notes ar
 2. For smoke runs: `npm run build`, then `ln -sfn ../dist server/dist` and add `server/dist` to `.git/info/exclude`.
 3. Install Playwright next to `tooling/launch.js` (`npm i playwright-core`, `npx playwright install chromium`). Set `CHROME_PATH` to the binary.
 4. Workflow scripts take paths as args. Pass `main` (absolute repo path), `done` (absolute path to `tooling/run-state/done.txt`) and `pw` (absolute path to `launch.js`). See PROCESS.md.
-5. Before the next round, append round 5 and the smoke round to `done.txt`, using the titles in DONE.md.
+5. `done.txt` covers rounds 1 to 5 and the smoke round.

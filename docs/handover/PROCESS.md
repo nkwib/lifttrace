@@ -43,6 +43,6 @@ Use `git config merge.conflictstyle diff3` and enable rerere.
 
 ## Run state files (`tooling/run-state/`)
 
-- `done.txt`: shipped and rejected titles per round. Scouts read it to avoid re-proposing. Rounds 1 to 4 are in it; round 5 and the smoke round are not yet.
+- `done.txt`: shipped and rejected titles per round. Scouts read it to avoid re-proposing. Rounds 1 to 5 and the smoke round are in it.
 - `followups-r1..r5.txt`: reviewer notes on shipped changes. Round 5's follow-up lens already triaged rounds 1 to 4.
 - `manual-merges.txt`: hunks resolved by hand during integration, which carry the highest risk of semantic bugs.
