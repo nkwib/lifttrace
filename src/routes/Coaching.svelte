@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { isRepSet, setKind, fmtSetAmount, distanceUnitOf, repsLabel } from '../lib/workout.js';
+  import { isRepSet, setKind, fmtSetAmount, distanceUnitOf, repsLabel, goalLabel } from '../lib/workout.js';
   import { push } from 'svelte-spa-router';
   import { _ } from 'svelte-i18n';
   import { LtApi } from '../lib/api.js';
@@ -827,7 +827,7 @@
                 <span class="material-symbols-rounded row-icon">calendar_month</span>
                 <div class="row-body">
                   <span class="row-title">{p.name}</span>
-                  <span class="row-sub">{p.goal || 'general'}{#if p.active && overview.active_program?.id === p.id && overview.active_program.duration_weeks > 1 && overview.active_program.current_week}{' · '}{$_('programs.week_of', { values: { week: overview.active_program.current_week, total: overview.active_program.duration_weeks } })}{/if}</span>
+                  <span class="row-sub">{goalLabel(p.goal || 'general', $_)}{#if p.active && overview.active_program?.id === p.id && overview.active_program.duration_weeks > 1 && overview.active_program.current_week}{' · '}{$_('programs.week_of', { values: { week: overview.active_program.current_week, total: overview.active_program.duration_weeks } })}{/if}</span>
                   <!-- The client's excused days push a calendar program back (#121). -->
                   {#if p.active && overview.active_program?.id === p.id && overview.active_program.paused_days > 0}
                     <span class="row-paused">

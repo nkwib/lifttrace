@@ -2,7 +2,7 @@
   import { activateOnKey } from '../lib/a11y.js';
   import { onMount, onDestroy, tick } from 'svelte';
   import { wideContent } from '../lib/wide.js';
-  import { fmtSetDuration, parseDuration, distanceUnitOf } from '../lib/workout.js';
+  import { fmtSetDuration, parseDuration, distanceUnitOf, goalLabel } from '../lib/workout.js';
   import { weightUnit } from '../stores/settings.js';
   import { push } from 'svelte-spa-router';
   import { _ } from 'svelte-i18n';
@@ -392,8 +392,8 @@
     <div class="content">
       <!-- Info bar -->
       <div class="info-bar">
-        <span class="goal-tag">{program.goal}</span>
-        <span class="template-count">{program.templates?.length || 0} workouts</span>
+        <span class="goal-tag">{goalLabel(program.goal, $_)}</span>
+        <span class="template-count">{$_('programs.workouts_count', { values: { count: program.templates?.length || 0 } })}</span>
         {#if program.duration_weeks > 1}
           <span class="goal-tag week-tag">
             {program.is_active && program.current_week ? $_('programs.week_of', { values: { week: program.current_week, total: program.duration_weeks } }) : $_('programs.n_weeks', { values: { n: program.duration_weeks } })}
@@ -581,7 +581,7 @@
   <div class="form-sheet">
     <h3 class="form-title">Duration & progression</h3>
     <div class="form-group">
-      <label class="form-label">Duration (weeks)</label>
+      <label class="form-label">{$_('programs.duration_weeks')}</label>
       <input class="form-input" type="number" min="1" max="52" bind:value={settingsDuration} placeholder="1" />
       <p class="form-hint">More than 1 enables a per-week progression matrix in the workout editor.</p>
     </div>

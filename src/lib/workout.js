@@ -714,6 +714,13 @@ export const MUSCLES = [
   'neck', 'traps',
 ];
 
+// Display label for a goal id; unknown/custom goals (coach, MCP, import) show as stored.
+// `t` is svelte-i18n's $_ so callers stay reactive to locale changes.
+export function goalLabel(id, t) {
+  if (!id) return '';
+  return t(`programs.goals.${id}`, { default: String(id) });
+}
+
 export const GOALS = [
   { id: 'cutting',     label: 'Cutting' },
   { id: 'bulking',     label: 'Bulking' },

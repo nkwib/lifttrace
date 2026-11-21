@@ -9,7 +9,7 @@
   import { isNative, getServerUrl } from '../lib/platform.js';
   import { showSuccess, showError } from '../stores/toast.js';
   import { confirmDialog } from '../stores/confirmDialog.js';
-  import { GOALS } from '../lib/workout.js';
+  import { GOALS, goalLabel } from '../lib/workout.js';
   import Sheet from '../components/ui/Sheet.svelte';
   import ActionSheet from '../components/ui/ActionSheet.svelte';
   import { duplicateProgram, setActive, clearActive, renameProgram } from '../lib/program-actions.js';
@@ -181,7 +181,7 @@
       // Only update if the user hasn't tapped another card mid-fetch.
       if (_previewSelected?.id === program.id) _previewSelected = full;
     } catch (e) {
-      showError(e.message || 'Failed to load program');
+      showError(e.message || $_('programs.preview_load_failed'));
     }
     _previewLoading = false;
   }
@@ -224,7 +224,7 @@
       <input type="file" accept="application/json,.json" bind:this={importInput} on:change={onImportFile} hidden />
       <button class="btn-primary-sm" on:click={() => showCreate = true}>
         <span class="material-symbols-rounded">add</span>
-        New
+        {$_('programs.new')}
       </button>
     </div>
   </header>
@@ -267,7 +267,7 @@
               {/if}
             </div>
             <div class="card-meta">
-              <span class="goal-tag">{p.goal}</span>
+              <span class="goal-tag">{goalLabel(p.goal, $_)}</span>
               <span class="template-count">{$_('programs.workouts_count', { values: { count: p.template_count } })}</span>
               {#if p.is_assigned && p.assigned_by_name}
                 <span class="coach-badge" title={$_('programs.assigned_by_coach')}>
@@ -322,9 +322,9 @@
           <div class="ppp-title-block">
             <h3 class="ppp-title">{p.name}</h3>
             <div class="ppp-meta">
-              <span class="goal-tag">{p.goal}</span>
+              <span class="goal-tag">{goalLabel(p.goal, $_)}</span>
               {#if p.duration_weeks && p.duration_weeks > 1}
-                <span class="ppp-meta-item">{p.duration_weeks} weeks</span>
+                <span class="ppp-meta-item">{$_('programs.n_weeks', { values: { n: p.duration_weeks } })}</span>
               {/if}
               {#if p.is_active}
                 <span class="active-badge">{$_('programs.active')}</span>
@@ -345,11 +345,11 @@
         {#if p.description}
           <p class="ppp-desc">{p.description}</p>
         {/if}
-        <div class="ppp-templates-head">Workouts</div>
+        <div class="ppp-templates-head">{$_('programs.workouts_heading')}</div>
         {#if _previewLoading && !p.templates}
-          <div class="ppp-loading">Loading…</div>
+          <div class="ppp-loading">{$_('programs.preview_loading')}</div>
         {:else if !p.templates || p.templates.length === 0}
-          <div class="ppp-empty-templates">No workouts yet in this program.</div>
+          <div class="ppp-empty-templates">{$_('programs.preview_no_workouts')}</div>
         {:else}
           <ol class="ppp-templates">
             {#each p.templates as t, i}
@@ -358,9 +358,9 @@
                   on:click={() => push(`/programs/${p.id}/template/${t.id}`)}>
                   <span class="ppp-template-num">{i + 1}</span>
                   <div class="ppp-template-body">
-                    <span class="ppp-template-name">{t.name || `Day ${i + 1}`}</span>
+                    <span class="ppp-template-name">{t.name || $_('programs.day_n', { values: { n: i + 1 } })}</span>
                     {#if t.exercises && t.exercises.length}
-                      <span class="ppp-template-meta">{t.exercises.length} {t.exercises.length === 1 ? 'exercise' : 'exercises'}</span>
+                      <span class="ppp-template-meta">{$_('diary_extra.exercise_count', { values: { count: t.exercises.length } })}</span>
                     {/if}
                   </div>
                   <span class="material-symbols-rounded ppp-template-chev">chevron_right</span>
@@ -388,8 +388,8 @@
       {:else}
         <div class="ppp-empty">
           <span class="material-symbols-rounded ppp-empty-icon">calendar_month</span>
-          <p class="ppp-empty-title">Preview any program</p>
-          <p class="ppp-empty-desc">Tap any card to see its day-by-day workout structure here without opening it.</p>
+          <p class="ppp-empty-title">{$_('programs.preview_empty_title')}</p>
+          <p class="ppp-empty-desc">{$_('programs.preview_empty_desc')}</p>
         </div>
       {/if}
     </aside>
@@ -402,25 +402,25 @@
     <h3 class="form-title">{$_('programs.new_program')}</h3>
     <div class="form-group">
       <label class="form-label">{$_('programs.name')}</label>
-      <input class="form-input" type="text" bind:value={newName} placeholder="e.g. Cutting 2026" autofocus
+      <input class="form-input" type="text" bind:value={newName} placeholder={$_('programs.name_placeholder')} autofocus
         on:keydown={e => e.key === 'Enter' && createProgram()} />
     </div>
     <div class="form-group">
       <label class="form-label">{$_('programs.goal')}</label>
       <select class="form-select" bind:value={newGoal}>
-        {#each GOALS as g}<option value={g.id}>{g.label}</option>{/each}
+        {#each GOALS as g}<option value={g.id}>{goalLabel(g.id, $_)}</option>{/each}
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Duration (weeks)</label>
+      <label class="form-label">{$_('programs.duration_weeks')}</label>
       <input class="form-input" type="number" min="1" max="52" bind:value={newDurationWeeks}
         placeholder="1" />
-      <p class="form-hint">Weeks in this training block. More than 1 enables per-week progression (different sets/reps/tempo/rest each week).</p>
+      <p class="form-hint">{$_('programs.duration_hint')}</p>
     </div>
     <div class="form-actions">
       <button class="btn btn-secondary" on:click={() => showCreate = false}>{$_('programs.cancel')}</button>
       <button class="btn btn-primary" on:click={createProgram} disabled={creating || !newName.trim()}>
-        {creating ? 'Creating...' : 'Create'}
+        {creating ? $_('programs.creating') : $_('programs.create')}
       </button>
     </div>
   </div>

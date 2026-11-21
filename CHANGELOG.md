@@ -17,6 +17,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Estimated 1RM trend on exercise detail.** A Top set / Est. 1RM toggle on the progress chart plots the best Epley estimate per session (sets up to 12 reps), so gains at higher reps show up. Hidden for timed and assisted exercises and with fewer than 2 estimable sessions.
 - **Stalled lift hint.** Exercise detail shows a dismissible note when a rep lift has had no new best e1RM over its last 4 sessions (14+ days), suggesting a lighter week at about 90% of your last top weight. Skipped for assisted, bodyweight-only, timed and new lifts.
 - **Best weight by rep count on exercise details.** A compact grid shows your heaviest set at 1, 2, 3, 5, 8, 10 and 12+ reps (warm-ups excluded, repeated weights collapsed). Shown once there are two distinct rows.
+- **Programs create sheet, preview pane and goal names are translatable.** Goal tags now show the localized goal instead of the raw id.
 - **Reorder program days on phones.** Each day in a program has up/down buttons, since drag-and-drop only worked with a mouse.
 - **Workout editor asks before discarding edits.** Back arrow and Android back confirm when there are unsaved changes. Closing the tab warns on the web; other web navigation is not intercepted.
 - **Duplicate a workout day.** A copy button on each day card in a program makes "Day (Copy)" with the same exercises, placed right after the original.

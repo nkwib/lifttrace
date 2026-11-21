@@ -1202,6 +1202,27 @@
     "added":                 "{count, plural, one {Added # exercise} other {Added # exercises}}"
   },
   "programs": {
+    "new": "New",
+    "name_placeholder": "e.g. Cutting 2026",
+    "duration_weeks": "Duration (weeks)",
+    "duration_hint": "Weeks in this training block. More than 1 enables per-week progression (different sets/reps/tempo/rest each week).",
+    "create": "Create",
+    "creating": "Creating...",
+    "goals": {
+      "cutting": "Cutting",
+      "bulking": "Bulking",
+      "maintenance": "Maintenance",
+      "strength": "Strength",
+      "endurance": "Endurance",
+      "general": "General Fitness"
+    },
+    "preview_load_failed": "Failed to load program",
+    "workouts_heading": "Workouts",
+    "preview_loading": "Loading…",
+    "preview_no_workouts": "No workouts yet in this program.",
+    "day_n": "Day {n}",
+    "preview_empty_title": "Preview any program",
+    "preview_empty_desc": "Tap any card to see its day-by-day workout structure here without opening it.",
     "workouts_count": "{count, plural, one {# workout} other {# workouts}}",
     "coach_badge": "Coach: {name}",
     "assigned_by_coach": "Assigned by your coach",
