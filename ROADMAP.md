@@ -204,7 +204,7 @@ A Custom option on the Model list for Claude, OpenAI and Gemini.
 RENDER_LERP 0.08 → 0.35 so the frequency ring tracks music dynamics with the same amplitude as the PWA.
 
 ### Trace deload suggestions
-Not started. Trace mentions a deload when asked and the RPE trend calls for it, but it does not suggest one on its own. Planned deloads in programs are item 8 of the training-depth plan.
+Partly done: Exercise detail shows a stalled-lift hint. Trace does not yet suggest a deload on its own. Trace mentions a deload when asked and the RPE trend calls for it, but it does not suggest one on its own. Planned deloads in programs are item 8 of the training-depth plan.
 
 ---
 

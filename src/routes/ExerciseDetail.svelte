@@ -8,6 +8,7 @@
   import { onSyncChanges, newestRead } from '../lib/sync-refresh.js';
   import { weightUnit, exerciseDistanceUnits } from '../stores/settings.js';
   import { setKind, SET_TYPE_FIELD, fmtSetAmount, fromMeters, distanceUnitOf, setReps } from '../lib/workout.js';
+  import { detectStall } from '../lib/progression.js';
   import { exerciseWeightPr, sessionE1rms } from '../lib/history-set.js';
   import { showError, showSuccess } from '../stores/toast.js';
   import { confirmDialog } from '../stores/confirmDialog.js';
@@ -59,6 +60,18 @@
   let loadError = '';
 
   let similar = [];
+
+  // Stalled-lift hint: rep lifts only, dismissed per exercise until the next session.
+  let stallDismissed = '';
+  const stallKey = (id) => `lt:stall-dismissed:${id}`;
+  $: if (exercise?.id != null) { try { stallDismissed = localStorage.getItem(stallKey(exercise.id)) || ''; } catch { stallDismissed = ''; } }
+  $: stall = (!loading && exercise && !detailTimed && history.length)
+    ? detectStall(history, { unit: $weightUnit === 'lbs' ? 'lbs' : 'kg', equipment: exercise.equipment }) : null;
+  $: showStall = stall && stall.date !== stallDismissed;
+  function dismissStall() {
+    stallDismissed = stall.date;
+    try { localStorage.setItem(stallKey(exercise.id), stall.date); } catch { /* private mode */ }
+  }
 
   async function loadSimilar() {
     if (!exercise || !(exercise.primary_muscles || []).length) { similar = []; return; }
@@ -245,6 +258,19 @@
 
       <ExerciseInfo {exercise} {pr} {history} />
 
+      {#if showStall}
+        <div class="stall-note" role="status">
+          <span class="material-symbols-rounded" aria-hidden="true">info</span>
+          <div class="stall-text">
+            <strong>{$_('exercise_detail.stall_title', { values: { days: stall.days } })}</strong>
+            <span>{$_('exercise_detail.stall_body', { values: { sessions: stall.sessions, weight: stall.suggestedWeight, unit: $weightUnit } })}</span>
+          </div>
+          <button class="stall-dismiss" on:click={dismissStall} aria-label={$_('exercise_detail.stall_dismiss')}>
+            <span class="material-symbols-rounded" aria-hidden="true">close</span>
+          </button>
+        </div>
+      {/if}
+
       {#if progressSvg}
         <div class="progress-card">
           <div class="progress-head">
@@ -356,6 +382,14 @@
   /* Inline progress chart — top set over time, sourced from the existing
      history list. Same SVG pattern as Stats > Exercise Progress but smaller
      and embedded here so the user doesn't have to nav for a quick glance. */
+  .stall-note {
+    display: flex; align-items: flex-start; gap: 10px; margin-top: 16px;
+    padding: 10px 12px; background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); color: var(--text-2); font-size: 13px;
+  }
+  .stall-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .stall-text strong { color: var(--text-1); }
+  .stall-dismiss { background: none; border: 0; padding: 0; color: var(--text-3); cursor: pointer; }
   .progress-card {
     margin-top: 24px;
     padding: 14px 16px;
