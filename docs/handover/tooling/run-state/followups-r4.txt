@@ -1,0 +1,120 @@
+## pill-timer-frozen-centis ship
+- Nit: src/components/WorkoutModeBar.svelte:13 has `:''` with no space before the quote (was `: ''`). Cosmetic only.
+- Nit: the test's second case is a source grep, so it checks the call text rather than behavior. This matches the repo's wiring-test convention.
+## diary-stale-day-nav-side-effects ship
+- Nit: A->B->A rapid navigation lets the stale first A load pass afterDayLoad (ds === currentDate) and read $todayLog before the newer A load lands. Same fetch date, so harmless, and a loader seq check would be needed to fix it.
+- Nit: the new test is a source-grep test. The loadSetMedia check uses a fixed 11-line slice, which is brittle if the function grows.
+- Nit: the preferFresher site (Diary.svelte:1108) and the callers at 847/926/932/1035 do not use afterDayLoad. This is correct, since the loader guards cover them.
+## progression-use-library-equipment ship
+- Nit: nextTarget still accepts the now-unused loadType param, and the new test still passes it.
+- Nit: a failed getExercise is not cached, so every card retries the lookup. The flat-step fallback still works.
+## superset-remove-no-undo ship
+- nit: wiring test only greps the call string, not the guards (date/log id/undone)
+- nit: new test file added instead of extending a shared one (the planned undo-remove.test.js doesn't exist), acceptable
+## rir-chip-light-theme-contrast ship
+- Nit: SetRow.svelte --lvl-text uses var(--success-text) etc. with no fallback, while --lvl keeps hex fallbacks. Tokens are defined in both themes, so harmless.
+- Nit: .rpe-opt.clear still uses raw color: var(--danger) (SetRow.svelte ~:974). Out of scope, but the same light-theme contrast problem remains there.
+## stats-cardio-fill-empty-weeks ship
+- Nit: cw-label now aria-hidden and hidden when not shown; the date stays only in the col title attribute (not touch/AT friendly). Acceptable, matches the intent of thinning.
+- Nit: fillWeeks does not fill weeks before the first data week, so a leading layoff is still excluded from avg/on-target. Known fillWeeks semantics, same as volume/frequency.
+- Nit: the ticket's expected '9 weeks, avg 13' is wrong; the test's 8 weeks / avg 15 is correct for 2026-01-05 to 2026-02-23 (8 Mondays).
+- Nit: .cw-bars.dense .cw-label.shown uses max-width:0 with overflow visible and display:flex; the layout at 52+ columns is unverified on a device.
+## trace-history-images-and-time ship
+- Nit: the new test file is a mix of unit tests and wiring greps. Acceptable.
+- Nit: the server 400 on non-string content also rejects an empty array, which is correct. Old clients posting arrays now get a 400 instead of a 413 or a stored blob. Both fail silently in the client's .catch.
+## stats-progress-load-stale-guard ship
+- nit: the harness regex-rewrites the function body, so it is somewhat brittle to future renames (acceptable)
+- nit: the plan listed an assertion in stats-range-change-refetch.test.js. The wiring test went into a new file instead, which is fine.
+## stats-today-stale-after-midnight ship
+- nit: new test is grep-only (wiring), does not exercise a real rollover; consistent with repo convention.
+- nit: no Capacitor resume listener, relies on WebView visibilitychange (acceptable).
+## stats-recent-limit-truncates-1y-all ship
+- src/routes/Statistics.svelte (loadWideData, reactive `$: range, $cardioEnabled, loadWideData()`): a Track Cardio toggle on 1Y/All does not refetch the wide set because the limit is unchanged and force is false. wideDates keeps the old cardio-inclusive or cardio-exclusive trained-day set, so priorDays in periodDeltas goes stale until sync or range change. Nit: drop the $cardioEnabled dependency, or pass force on cardio change.
+- src/routes/Statistics.svelte (loadWideData): a forced refetch on sync or Retry nulls wideLogs first. statsWorkouts then falls back to the truncated base set, so calories and deltas blink off, then back on, on every sync. Nit: keep the old wide data until the new fetch lands.
+- Side effect, acceptable: ranges 1W to 6M now hide calories and deltas for heavy loggers whose newest 365 sessions do not reach the window start. This is correct, but it is a visible behavior change.
+## validation-errors-masked-as-internal-500 ship
+- Nit: the new test never runs a route through the handler; it covers the throw status and the handler separately, which is enough.
+- Nit: the rethrow in image-localizer.js passes through assertAllowedMedia's message as-is. That is the intended user-facing reason.
+## import-commit-no-accounts-dedupe ship
+- nit: the new test is not verified to fail on the old code. My re-run against the parent's workout-import.js printed no pass/fail counts because my grep pattern missed the output format.
+- nit: Android Local-mode importer parity (db-native.js, api-native.js) was not checked by the implementer or by me.
+- nit: _getUserWeightUnit `IS ?` is a no-op in practice, since user_settings.user_id is NOT NULL. It is harmless.
+## reminder-names-next-day-no-accounts ship
+- Nit: the CHANGELOG line and the commit are fine, but the task plan named scripts/reminder-plan.test.js. The implementer added a new test file instead, which is acceptable.
+- Nit: soloStart() can write a backfilled start during a scheduler read. This was disclosed and is idempotent.
+## local-exercise-history-uncapped ship
+- Nit: scripts/local-exercise-history-uncapped.test.js is a source-grep wiring test, not a 60-row behavior test (api-native.js is not importable under node, per the implementer). It would pass on a regression that changes behavior but keeps the same strings.
+- Nit: delete_msg_many is still present in the other locale files, as instructed. i18n:check does not fail on it.
+## local-clear-data-parity ship
+- Nit: wiring test regex depends on the `async clearData() {...\n  },` formatting, so it is brittle.
+- Nit: local clearData still omits progress photos/media and the unscoped excused_days delete (noted as out of scope).
+## local-exercise-usage-same-day-sessions ship
+- nit: the behavior test extracts the branch via string slicing and new Function, so it is brittle if the marker text or the following 'sources' branch moves. The failure would be loud, so it is acceptable.
+## light-status-text-fallback-fills ship
+- nit: the SHARED exemption in the guard matches by basename only, so any file of the same name elsewhere in src/ is also skipped.
+- nit: the comment 'Non-text glyphs use -text too, for consistency' sits oddly next to the CookieWarning/PlainHttpSheetMount exemption, which leaves two icon glyphs at 2.3:1/2.5:1 on light theme. This is a justified tradeoff because those files are hash-pinned.
+- nit: .status-success in SettingsWebhooks still uses var(--success, var(--accent)) for its color-mix background. That is a fill, so it is correct.
+## escape-in-custom-equipment-closes-editor ship
+- Nit: the new test is grep-only. The planned behavioral focus-trap test (defaultPrevented bubbling Escape does not call onEscape) was not added. The existing scripts/focus-trap.test.js:40 is also a grep for defaultPrevented.
+- Nit: stopPropagation is redundant with preventDefault, since focus-trap checks defaultPrevented. It is harmless.
+- Unverified: Diary.svelte:2878 and BodyStatsWidget.svelte:118 Escape handlers lack preventDefault, and the implementer did not check whether they sit inside a Sheet or Dialog. This is not a defect in this commit, but worth a follow-up check.
+## trap-focus-remaining-modals ship
+- Nit: Settings twoStep Escape has no in-flight guard (matches existing back behavior).
+- Nit: wiring test is regex-on-source only; no behavioral check, nor browser check of TimePicker nested in Sheet.
+## changelog-unreleased-structure ship
+- nit: test 2 only flags a blank line between two bullets; fine for the stated goal.
+- nit: the Sunday-week sentence was dropped from the Trace entry, not merged into the 'Weekly charts' entry. That entry already says Statistics reloads on a setting change, so nothing is lost.
+## editor-name-and-hardcoded-strings ship
+- Nit: sync.js (lines ~693, 720) template writes via the offline sync path don't trim or reject blank names, so parity is only on REST PUT/POST and Local mode.
+- Nit: the new test is mostly source-grep and doesn't exercise the 400 or the trim behavior at runtime.
+- Nit: Local create/update throw plain Error('Name required'), while the server returns 400. This is fine, since the editor now blocks blank names first.
+- Nit: maxlength=120 was skipped. The commit message and implementer notes explain why.
+## editor-unsaved-guard ship
+- Nit: the wiring test only greps source, so the async confirm/leaving flow is untested (acceptable).
+- Nit: isEditorDirty drops undefined keys, so a field changed to undefined counts as clean. Harmless.
+- Nit: the node_modules symlink in my temp worktree is not part of the commit. No em dashes were added by the diff.
+## editor-move-breaks-superset ship
+- Nit: members can no longer leave a group via Move; relies on the existing Remove from superset action (documented in CHANGELOG).
+- Nit: the wiring test's `>= 6` count of canMove calls is loose, but the other tests cover behavior.
+## program-day-reorder-touch ship
+- nit: scripts/program-day-reorder-touch.test.js en.json test is weak (`|| JSON.stringify(en).includes(...)` makes it pass for any key anywhere); assert en.program_detail[k] strictly
+- nit: tests are mostly source greps; the focus-after-move logic (moveTplBy) is untested
+- nit: the pre-existing drag-handle title still says 'Drag to reorder' on touch; harmless
+## program-copy-day ship
+- Nit: scripts/program-copy-day.test.js:~40 wiring test greps source for the button; the unit tests are real though.
+- Nit: ProgramDetail.svelte copyTemplate `catch(e)` shadows the event param (harmless).
+- Nit: the copy's uuids are shared with the source (as duplicateProgram does). Safe because tombstones are keyed per template.
+## progress-photos-beyond-12-months ship
+- nit: new test only greps source (wiring), does not exercise startStr/setRange behavior
+- nit: 'All' reads from 2000-01-01 with no photo cap (server has none either); fine at current scale
+- nit: `months` prop changes after mount are ignored (range captured once); Progress.svelte never changes it
+## body-weight-log-updates-profile-weight ship
+- Nit: the new test's wiring check only greps for adoptLoggedWeight( after "method: 'PUT'". It would not catch a call placed outside the success path.
+- Nit: adoptLoggedWeight runs inside the save try block in BodyStats, BodyStatsWidget and WeightQuickLog. If it ever threw, the user would see a save-failed toast even though the PUT succeeded. This is very unlikely.
+- Known gap, not a blocker: weigh-ins via REST, MCP, Wear and Trace do not update currentWeightKg. The implementer already flagged this.
+## progress-timeline-quiet-reload-after-weight-save ship
+- Nit: I could not run the new test. The checkout I tried was denied by the sandbox, so I did not verify the 'pass' result from the implementer's notes.
+- Nit: the test regex `[^}]*` would break if onStatsChanged ever gains a nested block. Acceptable for a wiring test.
+## body-stats-sheet-i18n-and-unsaved-guard ship
+- nit: touched.size>0 prompts even when a typed value was reverted (acknowledged by implementer)
+- nit: the Settings → Workout arrow inside body_stats_none_enabled is a pre-existing literal, fine
+- nit: the new wiring test is source-grep only and does not exercise the async close behaviour
+## profile-avatar-remove-and-range-validation ship
+- Weight lb bounds are inconsistent with validation. src/routes/Profile.svelte weight input has min=44 for lb, and src/i18n/en.json profile.weight_range says '44 to 551 lb'. displayToKg(44,'lbs') rounds to 19.96 kg, which validateBody (src/lib/validation.js, WEIGHT_KG_RANGE [20,250]) rejects. 44 lb (or 44.0 to 44.1 lb) therefore fails with a message claiming 44 is allowed. Fix: use 45 as the lb min (45 lb = 20.41 kg) and say '45 to 551 lb', or compare after rounding to the display unit. 551 lb = 249.93 kg is fine. Add a test for the 44 lb boundary; the current test only checks 5, 500 and 600 lb.
+- Test gap (nit): the wiring test only greps Profile.svelte. No assertion covers the lb min/max and message alignment, which is how the 44 lb bug slipped through.
+## profile-avatar-remove-and-range-validation ship
+- nit: the new test regex for the weight input is a long alternation of two near-identical forms, so it is brittle. Not a blocker.
+## settings-search-fixes ship
+- Nit: src/routes/Settings.svelte:47 new import has no 2-space indent; the `{/if}` after the federation rail button is also unindented.
+- Nit: the rail users/email group now shows in single-user server mode (was admin+userMgmt only). This matches the inline stack and is documented, but it is a behavior change.
+- Nit: the wiring test only greps for `_noMatches` and `sectionAvailable`. Gate parity between rail and inline is not behaviorally tested.
+## settings-sync-failure-feedback ship
+- Nit: flushSettingSaves `if (!res.ok) return;` is a no-op, just dead code with a comment.
+- Nit: dynamic import of toast.js and svelte-i18n is unnecessary if no cycle, but harmless.
+- Nit: throttle timestamp is set before the toast imports resolve, fine. The 'offline' case is only tested as a throw, matching the notes.
+## settings-calorie-toggle-missing-profile-hint ship
+- Nit: src/lib/workout.js ~L608: missingCalorieProfileFields was inserted between the ageFromDob JSDoc and ageFromDob, so the 'Compute age in years' doc now sits above the wrong function. Move the new helper above that JSDoc.
+- Nit: src/components/settings/SettingsWorkout.svelte ~L25: the new 'Same sources as WorkoutSummary' block was inserted between the 'Set videos (issue #57)' comment and the clipUsage code it describes. Move it above that comment.
+- Nit: Diary.svelte:1911 reads sex/dob without the DB.getSetting fallback. This is pre-existing and not touched here. Settings matches WorkoutSummary and Statistics, which is what the task asked for.
+## log-set-schema-required-fields ship
+- Nit: the commit leaves the MCP log_set schema in server/lib/mcp/tools/log-set.js unchanged. The task said to mirror it only if a description exists there. I did not check whether that schema's weight requirement is consistent.

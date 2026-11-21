@@ -1,0 +1,187 @@
+## csv-export-library-types-and-local-date
+  - Nit: test is a new file scripts/csv-export-library-types-and-local-date.test.js instead of extending workouts-csv-all.test.js as planned; harmless.
+  - Nit: the wiring test only checks `\bname\s*:` in api.js, which is loose, but fine.
+  - Nit: the changelog says 'alternating' while the actual load_type is 'unilateral'. User-facing wording, acceptable.
+  notes: Local mode: api-native handles GET /api/exercises through Exercises.list, so getExercises works there. The server list hides soft-deleted exercises and disabled catalogs, so workouts referencing those still fall back to bilateral (pre-existing, not fixed). The library load_type that triggers L+R expansion is 'unilateral', not 'alternating'. The single-workout filename uses the workout's own date, so it has no UTC issue. No other export filenames used toISOString.
+## native-import-same-day-sessions
+  - Nit: no transaction around the commit loop (server uses db.transaction), so a mid-import failure leaves a partial import. Acceptable; the old code had the same gap.
+  - Nit: server replace also updates field_times, Local mode has no equivalent. sync_state='pending' covers sync.
+  - Nit: wiring test slices on the "if (id === 'preview')" literal, which is brittle to reformatting.
+  notes: The commit was not wrapped in a transaction; I did not check whether db-native has a transaction helper. The wiring test checks that the importer block (the `preview` handler through the "Unknown workout-import endpoint" throw) has no `date IN (` and no `SET deleted_at`. The test file already imported planImport, so I added no duplicate import.
+## exercise-delete-media-prefix-traversal
+  - nit: scripts/exercise-delete-uploads.test.js tests are gated by `maybe` and all 7 SKIPPED in my worktree (no better-sqlite3 binding), so the new cases were not run here. I checked resolveUploadSubdirPath directly instead.
+  - nit: no direct unit test for resolveUploadSubdirPath. It is only covered through the DB-backed route tests.
+  notes: New cases: '/uploads/exercises/../keep2.jpg', '/uploads/exercises/../body-stats/x.jpg' and '/uploads/exercises/' (empty name) are all left in place. A legitimate '/uploads/exercises/legit.jpg' is still deleted. Did not add a backslash case, since the resolved-path check covers it. No CHANGELOG line (not user-visible). No Android change needed (cleanup is server-only).
+## i18n-remaining-hardcoded-english
+  - Nit: scripts/i18n-remaining-hardcoded-english.test.js only checks that the old literals are gone and that keys resolve. It does not check rendered output.
+  - Nit: Exercises toasts and the ProgramDetail placeholders are still hardcoded. The implementer listed these as deliberately skipped.
+  - Nit: Trace.svelte was not grepped for literals, as the implementer noted.
+  - Nit: Exercises ActionSheet label alignment whitespace is inconsistent.
+  notes: The work is a single commit, not one commit per file as the proposal suggested, because the task requires exactly one commit. I inserted the en.json keys as text, because a JSON round trip reformats the file (aligned keys). Other locales are untouched. Added a CHANGELOG line under Unreleased > Fixed. In Exercises I also translated a few strings beyond the evidence list: the favorite and custom-chip titles, the ActionSheet labels, the Dialog title, the preview Loading text, and the All chip. Not 
+## local-bodystats-parity
+  - Nit: tests are wiring greps plus a pure mergeStatsObject test, with no behavioural sqlite test of the revive path.
+  - Nit: a revive skips the server's 410 and newer-wins handling. The code comment already notes this gap.
+  notes: Known gaps noted in a code comment: no field_times, newer-wins or 410 on a revived day. The new tests are wiring greps plus a pure mergeStatsObject test, with no in-memory sqlite behavioural test. Static-import guard: workout-merge is imported dynamically inside put().
+## local-progress-volume-load-type
+  - Nit: CHANGELOG line is inserted after a blank line, splitting the Fixed list (the latest commit consolidated it into one list).
+  - Nit: the wiring test's negative regex only matches one exact spelling of the raw product.
+  notes: The CHANGELOG line describes parity, not a visible bug, since totalVolume is not rendered anywhere. I did not check that _allWorkouts rows expose `id` or that the Statistics chart consumers tolerate the extra field. The wiring test asserts that progressFor contains setVolume(, resolveLoadType( and workout_id: w.id, and not the raw weight*reps product. The numeric parity test checks src/lib/workout.js against server/lib/volume.js for bilateral, paired and unilateral sets, including reps_l/reps_r 
+## local-write-date-and-cardio-validation
+  - Nit: stored garbage cardio date is only sliced to 10 chars in Cardio.update (documented, matches server leniency).
+  - Nit: wiring test guard-order check is loose (search result `>>> 0 || Infinity` quirk), but passes and asserts the guard exists.
+  notes: Cardio.update only throws on a bad date when body.date is sent; a stored garbage date is just sliced to 10 chars, so old rows can still be edited. Did not touch aiTools. Router and sync-queue behavior (item 4) not separately verified. If local-bodystats-parity edits BodyStats.put, expect a one-line conflict.
+## local-cardio-templates-dedupe
+  - Nit: the wiring test regex is brittle (exact SQL string plus `rows` variable name)
+  - Nit: the test never calls Cardio.templates itself, so behaviour is only covered through the pure helper and a source grep
+  notes: The server can't import from src/ (it uses its own server/lib), so I did not share the helper. server/routes/cardio.js is untouched and the native helper carries a comment pointing at it. The new test covers Run/Run/Bike, a case-sensitivity check, and a wiring check that the dedupe runs right after the ordered query.
+## api-set-input-validation
+  - nit: scripts/api-set-input-validation.test.js greps source instead of running logSetCore against a temp DB, so a mistake in the integration (such as the planned-weight snapshot) is not exercised. Validators themselves are well unit tested.
+  - nit: PUT workout route and db-native logSet remain unvalidated (acknowledged parity gap, out of scope).
+  - nit: Zod literals are duplicated rather than derived from SET_LIMITS; the test pins them, which is acceptable.
+  notes: The zod lines in log-set.js are unchanged and still literal, because a wiring test (probably mcp-core-extraction) greps `reps: z.number().int().min(0).max(1000).optional()`. The new test asserts those literals match SET_LIMITS, so the two cannot drift silently. The new test is a pure unit test of the validators plus source-wiring checks, not a direct logSetCore run against a temp DB. logSetCore imports server/db.js, which opens a real database, so I split the validators out instead. Parity gap, 
+## api-body-stat-input-validation
+  - nit: Number() coercion also accepts '0x10' and '1e2' as numeric strings; harmless.
+  - nit: the revive guard `if (revive && !Object.keys(merged).length) return null` and the `{ok:true, stats:{}}` branch are now effectively dead code; left in place.
+  notes: Added the new test to body-stats-revive.test.js rather than a new file, since it already has the REST harness. The existing test 'nothing to measure leave a deleted day deleted' sent `{foo:1}` and expected 200. `{weight:null}` now throws 'At least one stat value is required', and `{}` already did, so no input keeps a 200 any more. I renamed that test and changed it to expect 400, with the deleted day still deleted. The revive guard for a merge that comes out empty is now unreachable from REST an
+## mcp-api-calendar-date-validation
+  - Nit: scripts/mcp-util.test.js puts imports mid-file after the first tests (works in ESM, style only).
+  - Nit: api-native.js parity not checked (implementer said so); the server fix is server-only and the app routes were covered earlier.
+  notes: I did not add a start > end check to list-progress-photos, so there is no behavior change there. I did not touch delete-workout, get-workouts or get-records. The public API already maps a thrown Error to a 400. I did not check api-native.js for parity.
+## webhook-workout-completed-wrong-session
+  - Nit: docs/webhooks.md new sentence has a long unwrapped line (cosmetic).
+  - Nit: the existing comment in the sibling area still mentions 'issue #79' fine; no em dashes found in the diff.
+  notes: `workout` there is the enriched row with exercises already parsed, so I did a second raw SELECT. getWorkoutCore import in workout.js was swapped for formatWorkoutRow. get-workout.js is untouched. The log-set.js path has no workout.completed dispatch, so it has no equivalent bug. I put the test in a new file because adding workout.completed to write-webhooks' hook could disturb its other assertions.
+## api-recent-workouts-multi-session-order
+  - nit: the test inserts both rows in seq order, so it cannot tell `id DESC` from a seq-only tie-break. The `session_seq DESC` ordering is still exercised, because the lower seq row has the lower id and a date-only order would be ambiguous.
+  - nit: the legacy /api/workout/recent and api-native were left alone, as stated. Neither is part of this contract.
+  notes: The legacy /api/workout/recent and api-native were not touched. No wiring test greps the old ORDER BY string. The "unique per attempt" claim appeared only at docs/webhooks.md:169 (no matches in webhooks.js). The workout id is not added to the summary. I did not run vite build or i18n:check because I changed nothing in src/ or en.json.
+## stats-fill-empty-weeks
+  - Nit: the wiring test greps Statistics.svelte source text, so a rename breaks it. fillWeeks itself has real behavioral tests.
+  - Nit: fill starts at the first data week, so a layoff before the first workout in a range is not shown. This is a documented design choice that protects 'All' and new users from dilution.
+  notes: Design choices:
+- Fill starts at the first data week. This resolves the conflict between "use weekStartOf(startDate)" and "don't add weeks before the first data week". Layoffs before the first workout in a range are not shown, which keeps 'All' (start '2000-01-01') and new users from being diluted.
+- Fill ends at the last data week, or the week before the end week when the current week has no data. A Monday with nothing logged does not lower the average.
+- Never fills past the end week, and caps
+## records-tiebreak-reps-at-max-weight
+  - Nit: the native half of the test only greps the source for the condition and the ORDER BY clause, so it does not run the native logic.
+  - Nit: the new test file name differs from the plan's scripts/records-tiebreak.test.js. This is harmless.
+  notes: I left newRecord's shape unchanged. maxReps is always set before a tie can occur, because the weight > 0 guard returns early and the strict-greater branch sets maxReps first. I did not touch weekly-summary's strict weight comparison. The native test greps for the `wt === records[id].maxWeight && reps > records[id].maxReps` condition and the ORDER BY clause. The server side is covered by behavioral tests.
+## exercise-detail-history-clarity
+  - Nit: wiring test case 'wiring: warm-up marker, show all' still greps sources for warmup_short, show_all and exerciseWeightPr. It is shallow, but the behavior is covered by the unit tests, so it is not a blocker.
+  - Nit: a set with reps_l and reps_r is shown as 'w×L+R', but the PR uses setReps, which is the weaker side. This is consistent with existing semantics. Ties between equal weight and equal reps keep the first set found.
+  notes: The Exercises, Picker and Sheet PRs now also show the "weight × reps" label and the e1RM line, as ExerciseDetail does. All three previously showed weight only. Timed, distance and calorie exercises still get a weight PR only from their rep-kind sets, as the Sheet already did. One commit on top of 217c2a3, with no node_modules symlinks staged.
+## stats-range-change-refetch
+  - nit: the new test only greps source (wiring), so it does not exercise runtime behaviour such as scroll retention or the seq guards
+  - nit: the 1Y prior-window delta can still exceed limit=365. This was skipped deliberately and was already true before the change.
+  notes: CHANGELOG line added under Unreleased/Fixed. No en.json changes. Frequency and weekday now also re-fetch on a Track Cardio toggle, which is a small improvement over the previous behavior.
+## stats-bar-charts-dense-weeks
+  - Nit: Not verified in a browser. The dense-label CSS (.dense .bar-label.shown with max-width:0, display:flex, justify-content:center) relies on flex overflow centering. The first and last labels may overflow the card edge by about half a label width.
+  - Nit: the two charts duplicate markup and CSS, as the implementer noted. This was acceptable for scope.
+  - Nit: the i18n tests grep component sources and en.json. The labelStride and showBarLabel tests exercise real behavior, so they are fine.
+  notes: - **Labels:** `labelStride(count)` is 1 up to 12 bars, else ceil(count/8). A new `showBarLabel(i, count)` helper always labels the last bar and drops a stride label within N/2 of it. Unlabelled spans use visibility:hidden so columns keep their width. On dense charts the labelled span has overflow visible, so it can run wider than its column.
+- **Dense mode (more than 12 bars):** gap is 1px and the bar border-radius is 1px.
+- **Tap-to-read:** columns are `<button type="button">` with aria-pressed
+## coach-assign-keeps-start-and-active
+  - Nit: the assign dialog's Make active checkbox (src/routes/Coaching.svelte:523, :997) can no longer deactivate an already-active program, so it is now a no-op on an active row. The CHANGELOG line states this.
+  - Nit: the test file is named coach-assign-keeps-start-and-active.test.js, not coach-assign-upsert.test.js as the plan said. Harmless.
+  notes: The new test covers all five cases from the round table, reading rows straight from the SQLite file. The cases are:
+- Re-assign with make_active only keeps the start date.
+- An explicit new start date overrides it.
+- make_active:false on an active row keeps it active.
+- make_active:false on a new row inserts it inactive.
+- make_active:true on an inactive row activates it and deactivates the others.
+
+Behavior changes, both noted in the CHANGELOG line:
+- A coach can no longer clear a start_date th
+## prescription-date-validation
+  notes: The only INSERT INTO coach_prescriptions in server/ is the trainer.js route; there is no MCP prescription creator. Local mode (api-native.js, db-native.js) has no coach create or edit path (PUT is a stub), so no parity change was needed. No existing test sent odd date strings. The new test file has its own harness copy (the task allowed a new file) rather than extending the existing one.
+## native-program-session-count-and-i18n
+  - nit: api-native.js header comment around line 126-128 has one overlong reflowed line
+  - nit: wiring test is grep-only, does not execute _resolveCurrentWeek
+  notes: The only callers of _resolveCurrentWeek are the two Object.assign sites in Programs.list and Programs.get, so no truthiness checks needed changing. The Programs.svelte card already tests p.duration_weeks > 1 && p.current_week, so one-week programs still show the weeks_active label. Other locales are untouched. The commit stages only the 5 intended files, and the node_modules symlinks were not added.
+## native-activate-no-restart-when-active
+  - Nit: src/lib/api-native.js:741 read and write are not in one transaction; harmless for a single-user client.
+  - Nit: the no-op path clears the pinned week even for account-mode assignments, where the server does not clear it. This follows solo mode as the task intended.
+  - Nit: the new test was not confirmed to fail without the fix. By inspection it would, since the old code overwrote assigned_at and the pin stayed.
+  notes: Server parity: solo mode (activateSolo) keeps the start on same-id activate but still deletes the cursor, which native now matches. Account mode never restarts and does not clear the cursor. Native follows solo, the Local-mode analogue, per the maintainer's refinement. program_assignments has no sync_state column, so there is nothing to mark pending. The no-op path does not touch updated_at. I did not put the read and the write in one transaction (the read comes just before the write). The exist
+## restore-preflight-validate
+  - nit: the snapshot-before-wipe part of the plan was skipped (deliberate, noted by implementer).
+  - nit: the header-size sum can be spoofed by a crafted zip. The in-loop 5GB backstop stays, so this is acceptable.
+  - nit: the tests do not exercise the routes' err.status mapping or openBackupZip's non-zip 400.
+  notes: Snapshot via createBackup() was skipped on purpose, to keep the diff small and avoid pruning the file being restored. The existing error messages are kept, but they now carry status 400. src/ untouched, so no vite build or i18n check.
+## invite-email-failure-keeps-link
+  - Nit: server email_error is hardcoded English but the client ignores its text and uses the i18n key, so harmless.
+  - Nit: the test is a grep wiring test only, with no behavioral check.
+  notes: There is no `logger` instance in auth.js (only `wrap` is imported), so I used console.warn, matching forgot-password. The invite-link UI already shows the link panel when sent is false, so no template change was needed. Only the English string was added.
+## scheduled-backup-failure-backoff
+  - Nit: user changing the schedule (setScheduleConfig) does not clear backup_last_auto_error_at, so up to 6h of silent backoff after fixing the cause.
+  - Nit: the sentinel throw 'streak' to skip the push is hacky; an if-block would be clearer.
+  - Nit: the test extracts the helper via regex and new Function, so it is brittle to reformatting.
+  notes: The helper backupRetryAllowed lives in full-backup.js and is pure. Missing or unparseable errorAt allows a retry. The shared backup-schedule.js is untouched. The change is server-only; Android Local mode has its own backup path and was not changed. The "push once per streak" check throws a sentinel inside the existing try/catch to skip the push. That is slightly hacky but harmless.
+## local-backup-cardio-and-atomic-restore
+  - Nit: scripts/local-backup-cardio-and-atomic-restore.test.js is grep-only. It never runs importBackup against a stub, so it does not check that a bad table leaves the DB untouched.
+  - Nit: src/lib/local-backup.js:47 still says a restore 'replaces everything'. Tables absent from the file are now left alone, so the comment is stale.
+  - Nit: importBackup has no caller in src, so the restore path is unreachable from the UI. This was already true before the commit.
+  notes: No importBackup caller exists in src, so restore is not reachable from the UI; I did not add UI. I did not check the plugin's transaction flag default for executeSet; no FK pragma found in db-native.js. Out of scope and untouched: sync_state/row_origin/id_remap handling for restored rows, cardio_log AUTOINCREMENT and negative local ids, coach_messages and workout_tombstones.
+## cookie-lifetime-matches-session
+  - nit: the new test only counts regex matches in source (wiring), and does not check oidc.js
+  - nit: COOKIE_OPTS still has a 30d maxAge default that could be reused by mistake later
+  notes: scripts/cookie-check.test.js had a regex expecting res.cookie('lt_token' right after warnIfPlainHttp in finishSignIn. I updated it to expect setSessionCookie(res, token). The new test checks there is one raw res.cookie('lt_token' in auth.js (inside the helper, which passes maxAge: sessionMaxAge()) and exactly five helper call sites. I did not check oidc.js in the test, only auth.js. I left COOKIE_OPTS' 30d maxAge default in place.
+## validate-role-on-register-and-invite
+  - Nit: invite with explicit role:null falls through the destructuring default and now returns 400, while register treats null as default member. Inconsistent, harmless.
+  - Nit: accept-invite fallback for already-stored invalid invite roles was skipped (server/routes/auth.js:638). Pre-existing invites with bad roles still create odd accounts, but the window is small.
+  - Nit: no test for first-user register, noted by implementer; the guard is correctly skipped via !isFirst.
+  notes: I did not check the MCP or REST wrappers for other user-creation paths. The test has no first-user register case: it boots a fresh server per file and the shared setup registers the first user without a role, so the first-user path is only covered by that setup.
+## pwa-update-banner-skipwaiting
+  - nit: src/main.js preload handler: the sessionStorage stamp is never cleared, so a second stale-chunk failure within 10 s of the reload is ignored. That is the intended loop guard.
+  - nit: the new tests are source-grep wiring tests, which is consistent with the repo's other tests. They don't exercise the handler's behavior.
+  notes: I did not change src/lib/pwa-update.js; its header is still accurate. Mid-workout reload safety: I found no localStorage or draft persistence of an active workout, so I did not confirm the server saves sets as they are logged. An in-progress unsaved form could be lost on that single reload, which only happens after a chunk 404 (the app would already be broken). I did not add a banner or toast fallback.
+## player-pause-during-crossfade
+  - Nit: the new test only greps the source, so it does not exercise the behavior.
+  - Nit: the mid-fade `vol` closure is stale if the volume setting changes during a fade. This was already the case and the implementer left it alone.
+  notes: I did not run a loop check for double-starting the crossfade; I reasoned it from the code. _stopProgress stops the progress interval on pause, so the near-end trigger can only fire again after resume. Resuming near the end starts one new crossfade, which is harmless. The stop() ordering is unchanged. The mid-fade `vol` closure captured at start is still not updated when the volume setting changes; I left that alone as out of scope. The helper sits next to _startCrossfade rather than at the top o
+## player-now-playing-poll-stale-and-background
+  - nit: scripts/player-now-playing-poll-stale-and-background.test.js only greps source; no behavioral test with injected fetch/timer.
+  - nit: the original task also asked for polling to stop when document.hidden. The implementer deliberately skipped this to keep lockscreen metadata for background radio, which is defensible and noted in the commit.
+  - nit: after resume from pause, the title can be stale for up to 8s until the next tick. No immediate poll on 'play'.
+  notes: One commit on top of 217c2a3. Only the three files above were staged; the node_modules symlinks were not. No existing wiring test greps the poll strings.
+## native-background-sync-idempotent
+  - Nit: the wiring test only greps source order, so it does not exercise the behavior (two calls registering one listener set).
+  - Nit: if the server URL is cleared on logout and later set again, listeners stay wired. That is fine, since runSync reads getServerUrl lazily.
+  notes: runSync checks getServerUrl at call time (sync.js:310), so a changed server URL still works. No CHANGELOG entry: the change has no user-visible effect. I did not check the offline-api.js:841 reference or the App.svelte 30s pull timer.
+## heatmap-shade-by-effort
+  - nit: src/routes/Statistics.svelte:2-3 new import is unindented and placed before the onMount import (looks mangled by a sed edit); tidy it.
+  - nit: scripts/heatmap-shade-by-effort.test.js multi-session test has a vacuous assertion (`level3 > level2 - 1`); make it a real comparison.
+  - nit: the Statistics wiring test regex `/hm-l\$\{|hm-l/` matches almost anything.
+  - nit: hmDetail shows ' ✓' for days with neither minutes nor sets (cardio-only), which is fine.
+  notes: - **Metric choice:** minutes and sets are never pooled. The window uses minutes when more than half the trained days have a duration, otherwise working sets (completed, not warm-up). Days missing the chosen metric get level 1. This is documented in the helper header.
+- **Levels:** mid-rank percentile among the user's own days, so ties share a level. A lone day, or all days equal, lands on level 3.
+- **Outliers:** each workout's minutes are capped at 300.
+- **Precedence:** `hm-active` is still bo
+## wake-lock-scoped-to-workout
+  - Nit: the hold-timer interplay is a known limit. If the hold timer releases the lock after the setting declined to take it, the screen can sleep mid-workout until the next workout-state change.
+  - Nit: the tests are mostly source-grep wiring plus a pure-policy truth table. The reactive flip and the took/release flag logic are not exercised at runtime.
+  - Nit: the wake-toggle button title is still hardcoded English ('Screen lock on'/'Screen lock off'). It predates this commit.
+  notes: The wake lock itself could not be verified without a browser.
+- Defaults: createSettingStore only reads the default and never writes it, so the new default is not synced as a stored choice. SettingsBackup.svelte:325 already resets to true.
+- Inputs: hasLoggedSet is stats.completed > 0, finished is $todayLog?.completed, and isActiveDay is isToday.
+- Known limit: if the hold timer holds the lock when the first set is logged, the setting does not take it. The hold timer's release then drops the loc
+## openapi-spec-public-api
+  - Nit: coverage test regex only matches router.<m>('path' with single quotes; a route written with double quotes or a template literal would silently escape the check (the >=19 count guard partly mitigates).
+  - Nit: spec lives in server/openapi.yaml rather than docs/ as the plan suggested; justified by the Dockerfile COPY server/ and documented.
+  notes: The spec lives in server/ because the Dockerfile does `COPY server/ .` and never copies docs/. The route uses `router.use('/openapi.yaml', ...)` limited to GET and HEAD, not `router.get`, so the existing wiring test (which requires every router.get to use requireScope('mcp:read')) keeps passing. The coverage test compares method+path pairs and sees only the `router.get/post/put/delete` calls, so the static route is exempt automatically. No yaml dependency was added; the test uses a small line pa
+## rir-scale-alongside-rpe
+  - src/components/diary/SetRow.svelte:564: the chip class became a dynamic expression (`class="rpe-chip tap {chipLevel ? 'lvl-' + chipLevel : ''}"`), so the literal `class="rpe-chip tap"` is gone. scripts/diary-touch-targets.test.js:36 ('the Diary's small controls carry it') now fails with 0 !== 1 (SetRow.svelte: class="rpe-chip tap"). It passes on parent 217c2a3 and fails on c7c0ee8, so this is a re
+  - Both previous-review items are fixed and verified: src/lib/planned-workout.js and server/lib/planned-workout.js are byte-identical, and scripts/planned-workout.test.js and scripts/rir-scale-alongside-rpe.test.js pass (20/20). The wiring test now asserts both copies.
+  notes: The commit is the only one on top of 217c2a3, and the node_modules symlinks are not staged. The wiring test loops over both files with a regex grep. It does not call logIntoSets.
+## week-start-sunday-setting
+  - Nit: src/routes/Statistics.svelte ~line 423, comment '// Heatmap (90 days, Mon-first week)' is stale/misleading; the heatmap is a rolling 91-day grid not aligned to a week start, so the changelog/plan claim 'there is no heatmap' is inaccurate (it exists but needs no change). Plan note says the heatmap 'does not exist yet'.
+  - Nit: default (Monday) users now see the weekday-distribution bars Mon..Sun instead of the old fixed Sun..Sat order; intended, but unmentioned in the CHANGELOG.
+  - Nit: server/routes/stats.js and cardio.js keep a `_weekStart` alias/import and a dangling comment block in cardio.js; cosmetic.
+  - Nit: Dockerfile copies week-start.js and a wiring test pins it; PUT /api/settings validation is only regex-tested, not exercised.
+  notes: Plan item 1 stays unchecked. I added a status note listing what is left.
+
+- **weekly-summary.js and the Diary week strip:** both are rolling seven-day windows ending today, not week-start buckets, so I left them unchanged. Whether "this week" should become a calendar week is a separate decision.
+- **Calendar grids:** the DatePicker and Diary grids still use getDay() for the first column. I left them out as display-only.
+- **Heatmap:** there is no activity heatmap in the code to change.
+- **MCP t

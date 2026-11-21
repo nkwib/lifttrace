@@ -1,0 +1,163 @@
+## fillweeks-honor-week-start
+  - Nit: the new wiring test pins the literal `520, $weekStartsOn` call text, so it is brittle against reformatting.
+  - Nit: the debounced PUT race is not covered. If the server saves the setting after the refetch, rows can still use the old setting. The commit message does not claim to fix this, so it is not a blocker.
+  notes: startsOn goes after cap because existing tests pass cap positionally, so Statistics passes 520 explicitly. The _rangeSeq guard already discards stale fetches, so the extra dependency is safe. Cardio weekly does not use fillWeeks, so nothing to change there. The commit message does not claim the debounced PUT race. I did not add extra normalization in fillWeeks, since weekStartOf already normalizes startsOn.
+## trace-weekly-avg-count-empty-weeks
+  - Nit: scripts/trace-weekly-avg-count-empty-weeks.test.js covers aiTools only by grep of source (regex pins exact call text), so a refactor of the call breaks it and the real summary builder is untested. Acceptable for a small fix.
+  - Nit: the cap of 104 is applied via slice after fillWeeks with cap 520. The average still uses up to 520 weeks while the series show 104, so weekly_avg may cover more weeks than the series shown on an 'all' range. This is a minor inconsistency and is documented in the commit.
+  notes: fillWeeks only fills from the first data week to the last (or to the week before an empty current week), so a leading layoff does not dilute weekly_avg. That matches Statistics. No existing test pinned weekly_avg. The ToolSearch and MCP docs did not claim the series are sparse. I did not add a test that runs the summary builder with stubbed _get and DB, so aiTools itself is only covered by grep-style wiring checks.
+## toast-above-workout-mode-bar
+  - nit: 54px is a hardcoded constant (36px buttons + 8px padding + 2px border = 46px pill + 8px gap); it will drift if the pill styling changes. This is acceptable.
+  - nit: the test greps source rather than checking behavior. This matches the repo's wiring-test convention.
+  notes: Toast.svelte keeps its CRLF line endings. WorkoutModeBar is mounted globally in App.svelte, so --wm-h is set on every route. The 54px is a constant (46px pill + 8px gap), not a measured height. HoldTimer is at src/components/diary/HoldTimer.svelte. I did not render the UI to check the toast visually.
+## program-share-i18n-errors
+  - Nit: the 'every thrown code has an en.json key' test regex only matches single-quoted literals with no apostrophes, so a future message containing an apostrophe is silently skipped (the n >= 8 floor limits this).
+  - Nit: the Programs.svelte code-to-key map is rebuilt on every call. It could be hoisted to module scope, but this has no functional impact.
+  notes: `npm run i18n:check` rejected a dynamic key like 'programs.share_err.' + code, so Programs.svelte uses a static code-to-key map. The two lines at 166 and 169 share the code not_program. 'Import failed part way' and withNote errors are left uncoded. The test checks that each thrown code's message equals its en.json text.
+## week-start-no-accounts-server
+  - src/lib/aiTools.js ~line 1185 (nit): the new _weekStartVal helper was inserted between the existing 'Track Cardio ... read from this device's settings' comment and _cardioOn, so that comment now sits above the wrong function. Move the helper above the comment.
+  - scripts/week-start.test.js (nit): the new server test calls userWeekStart directly and does not exercise the routes. It is covered by the route-source wiring grep, so acceptable.
+  notes: The server-side logic is `userWeekStart(userId, queryValue)` in server/lib/week-start-pref.js. It checks `typeof === 'string'` and WEEK_STARTS, so array or invalid values fall back to Monday. Streaks and weekday-distribution do not use the week start, so they are untouched. I did not add a server route cache key because I found no route cache. api-native stays unchanged. The new server-side test covers `userWeekStart` directly (userId null with `week_start=sunday`, invalid or array values, and a
+## delete-legacy-bad-date-workout
+  - Nit: new DELETE test only asserts `!row || row.deleted_at`, which is loose, though r.data.deleted===true already pins the behavior.
+  - Nit: Local wiring test is source-grep only (consistent with the rest of that file).
+  notes: I did not check GET /:date or the sessions routes for a calendar guard; I only confirmed _resolve and _resolveWorkout are unaffected by this change. Server delete is a soft delete, so the new test checks the row is tombstoned (deleted_at set) rather than gone. Edited scripts/validate-write-dates.test.js (the named workout-date-validation test file does not exist). In the Local wiring test I dropped Workout.del from the isCalendarDate list and added its own isDateShape assertion.
+## openapi-setinput-limits
+  - Nit: spec says duration_*_sec type integer, but core rounds non-integers (Math.round) rather than rejecting; fine as documented.
+  - Nit: SET_LIMITS test regex depends on exact one-line formatting of SetInput properties; brittle but passes.
+  notes: The spec is OpenAPI 3.0.3, so distance_m uses `minimum: 0` with `exclusiveMinimum: true`. The 400 text change is on the sets POST only. The per-side durations (both sides together, duration_sec equal to the shorter side) are described on the duration properties. The string-coercion note is one sentence and types stay plain. The new test is a separate file rather than an extension of openapi-coverage.test.js. I did not check whether the MCP/REST docs mention these limits. No CHANGELOG entry, sinc
+## trace-log-values-validation
+  - Nit: I did not run the tests. A checkout of the commit was blocked, so this verdict rests on reading the diff and the server code.
+  - Nit: log_set's tool schema in src/lib/aiTools.js:506 still lists only workout_id and weight as required, although reps are now required for rep sets. The schema description does say to omit reps for a timed set, so the model gets a clear error and can retry.
+  notes: - Added src/lib/set-values.js, a copy of server/lib/set-input.js with the same SET_LIMITS and messages. It also has normalizeSetValues, which requires reps unless the set carries an amount (time, distance or calories).
+- There is no unit-suffix stripping (per the skeptic and product reviewers). '225 lbs' is rejected with the standard weight error.
+- _logWorkout validates every set after the Unknown-exercise check and before any PUT. Errors name the exercise and 1-based set index, e.g. "Bench Pre
+## native-import-single-transaction
+  - nit: test is a source-grep wiring test only; the seq allocator is not behavior-tested (the plan's optional pure test was skipped).
+  - nit: the bridge payload size for very large imports is unchecked; the single transaction cannot be chunked without losing atomicity.
+  notes: The named test file did not exist, so I extended scripts/workout-import-multi-session.test.js. No pure allocator extraction. Did not check the bridge payload limit for very large batches, and it is untested on a device. Chunking was not added because it would break atomicity.
+## backup-schedule-change-clears-error-backoff
+  - Nit: scripts/scheduled-backup-failure-backoff.test.js new test is wiring only, no behavioral check; the ENV_LOCKED ordering assertion is weak (indexOf matches the early throw at the top, so it only proves the push comes later).
+  - Nit: a retention-only save clears the backoff without resetting backup_schedule_set_at, so an overdue schedule may retry immediately. This matches the stated intent.
+  notes: Wiring test only, scoped to the setScheduleConfig body: it pins the push after validation, before the transaction, after the ENV_LOCKED check, and that the error text is not cleared. No behavioural test, because no temp DB harness exists. Test results were not read from the output in this session (the final run's output was not shown).
+## upload-subdir-path-unit-test
+  notes: The module already has no native deps, so the test uses a plain top-level await import after setting UPLOADS_PATH to a mkdtemp dir. Expected paths use path.join. No backslash assertion, since it is a literal filename character on Linux. The percent-encoded '..%2f' case asserts the actual behaviour (not decoded, stays inside the subdir). No CHANGELOG entry (test only).
+## trace-log-body-stat-wrong-keys
+  - Nit: legacy {value,unit} rows are always labelled with the current weightUnit, not the row's own unit, so a legacy lb row read by a kg user is mislabelled.
+  - Nit: log_body_stat now sends only the one key. Merge happens per key on both the server and Local mode (api-native.js:1126 uses mergeStatsObject), so this is correct.
+  notes: I read the unit from DB.getSetting('weightUnit') inside try/catch, not from the settings store. Importing stores/settings.js breaks the node tests, because it needs localStorage at import time. ai-date-guard.test.js was not modified, since its existing calls stay valid. Legacy object rows stay unreadable in the Diary, as the proposal accepted. Writing a plain number over a legacy object for the same key repairs that key. I did not touch the MCP tool docs, which already say bodyFat.
+## trace-proxy-provider-errors-visible
+  - Nit: 502 may be replaced by nginx/Cloudflare error pages on some deployments. The 422 used for trace_stopped_ avoids that, and the implementer already flagged it as a one-line change in providerError.
+  - Nit: 429 is passed through with the provider message. It is not checked against the client's non-ok handling beyond the existing 401 special case.
+  - Not verified: I could not run the tests (checkout of the commit was denied). The verdict rests on reading the diff and the unchanged error-handler.js.
+  notes: I used 502 as the proposal and two of the three reviewers asked. The skeptic preferred a non-5xx status like the trace_stopped_ precedent (422), because nginx or Cloudflare may replace 5xx bodies. If that matters on a deployment, switching to 424 or 422 is a one-line change in providerError. No test can catch that proxy behaviour. The client only special-cases 401, so 502 and 429 both show the server message via `data.error`. Local mode (api-native) is unaffected. trace-scan.test.js's own error 
+## trace-stop-button-and-stale-reply
+  - nit: .lb-stop-btn class has no CSS rule (harmless, Stop reuses the send button styling).
+  - nit: a tool already running cannot be stopped; documented in code and the commit message.
+  - nit: after Stop the history ends on a user turn, so the next request sends two user messages in a row. The code comment states this, and it matches the behaviour for any failed request.
+  notes: The deadline is 300000 ms, not 180000, per the skeptic and product refinements. aiChat.js gets an exported `_timed(signal, fn, ms)` helper. It joins the caller's signal to a manual timer, so old WebViews without AbortSignal.any still get a deadline. Any error with `signal.aborted` becomes an AbortError (a quiet cancel), and an error caused by the timer becomes trace_timed_out. Every round loop checks the signal before each tool starts, in `_runTool`. A tool already running cannot be stopped. The
+## trace-error-bubbles-polluting-context
+  - nit: if the user types a new message instead of tapping Retry, the failed unanswered user turn is still in apiMessages (consecutive user turns sent to the model). The spec only removes it on retry, so this is acceptable.
+  - nit: retry skips the history POST. If the original fire-and-forget POST had failed (offline), the user turn is never stored server-side. Rare.
+  - nit: the new tests are source-grep wiring only, as the implementer disclosed. They do not exercise retry or note filtering behaviourally.
+  notes: - **Retry and the duplicate user turn:** I picked "skip the POST on retry". send() builds the user message and calls the new `respondTo(userMsg, persist)`. `retry(note)` calls `respondTo(note.retryMsg, false)` with the original message object, so image arrays are kept. The retried message is not saved a second time, so the server history has no duplicate. The failed turn and its note are removed from local state by object identity.
+- **Retry button:** it shows only on the latest error note and i
+## backup-failed-push-wrong-args
+  - nit: server/routes/full-backup.js: the adminRow DB query now runs outside any try/catch. The old catch {} hid DB errors there. A throw would replace the original backup error that `throw e` is meant to propagate. A failing SELECT on users is very unlikely.
+  - nit: the test extracts the helper with a regex over the source. The existing test does the same, so this is acceptable.
+  notes: I did not add a CHANGELOG line, since the fix is not user-visible. I did not run i18n:check or the vite build, because neither en.json nor src/ was touched. The old title appears in no tests or docs.
+## scheduler-per-user-isolation
+  - nit: server/lib/scheduler.js _processUser is not section-wrapped, so one failing section (e.g. weekly) still skips later sections for that user. Deliberate per implementer notes.
+  - nit: the test only exercises _runUsers with a stub fn. It does not run the real _tick or _processUser, so it does not show that housekeeping runs after a failing user.
+  notes: Skipped per-section wrapping (2 of 3 reviewers advised against). Streak/weekly last-run markers were not examined or changed. The test imports scheduler.js with DB_PATH set to a temp dir.
+## weekly-summary-email-opt-out
+  - Nit: scheduler guard is only covered by a source grep, no behavior test with the setting stored as false. readSettingRaw JSON-parses 'false' to a real false, so the guard works.
+  - Nit: the toggle is not gated on SMTP, same as the coach-email toggle. The hint text covers this.
+  - Nit: the en.json hint says 'when the server has email set up'. Fine.
+  notes: Deviations from the round table, none tested beyond the grep wiring test:
+- The Toggle is not gated on SMTP. The coach-email toggle only checks $notifCoachMessage, so I mirrored that. The hint text says "when the server has email set up".
+- server/routes/settings.js has no key allow-list, so no change was needed there.
+- The scheduler guard is only covered by a source grep. I did not add a behavior test with the setting set to false.
+- No existing test asserted the old footer text.
+- The key is 
+## workout-reminder-name-next-program-day
+  - nit: server/lib/scheduler.js ~L168 still runs the program_assignments query for userId, now unused (only the single-user branch needs activeRow). Could be simplified.
+  - nit: no direct helper unit tests (the deleted-template and before-assigned_at cases rely on the MCP tests).
+  notes: Not done: no standalone helper unit tests for the history-before-assigned_at and deleted-template cases; the MCP tests cover that logic. The Android Local mode reminder text was not checked and may need a follow-up. In the zone-fallback test, assigned_at is set directly in SQLite, because the fake clock (Oct 2026) is behind real SQLite time.
+## scheduler-dedupe-survives-restart
+  - Nit: restoreFromZip (server/routes/full-backup.js ~L282) runs DELETE FROM app_config, which wipes the sched: markers. A restore inside a due window can resend. Before this change the in-memory markers survived a restore. Fix by deleting only keys NOT LIKE 'sched:%'.
+  - Nit: markers for deleted users are only pruned after 7 days, not on deletion. Harmless.
+  - Nit: the pruneMarkers test checks a mock SQL string, not a real DELETE. dbStore is untested against SQLite.
+  notes: The premise holds. The admin GET /api/app-config lists all of app_config, so it had to filter sched: keys, in addition to the backup export and restore changes. The claim-on-check semantics are unchanged: the marker is written when the check passes, before any send. Nothing greps _recentlyRan. The new test file is scripts/scheduler-dedupe-survives-restart.test.js and uses a fake store with no db import.
+## exercise-put-clear-fields
+  - nit: `next()` treats any falsy value (0, false) as null, not just null/''. Harmless for text columns.
+  - nit: unlinkOrphanedUploads runs on every PUT, so it does up to 3 extra SELECTs even when media is unchanged. Cheap and correct, since the unchanged file is still referenced by the updated row.
+  - I did not run the tests: the sandbox denied the checkout. I reviewed the diff and the surrounding code only.
+  notes: Category is a nullable TEXT column. The sync push path (sync.js ~533) already writes `|| null`, so it needs no change. applyToBody runs before the new null handling, so a "keep" decision restores the existing value. localizeDataUrl passes null and undefined through unchanged. I did not grep MCP or public-api callers of PUT /exercises and relied on the skeptic's finding that there are none. I did not run the newer-wins tests; sync.js was not touched and the newer-wins logic is unchanged.
+## exercise-search-by-muscle
+  - Nit: Exercises.svelte:291 `_q = foldText(search)` does not trim, but matchesSearch splits on whitespace so it is harmless.
+  - Nit: the ranking part of the plan (name hits before muscle-only hits) was dropped. The implementer noted this.
+  notes: Left out per the round table: ranking, equipment and category in the haystack, and any server or db-native search changes. Muscle matching is substring on the folded haystack. Muscle data is guarded with Array.isArray. A JSON-string `primary_muscles` is ignored rather than parsed, since api-native already parses rows into arrays. No en.json change, so i18n:check was not needed.
+## exercise-create-duplicate-name-warning
+  - Nit: the commit adds scripts/exercise-create-duplicate-name-warning.test.js, not the planned scripts/local-exercise-write.test.js. Local create/update coverage is source-grep only, so no behaviour is exercised.
+  - Nit: Local update does not check created_by ownership. The implementer flagged this as optional.
+  notes: Exercises.create has no internal callers (grep showed only the route-dispatch line), so is_global and source are forced inside create itself. Wger and program import insert through their own SQL (api-native.js line ~481), so they are unaffected. Local update throws 'Exercise not found' for a missing or soft-deleted row. It does not check created_by ownership, which the maintainer review called optional. The editor lookup uses LtApi.getExercises (confirmed to exist); the server list excludes soft
+## exercise-delete-shows-usage
+  - Nit: server mode with exactly 50 workouts shows '50+' because the cap check is shared (accepted by implementer).
+  - Nit: test is grep-only, so it does not exercise the branch behavior.
+  - Nit: new messages are not plain 'N workouts' for 0 < n < 50 only in Local, which is fine; no em dashes added (the existing delete_msg em dash is unchanged).
+  notes: The Local cap fix has a limit. When history.length >= 50 (HISTORY_CAP in ExerciseDetail.svelte), the dialog uses a new key `delete_msg_many`: "Logged in 50+ workouts. ...". The server is uncapped, so a server exercise with exactly 50 workouts also shows "50+". I judged that acceptable and did not add a dedicated count query. I dropped the wrong "uncapped" comment.
+
+Both `delete_msg_used` and `delete_msg_many` now say "but links to this exercise will break". The 0-workout fallback `delete_msg` is
+## workout-timer-tick-on-demand
+  - nit: src/stores/workoutTimer.js timerSec floors paused elapsed, so WorkoutSummary minutes now has 1s granularity (negligible).
+  - nit: CHANGELOG entry sits above the CSV bullet with a blank line splitting the Fixed list; mixes the strip fix and perf note in one bullet.
+  - nit: scripts/workout-timer-tick-on-demand.test.js timerSec test is timing-based (1.3s) with loose bound (<=3).
+  notes: The Diary progress strip now shows when a timer is active for the current date, even with zero completed sets, and the CHANGELOG notes it. No existing wiring test greps `$timerMs`. WorkoutSummary now reads timerSec, so its minutes value is floored to the second. It still re-evaluates on $timerState. The timerSec test is timing-based (about 1.3 s).
+## pr-history-bests-memo
+  notes: 
+## history-fetch-coalesce
+  - Nit: only saveWorkout/deleteWorkout clear the map; other write paths (import, MCP, watch set logging) are not in LtApi, but the in-flight-only window is short, so staleness is negligible.
+  - Nit: shared result object across callers; audit found no in-place mutation (lastCompletedSession copies, ExerciseDetail spreads before reverse).
+  notes: The new test covers coalescing, a call after settle, different ids, a rejection, and a save or delete between calls. I did not re-audit callers for mutation or check how Local mode intercepts fetch. I relied on the skeptic's grep (no caller mutates the result), so no clone or freeze was added. The only write paths in LtApi are saveWorkout and deleteWorkout. I did not look for set-save or import paths outside api.js. No CHANGELOG entry, since the change is not user-visible.
+## diary-recent-workouts-refetch
+  - Nit: no in-flight guard or LtApi swap (explicitly optional in the plan).
+  - Nit: the new test only greps source, so it checks the wiring and not the runtime behavior.
+  notes: No CHANGELOG entry (not user-visible). No existing test grepped the old line.
+## diary-feedback-per-card-filter
+  notes: 
+## a11y-keyboard-role-button-rows
+  - Nit: Profile.svelte avatar button contains a div (.avatar-overlay); phrasing-content only, but harmless in practice.
+  notes: The new assertion in scripts/a11y-keyboard-role-button-rows.test.js checks Radio, FullPlayer and ProgramDetail for /activateOnKey\(e, \(\) => \(\) =>/. One commit on top of 328f9b5; no symlinks staged.
+## a11y-fullplayer-sliders
+  - nit: scripts/a11y-fullplayer-sliders.test.js is grep-only; it does not exercise key handling (acceptable for this repo's wiring tests)
+  - nit: aria-valuemin/max/now are percent, not seconds, so SR value is percent for seek, though aria-valuetext gives m:ss / m:ss when seekable
+  - nit: when seekable flips to false, aria-disabled renders as the string "false"/"true", which is valid ARIA
+  notes: Both bars use aria-valuemin=0, aria-valuemax=100 and aria-valuenow as integer percent. The seek bar adds aria-valuetext "m:ss / m:ss".
+
+Arrow keys step seek by 5s (fraction clamped 0..1) and volume by 0.05, rounded to avoid float drift. Home and End are supported on both. ArrowUp and ArrowDown also work, and handled keys call preventDefault and stopPropagation.
+
+The seek bar gets tabindex -1 when not seekable, so it is not a dead tab stop. Both bars have a :focus-visible outline.
+
+Only radio.see
+## a11y-contrast-text-tokens
+  - nit: light --accent text (#E65100, about 3.8:1) is left below 4.5:1 and the test does not cover it; the implementer documents this as intentional.
+  - nit: the 'no raw status color text' test only matches `color: var(--success|--warning)`. It misses JS string colors and `fill`/`stroke` text uses.
+  - nit: I could not run the full test suite on the commit (checkout was denied). I read the diff and the one wiring test that greps text-3 (body-figure.test.js), which the commit updates to text-4.
+  notes: Wear OS and native themes not touched. The test parses only the :root/dark and [data-theme=light] blocks (the only theme blocks in tokens.css). Node_modules symlinks are not committed.
+## a11y-tpl-picker-backdrops-escape
+  notes: 
+## progression-chip-range-and-snap
+  - Nit: progression-chip-range-and-snap.test.js name differs from planned scripts/progression.test.js; harmless.
+  - Nit: equipment is never plumbed (exercise.equipment undefined), so per-bucket increments are inert; the Bodyweight and 'weighted' rule is dead code. Documented in the CHANGELOG and commit, acceptable.
+  - Nit: the CHANGELOG entry is long for a brief-style repo.
+  notes: Equipment has no source in the workout row, the Diary, or ExerciseCard (no equipment field is plumbed through). ExerciseCard passes exercise.equipment, which is currently undefined, so the flat 2.5 kg / 5 lb step applies. The per-bucket increments are implemented and unit-tested but inert until equipment is plumbed through (server join, db-native, prop). The bodyweight rule returns null unless loadType === 'weighted'; that load type does not exist yet, so it is effectively always null for the Bo
+## add-past-workout-action
+  notes: 
+## inline-plate-math-per-exercise-bar
+  - nit: ExerciseCard.svelte plateBar/plateLine reactive block is dense; the name fallback can misfire only for odd names (acceptable)
+  - nit: getExercise failure is swallowed, so libEquipment stays null and no line shows (intended, but not retried)
+  - nit: tests cover pure helpers; ExerciseCard rendering is only grep-wired
+  notes: Premise check: workout exercise objects do NOT carry raw equipment, in either server or Local mode. ExerciseCard therefore fetches LtApi.getExercise(id) once per exercise id (module-level cache) only while the setting is on. It falls back to the exercise name when there is no library row or the library equipment is empty. Deviations: the line renders once per ExerciseCard (the next working set, or the last when all are done), not in SetRow, following the product reviewer's clutter concern. It is
+## bodyweight-volume-with-body-weight
+  notes: 

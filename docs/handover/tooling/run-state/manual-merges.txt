@@ -1,0 +1,9 @@
+Hunks resolved by hand or by line-wise auto-resolution during cherry-picks (highest risk of semantic merge bugs):
+- src/components/ui/Toast.svelte (rest-bar bottom offset + undo action button; later toast-above-workout-mode-bar --wm-h)
+- src/i18n/en.json (programs.* keys from list-load-error-state + program-share; trace.stop + trace.error_prefix/retry)
+- docs/public-api.md (sets row validation text + body-stats row; recent workouts session_seq row)
+- src/routes/Statistics.svelte loadRangeData (volumeRaw/frequencyRaw from stats-fill-empty-weeks vs records/streaks moved to base loader by stats-range-change-refetch)
+- Dockerfile COPY lines and src/lib/api-native.js imports (cardio-input, week-start, import-match moved to src/lib)
+- src/lib/statsFormat.js fillWeeks doc; src/lib/aiTools.js imports (fillWeeks, normalizeWeekStart, BODY_STAT_KEYS, normalizeSetValues)
+- src/components/ai/Trace.svelte send()/retry()/respondTo(): stop button (AbortController, epoch/stale) merged with retryable error notes; a scope bug was found and fixed by hand (ctl/stale moved into respondTo). Check the whole send/stop/retry/clear flow.
+- server/routes/exercises.js PUT /:id: name trimming (duplicate-name warning) merged with explicit-null clearing of fields

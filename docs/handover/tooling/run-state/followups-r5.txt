@@ -1,0 +1,93 @@
+## local-backup-restore-ui
+- nit: src/components/settings/SettingsBackup.svelte pickLocalRestoreFile uses a detached input element. Some WebViews can GC it before onchange fires. Appending it to the DOM (hidden) or using a bound hidden input is safer.
+- nit: Restore toast appends raw English errors from local-backup.js ('Not a LiftTrace backup file', JSON parse errors) to the translated prefix.
+- nit: The safety snapshot uses includeUploads:false, but restoring a v2 backup overwrites upload files with no copy of the current ones. Safety snapshots also accumulate, since they have no auto- prefix and are never pruned.
+## stats-wide-data-cardio-toggle-and-blink
+- Nit: on a same-limit Track Cardio flip, stale wideDates (statsDates) show briefly until the refetch lands. Accepted by the implementer and by the task's risk note.
+- Nit: the wiring test slices loadWideData text and counts `_wideCardio = null` occurrences (3). That is brittle but it passes.
+## trace-weighin-updates-profile-weight
+- Nit: scripts/trace-weighin-updates-profile-weight.test.js behaviour test does not assert currentWeightKg is set; only the wiring regex (formatting-sensitive) covers adopt.
+- Nit: _today() in aiTools.js duplicates localDateStr, but both use local date so adoptLoggedWeight's date check matches.
+## calendar-grids-honour-week-start
+- Nit: .slice(0,2) on translated names can truncate other locales oddly (e.g. Spanish 'mar'/'mié' collisions, surrogate pairs). Acceptable.
+- Nit: wiring test asserts `!s.includes('getDay()')` across whole Diary.svelte; fragile if getDay() is used elsewhere later.
+## undo-set-removal-keeps-set-video
+- Nit: relinkPlan emits set_uuid:null for exercise-level clips (set_uuid column is nullable on POST), and PATCH rejects null with 400 (server/routes/set-media.js valid()). Latent only, since the UI only creates set-level clips (Diary mediaBySet filters on set_uu
+- Nit: Promise.all in relinkClips is inside one try/catch, so one failure is swallowed silently. Acceptable per the design.
+- Nit: the server integration test uses skip:!ready. It can skip silently in environments where the server fails to start.
+## mcp-rest-default-date-account-zone
+- Nit: test uses real-clock dayIn() for log_body_stat/add_progress_photo checks, so a midnight-window flake is possible (implementer already noted it).
+- Nit: _util.js now imports weekly-summary.js just for shiftDate, which pulls in a heavy module graph plus src/lib/trained-day.js. A tiny local shift helper would be lighter, but there is no cycle and tests pass.
+- Nit: log-set with workout_id still defaults the day via todayFor, unchanged behavior, fine.
+## garmin-fit-import-local-date
+- Nit: a non-UTC TZ run of the new test wasn't done. The tests use explicit zones, and the fallback test compares against the server zone, so it should pass in any TZ.
+- Nit: the zone is the user's current stored zone, not where the workout happened. The code comment and CHANGELOG both state this.
+## celebration-dedup-resets-at-midnight
+- Nit: the third test (another tab rewriting lt:celebDate to a past date re-fires the celebration) pins incidental behavior. Harmless.
+- Nit: the test slices the source between 'const _celebratedToday' and 'export function celebratePR'. It is brittle but matches the existing device-reminders approach.
+## android-local-streak-today-zone-consistency
+- Nit: first test is a source-grep wiring test (no sv-SE, monthsAgo regex); the behavioral monthsAgo test is the useful one.
+- Nit: the implementer did not re-run the other 51 touched-file wiring tests after editing progress-photos-beyond-12-months.test.js. I only inspected the diff and did not run them. The change was a single assertion swap, so risk is low.
+## mcp-progress-exact-name-match
+- Nit: server/routes/public-api.js:164 Number(req.query.exercise_id) gives NaN for junk input. It still ends in the 'No exercise with id' error, so the result is correct but the message is odd.
+- Nit: when both exercise_name and exercise_id are passed, the id silently wins. This is documented in openapi.
+- Nit: the REST path :name segment is still required even when exercise_id is supplied.
+## mcp-workout-read-exposes-id-and-sessions
+- nit: session_seq 0 on a date with only a later session (seq 1) returns logged:false, which is consistent with the documented behavior
+- nit: get_workouts rows and the webhook payload do not include session_count (only get_workout does), which is by design
+## rest-limit-validation-and-error-mapping
+- Nit: limit=0 behavior change in list-recent-workouts/search-exercises (old: 0 gave default 10, now clamps to 1); mentioned by implementer, low impact.
+- Nit: clampLimit(Infinity) returns default rather than max.
+- Nit: tests for core() and exercises route are source greps only, no HTTP-level test; public-api.js comment above core() still says 'any other exception falls through' which is now only true for SQLITE_* errors.
+## media-url-traversal-confused-deputy
+- nit: full-backup.js:408/417 restore inserts body_stat_media/set_media urls unchecked (admin-only restore path, but the file routes now re-validate via isLocal*Url so streaming is closed anyway)
+- nit: isLocal* coverage in the new test is wiring greps only; isUploadFileUrl itself is tested directly, which is the real logic
+## login-throttle-proxy-and-password-change
+- Nit: the wiring test for every bcrypt.compareSync behind a limiter was skipped (the plan asked for it). two-step.js is covered by codeLimit, which I checked by reading the code.
+- Nit: warnIfUntrustedProxy checks process.env.TRUST_PROXY truthiness. TRUST_PROXY=false or 0 is truthy as a string, so the warning is suppressed even though trust is off. Minor.
+- Nit: with the default TRUST_PROXY off, behind a proxy 10 failed logins still lock out the shared IP bucket. This is documented and opt-in, and successes no longer count.
+## webhook-delivery-pinned-fetch
+- Nit: the default-reject test regex /private|ALLOW_PRIVATE_WEBHOOK_URLS/i also asserts hit===false, so it is adequate. The 302 test only proves the redirect target was not fetched, which is fine.
+- I could not run the tests. The auto-mode classifier denied my checkout in the main checkout, and I made no further attempt. The review is from reading the diff and fetchChecked in ssrf-guard.js.
+## exercise-sticky-notes
+- nit: ExerciseCard.svelte chip aria-label is static, so screen readers never read the note text (title is set but aria-label overrides the content). Consider including the note in the label.
+- nit: ExerciseInfo.svelte noteDraft is not refreshed if a synced exerciseNotes update arrives while the same exercise stays open. Draft would overwrite it on blur only if the user edited it.
+- nit: The editor also renders in the ExercisePicker and Exercises previews, which is a small scope expansion but harmless.
+## warmups-equipment-aware
+- Nit: equipment like Body weight, Kettlebell or Other also gets bar:null (the 40% ramp), because barWeightForEquipment returns null for anything that is not a bar. This is harmless and arguably correct.
+- Nit: a failed getExercise is not cached, so every click refetches. This is acceptable.
+- Nit: the test does not cover the ExerciseCard wiring in warmupOpts. The helper logic is simple and reuses the existing cache and barWeightForEquipment.
+## exercise-e1rm-trend
+- Nit: the assisted-session skip in history-set.js sessionE1rms (h.load_type) is likely a no-op, because history rows may not carry load_type. The exercise-level check in ExerciseDetail.svelte covers the real case.
+- Nit: the 1-decimal rounding is a no-op because calc1RM returns integers. The first test's expected-value expression also hides this. Harmless.
+- Nit: I did not run the new test file. It is not in the checked-out tree at 5b29f8c, and I did not create a worktree at 011f9e5.
+## stalled-lift-deload-hint
+- ROADMAP.md:207 nit: the sentence repeats itself. It says Trace does not yet suggest a deload, then says it does not suggest one on its own.
+- src/lib/progression.js detectStall nit: the 90% floor-to-step rule gives about a 12% cut for 102.5 kg (suggests 90) and 11% for 225 lb (suggests 200). That is a bit more than the stated ~10%, but acceptable.
+- Nit: the stall banner and the dismissal key have no wiring test. Only detectStall is unit tested.
+## rep-max-table
+- Nit: heaviest weight tie at a rep target keeps the first set in iteration order. If history is newest-first this shows the newest date, but the PR ties on most reps. Harmless.
+- Nit: the L/R test only checks that the 8-rep row exists. It does not check that 8 comes from setReps. If setReps returned the total (16), the 10+ rep rows would still be absent only by luck.
+## import-restore-oversize-413
+- Nit: the 413 fallback in SettingsWorkoutImport.svelte and SettingsBackup.svelte shows generic 'File too large' with no MB cap, but the server message with the cap is used whenever the body is JSON.
+- Nit: the workout-import 25 MB cap is hardcoded in 3 places (multer limit plus two singleUpload calls) and could drift.
+## diary-finish-and-empty-state-i18n
+- Nit: the hud-empty-desc ('Load a workout from a program...') and the empty-state <p> texts ('Schedule a workout...', 'Pick a quick start...') are still hardcoded English next to the translated titles. This is the same scope-trim as the aria-labels and week-nav
+- Nit: the new test checks that $_() keys resolve, but it does not assert that the Finish button and the Spinner use the new keys. It only asserts that the old literals are gone. That is acceptable.
+## programs-create-sheet-and-preview-i18n
+- Nit: ProgramDetail settings sheet still has hardcoded 'Duration & progression', the form hint, and the Calendar/Repeat options. The implementer disclosed this and it is out of scope.
+- Nit: CSS text-transform: capitalize on .goal-tag will capitalize localized labels. This is harmless.
+- Nit: the new test mostly greps sources. goalLabel itself is tested for real.
+## summary-and-library-preview-i18n
+- Nit: src/components/exercises/ExercisePicker.svelte:270 still has hardcoded 'Added' text next to the converted strings.
+- Nit: the picker placeholder text now comes from exercises_page.search_placeholder, which is cross-namespace but fine.
+## icon-font-subset
+- nit: public/fonts/icons-all.txt (4304 lines, ~60 KB) and icons-included.txt live under public/, so they are copied into dist and served. They are not precached (txt is not in globPatterns). Better placed under scripts/ or a non-public dir.
+- nit: scan regex /[a-z][a-z0-9_]*/ cannot match digit-leading ligatures (e.g. 360, 123, 3d_rotation, 2k). No current use in src, but a future icon like that would be silently missed by both the generator and the coverage test.
+- nit: coverage test only checks the committed icons-included.txt, not the woff2 contents. A stale font with an up-to-date txt passes. The size check is only a coarse guard.
+## diary-sync-gate-reloads
+- CHANGELOG.md ~line 38: the commit adds a second blank line before the new entry (nit)
+- scripts/diary-sync-gate-reloads.test.js is source-grep only and doesn't run the handler (nit, matches repo style)
+## radio-list-images-lazy
+- Nit: lazy imgs without width/height rely on CSS boxes; likely fine since .track-art/.album-art/.station-icon have fixed sizes.
+- Nit: test does not run in my review (could not checkout); verified via source inspection only.

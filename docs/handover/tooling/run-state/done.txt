@@ -1,0 +1,158 @@
+Done in round 4 (do not propose):
+- Workout pill shows a frozen '.00' centisecond suffix
+- Rapid day navigation attaches the wrong day's coach feedback and set media
+- Feed library equipment to the progression chip (per-equipment increments and bodyweight rule are inert)
+- Removing a whole superset has no Undo, unlike set and exercise removal
+- RIR/RPE level chip colours bypass the new 4.5:1 contrast tokens
+- Statistics Cardio tab: count empty weeks in average, on-target and bars
+- Trace: image messages are never saved to history, and reloaded messages lose their timestamps
+- Statistics progress tab: out-of-order responses show the wrong exercise or range
+- Statistics keeps yesterday as 'today' when left open past midnight
+- Statistics: 365-session cap on workout/recent skews 1Y and All calories and period deltas
+- Bad embedded picture and bad OIDC provider form show 'Internal server error'
+- Workout import preview/commit never detect duplicates or pick correct session_seq in no-accounts mode
+- Workout reminder in no-accounts mode still always names the program's first day (and drop dead assignment query)
+- Android Local: exercise history is truncated to 50 workouts, the server returns all
+- Android Local 'Clear All Data' leaves cardio sessions and workout tombstones behind
+- Android Local exercise usage count double counts an exercise done in two sessions on one day
+- Light theme: status text still uses raw --success/--warning fills (2.3:1 and 2.5:1)
+- Escape in the custom-equipment field closes the whole exercise editor and discards edits
+- Time picker, sync challenge, wizard skip modal, full player and test-email dialog ignore Escape and focus trapping
+- CHANGELOG [Unreleased]: duplicate Fixed headings, fixes filed under Added, duplicate Sunday-week entries
+- Program/WorkoutEditor: trim and validate day name, translate remaining hardcoded English
+- WorkoutEditor: confirm before leaving with unsaved changes
+- Fix exercise Move up/down tearing supersets apart
+- Reorder program days on phones (drag-and-drop is mouse-only)
+- Duplicate a workout day within a program
+- Progress timeline: photos older than 12 months are unreachable
+- Logging body weight never updates the weight used for calorie burn
+- Saving a weight on the Progress page blanks the whole timeline and jumps scroll
+- Body Stats sheet: hardcoded English, and backdrop tap silently discards typed values
+- Profile: avatar cannot be removed; height and weight accept impossible values
+- Settings search: fix false 'No settings match', match titles and all query tokens, add missing keywords
+- Surface failed settings saves instead of swallowing them
+- Calorie estimate toggle: say which Profile fields are missing and link to Profile
+- Trace log_set tool schema: accurate required fields so models stop guessing
+Rejected in round 4:
+- Server restore keeps the scheduler dedupe markers :: skeptic: The citations are accurate. full-backup.js:291 wipes all of app_config, :449 skips sched: on import, and :696 excludes sched: from export. But the claimed harm mostly doesn't happen. sched-dedupe.js createRanRecently keeps an in-memory Map as the source of truth and reads the store only on a cache m
+
+
+Done in round 3 (do not propose):
+- Statistics weekly charts: fillWeeks ignores weekStartsOn, Sunday-start users get zero-filled charts
+- Trace training summary: weekly_avg and weekly series skip empty weeks, contradicting Statistics
+- Undo toast is drawn on top of the workout pill (timer and keep-awake toggle)
+- Routine import errors shown as hardcoded English toasts
+- Week start setting has no effect on server stats in no-accounts mode (web), so client and server week keys disagree
+- Workouts saved with an impossible date (2026-02-31) can no longer be deleted
+- openapi.yaml SetInput omits fields and limits the REST endpoint now enforces
+- Trace log_set and log_workout coerce bad values to 0 instead of rejecting them (client parity with server set-input)
+- Android Local workout import commit runs as one transaction
+- Changing the backup schedule clears the failure backoff
+- Direct unit tests for resolveUploadSubdirPath (runs without better-sqlite3)
+- Trace log_body_stat saves nothing or garbage: wrong key names, object values, kg label for lb users
+- Env-locked Trace: provider errors (bad key, quota, unknown model, network) show as 'Internal server error'
+- Trace: Stop button, request deadline for direct providers, and no reply after Clear
+- Trace failure bubbles are stored as assistant turns, hardcoded English, and resent to the model
+- Scheduled-backup failure push: fix pushNotify arguments (title, body and priority are shifted)
+- Scheduler tick: one user's error must not skip every later user and the housekeeping
+- Separate opt-out for the weekly summary email
+- Workout reminder push names the program's next day, not always its first
+- Persist reminder and summary send markers so a restart in the due window does not resend
+- Editing a custom exercise can't clear its picture, instructions, tips or category (server PUT ignores null)
+- Library and picker search also match muscles, equipment and category, not only the name
+- Custom exercise names: warn on duplicates and reject blank names on server and Android Local
+- Deleting a used custom exercise: show how many workouts log it
+- Workout timer: tick only while something watches, seconds-granular store for the rest
+- Coalesce concurrent getWorkoutHistory requests when the Diary opens or syncs
+- Diary empty-state reactive refetches recent workouts on every todayLog update
+- Enter/Space activation for role=button rows (Radio, FullPlayer queue, ProgramDetail template cards, Profile avatar, Trace FAB)
+- FullPlayer seek and volume bars as keyboard-operable sliders
+- Raise --text-3 and light-theme status colors to readable contrast
+- Fix the Diary progression chip: respect rep ranges, explain the reason, use equipment increments
+- Inline plate split under the weight field, with a per-exercise bar weight
+
+Rejected in round 3:
+- Memoize per-exercise history bests so a keystroke does not rescan all history: skeptic: The code citations are accurate. Diary.svelte:204 reruns prFlags whenever `exercises` changes, and historyBests rescans the full history for each exercise. The slowdown itself is unmeasured. A heavy user might have a few hundred sessions per exercise; product: Cost is small: per keystroke, one pass over a single exercise's history (a few hundred sets for a heavy user, microseconds to ~1ms) per exercise on screen. No noticeable lag for a lifter. The cache adds hidden module-level state (WeakMap keyed by arr
+- Stop re-filtering coach feedback and rebuilding supersetGroups per render for every exercise: skeptic: The cited lines are accurate: the inline filter is at Diary.svelte:3047, and the supersetGroups IIFE at :598-618 returns new objects each time. But the problem is hypothetical. The feedback list is a handful of coach notes per day, often empty. Filte; product: No user-visible value. Filtering a tiny feedback array (usually 0-3 notes) per exercise group is microseconds, even with ~10 exercises on each invalidation. Fresh supersetGroups objects don't cause DOM churn, because the each is keyed and Svelte comp; maintainer: The per-card filter in src/routes/Diary.svelte:3047 runs over a feedback list that usually holds 0-5 coach notes. That is O(exercises x notes), a few dozen comparisons per invalidation, which is unmeasurable next to the rest of the Diary render. The 
+- Escape closes the Radio context menu and template/set number and RPE pickers: skeptic: The evidence is partly wrong. SetRow.svelte already has `<svelte:window on:keydown={onWindowKeydown} />` (line 311). `onWindowKeydown` (line 173) closes numOpen and rpeOpen on Escape, and done.txt lists "set popover Escape" as already done. Radio ctx; product: SetRow already has Escape handling for numOpen/rpeOpen (onWindowKeydown, done.txt line 49: "set popover Escape"), so the proposal is partly a duplicate. The remaining layers are the Radio track context menu, the TemplateSpecRow pickers and the Trace 
+- Add past workout: date picker flow in Diary with existing-session choice: skeptic: Citations are mostly accurate. openDatePicker/calPickDay (Diary.svelte:461-480) only navigate. Plan item 5 is unchecked. addMenuActions at ~2084 has only 'exercise' and 'workout'. isFuture is at 1202. But the proposed entry point is wrong. The Add me; product: Backfilling already works: the Diary header has date arrows and a calendar picker (openDatePicker, calPickDay), and an empty past day shows the "Ready to train?" quick-start. Landing on a day that already has a session shows its session tabs, and the
+- Count body weight in volume for bodyweight rep exercises: skeptic: The cited evidence is accurate. setVolume returns 0 for weight <= 0, and plan item 3 is unchecked. The proposed change is under-scoped and rests on a fragile qualifier.
+
+1. The "Bodyweight equipment bucket" does not exist on the server. It is client-; product: The pain is real: pull-ups, dips and push-ups at weight 0 count as zero volume. But this slice is the wrong shape. Its rule is a volume-only heuristic that guesses from library equipment containing "Bodyweight" (a JSON array in `exercises.equipment`); maintainer: Real gap, plan item 3 is unchecked, but the proposal departs from the documented design and understates scope. (1) The plan routes this through set_type='bodyweight' (per-instance chip, library default, name seed) plus an added_weight field. The prop
+
+Done in round 2 (do not propose):
+- CSV exports: fix nonexistent LtApi.listExercises (alternating L/R) and use local date in filename
+- Android Local workout importer: match (date,name) sessions and pair like the server
+- Exercise-delete upload cleanup: reject ../ paths inside /uploads/exercises/ prefix
+- Move remaining hardcoded English (App, ProgramDetail, Exercises, WorkoutModeBar, ExerciseInfoSheet, SetRow ' ea') to en.json
+- Local body-stats: honour start/end range and use the server's per-key merge on PUT
+- Local exercise progress totalVolume honours load type and split reps
+- Local workout, body-stats and cardio writes refuse non-calendar dates and out-of-range cardio
+- Local cardio templates list dedupes by activity like the server
+- REST/log_set: validate reps, weight, rpe, warmup, completed types and ranges in logSetCore
+- PUT /api/v1/body-stats/:date: type-check values, refuse unknown keys and unknown weight_unit
+- MCP/REST tools accept impossible dates like 2026-02-31 (DATE_RE only)
+- workout.completed webhook sends the day's first session, not the one just completed
+- list_recent_workouts: deterministic order and session_seq; fix webhook delivery id doc
+- Statistics: weekly averages and charts count weeks with no training
+- Records: more reps at the same max weight updates the record
+- Exercise detail: mark warm-ups, show units, split reps for any load type, richer PR card, show all history
+- Statistics: range chip tap refetches range-independent data and loads progress twice
+- Weekly bar charts: readable labels and tap-to-read values on phones for 6M/1Y/All
+- Coach re-assign no longer wipes the client's start date or deactivates their active program
+- Validate prescription dates on create and edit (calendar date or null)
+- Android Local: show session count for one-week programs; translate the card's 'session(s)' label
+- Android Local: re-activating the already active program must not restart it
+- Server restore: validate the archive before wiping, snapshot first
+- Invite: SMTP failure must still return the invite link
+- Scheduled backup: back off after a failure instead of retrying and pushing every 15 min
+- Android local backup: include cardio, restore atomically, report failures
+- Sign-in cookie lifetime: register, reset-password and accept-invite ignore the session setting
+- Reject unknown roles when an admin creates an account or invite
+- PWA update banner never fires: workbox skipWaiting contradicts registerType prompt
+- Pausing mid-crossfade leaves the second audio element playing, then resumes the main one
+- ICY now-playing poll: stale response from previous station, overlapping requests, polls while paused/hidden
+- startBackgroundSync stacks duplicate online/offline/visibility listeners and boot timers
+- Statistics activity heatmap shaded by time trained (plan item 6)
+- Scope screen wake lock to the open workout, release when it ends or Diary is left (plan item 2)
+- Checked-in openapi.yaml for /api/v1 with a route-coverage test (plan item 13)
+- RIR as an alternative to RPE per user, each set stores its scale (plan item 10)
+- Week start setting (Monday or Sunday) for server and Local week bucketing (plan item 1)
+- Share a routine as a JSON file and import it
+- perf(startup): keep sync.js and api-native.js out of the startup chunk
+- perf(history): filter exercise history by exercise in SQL
+- Export all workouts as one CSV from Settings > Backup
+- feat(gym-tools): 1RM and percentage calculator tab
+- fix(i18n): move hardcoded English in Diary set and superset UI to en.json
+- Programs and Exercises show a retry state when loading fails, not an empty list
+- perf(exercises): fold search once, sort once, cap rendered rows with Show more
+- perf(app): load Trace assistant lazily when AI is enabled
+- fix(a11y): keyboard access for exercise/superset headers, mini player, set popover Escape
+- feat(a11y): Escape closes sheets and dialogs, focus moves in and returns
+- fix(wizard): screen reader labels, switch role, Enter submit, translatable strings
+- Label icon-only buttons for screen readers
+- fix(server): refuse workout, body-stats and cardio writes for a non-calendar date
+- Unlink, delete provider and disable password login use the in-app confirm dialog
+- Rest bar: -30s button, timer role, toasts clear the bar
+- A collapsed exercise card shows its best set
+- fix(coaching): Missed badge and clip cutoff use the local date
+- fix(exercises): delete uploaded media when a custom exercise is deleted
+- fix(profile): save weight only when edited, lossless lb round trip
+- fix(import): CSV importers read quoted fields containing newlines
+- fix(auth): duplicate username returns 409; 5xx bodies stay generic
+- fix(calories): convert lbs volume to kg before the MET threshold
+- Undo toast after removing a set or an exercise
+- fix(workout): stale or failed loadWorkout no longer wipes the current date
+- fix(import): keep same-day same-name sessions, Replace updates in place
+- fix(exercises): read-by-id and media-urls cover the library and your own exercises only
+- fix(settings): Clear All Data works without accounts and covers cardio
+
+Rejected by round table earlier (do not re-propose unless you have NEW evidence that fixes the rejection reason):
+- Highlight and scroll a newly added set into view; base it on last working set :: skeptic: The cited code is accurate (ExerciseCard.svelte:267-275, no scroll or focus). But the problem is mostly hypothetical. (1) The warm-up bug is narrow. addWarmups (ExerciseCard.svelte:298-302) PREPENDS warm-ups (`[...generated, ...sets]`), so the last set is a warm-up only when the card holds nothing but warm-ups. In that case the "last non-warmup, fallback last" rule falls back to the warm-
+- Sync Now and long-running settings actions: shared busy state with Spinner :: skeptic: The problem is mostly already handled. SettingsBackup.svelte:424-429 already has `fullBackupBusy` (set at lines 190 and 197). The create button is disabled while busy, shows a spinning icon and a "working" label, and the sibling buttons are disabled too. Settings.svelte:114-127 already has the `_syncing` guard, a disabled button, a spin icon, a "Syncing" label, and success and error toast
+- pr.set webhook: compute records only for saved exercises, not full history twice :: skeptic: The evidence is accurate. log-webhooks.js:51-55 and :65-68 both call getRecordsCore(userId) with no filter. get-records.js:59-62 does an unfiltered SELECT * plus JSON.parse per row. The callers at workout.js:312/417 and log-set.js:161/222 match, and the key `ex.exercise_id || ex.exercise_name` is at get-records.js:68. Both scans only run when WEBHOOKS_ENABLED is set (webhooks.js:40, off b
+- Scheduler: bound streak-alert history load and per-tick work :: skeptic: The citations are accurate. scheduler.js:208 calls trainedDateSet(userId) unbounded, and trained-days.js:36-39 does support start/end. The problem is not real at a meaningful scale, though. The streak branch only runs for users with notifStreakAlert on, only inside the due window (_dueDay), and only if not _ranRecently within 1h. In practice that is a few users, about once a day each, not
+- Diary quick-start card names and starts the program's next day :: skeptic: The evidence is accurate. Diary.svelte:2879-2884 matches the quote, and ROADMAP:126-127 says the Diary does not suggest the next day yet. Server `_nextDay` is at server/lib/mcp/tools/start-program-workout.js:76-89, not the cited start-program-workout.js:12-15 (those lines are the header comment). The proposal is under-scoped, though. `_nextDay` is a SQL query over workout_log: completed=1
+- Visible focus indicators for custom widgets that suppress outlines :: skeptic: The named candidates are wrong. FullPlayer.svelte and ActionSheet.svelte have no `outline` rules at all. MiniPlayer.svelte has one hit (line 152), on the volume range slider, not on `mini-btn`. Wizard.svelte has `.bp-input:focus` at line 786 with a border-color change, and no `wiz-input` exists. A grep for `fp-ctrl` and `as-btn` finds nothing relevant, so the claimed round icon buttons cl
+
+Done earlier on the lab branch (do not propose): lazy-loading routes other than Diary, response compression, uploads served before auth, sync updated_at indexes, Statistics reading only range workouts, Diary reading trained days, session tabs from save answer, sequential workout saves, reminders rescheduled only on training sync, superset round-by-round layout.
