@@ -331,7 +331,7 @@
         <div class="pp-grid">
           {#each g.items as p (p.id)}
             <div class="pp-tile" class:picked={compareMode && picked.some(x => x.id === p.id)}>
-              <button class="pp-thumb" on:click={() => onPick(p)}>
+              <button class="pp-thumb" aria-label={dayLabel(p.date)} on:click={() => onPick(p)}>
                 <PhotoImage photo={p} alt={dayLabel(p.date)} />
                 {#if compareMode && picked.some(x => x.id === p.id)}
                   <span class="pp-check material-symbols-rounded" aria-hidden="true">check_circle</span>
