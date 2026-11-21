@@ -652,9 +652,9 @@
           </div>
 
           <div class="setting-divider"></div>
-          <div class="setting-row">
+          <div class="setting-row session-row">
             <span class="setting-label">{$_('settings.users.session_duration')}</span>
-            <div style="display:flex;gap:8px;align-items:center">
+            <div class="session-controls">
               <select class="form-select-sm" bind:value={sessionHours}>
                 <option value="0">{$_('settings.users.session_never')}</option>
                 <option value="8">{$_('settings.users.session_8h')}</option>
@@ -779,6 +779,10 @@
 </Dialog>
 
 <style>
+  .session-row { flex-wrap: wrap; }
+  .session-controls { display: flex; gap: 8px; align-items: center; min-width: 0; max-width: 100%; }
+  .session-controls :global(.form-select-sm) { min-width: 0; flex: 1 1 auto; }
+  .session-controls :global(.btn) { flex-shrink: 0; }
   /* My Profile shortcut (top of the User Management section) */
   .my-profile-row {
     display: flex; align-items: center; gap: 14px;
