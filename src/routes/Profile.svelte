@@ -385,8 +385,8 @@
 <div class="page" class:profile-embedded={_embedded}>
   {#if !_embedded}
     <header class="page-header">
-      <button class="btn-icon back-btn" on:click={() => push('/settings')}>
-        <span class="material-symbols-rounded">arrow_back</span>
+      <button class="btn-icon back-btn" on:click={() => push('/settings')} aria-label={$_('common.back')}>
+        <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
       </button>
       <h1>{$_('routes.profile.title')}</h1>
       <button class="btn btn-primary save-btn" on:click={save} disabled={saving}>
@@ -546,8 +546,8 @@
           {:else}
             <input class="form-input" type="password" bind:value={currentPassword} placeholder={$_('profile.current_password_ph')} />
           {/if}
-          <button class="pw-toggle" on:click={() => showPw = !showPw} type="button">
-            <span class="material-symbols-rounded">{showPw ? 'visibility_off' : 'visibility'}</span>
+          <button class="pw-toggle" on:click={() => showPw = !showPw} type="button" aria-label={$_(showPw ? 'common.hide_password' : 'common.show_password')} aria-pressed={showPw}>
+            <span class="material-symbols-rounded" aria-hidden="true">{showPw ? 'visibility_off' : 'visibility'}</span>
           </button>
         </div>
       </div>

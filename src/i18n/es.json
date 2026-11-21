@@ -73,6 +73,8 @@
     "signing_out": "Cerrando sesión…",
     "admin": "admin",
     "hide": "Ocultar",
+    "show_password": "Mostrar contraseña",
+    "hide_password": "Ocultar contraseña",
     "errors": {
       "cant_reach_server": "No se pudo conectar con el servidor",
       "failed": "Error",

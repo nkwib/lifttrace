@@ -102,6 +102,8 @@
     "signing_out": "退出登录中…",
     "admin": "管理员",
     "hide": "隐藏",
+    "show_password": "显示密码",
+    "hide_password": "隐藏密码",
     "errors": {
       "cant_reach_server": "无法连接服务器",
       "failed": "失败",

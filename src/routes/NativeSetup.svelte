@@ -399,8 +399,8 @@
               {:else}
                 <input class="input" type="password" placeholder={$_('native_setup.password_ph')} bind:value={password} style="padding-right:40px" />
               {/if}
-              <button type="button" class="pw-toggle" on:click={() => showPw = !showPw}>
-                <span class="material-symbols-rounded" style="font-size:20px">{showPw ? 'visibility_off' : 'visibility'}</span>
+              <button type="button" class="pw-toggle" on:click={() => showPw = !showPw} aria-label={$_(showPw ? 'common.hide_password' : 'common.show_password')} aria-pressed={showPw}>
+                <span class="material-symbols-rounded" aria-hidden="true" style="font-size:20px">{showPw ? 'visibility_off' : 'visibility'}</span>
               </button>
             </div>
           </div>

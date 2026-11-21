@@ -73,6 +73,8 @@
     "signing_out": "Uscita…",
     "admin": "admin",
     "hide": "Nascondi",
+    "show_password": "Mostra password",
+    "hide_password": "Nascondi password",
     "errors": {
       "failed": "Errore",
       "cant_reach_server": "Impossibile raggiungere il server",

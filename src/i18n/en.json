@@ -105,6 +105,8 @@
     "signing_out":  "Signing out…",
     "admin":        "admin",
     "hide":         "Hide",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
     "errors": {
       "cant_reach_server":      "Could not reach server",
       "failed":                 "Failed",
