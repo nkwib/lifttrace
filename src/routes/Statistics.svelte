@@ -85,6 +85,10 @@ import { onMount, onDestroy, tick } from 'svelte';
   // Local "today", fixed at mount and rolled forward by refreshToday() so a
   // page left open past midnight stops treating yesterday as today.
   let today = localDateStr();
+  // An unranged cardio GET is capped at the newest 500 rows; the trained-day
+  // loaders pass an explicit all-time range instead.
+  const ALL_CARDIO_FROM = '2000-01-01';
+  const ALL_CARDIO_TO = '9999-12-31';
   function refreshToday() {
     const t = localDateStr();
     if (t === today) return false;
@@ -359,7 +363,7 @@ import { onMount, onDestroy, tick } from 'svelte';
       const raw = await fetchRecentLogs(limit);
       if (seq !== _wideSeq || !raw) { if (seq === _wideSeq) { _wideLimit = 0; _wideCardio = null; } return; }
       const logs = raw.filter(l => exercisesOf(l).length > 0);
-      const cardioRows = cardio ? await LtApi.listCardio().catch(() => []) : [];
+      const cardioRows = cardio ? await LtApi.listCardio(ALL_CARDIO_FROM, ALL_CARDIO_TO).catch(() => []) : [];
       if (seq !== _wideSeq) return;
       wideDates = trainedDates({ workouts: logs, cardio: cardioRows, cardioOn: cardio });
       wideMeta = { raw, limit };
@@ -402,7 +406,7 @@ import { onMount, onDestroy, tick } from 'svelte';
           // cached records too; the phone's standalone mode already leaves
           // them out.
           const logs = recentRaw.filter(l => exercisesOf(l).length > 0);
-          const cardioRows = $cardioEnabled ? await LtApi.listCardio().catch(() => []) : [];
+          const cardioRows = $cardioEnabled ? await LtApi.listCardio(ALL_CARDIO_FROM, ALL_CARDIO_TO).catch(() => []) : [];
           const excused = await LtApi.listExcusedDays().catch(() => excusedRows);
           if (seq !== _baseSeq) return;
           workoutDates = trainedDates({ workouts: logs, cardio: cardioRows, cardioOn: $cardioEnabled });
