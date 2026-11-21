@@ -800,7 +800,7 @@
   .fav-btn .fav-active { color: var(--lift-pr, #FFD54F); }
   .fav-btn .material-symbols-rounded { font-size: 20px; }
   .ex-row-main {
-    flex: 1; display: flex; align-items: center; justify-content: space-between;
+    flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between;
     padding: 10px 14px 10px 0;
     background: none; border: none; cursor: pointer; text-align: left;
     gap: 10px;
@@ -870,6 +870,7 @@
   .sort-check { font-size: 18px; }
   .exercise-row:hover { background: var(--surface-2); }
   .ex-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .ex-row-main .arrow { flex-shrink: 0; }
   .ex-name-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .ex-name { font-size: 14px; font-weight: 600; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
   .custom-chip {
