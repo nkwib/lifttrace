@@ -51,3 +51,25 @@ export function exerciseWeightPr(history, unit, fmtE1rm) {
     sub: e1 && maxReps > 1 && fmtE1rm ? fmtE1rm(Math.round(e1 * 10) / 10, unit) : undefined,
   };
 }
+
+/**
+ * Best Epley e1RM per session, oldest first, as [{ date, e1rm }] (1 decimal).
+ * history is newest-first. Counts completed, non-warm-up rep sets only; sets
+ * outside estimateOneRm's range (13+ reps, no weight) are skipped one by one.
+ * L/R splits count at the weaker side (setReps). Assisted sessions are
+ * skipped: their weight is help, not load.
+ */
+export function sessionE1rms(history) {
+  const out = [];
+  for (const h of [...(history || [])].reverse()) {
+    if (h?.load_type === 'assisted') continue;
+    let best = 0;
+    for (const s of h.sets || []) {
+      if (!s.completed || s.warmup || setKind({ set_type: h.set_type }, s) !== 'reps') continue;
+      const e = estimateOneRm(s.weight, setReps(s));
+      if (e && e > best) best = e;
+    }
+    if (best > 0) out.push({ date: h.date, e1rm: Math.round(best * 10) / 10 });
+  }
+  return out;
+}

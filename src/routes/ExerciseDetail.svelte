@@ -8,7 +8,7 @@
   import { onSyncChanges, newestRead } from '../lib/sync-refresh.js';
   import { weightUnit, exerciseDistanceUnits } from '../stores/settings.js';
   import { setKind, SET_TYPE_FIELD, fmtSetAmount, fromMeters, distanceUnitOf, setReps } from '../lib/workout.js';
-  import { exerciseWeightPr } from '../lib/history-set.js';
+  import { exerciseWeightPr, sessionE1rms } from '../lib/history-set.js';
   import { showError, showSuccess } from '../stores/toast.js';
   import { confirmDialog } from '../stores/confirmDialog.js';
   import ExerciseInfo from '../components/exercises/ExerciseInfo.svelte';
@@ -144,7 +144,18 @@
   // Per-session top set for the inline progress chart. Oldest first so the
   // chart reads left-to-right chronologically. Limited to the last 24
   // sessions so the SVG stays readable on small phones.
-  $: progressPoints = (() => {
+  // Top set | Est. 1RM toggle: rep exercises with 2+ estimable sessions
+  // (counted before the 24 cap). Back to top set when the exercise changes.
+  let chartMode = 'top';
+  let _modeFor = params.id;
+  $: if (params.id !== _modeFor) { _modeFor = params.id; chartMode = 'top'; }
+  $: e1rmSeries = detailTimed || exercise?.load_type === 'assisted' ? [] : sessionE1rms(history);
+  $: canE1rm = e1rmSeries.length >= 2;
+  $: showE1rm = canE1rm && chartMode === 'e1rm';
+
+  $: progressPoints = showE1rm
+    ? e1rmSeries.slice(-24).map(p => ({ date: p.date, weight: p.e1rm, reps: 0 }))
+    : (() => {
     const arr = [];
     for (const h of [...history].reverse()) {  // oldest first
       let top = 0, topReps = 0;
@@ -237,12 +248,20 @@
       {#if progressSvg}
         <div class="progress-card">
           <div class="progress-head">
-            <h3 class="progress-title">{detailKind === 'time' ? $_('exercise_detail.longest_hold_over_time')
+            <h3 class="progress-title">{showE1rm ? $_('exercise_detail.e1rm_over_time') : detailKind === 'time' ? $_('exercise_detail.longest_hold_over_time')
               : detailKind === 'distance' ? $_('exercise_detail.longest_distance_over_time')
               : detailKind === 'calories' ? $_('exercise_detail.most_calories_over_time')
               : $_('exercise_detail.top_set_over_time')}</h3>
             <span class="progress-meta">{$_('exercise_detail.sessions_count', { values: { count: progressPoints.length } })}</span>
           </div>
+          {#if canE1rm}
+            <div class="chart-mode" role="group" aria-label={$_('exercise_detail.chart_mode')}>
+              <button type="button" class="chart-mode-btn" class:active={!showE1rm} aria-pressed={!showE1rm}
+                on:click={() => chartMode = 'top'}>{$_('exercise_detail.mode_top_set')}</button>
+              <button type="button" class="chart-mode-btn" class:active={showE1rm} aria-pressed={showE1rm}
+                on:click={() => chartMode = 'e1rm'}>{$_('exercise_detail.mode_e1rm')}</button>
+            </div>
+          {/if}
           <svg class="progress-svg" viewBox="0 0 {progressSvg.W} {progressSvg.H}" preserveAspectRatio="none">
             <polyline fill="none" stroke="var(--accent)" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"
@@ -256,6 +275,7 @@
             <span>{progressSvg.pts[0].date} · {detailTimed ? _fmtPoint(progressSvg.pts[0].weight) : `${progressSvg.pts[0].weight} ${$weightUnit}`}</span>
             <span>{progressSvg.pts.at(-1).date} · {detailTimed ? _fmtPoint(progressSvg.pts.at(-1).weight) : `${progressSvg.pts.at(-1).weight} ${$weightUnit}`}</span>
           </div>
+          {#if showE1rm}<p class="chart-hint">{$_('exercise_detail.e1rm_hint')}</p>{/if}
         </div>
       {/if}
 
@@ -351,6 +371,10 @@
     font-size: 11px; color: var(--text-3); margin-top: 6px;
     font-variant-numeric: tabular-nums;
   }
+  .chart-mode { display: inline-flex; gap: 2px; padding: 2px; margin-bottom: 8px; background: var(--surface-2); border-radius: var(--radius-md, 8px); }
+  .chart-mode-btn { border: 0; background: transparent; color: var(--text-3); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+  .chart-mode-btn.active { background: var(--accent); color: var(--on-accent, #fff); }
+  .chart-hint { font-size: 11px; color: var(--text-3); margin: 6px 0 0; }
   .loading { text-align: center; padding: 48px; color: var(--text-3); }
   .load-error { text-align: center; padding: 48px 24px; color: var(--text-3); }
   .load-error .material-symbols-rounded { font-size: 48px; color: var(--danger); margin-bottom: 12px; }
