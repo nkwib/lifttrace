@@ -1,5 +1,5 @@
 <script>
-  import { activateOnKey } from '../lib/a11y.js';
+  import { pointerClick } from '../lib/a11y.js';
   import { onMount, onDestroy, tick } from 'svelte';
   import { wideContent } from '../lib/wide.js';
   import { fmtSetDuration, parseDuration, distanceUnitOf, goalLabel } from '../lib/workout.js';
@@ -455,17 +455,14 @@
               >
                 <div class="template-card"
                      class:selected-for-preview={_wideMode && _previewTemplateId === t.id}
-                     on:click={() => _tapTemplate(t)}
-                     on:keydown={e => activateOnKey(e, () => _tapTemplate(t))}
-                     role="button"
-                     tabindex="0">
+                     use:pointerClick={() => _tapTemplate(t)}>
                   <div class="tpl-left">
                     {#if !othersProgram}<span class="material-symbols-rounded tpl-drag-handle" title={$_('program_detail.drag_to_reorder')}>drag_indicator</span>{/if}
                     <span class="tpl-num">{idx + 1}</span>
-                    <div class="tpl-info">
+                    <button type="button" class="tpl-info" on:click|stopPropagation={() => _tapTemplate(t)}>
                       <span class="tpl-name">{t.name}</span>
                       <span class="tpl-meta">{(t.exercises || []).length} exercises</span>
-                    </div>
+                    </button>
                   </div>
                   <div class="tpl-right">
                     {#if !othersProgram}
@@ -730,7 +727,6 @@
     flex-shrink: 0;
   }
   .tpl-drag:hover .tpl-drag-handle { opacity: 0.9; }
-  .template-card:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .template-card {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px;
@@ -749,7 +745,8 @@
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-  .tpl-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .tpl-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; background: none; border: none; padding: 0; margin: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; border-radius: 4px; }
+  .tpl-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .tpl-name { font-size: 14px; font-weight: 600; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tpl-meta { font-size: 12px; color: var(--text-3); }
   .tpl-right { display: flex; align-items: center; gap: 4px; }
