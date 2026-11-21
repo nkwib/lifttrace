@@ -17,6 +17,7 @@ Each file boots its own server (free port, temp data dir), creates the admin thr
 
 - uncaught page errors, console errors, 5xx responses (4xx resource logs are ignored; assert on those in the spec)
 - raw i18n keys from `en.json` shown as text, aria-label, title or placeholder
+- icon font ligature text ("close", "dashboard") read out as part of a control's name because the icon is not `aria-hidden`
 - sideways page scroll, controls and headings past the viewport edge, titles clipped without an ellipsis
 - axe-core: accessible names, ARIA validity, nested interactive controls, color contrast
 
@@ -26,5 +27,6 @@ Each file boots its own server (free port, temp data dir), creates the admin thr
 
 - `pages.e2e.mjs`: every signed-in route at 320px, phone and desktop, dark and light.
 - `public.e2e.mjs`: wizard on a server with no accounts, sign-in, forgot and reset password, accept invite.
+- `flows.e2e.mjs`: every Settings section, every Statistics tab with 12 weeks of data, exercise detail `:id` change, drawer Escape and focus, server backup create and restore.
 
 Add a flow as `e2e/<flow>.e2e.mjs`: seed through `api()`, drive with role and text selectors, call `expectClean` after each step that changes the screen.

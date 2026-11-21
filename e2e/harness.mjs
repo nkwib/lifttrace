@@ -125,6 +125,7 @@ export async function openPage(server, client, { view = 'phone', theme = 'dark',
     await ctx.addCookies([{ name, value, url: server.url }]);
   }
   const page = await ctx.newPage();
+  page.setDefaultTimeout(5000);
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   // 4xx resource loads are often the expected answer (a bad reset token);
@@ -163,12 +164,12 @@ const AXE_RULES = [
 
 // Generic checks on whatever the page shows now. Returns a list of short,
 // self-contained problem strings: empty means the page is fine.
-// opts.skip: check names to skip ('overflow', 'clipped', 'i18n', 'axe', 'errors').
+// opts.skip: check names to skip ('overflow', 'clipped', 'i18n', 'icons', 'axe', 'errors').
 // opts.axeExclude: CSS selectors axe should ignore (known, tracked issues).
 export async function checkPage(page, { skip = [], axeExclude = [] } = {}) {
   const problems = [];
   if (!skip.includes('errors')) problems.push(...page.errors.splice(0));
-  const layout = await page.evaluate(({ keys, doOverflow, doClipped, doI18n }) => {
+  const layout = await page.evaluate(({ keys, doIcons, doOverflow, doClipped, doI18n }) => {
     const out = [];
     const desc = (el) => {
       const id = el.id ? `#${el.id}` : '';
@@ -204,6 +205,14 @@ export async function checkPage(page, { skip = [], axeExclude = [] } = {}) {
         if (el.clientWidth === 0 && n++ < 5) out.push(`collapsed: ${desc(el)} has zero width`);
       }
     }
+    if (doIcons) {
+      // Icon font ligature text ("close", "dashboard") inside a control is
+      // read out as part of its name unless the icon is aria-hidden.
+      const leaks = [...document.querySelectorAll('.material-symbols-rounded, .material-symbols-outlined, .material-icons')]
+        .filter((e) => visible(e) && !e.closest('[aria-hidden="true"]') && e.closest('button, a[href], [role=button], [role=tab], [role=menuitem], label'));
+      for (const e of leaks.slice(0, 5)) out.push(`icon-name: "${e.textContent.trim()}" leaks into ${desc(e.closest('button, a[href], [role=button], [role=tab], [role=menuitem], label'))}`);
+      if (leaks.length > 5) out.push(`icon-name: +${leaks.length - 5} more`);
+    }
     if (doI18n) {
       const text = document.body.innerText + ' ' + [...document.querySelectorAll('[aria-label],[title],[placeholder]')]
         .map((e) => [e.getAttribute('aria-label'), e.getAttribute('title'), e.getAttribute('placeholder')].join(' ')).join(' ');
@@ -211,7 +220,7 @@ export async function checkPage(page, { skip = [], axeExclude = [] } = {}) {
       for (const k of raw) out.push(`i18n: raw key "${k}" shown`);
     }
     return out;
-  }, { keys: I18N_KEYS, doOverflow: !skip.includes('overflow'), doClipped: !skip.includes('clipped'), doI18n: !skip.includes('i18n') });
+  }, { keys: I18N_KEYS, doIcons: !skip.includes('icons'), doOverflow: !skip.includes('overflow'), doClipped: !skip.includes('clipped'), doI18n: !skip.includes('i18n') });
   problems.push(...layout);
   if (!skip.includes('axe')) {
     if (!(await page.evaluate(() => !!window.axe))) await page.addScriptTag({ content: AXE });
