@@ -58,7 +58,7 @@ test('uploads are capped and checked by their bytes, not their name', () => {
 test('deleting a clip removes the file and keeps the coach note', () => {
   const del = route.slice(route.indexOf("router.delete('/:id'"), route.indexOf("router.post('/cleanup'"));
   assert.match(del, /UPDATE set_media SET deleted_at = datetime\('now'\)/, 'soft-delete so the removal syncs');
-  assert.match(del, /unlinkMediaFile\(row\.url\)/, 'and the file goes, rather than lingering as an orphan');
+  assert.match(del, /unlinkMediaFile\(row\.url, .set-videos.\)/, 'and the file goes, rather than lingering as an orphan');
   assert.match(del, /UPDATE coach_feedback SET media_id = NULL, media_time_sec = NULL/);
 });
 
@@ -95,7 +95,7 @@ test('every path that deletes a user deletes their clips and files', () => {
     assert.match(src, /deleteMediaForUser as deleteSetMediaForUser/, `${f} imports it`);
     assert.match(src, /deleteSetMediaForUser\(/, `${f} calls it`);
   }
-  assert.match(lib, /for \(const r of rows\) unlinkMediaFile\(r\.url\)/);
+  assert.match(lib, /for \(const r of rows\) unlinkMediaFile\(r\.url, VIDEO_SUBDIR\)/);
 });
 
 test('clips travel between devices, but only as rows', () => {

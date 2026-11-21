@@ -302,7 +302,7 @@ test('the photo file route checks ownership against the row, not the filename', 
   assert.match(fn, /deleted_at IS NULL/);
   // The path comes from the stored row through the traversal-safe resolver,
   // never from the request.
-  assert.match(fn, /resolveUploadPath\(row\.url\)/);
+  assert.match(fn, /resolveUploadSubdirPath\(row\.url, PHOTO_SUBDIR\)/);
 
   // A row's url is caller supplied, so the route must not trust that the
   // write path constrained it: without this, attaching a row pointing at

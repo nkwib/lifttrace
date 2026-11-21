@@ -53,6 +53,7 @@ import { readablePairingIds, messageOut } from '../lib/coaching-messages.js';
 import { soloStart } from '../lib/solo-program.js';
 import { rememberZone } from '../lib/user-zone.js';
 import { clientSettingRaw, settingToStoreRaw } from '../lib/secret-settings.js';
+import { isLocalPhotoUrl } from '../lib/body-stat-media.js';
 
 // ── Tombstone helpers for the sync push/pull loops (Option C) ─────────
 // Same shape as workout.js — duplicated here to keep both routes
@@ -934,7 +935,9 @@ router.post('/push', wrap((req, res) => {
       } else if (!p.deleted_at && p.url && p.date) {
         // Into body-stats/, served only to its owner, like the REST route.
         const url = localizeOr(p.url, null, { subdir: 'body-stats' });
-        if (!url) continue;
+        // Only a file in body-stats/ or an external link: any other /uploads
+        // path would let the file route stream it back.
+        if (!url || !(isLocalPhotoUrl(url) || /^https?:\/\//i.test(url))) continue;
         const r = db.prepare(
           `INSERT INTO body_stat_media (user_id, date, kind, url, created_at, updated_at) VALUES (?, ?, 'photo', ?, datetime('now'), datetime('now'))`
         ).run(u, p.date, url);

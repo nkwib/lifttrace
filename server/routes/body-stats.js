@@ -101,7 +101,7 @@ router.delete('/photos/:id', wrap((req, res) => {
   if (!row) return res.status(404).json({ error: 'Not found' });
 
   db.prepare("UPDATE body_stat_media SET deleted_at = datetime('now') WHERE id = ?").run(id);
-  unlinkMediaFile(row.url);
+  unlinkMediaFile(row.url, 'body-stats');
   res.json({ ok: true });
 }));
 

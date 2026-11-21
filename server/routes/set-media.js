@@ -116,7 +116,7 @@ router.delete('/:id', wrap((req, res) => {
   // A note that pointed at this clip keeps its words and loses the pointer,
   // rather than being deleted along with footage the coach did not own.
   db.prepare('UPDATE coach_feedback SET media_id = NULL, media_time_sec = NULL WHERE media_id = ?').run(id);
-  unlinkMediaFile(row.url);
+  unlinkMediaFile(row.url, 'set-videos');
   res.json({ ok: true });
 }));
 

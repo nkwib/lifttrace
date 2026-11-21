@@ -18,9 +18,9 @@
  * gap, deliberately scoped to the rows this feature creates.
  */
 import db from '../db.js';
-import { resolveUploadPath, unlinkMediaFile } from './upload-paths.js';
+import { resolveUploadPath, resolveUploadSubdirPath, unlinkMediaFile, isUploadFileUrl, PHOTO_SUBDIR } from './upload-paths.js';
 
-export { resolveUploadPath, unlinkMediaFile };
+export { resolveUploadPath, unlinkMediaFile, PHOTO_SUBDIR };
 
 /**
  * Remove every progress-photo row for a user AND its file on disk.
@@ -31,7 +31,7 @@ export function deleteMediaForUser(userId) {
   const rows = userId == null
     ? db.prepare('SELECT url FROM body_stat_media WHERE user_id IS NULL').all()
     : db.prepare('SELECT url FROM body_stat_media WHERE user_id = ?').all(userId);
-  for (const r of rows) unlinkMediaFile(r.url);
+  for (const r of rows) unlinkMediaFile(r.url, PHOTO_SUBDIR);
   if (userId == null) {
     db.prepare('DELETE FROM body_stat_media WHERE user_id IS NULL').run();
   } else {
@@ -55,7 +55,7 @@ export const PHOTO_DIR = '/uploads/body-stats/';
 
 /** True for a local upload path that is actually a progress photo. */
 export function isLocalPhotoUrl(url) {
-  return typeof url === 'string' && url.startsWith(PHOTO_DIR);
+  return isUploadFileUrl(url, PHOTO_SUBDIR);
 }
 
 /**
@@ -93,7 +93,7 @@ export function resolvePhotoFileForUser(userId, rawId) {
   //    would stream it back, ownership check and all, because the row
   //    genuinely is yours.
   if (!isLocalPhotoUrl(row.url)) return { status: 409, error: 'Photo is not stored locally' };
-  const abs = resolveUploadPath(row.url);
+  const abs = resolveUploadSubdirPath(row.url, PHOTO_SUBDIR);
   if (!abs) return { status: 409, error: 'Photo is not stored locally' };
   return { path: abs };
 }

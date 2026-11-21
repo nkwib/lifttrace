@@ -48,6 +48,19 @@ export function resolveUploadSubdirPath(url, subdir) {
 }
 
 /**
+ * True for `/uploads/<subdir>/<name>` where <name> is a single plain file
+ * name (letters, digits, dot, dash, underscore; no leading dot) that
+ * resolves inside the subdir. Rejects `..`, encoded and backslash tricks.
+ */
+export function isUploadFileUrl(url, subdir) {
+  if (typeof url !== 'string') return false;
+  const prefix = `/uploads/${subdir}/`;
+  if (!url.startsWith(prefix)) return false;
+  if (!/^[A-Za-z0-9_-][A-Za-z0-9._-]*$/.test(url.slice(prefix.length))) return false;
+  return resolveUploadSubdirPath(url, subdir) !== null;
+}
+
+/**
  * Subdirectories under UPLOADS_PATH whose contents must never be served by
  * the static handler.
  *
@@ -70,6 +83,8 @@ export function resolveUploadSubdirPath(url, subdir) {
  * through GET /api/coaching/photos/:name, which serves them to the two
  * people in that conversation.
  */
+export const PHOTO_SUBDIR = 'body-stats';
+export const VIDEO_SUBDIR = 'set-videos';
 const PRIVATE_SUBDIRS = ['body-stats', 'backups', 'set-videos', 'coaching'];
 
 /**

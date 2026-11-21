@@ -24,17 +24,17 @@
  * inferred from anything the caller sends.
  */
 import db from '../db.js';
-import { resolveUploadPath, unlinkMediaFile } from './upload-paths.js';
+import { resolveUploadPath, resolveUploadSubdirPath, unlinkMediaFile, isUploadFileUrl, VIDEO_SUBDIR } from './upload-paths.js';
 import { coachesClient } from './coaching.js';
 
-export { resolveUploadPath, unlinkMediaFile };
+export { resolveUploadPath, unlinkMediaFile, VIDEO_SUBDIR };
 
 /** Local set-video URLs must sit in this one directory. */
 export const VIDEO_DIR = '/uploads/set-videos/';
 
 /** True for a local upload path that is actually a set video. */
 export function isLocalVideoUrl(url) {
-  return typeof url === 'string' && url.startsWith(VIDEO_DIR);
+  return isUploadFileUrl(url, VIDEO_SUBDIR);
 }
 
 /**
@@ -64,7 +64,7 @@ export function resolveVideoFileForViewer(viewerId, rawId) {
   if (!canReadMedia(viewerId, row)) return { status: 404, error: 'Not found' };
   if (!isLocalVideoUrl(row.url)) return { status: 409, error: 'Clip has no local file' };
 
-  const abs = resolveUploadPath(row.url);
+  const abs = resolveUploadSubdirPath(row.url, VIDEO_SUBDIR);
   if (!abs) return { status: 404, error: 'Not found' };
   return { path: abs, mime: row.mime || 'video/mp4', row };
 }
@@ -137,7 +137,7 @@ export function deleteMediaForUser(userId) {
   const rows = userId == null
     ? db.prepare('SELECT url FROM set_media WHERE user_id IS NULL').all()
     : db.prepare('SELECT url FROM set_media WHERE user_id = ?').all(userId);
-  for (const r of rows) unlinkMediaFile(r.url);
+  for (const r of rows) unlinkMediaFile(r.url, VIDEO_SUBDIR);
   if (userId == null) {
     db.prepare('DELETE FROM set_media WHERE user_id IS NULL').run();
   } else {
@@ -181,7 +181,7 @@ export function deleteMediaOlderThan(userId, cutoffDate) {
     // Soft-delete so the removal reaches other devices, unlink so the file
     // does not linger as an orphan.
     db.prepare("UPDATE set_media SET deleted_at = datetime('now') WHERE id = ?").run(r.id);
-    unlinkMediaFile(r.url);
+    unlinkMediaFile(r.url, VIDEO_SUBDIR);
   }
   return { deleted: rows.length };
 }
