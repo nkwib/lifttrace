@@ -1541,6 +1541,16 @@
     "duplicate_msg":          "An exercise named \"{name}\" already exists. Save anyway?",
     "duplicate_confirm":      "Save anyway"
   },
+  "diary_finish": {
+    "finish": "Finish workout",
+    "view_summary": "View summary",
+    "view_workout_summary": "View workout summary",
+    "sets_progress": "{completed}/{total} sets",
+    "nothing_logged": "Nothing logged yet",
+    "untitled": "Untitled workout",
+    "plan_ahead": "Plan ahead",
+    "ready_to_train": "Ready to train?"
+  },
   "diary_extra": {
     "toggle_section": "Show or hide {name}",
     "toast": {

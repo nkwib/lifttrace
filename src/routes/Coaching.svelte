@@ -1017,7 +1017,7 @@
        title={workoutDetail?.name || $_('coaching.sheets.workout')}>
   <div class="workout-detail">
     {#if workoutDetailLoading}
-      <Spinner block label="Loading workout…" />
+      <Spinner block label={$_('workout_editor.loading')} />
     {:else if !workoutDetail}
       <div class="empty-inline">Couldn't load this workout.</div>
     {:else}

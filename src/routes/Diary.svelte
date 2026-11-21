@@ -2672,7 +2672,7 @@
     {#if exercises.length === 0 && !loading && !isFuture}
       <div class="hud-empty-card">
         <span class="material-symbols-rounded hud-empty-icon">fitness_center</span>
-        <p class="hud-empty-title">Nothing logged yet</p>
+        <p class="hud-empty-title">{$_('diary_finish.nothing_logged')}</p>
         <p class="hud-empty-desc">Load a workout from a program or add an exercise to get started.</p>
         <button type="button" class="rail-action" on:click={openLoadWorkout}>
           <span class="material-symbols-rounded">library_books</span>
@@ -2694,10 +2694,10 @@
           {$todayLog?.completed ? 'task_alt' : 'flag'}
         </span>
         <span class="hud-finish-text">
-          {$todayLog?.completed ? 'View summary' : 'Finish workout'}
+          {$todayLog?.completed ? $_('diary_finish.view_summary') : $_('diary_finish.finish')}
         </span>
         {#if !$todayLog?.completed}
-          <span class="hud-finish-sub">{stats.completed}/{stats.total} sets</span>
+          <span class="hud-finish-sub">{$_('diary_finish.sets_progress', { values: { completed: stats.completed, total: stats.total } })}</span>
         {/if}
       </button>
     {/if}
@@ -2950,7 +2950,7 @@
         />
       {:else}
         <button class="workout-title tap" on:click={startEditName} title={$_('diary.tap_to_rename')}>
-          <span class="workout-title-text">{workoutName || 'Untitled workout'}</span>
+          <span class="workout-title-text">{workoutName || $_('diary_finish.untitled')}</span>
           <span class="material-symbols-rounded title-edit-icon">edit</span>
         </button>
       {/if}
@@ -2978,7 +2978,7 @@
   <!-- Exercise list -->
   <div class="exercise-list">
     {#if loading}
-      <Spinner block label="Loading workout…" />
+      <Spinner block label={$_('workout_editor.loading')} />
     {:else if exercises.length === 0}
       <div class="empty-state">
         {#if excusedHere}
@@ -2987,7 +2987,7 @@
           <p>{$_('excused.empty_desc')}</p>
         {:else}
           <span class="material-symbols-rounded empty-icon">{isFuture ? 'event_note' : 'fitness_center'}</span>
-          <h3>{isFuture ? 'Plan ahead' : 'Ready to train?'}</h3>
+          <h3>{isFuture ? $_('diary_finish.plan_ahead') : $_('diary_finish.ready_to_train')}</h3>
           <p>{isFuture ? 'Schedule a workout for this day or add exercises manually.' : 'Pick a quick start, or build from scratch.'}</p>
         {/if}
 
@@ -3196,10 +3196,10 @@
             {$todayLog?.completed ? 'task_alt' : 'flag'}
           </span>
           <span class="finish-text">
-            {$todayLog?.completed ? 'View workout summary' : 'Finish workout'}
+            {$todayLog?.completed ? $_('diary_finish.view_workout_summary') : $_('diary_finish.finish')}
           </span>
           {#if !$todayLog?.completed}
-            <span class="finish-sub">{stats.completed}/{stats.total} sets · {formatTimerMs($timerSec * 1000, { centi: false })}</span>
+            <span class="finish-sub">{$_('diary_finish.sets_progress', { values: { completed: stats.completed, total: stats.total } })} · {formatTimerMs($timerSec * 1000, { centi: false })}</span>
           {/if}
         </button>
       {/if}
