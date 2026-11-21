@@ -265,7 +265,8 @@
         throw new Error($_('settings_backup.local.read_failed'));
       }
       lb.parseBackupText(text);
-      await lb.exportBackup({ share: false, includeUploads: false });
+      await lb.exportBackup({ share: false, prefix: lb.SAFETY_PREFIX });
+      await lb.pruneSafetySnapshots(parseInt($localBackupRetention, 10) || 7);
       await lb.importBackup(text);
       showSuccess($_('settings_backup.local.restored'));
       setTimeout(() => location.reload(), 1200);

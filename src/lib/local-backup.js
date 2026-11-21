@@ -28,13 +28,16 @@ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { isNative } from './platform.js';
 import { dbQuery, dbExec } from './db-native.js';
-import { newestFirst } from '../../server/lib/backup-schedule.js';
+import { newestFirst, backupsToPrune } from '../../server/lib/backup-schedule.js';
 
 // Same dir the scheduler writes (Directory.Documents); list/read/delete/share
 // and exportBackup all use it so every backup is in one place.
 const BACKUP_DIR  = 'lifttrace-backups';
 const UPLOADS_DIR = 'lifttrace-uploads';
 const SCHEMA_VERSION = 2;
+// Taken before a restore overwrites data; pruned apart from the scheduled
+// auto backups so neither crowds out the other.
+export const SAFETY_PREFIX = 'lifttrace-backup-prerestore-';
 
 const TABLES = [
   'users',
@@ -122,14 +125,14 @@ export async function buildBackup(opts = {}) {
  * email, etc.). Set `opts.includeUploads = false` to produce a much
  * smaller metadata-only JSON.
  */
-export async function exportBackup({ share = true, includeUploads = true } = {}) {
+export async function exportBackup({ share = true, includeUploads = true, prefix = 'lifttrace-' } = {}) {
   if (!isNative) throw new Error('Local backup is Capacitor-only');
   await _ensureDir(BACKUP_DIR, Directory.Documents);
   const data = await buildBackup({ includeUploads });
   const json = JSON.stringify(data);
   // Named in this device's own time (TraceApps/notetrace#44).
   const { localFileStamp } = await import('./file-stamp.js');
-  const name = `${BACKUP_DIR}/lifttrace-${localFileStamp()}.json`;
+  const name = `${BACKUP_DIR}/${prefix}${localFileStamp()}.json`;
   const writeRes = await Filesystem.writeFile({
     path: name,
     data: json,
@@ -234,6 +237,17 @@ export async function listLocalBackups() {
       }))
       .filter(f => f.name.endsWith('.json')));
   } catch { return []; }
+}
+
+/** Delete safety snapshots beyond the newest `keep`. Never throws. */
+export async function pruneSafetySnapshots(keep) {
+  try {
+    const r = await Filesystem.readdir({ path: BACKUP_DIR, directory: Directory.Documents });
+    const files = (r?.files || []).map(f => (typeof f === 'string' ? { name: f } : f));
+    for (const f of backupsToPrune(files, SAFETY_PREFIX, keep)) {
+      await deleteLocalBackup(f.name);
+    }
+  } catch {}
 }
 
 export async function readBackupFile(name) {

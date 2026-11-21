@@ -85,3 +85,9 @@ export function newestFirst(entries) {
   const at = (e) => backupNameInstant(e.name) ?? (Number(e.mtime) || 0);
   return [...entries].sort((a, b) => (at(b) - at(a)) || String(b.name).localeCompare(String(a.name)));
 }
+
+/** Files with `prefix` and a .json ending beyond the newest `keep`: the ones to delete. */
+export function backupsToPrune(entries, prefix, keep) {
+  const n = Math.max(1, Math.min(99, parseInt(keep, 10) || 7));
+  return newestFirst((entries || []).filter(f => f && f.name && f.name.startsWith(prefix) && f.name.endsWith('.json'))).slice(n);
+}

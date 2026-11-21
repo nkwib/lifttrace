@@ -230,7 +230,7 @@ test('the scheduler, the settings page and the phone use it', () => {
   assert.match(phone, /\$\{AUTO_PREFIX\}\$\{localFileStamp\(\)\}\.json/);
   assert.match(phone, /const due = isBackupDue\(\{/);
   assert.match(phone, /const autos = newestFirst\(/);
-  assert.match(read('../src/lib/local-backup.js'), /lifttrace-\$\{localFileStamp\(\)\}\.json/);
+  assert.match(read('../src/lib/local-backup.js'), /\$\{prefix\}\$\{localFileStamp\(\)\}\.json/);
   const en = JSON.parse(read('../src/i18n/en.json'));
   assert.ok(en.settings_backup.auto.zone_differs.includes('{zone}') && en.settings_backup.auto.use_my_zone === 'Use My Time Zone');
 });
