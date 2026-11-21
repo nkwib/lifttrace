@@ -46,6 +46,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **Exercise page follows the URL.** Going from one exercise to another (link or back/forward) now loads the new exercise instead of keeping the old one.
 - **Add Exercise picker opens again.** It crashed with "_ is not defined" because of a missing i18n import, so exercises could not be added from the Diary.
+- **Workout editor header fits phones.** The title no longer pushes Save off-screen and widens the page.
 - **Workout pill no longer shows a frozen ".00".** The floating timer pill now shows m:ss without the centisecond suffix.
 - **Fast day switching in the Diary.** Coach feedback and set videos from a day you already left no longer show up on the day you land on.
 - **Diary progression chip uses the exercise's equipment.** Cable and machine lifts now suggest +5 kg / +10 lb and dumbbells +2 kg, read from the library (it was always the flat 2.5 kg / 5 lb). Assisted exercises no longer get a "Try more weight" chip.

@@ -1314,7 +1314,7 @@
   /* page-header styled globally in base.css */
   .back-btn { background: none; border: none; cursor: pointer; color: var(--text-2); padding: 6px; display: flex; border-radius: var(--radius-sm); }
   .back-btn:hover { background: var(--surface-2); }
-  .title-input { flex: 1; background: none; border: none; outline: none; font-size: 18px; font-weight: 700; color: var(--text-1); font-family: inherit; }
+  .title-input { flex: 1; min-width: 0; background: none; border: none; outline: none; font-size: 18px; font-weight: 700; color: var(--text-1); font-family: inherit; }
   .save-btn { padding: 8px 16px; font-size: 13px; border-radius: var(--radius-md); }
 
   .content { padding: 16px var(--page-px); display: flex; flex-direction: column; gap: 12px; }
