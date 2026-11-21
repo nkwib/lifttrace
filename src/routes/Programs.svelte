@@ -431,6 +431,9 @@
   .page { min-height: 100dvh; background: var(--bg); padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + var(--mini-player-h, 0px) + 16px); }
 
   /* page-header styled globally in base.css */
+  /* Import + New are wide: wrap the actions under the title instead of collapsing it. */
+  .page-header { flex-wrap: wrap; row-gap: 8px; }
+  .page-header h1 { flex: 1 0 auto; min-width: 9ch; }
   .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; min-width: 0; }
   .btn-icon { background: none; border: none; cursor: pointer; color: var(--text-2); padding: 6px; border-radius: var(--radius-sm); display: flex; }
   .btn-icon:hover { background: var(--surface-2); }
