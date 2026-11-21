@@ -101,9 +101,8 @@ export function registerGetWorkout(server, { userId }) {
       title: 'Get Workout',
       description:
         "Read a day's workout — every exercise and its sets (reps, with reps_l and reps_r for reps split left/right and reps then the weaker side, weight, " +
-        "completed, warmup, RPE, duration_sec for timed sets like planks (with duration_l_sec and duration_r_sec for a hold timed per side, duration_sec then the shorter side), distance_m in meters for distance sets like rows and sled pushes, calories for calorie sets like air bikes). Date defaults to today in the server's " +
-        'timezone; pass an explicit YYYY-MM-DD for calendar accuracy from a ' +
-        'different TZ. Also returns workout_id (pass it to log_set), session_seq and session_count. ' +
+        "completed, warmup, RPE, duration_sec for timed sets like planks (with duration_l_sec and duration_r_sec for a hold timed per side, duration_sec then the shorter side), distance_m in meters for distance sets like rows and sled pushes, calories for calorie sets like air bikes). Date defaults to today in the account's " +
+        'timezone. Also returns workout_id (pass it to log_set), session_seq and session_count. ' +
         'A day can hold several sessions: the default is the first, and session_seq (0, 1, ...) reads another; ' +
         'a session_seq with no workout answers logged: false.',
       inputSchema: {
