@@ -61,6 +61,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Android Local restore errors are translated.** A failed restore shows only the translated message instead of appending the raw English parser error.
 - **Android Local restore keeps a full safety copy.** The snapshot taken before a restore now includes photos and media, and old ones are pruned to your backup retention.
 - **A program day saved offline keeps a trimmed name and can't be blank.** A blank name was queued and refused on every sync; it is now refused on the spot, as online.
+- **Track Cardio flip refreshes Statistics days.** On 1Y and All, turning Track Cardio on or off kept the old trained days until the reload finished.
 - **Empty Diary day refreshes its recent workouts after a sync.** Workouts synced for other dates now appear in the list without reopening the page.
 - **Statistics trained days count all cardio.** On 1Y and All, and in the year heatmap, only the newest 500 cardio sessions were counted, so older cardio days showed as rest days.
 - **Statistics after midnight loads the new day.** A page left open past midnight reloaded yesterday's range on sync or when the tab came back.

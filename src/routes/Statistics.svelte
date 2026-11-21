@@ -357,6 +357,9 @@ import { onMount, onDestroy, tick } from 'svelte';
     // Only a range change clears: a sync or cardio refetch keeps the old set
     // until the new one lands, so calories and deltas do not blink.
     if (limit !== _wideLimit) wideLogs = wideDates = wideMeta = null;
+    // Same window, Track Cardio flipped: the trained days are wrong now, so
+    // fall back to the base set until the refetch lands.
+    else if (cardio !== _wideCardio) wideDates = null;
     _wideLimit = limit;
     _wideCardio = cardio;
     try {
