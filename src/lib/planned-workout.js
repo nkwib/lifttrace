@@ -101,14 +101,33 @@ export function lastCompletedSession(history, { before } = {}) {
  * so the ramp only ever climbs, never repeats a weight and never drops below
  * the bar. A light load gets fewer steps (25 kg: bar x 8, 22.5 x 2), not a
  * ramp that goes down.
+ *
+ * Optional third arg { bar }: omitted or undefined keeps the default barbell
+ * (45 lb / 20 kg); a number starts from that bar; null means no bar
+ * (dumbbell, machine, cable), so the ramp is 40% x 8, 60% x 5, 80% x 3 of the
+ * working weight, rounded to the step, climbing, under W, never 0. Callers
+ * pass null only when the equipment is known to be non-barbell. The plan path
+ * has no equipment data and keeps the default.
  */
-export function generateWarmupSets(workingWeight, unit = 'lbs') {
+export function generateWarmupSets(workingWeight, unit = 'lbs', opts = {}) {
   const W = parseFloat(workingWeight) || 0;
-  const bar = unit === 'kg' ? 20 : 45;
   const step = unit === 'kg' ? 2.5 : 5;
   const roundTo = (n) => Math.round(n / step) * step;
-  if (W <= bar) return [];
   const base = { completed: false, warmup: true, notes: '' };
+  if (opts && opts.bar === null) {
+    const out = [];
+    let prev = 0;
+    for (const [pct, reps] of [[0.4, 8], [0.6, 5], [0.8, 3]]) {
+      const weight = roundTo(W * pct);
+      if (weight > prev && weight < W) {
+        out.push({ ...base, weight, reps });
+        prev = weight;
+      }
+    }
+    return out;
+  }
+  const bar = typeof opts?.bar === 'number' ? opts.bar : (unit === 'kg' ? 20 : 45);
+  if (W <= bar) return [];
   const sets = [{ ...base, weight: bar, reps: 8 }];
   let last = bar;
   for (const [pct, reps] of [[0.5, 5], [0.7, 3], [0.85, 2]]) {

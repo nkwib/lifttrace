@@ -276,3 +276,22 @@ test('a filled set keeps when it was done, so a copy saved from before it can\'t
     assert.equal(mergeExercises(server, later, [], [], {}, {}).merged[0].sets[0].duration_sec, 33);
   }
 });
+
+test('generateWarmupSets bar option: default unchanged, number, null ramp', () => {
+  const r = (w, u, o) => client.generateWarmupSets(w, u, o).map(s => [s.weight, s.reps]);
+  assert.deepEqual(r(225, 'lbs', undefined), r(225, 'lbs', {}));
+  assert.deepEqual(r(225, 'lbs', { bar: undefined }), r(225, 'lbs'));
+  assert.deepEqual(r(60, 'kg', { bar: 10 })[0], [10, 8]);
+  assert.deepEqual(r(50, 'lbs', { bar: null }), [[20, 8], [30, 5], [40, 3]]);
+  assert.deepEqual(r(100, 'kg', { bar: null }), [[40, 8], [60, 5], [80, 3]]);
+  assert.deepEqual(r(10, 'lbs', { bar: null }), [[5, 8]]);
+  assert.deepEqual(r(5, 'lbs', { bar: null }), []);
+  assert.deepEqual(r(0, 'kg', { bar: null }), []);
+  for (const unit of ['lbs', 'kg']) {
+    for (let W = 1; W <= 200; W += 2.5) {
+      const ws = client.generateWarmupSets(W, unit, { bar: null }).map(s => s.weight);
+      assert.ok(ws.length <= 4 && ws.every((w, i) => w > 0 && w < W && (i === 0 || w > ws[i - 1])), `${unit} ${W}`);
+      assert.deepEqual(server.generateWarmupSets(W, unit, { bar: null }), client.generateWarmupSets(W, unit, { bar: null }));
+    }
+  }
+});

@@ -350,8 +350,24 @@
     for (let k = 0; k <= i; k++) if (!sets[k]?.warmup) n++;
     return n;
   }
-  function addWarmups() {
-    const generated = generateWarmupSets(workingWeight, unit);
+  // null only when the library lists equipment and none of it is a bar
+  // (dumbbell, machine, cable, Smith); unknown or failed keeps the default bar.
+  async function warmupOpts() {
+    const id = exercise.exercise_id;
+    if (!id) return {};
+    let eq = _equipById.get(id);
+    if (eq === undefined) {
+      try {
+        const row = await LtApi.getExercise(id);
+        eq = Array.isArray(row?.equipment) ? row.equipment : [];
+        _equipById.set(id, eq);
+      } catch { return {}; }
+    }
+    if (!eq.length) return {};
+    return barWeightForEquipment(eq, unit === 'kg' ? 'kg' : 'lbs') == null ? { bar: null } : {};
+  }
+  async function addWarmups() {
+    const generated = generateWarmupSets(workingWeight, unit, await warmupOpts());
     if (generated.length === 0) return;
     dispatch('update', { ...exercise, sets: [...generated, ...sets] });
   }
