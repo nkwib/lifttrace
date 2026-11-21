@@ -4,9 +4,11 @@
  * Per-session progress for one exercise over a date range: max weight,
  * total volume, set count, and average RPE (when logged). Same
  * computation as GET /api/stats/progress/:exerciseId. Resolves the
- * exercise by NAME (case-insensitive substring match against the
- * catalog) since an agent thinks in names, not internal ids; ambiguous
- * matches are returned as a disambiguation list instead of guessing.
+ * exercise by NAME since an agent thinks in names, not internal ids: an
+ * exact (case/accent-insensitive) name wins, else a substring match
+ * against the catalog; ambiguous partial matches are returned as a
+ * disambiguation list instead of guessing. exercise_id skips name
+ * resolution.
  */
 import { z } from 'zod';
 import db from '../../../db.js';
@@ -21,25 +23,44 @@ import { foldText } from '../../search-text.js';
  * normal, successful return, not an error, since the caller still gets
  * something actionable (the candidate list) back.
  */
-export function getExerciseProgressCore(userId, { exercise_name, start, end } = {}) {
+export function getExerciseProgressCore(userId, { exercise_name, exercise_id, start, end } = {}) {
   const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end, 90, userId);
   const rangeError = validateDateRange(rangeStart, rangeEnd);
   if (rangeError) throw new Error(rangeError);
 
-  const matches = db.prepare(
-    `SELECT id, name, load_type FROM exercises WHERE deleted_at IS NULL AND fold(name) LIKE ? AND (is_global = 1 OR created_by = ?) ORDER BY name ASC LIMIT 10`
-  ).all(`%${foldText(exercise_name)}%`, userId);
-  if (matches.length === 0) {
-    throw new Error(`No exercise matching '${exercise_name}' found in the catalog.`);
+  let exercise;
+  if (exercise_id != null) {
+    exercise = db.prepare(
+      `SELECT id, name, load_type FROM exercises WHERE id = ? AND deleted_at IS NULL AND (is_global = 1 OR created_by = ?)`
+    ).get(Number(exercise_id), userId);
+    if (!exercise) throw new Error(`No exercise with id ${exercise_id} found in the catalog.`);
+  } else {
+    if (!exercise_name) throw new Error('exercise_name or exercise_id is required.');
+    const folded = foldText(exercise_name);
+    // Exact name first, so "Squat" never dead-ends behind "Front Squat".
+    // Duplicates: the caller's own row, then the lowest id.
+    exercise = db.prepare(
+      `SELECT id, name, load_type FROM exercises WHERE deleted_at IS NULL AND fold(name) = ? AND (is_global = 1 OR created_by = ?)
+        ORDER BY COALESCE(created_by = ?, 0) DESC, id ASC LIMIT 1`
+    ).get(folded, userId, userId);
+    if (!exercise) {
+      const matches = db.prepare(
+        `SELECT id, name, load_type FROM exercises WHERE deleted_at IS NULL AND fold(name) LIKE ? AND (is_global = 1 OR created_by = ?) ORDER BY name ASC, id ASC LIMIT 10`
+      ).all(`%${folded}%`, userId);
+      if (matches.length === 0) {
+        throw new Error(`No exercise matching '${exercise_name}' found in the catalog.`);
+      }
+      if (matches.length > 1) {
+        return {
+          ambiguous: true,
+          message: `Multiple exercises match '${exercise_name}'; call again with an exact name or an exercise_id.`,
+          candidates: matches.map(m => m.name),
+          candidate_exercises: matches.map(m => ({ exercise_id: m.id, name: m.name })),
+        };
+      }
+      exercise = matches[0];
+    }
   }
-  if (matches.length > 1) {
-    return {
-      ambiguous: true,
-      message: `Multiple exercises match '${exercise_name}'; call again with an exact name.`,
-      candidates: matches.map(m => m.name),
-    };
-  }
-  const exercise = matches[0];
 
   const conditions = ['deleted_at IS NULL'];
   const params = [userId];
@@ -88,7 +109,7 @@ export function getExerciseProgressCore(userId, { exercise_name, start, end } = 
       : null;
     progress.push({ date: row.date, maxWeight, max_duration_sec: maxDuration, max_distance_m: maxDistance, max_calories: maxCalories, totalVolume: Math.round(totalVolume), sets: completedSets.length, avgRpe });
   }
-  return { exercise_name: exercise.name, start: rangeStart, end: rangeEnd, progress };
+  return { exercise_id: exercise.id, exercise_name: exercise.name, start: rangeStart, end: rangeEnd, progress };
 }
 
 export function registerGetExerciseProgress(server, { userId }) {
@@ -101,18 +122,21 @@ export function registerGetExerciseProgress(server, { userId }) {
         'total volume, working-set count, and average RPE when logged, plus ' +
         'max_duration_sec, max_distance_m and max_calories for timed, distance ' +
         'and calorie exercises. Pass ' +
-        'the exercise by name (case-insensitive substring match). Range ' +
+        'the exercise by name (an exact case-insensitive name wins, otherwise ' +
+        'substring match; several partial matches return candidates with ' +
+        'exercise_ids) or by exercise_id. Range ' +
         "defaults to the last 90 days ending today in the account's timezone when " +
         'both bounds are omitted; a supplied bound leaves the other side open.',
       inputSchema: {
-        exercise_name: z.string().min(1).max(200),
+        exercise_name: z.string().min(1).max(200).optional(),
+        exercise_id: z.number().int().positive().optional(),
         start: z.string().regex(DATE_RE, 'YYYY-MM-DD').optional(),
         end:   z.string().regex(DATE_RE, 'YYYY-MM-DD').optional(),
       },
     },
-    async ({ exercise_name, start, end }) => {
+    async ({ exercise_name, exercise_id, start, end }) => {
       try {
-        return toolResult(getExerciseProgressCore(userId, { exercise_name, start, end }));
+        return toolResult(getExerciseProgressCore(userId, { exercise_name, exercise_id, start, end }));
       } catch (e) {
         return toolError(e.message);
       }

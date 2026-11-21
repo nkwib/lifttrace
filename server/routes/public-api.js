@@ -161,6 +161,7 @@ router.get('/exercises', requireScope('mcp:read'), core(req =>
 router.get('/exercises/:name/progress', requireScope('mcp:read'), core(req =>
   getExerciseProgressCore(req.apiUser.id, {
     exercise_name: req.params.name,
+    exercise_id: req.query.exercise_id ? Number(req.query.exercise_id) : undefined,
     start: req.query.start,
     end: req.query.end,
   })

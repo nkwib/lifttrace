@@ -378,9 +378,15 @@ paths:
         - name: name
           in: path
           required: true
-          description: Exercise name, matched case-insensitively by substring.
+          description: Exercise name. An exact case/accent-insensitive match wins (duplicates resolve to your own, then lowest id); otherwise substring, and several partial matches return ambiguous with candidates and candidate_exercises (exercise_id, name).
           schema:
             type: string
+        - name: exercise_id
+          in: query
+          required: false
+          description: Resolve by id instead of name (the path name is then ignored). Must be global or your own, else 400.
+          schema:
+            type: integer
         - name: start
           in: query
           required: false

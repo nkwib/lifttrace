@@ -20,11 +20,12 @@ const MAX_LIMIT = 25;
  */
 export function searchExercisesCore(userId, { query, limit } = {}) {
   const n = Math.min(Math.max(1, limit || 10), MAX_LIMIT);
+  const folded = foldText(query);
   const rows = db.prepare(
     `SELECT id, name, category, equipment, load_type, set_type FROM exercises
       WHERE deleted_at IS NULL AND fold(name) LIKE ? AND (is_global = 1 OR created_by = ?)
-      ORDER BY name ASC LIMIT ?`
-  ).all(`%${foldText(query)}%`, userId, n);
+      ORDER BY (fold(name) = ?) DESC, (fold(name) LIKE ?) DESC, name ASC, id ASC LIMIT ?`
+  ).all(`%${folded}%`, userId, folded, `${folded}%`, n);
   const exercises = rows.map(r => ({
     exercise_id: r.id,
     name: r.name,
@@ -43,7 +44,7 @@ export function registerSearchExercises(server, { userId }) {
       title: 'Search Exercises',
       description:
         'Search the exercise catalog by name (case-insensitive substring ' +
-        'match). Returns exercise_id, name, category, equipment, and ' +
+        'match, exact name first, then prefix). Returns exercise_id, name, category, equipment, and ' +
         'load_type and set_type for each match (set_type "time" means log ' +
         'duration_sec rather than reps, "distance" distance_m in meters, ' +
         '"calories" calories). exercise_id is what log_set expects.',
