@@ -8,6 +8,7 @@
 <script>
   import { closeOnBack } from '../lib/back-stack.js';
   import { trapFocus } from '../lib/focus-trap.js';
+  import { autoNameControls } from '../lib/name-controls.js';
   import { onMount, tick, afterUpdate, onDestroy } from 'svelte';
   import { fold } from '../lib/fold.js';
   import { slide, fade } from 'svelte/transition';
@@ -1084,7 +1085,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
   </button>
 {/snippet}
 
-<div class="page">
+<div class="page" use:autoNameControls>
   <!-- Sticky header + search wrap so the search bar tracks the page header
        at the same y position when scrolling instead of computing its own
        top offset (which budged when the header re-laid out under it). -->

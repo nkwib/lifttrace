@@ -51,6 +51,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Session Duration row fits phones.** The select and Save button no longer overflow the Users card at 320 and 390px; the row wraps.
 - **Rest bar readable at 320px.** The "REST" label no longer paints over the countdown on narrow phones; it is hidden there and the clock keeps its label for screen readers.
 - **Programs title no longer clipped on phones.** The Import and New buttons wrap under the title on narrow screens.
+- **Settings switches and dropdowns have accessible names.** Screen readers now announce each toggle and select by its row label (for example Reduce Motion, Theme).
 - **Workout pill no longer shows a frozen ".00".** The floating timer pill now shows m:ss without the centisecond suffix.
 - **Fast day switching in the Diary.** Coach feedback and set videos from a day you already left no longer show up on the day you land on.
 - **Diary progression chip uses the exercise's equipment.** Cable and machine lifts now suggest +5 kg / +10 lb and dumbbells +2 kg, read from the library (it was always the flat 2.5 kg / 5 lb). Assisted exercises no longer get a "Try more weight" chip.
