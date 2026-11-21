@@ -637,10 +637,11 @@
   .ex-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .ex-header {
     display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; row-gap: 4px;
     padding: 14px 14px 10px;
     cursor: pointer;
   }
-  .ex-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .ex-info { display: flex; flex-direction: column; gap: 2px; flex: 1 1 140px; min-width: 0; }
   .ex-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
   .ex-name {
     font-size: 15px; font-weight: 700; color: var(--text-1);
@@ -689,7 +690,7 @@
   .ex-clip .material-symbols-rounded { font-size: 15px; }
   .ex-clip:active { transform: scale(0.94); }
 
-  .ex-actions { display: flex; align-items: center; gap: 4px; }
+  .ex-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; margin-left: auto; }
   .btn-icon {
     background: none; border: none; cursor: pointer; color: var(--text-3);
     padding: 4px; border-radius: var(--radius-sm);

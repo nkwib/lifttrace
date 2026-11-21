@@ -246,6 +246,7 @@
 
   .superset-header {
     display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 4px 8px;
     padding: 10px 14px; width: 100%;
     background: linear-gradient(135deg, var(--accent-dim), transparent);
     border: none; border-bottom: 1px solid var(--border);
@@ -257,11 +258,11 @@
   .superset-header:hover { background: linear-gradient(135deg, var(--accent-dim), var(--surface-2)); }
   .superset-badge { display: flex; align-items: center; gap: 6px; }
   .ss-icon { font-size: 16px; color: var(--accent); }
-  .ss-label { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
-  .ss-count { font-size: 11px; color: var(--text-3); }
+  .ss-label { white-space: nowrap; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+  .ss-count { white-space: nowrap; font-size: 11px; color: var(--text-3); }
 
   .ss-meta { display: flex; align-items: center; gap: 8px; }
-  .ss-progress { font-size: 12px; color: var(--text-3); }
+  .ss-progress { white-space: nowrap; font-size: 12px; color: var(--text-3); }
   .ss-chevron {
     color: var(--text-3); font-size: 20px;
     transition: transform 0.2s ease;
