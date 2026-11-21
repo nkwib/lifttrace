@@ -23,6 +23,7 @@ Thanks for your interest in LiftTrace.
 - If you add or change a `/api/v1` route, update `server/openapi.yaml` too; `scripts/openapi-coverage.test.js` fails when the spec and the router drift.
 - Update `CHANGELOG.md` under the unreleased section if your change is user-visible.
 - The Android shell lives in `android/`; if you change web assets the maintainer will run `npx cap sync android` and rebuild the APK.
+- Adding an icon (`<span class="material-symbols-rounded">name</span>`) means regenerating the icon font, which is a subset: `pip install fonttools brotli && node scripts/subset-icon-font.mjs`, then commit `public/fonts/`. Otherwise the icon renders as raw text; `scripts/icon-font-coverage.test.js` fails with this command in its message.
 - No DCO or CLA required.
 
 ## Translations

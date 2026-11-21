@@ -64,6 +64,12 @@ Fonts are served by your own instance, never from a CDN. One file per script
 subset, so a browser downloads only the scripts a page needs. Regenerate them
 with `scripts/fetch-fonts.mjs`.
 
+`material-symbols-rounded.woff2` is a modified subset of the upstream font
+(only the icons the app uses, axes pinned to the values in `base.css`), which
+Apache 2.0 permits. Rebuild it with `node scripts/subset-icon-font.mjs`; it
+downloads the full font from a pinned commit of
+[google/material-design-icons](https://github.com/google/material-design-icons).
+
 [ofl]: https://openfontlicense.org/
 [apache]: https://www.apache.org/licenses/LICENSE-2.0
 

@@ -46,6 +46,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **Diary Finish workout button, empty states and loading labels are translatable.** Previously English in every language.
 - **Workout summary, library preview pane and exercise picker are translatable.** Their toasts, tooltips and aria-labels were hardcoded English.
+- **App loads and installs about 5 MB lighter.** The icon font is trimmed to the icons the app uses (5.3 MB to about 50 KB), which also speeds up first paint and the offline cache.
 - **Undo after removing a whole superset.** Same toast as for a set or exercise, shown when "confirm exercise removal" is off.
 - **Profile picture can be removed, and height and weight are range-checked.** A new Remove photo button clears the picture (Local mode used to keep it). Height outside 50-250 cm or weight outside 20-250 kg is rejected instead of saved.
 - **Settings search.** "No settings match" no longer shows over matching results. Several words all have to match, in any order, and section names in your language are searched. Added terms: week start, RPE, RIR, plates, warm-up, superset, heatmap.
