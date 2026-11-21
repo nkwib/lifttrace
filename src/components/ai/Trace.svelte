@@ -959,7 +959,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
                 </div>
               {/if}
               <div class="lb-msg-body">
-                <div class="lb-bubble">
+                <div class="lb-bubble" class:lb-plain={!(msg.role === 'assistant' && md)}>
                   {#each getImages(msg.content) as img}
                     <img class="lb-msg-img" src={img.dataUrl} alt="attachment" />
                   {/each}
@@ -1309,8 +1309,12 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
     padding: 10px 14px;
     border-radius: 18px;
     font-size: 14px; line-height: 1.5;
-    white-space: pre-wrap; word-break: break-word;
+    white-space: normal; word-break: break-word;
   }
+  /* Only plain text needs preserved newlines. Rendered markdown (.lb-md) is
+     block content, and pre-wrap would keep the whitespace node before it as a
+     blank line above the text. */
+  .lb-msg.user .lb-bubble, .lb-bubble.lb-plain { white-space: pre-wrap; }
   /* Assistant bubble */
   .lb-msg:not(.user) .lb-bubble {
     background: var(--surface-2); color: var(--text-1);
