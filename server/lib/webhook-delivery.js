@@ -10,6 +10,7 @@
  * the webhooks feature needs.
  */
 import { createHmac } from 'crypto';
+import { fetchChecked } from './ssrf-guard.js';
 
 const FETCH_TIMEOUT_MS = 10000;
 
@@ -26,22 +27,20 @@ export function signEnvelope(secret, event, data) {
 /**
  * POST one already-signed envelope to `url`. Throws on a non-2xx
  * response, a network error, or the fetch timing out, callers decide
- * whether/how to retry.
+ * whether/how to retry. The connection is pinned to the addresses the
+ * SSRF guard checked (fetchChecked), so a host can't pass the check with
+ * a public IP and then rebind to an internal one (DNS rebinding). Behind
+ * HTTP_PROXY/HTTPS_PROXY the proxy connects, so only the check applies.
  */
-export async function sendWebhookRequest(url, envelope, signature, deliveryId, event) {
+export async function sendWebhookRequest(url, envelope, signature, deliveryId, event, allowPrivate = false) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
-    const res = await fetch(url, {
+    // maxRedirects:0 returns a 3xx as is (a compromised endpoint could
+    // otherwise redirect to an internal address), so res.ok is false and
+    // the check below treats it as a failure.
+    const res = await fetchChecked(url, {
       method: 'POST',
-      // Do not follow a redirect: a compromised or malicious endpoint
-      // could 3xx this request to an internal address (169.254.169.254,
-      // localhost) after assertSafeUrl already validated the original
-      // host, bypassing the SSRF guard entirely. With redirect:'manual',
-      // Node's fetch returns the real 3xx status and res.ok is false, so
-      // the check below already treats it as a failure without a
-      // separate status-range check.
-      redirect: 'manual',
       signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +49,8 @@ export async function sendWebhookRequest(url, envelope, signature, deliveryId, e
         'X-LiftTrace-Delivery': deliveryId,
       },
       body: envelope,
-    });
+    }, { allowPrivate, allowPrivateEnvHint: 'ALLOW_PRIVATE_WEBHOOK_URLS', maxRedirects: 0 });
+    try { await res.body?.cancel(); } catch {}
     if (!res.ok) throw new Error(`Upstream responded ${res.status}`);
   } finally {
     clearTimeout(timer);

@@ -181,7 +181,7 @@ async function _deliverWithRetry(row, event, data) {
         allowPrivate: ALLOW_PRIVATE_WEBHOOK_URLS,
         allowPrivateEnvHint: 'ALLOW_PRIVATE_WEBHOOK_URLS',
       });
-      await sendWebhookRequest(row.url, envelope, signature, deliveryId, event);
+      await sendWebhookRequest(row.url, envelope, signature, deliveryId, event, ALLOW_PRIVATE_WEBHOOK_URLS);
       _recordDelivery(row.id, 'success', null);
       return;
     } catch (e) {

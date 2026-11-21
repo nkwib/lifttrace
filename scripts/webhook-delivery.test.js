@@ -68,7 +68,7 @@ test('sendWebhookRequest POSTs the exact envelope with the signature and event/d
   });
   try {
     const { envelope, signature } = signEnvelope('shh', 'body_stat.logged', { date: '2026-09-12' });
-    await sendWebhookRequest(url, envelope, signature, 'delivery-123', 'body_stat.logged');
+    await sendWebhookRequest(url, envelope, signature, 'delivery-123', 'body_stat.logged', true);
     assert.equal(received.method, 'POST');
     assert.equal(received.headers.signature, `sha256=${signature}`);
     assert.equal(received.headers.event, 'body_stat.logged');
@@ -87,7 +87,7 @@ test('sendWebhookRequest throws on a non-2xx response, so the retry loop in _del
   });
   try {
     const { envelope, signature } = signEnvelope('shh', 'workout.completed', {});
-    await assert.rejects(() => sendWebhookRequest(url, envelope, signature, 'd-1', 'workout.completed'), /500/);
+    await assert.rejects(() => sendWebhookRequest(url, envelope, signature, 'd-1', 'workout.completed', true), /500/);
   } finally {
     await close();
   }
@@ -100,7 +100,7 @@ test('sendWebhookRequest rejects when the receiver is unreachable (connection re
   const { url, close } = await withServer((req, res) => res.end());
   await close();
   const { envelope, signature } = signEnvelope('shh', 'pr.set', {});
-  await assert.rejects(() => sendWebhookRequest(url, envelope, signature, 'd-2', 'pr.set'));
+  await assert.rejects(() => sendWebhookRequest(url, envelope, signature, 'd-2', 'pr.set', true));
 });
 
 test('sendWebhookRequest does NOT follow a redirect (SSRF guard bypass regression check)', async () => {
@@ -121,10 +121,22 @@ test('sendWebhookRequest does NOT follow a redirect (SSRF guard bypass regressio
   });
   try {
     const { envelope, signature } = signEnvelope('shh', 'workout.completed', {});
-    await assert.rejects(() => sendWebhookRequest(url, envelope, signature, 'd-3', 'workout.completed'), /302/);
+    await assert.rejects(() => sendWebhookRequest(url, envelope, signature, 'd-3', 'workout.completed', true), /302/);
     assert.equal(redirectTargetHit, false, 'the redirect target should never have been fetched');
   } finally {
     await close();
     await closeTarget();
+  }
+});
+
+test('sendWebhookRequest refuses a loopback target by default (pinned fetch guard)', async () => {
+  let hit = false;
+  const { url, close } = await withServer((req, res) => { hit = true; res.end(); });
+  try {
+    const { envelope, signature } = signEnvelope('shh', 'workout.completed', {});
+    await assert.rejects(() => sendWebhookRequest(url, envelope, signature, 'd-4', 'workout.completed'), /private|ALLOW_PRIVATE_WEBHOOK_URLS/i);
+    assert.equal(hit, false);
+  } finally {
+    await close();
   }
 });
