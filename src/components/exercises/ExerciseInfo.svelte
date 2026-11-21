@@ -2,7 +2,7 @@
   import { resolveAssetUrl } from '../../lib/platform.js';
   import { failedMedia, mediaFailed } from '../../lib/media-fallback.js';
   import { _ } from 'svelte-i18n';
-  import { fmtHistorySet, historyHasRepSets } from '../../lib/history-set.js';
+  import { fmtHistorySet, historyHasRepSets, repMaxes } from '../../lib/history-set.js';
   import { onDestroy } from 'svelte';
   import { weightUnit, exerciseDistanceUnits, exerciseNotes } from '../../stores/settings.js';
   import { cleanNote, withNote, EXERCISE_NOTE_MAX } from '../../lib/exercise-notes.js';
@@ -34,6 +34,7 @@
   }
   onDestroy(saveNote);
   $: rows = history || [];
+  $: repMaxRows = repMaxes(history);
   $: shown = showAll ? rows : rows.slice(0, 10);
   $: ctx = { exerciseId: exercise?.id, exerciseName: exercise?.name, imperial: $weightUnit === 'lbs', distanceUnits: $exerciseDistanceUnits };
 </script>
@@ -131,6 +132,22 @@
     </div>
   {/if}
 
+  <!-- Rep maxes (rep-kind history only, needs 2+ distinct rows) -->
+  {#if repMaxRows.length >= 2}
+    <div class="section">
+      <h3 class="section-title">{$_('exercise_info.rep_maxes_title')} <span class="rm-unit">({$weightUnit})</span></h3>
+      <div class="rm-grid">
+        {#each repMaxRows as r}
+          <div class="rm-cell">
+            <span class="rm-reps">{$_('exercise_info.rep_maxes_reps', { values: { count: r.reps } })}</span>
+            <span class="rm-weight">{r.weight}</span>
+            <span class="rm-date">{r.date}</span>
+          </div>
+        {/each}
+      </div>
+    </div>
+  {/if}
+
   <!-- History (optional) -->
   {#if history && history.length > 0}
     <div class="section">
@@ -190,6 +207,17 @@
   .pr-value { font-size: 22px; font-weight: 700; color: #FFD54F; }
   .pr-sub   { font-size: 12px; color: var(--text-2); }
   .pr-date  { font-size: 12px; color: var(--text-3); }
+
+  .rm-unit { text-transform: none; font-weight: 500; color: var(--text-3); }
+  .rm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 6px; }
+  .rm-cell {
+    display: flex; flex-direction: column; gap: 2px; padding: 8px 10px;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-md);
+    font-variant-numeric: tabular-nums;
+  }
+  .rm-reps { font-size: 12px; color: var(--text-3); font-weight: 600; }
+  .rm-weight { font-size: 16px; font-weight: 700; color: var(--text-1); }
+  .rm-date { font-size: 11px; color: var(--text-3); }
 
   .history-list { display: flex; flex-direction: column; gap: 6px; }
   .history-row {

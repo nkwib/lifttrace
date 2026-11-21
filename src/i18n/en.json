@@ -983,6 +983,8 @@
     "tips":                  "Tips",
     "personal_record":       "Personal Record",
     "recent_history":        "Recent History",
+    "rep_maxes_title":       "Best by reps",
+    "rep_maxes_reps":        "{count}+ reps",
     "warmup":                "Warm-up",
     "warmup_short":          "W",
     "show_all":              "Show all ({count})",

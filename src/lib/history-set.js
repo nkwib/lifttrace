@@ -73,3 +73,27 @@ export function sessionE1rms(history) {
   }
   return out;
 }
+
+/**
+ * Best weight at or above each rep count: [{ reps, weight, date }] ascending
+ * by reps. Same set filter as exerciseWeightPr (completed, non-warm-up, rep
+ * kind, weight > 0, setReps for L/R). A row is dropped when the next-higher
+ * listed rep count has the same weight, so weights strictly decrease.
+ */
+export function repMaxes(history, reps = [1, 2, 3, 5, 8, 10, 12]) {
+  const sets = [];
+  for (const h of history || []) {
+    for (const s of h.sets || []) {
+      if (!s.completed || s.warmup || setKind({ set_type: h.set_type }, s) !== 'reps') continue;
+      const w = Number(s.weight) || 0, r = Number(setReps(s)) || 0;
+      if (w > 0 && r > 0) sets.push({ w, r, date: h.date });
+    }
+  }
+  const out = [];
+  for (const target of reps) {
+    let best = null;
+    for (const s of sets) if (s.r >= target && (!best || s.w > best.w)) best = s;
+    if (best) out.push({ reps: target, weight: best.w, date: best.date });
+  }
+  return out.filter((row, i) => i === out.length - 1 || out[i + 1].weight !== row.weight);
+}
