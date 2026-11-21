@@ -82,9 +82,9 @@
   }
   .rest-content { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
   .rest-label-col { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
-  .rest-label { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; color: var(--danger, #FF5C5C); }
+  .rest-label { overflow: hidden; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; color: var(--danger, #FF5C5C); }
   .rest-exercise { font-size: 11px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rest-time-col { display: flex; align-items: center; }
+  .rest-time-col { display: flex; align-items: center; flex-shrink: 0; }
   .rest-time { font-size: 26px; font-weight: 800; color: var(--text-1); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
   .rest-actions { display: flex; gap: 4px; flex-shrink: 0; }
   .rest-btn {
@@ -110,4 +110,7 @@
   .rest-sticky.paused .rest-label { color: var(--text-3); }
   .rest-sticky.paused .rest-time { color: var(--text-2); }
   .rest-btn .material-symbols-rounded { font-size: 18px; }
+  /* Narrow phones: the actions and the clock fill the bar, so the label
+     column (already 0 wide) is dropped; the clock keeps aria-label. */
+  @media (max-width: 360px) { .rest-label-col { display: none; } .rest-time-col { flex: 1; } }
 </style>
