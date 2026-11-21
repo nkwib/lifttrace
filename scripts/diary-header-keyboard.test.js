@@ -5,25 +5,21 @@ import { readFileSync } from 'node:fs';
 const r = (p) => readFileSync(p, 'utf8');
 const GUARD = /e\.target === e\.currentTarget && \(e\.key === 'Enter' \|\| e\.key === ' '\)/;
 
-for (const [name, file, cls] of [
-  ['ExerciseCard', 'src/components/diary/ExerciseCard.svelte', 'ex-header'],
-  ['SupersetCard', 'src/components/diary/SupersetCard.svelte', 'superset-header'],
+for (const [name, file, cls, tog] of [
+  ['ExerciseCard', 'src/components/diary/ExerciseCard.svelte', 'ex-header', 'ex-toggle'],
+  ['SupersetCard', 'src/components/diary/SupersetCard.svelte', 'superset-header', 'ss-toggle'],
 ]) {
-  test(`${name} header is keyboard operable`, () => {
+  test(`${name} header is keyboard operable via a real toggle button`, () => {
     const s = r(file);
     const tag = s.match(new RegExp(`<div class="${cls}"[\\s\\S]*?>\\n`))[0];
-    assert.match(tag, /role="button"/);
-    assert.match(tag, /tabindex="0"/);
-    assert.match(tag, /aria-expanded=\{expanded\}/);
-    assert.match(tag, GUARD);
-    assert.match(tag, /preventDefault/);
-    assert.match(s, new RegExp(`\\.${cls}:focus-visible`));
+    assert.doesNotMatch(tag, /role="button"/);
+    assert.match(s, new RegExp(`<button type="button" class="${tog} tap" aria-expanded=\\{expanded\\}`));
+    assert.match(s, new RegExp(`\\.${tog}:focus-visible`));
   });
 }
 
-test('SupersetCard header has no svelte-ignore; remove button stops propagation', () => {
+test('SupersetCard remove button stops propagation', () => {
   const s = r('src/components/diary/SupersetCard.svelte');
-  assert.doesNotMatch(s, /svelte-ignore/);
   assert.match(s, /ss-remove-btn[^>]*on:click\|stopPropagation/);
 });
 

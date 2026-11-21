@@ -4,6 +4,7 @@
 </script>
 
 <script>
+  import { pointerClick } from '../../lib/a11y.js';
   import { createEventDispatcher, onMount, afterUpdate } from 'svelte';
   import { _ } from 'svelte-i18n';
   import SetRow from './SetRow.svelte';
@@ -463,9 +464,8 @@
       on:pickDistanceUnit={(e) => pickDistanceUnit(e.detail)}
       on:close={() => loadMenuOpen = false} />
   {/if}
-  <div class="ex-header" role="button" tabindex="0" aria-expanded={expanded}
-    on:click={() => _setExpanded(!expanded)}
-    on:keydown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); _setExpanded(!expanded); } }}
+  <div class="ex-header"
+    use:pointerClick={() => _setExpanded(!expanded)}
     on:contextmenu|preventDefault={() => dispatch('menu')}>
     <div class="ex-info">
       <div class="ex-name-row">
@@ -473,10 +473,10 @@
         <button class="load-chip tap" class:non-default={loadType !== 'bilateral' || notReps}
                 on:click|stopPropagation={toggleLoadMenu}
                 title="Load type">
-          {#if loadType === 'paired'}<span class="material-symbols-rounded">compare_arrows</span>{loadTypeLabel}
-          {:else if loadType === 'unilateral'}<span class="material-symbols-rounded">swap_horiz</span>{loadTypeLabel}
-          {:else if !notReps}<span class="material-symbols-rounded">straighten</span>{/if}
-          {#if notReps}<span class="material-symbols-rounded">{SET_TYPE_ICON[setType]}</span>{$_(`exercise_card.set_type_${setType}`)}{/if}
+          {#if loadType === 'paired'}<span class="material-symbols-rounded" aria-hidden="true">compare_arrows</span>{loadTypeLabel}
+          {:else if loadType === 'unilateral'}<span class="material-symbols-rounded" aria-hidden="true">swap_horiz</span>{loadTypeLabel}
+          {:else if !notReps}<span class="material-symbols-rounded" aria-hidden="true">straighten</span>{/if}
+          {#if notReps}<span class="material-symbols-rounded" aria-hidden="true">{SET_TYPE_ICON[setType]}</span>{$_(`exercise_card.set_type_${setType}`)}{/if}
         </button>
       </div>
       <div class="ex-meta-row">
@@ -484,7 +484,7 @@
         {#if exerciseMedia.length}
           <button type="button" class="ex-clip" on:click|stopPropagation={() => dispatch('openMedia', exerciseMedia[0])}
             title="Watch this set" aria-label="Watch this set">
-            <span class="material-symbols-rounded">play_circle</span>
+            <span class="material-symbols-rounded" aria-hidden="true">play_circle</span>
             {#if exerciseMedia.length > 1}<span class="ex-clip-n">{exerciseMedia.length}</span>{/if}
           </button>
         {/if}
@@ -493,24 +493,27 @@
     <div class="ex-actions">
       {#if canMoveUp}
         <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('moveUp')} title={$_('radio.move_up')} aria-label={$_('radio.move_up')}>
-          <span class="material-symbols-rounded">keyboard_double_arrow_up</span>
+          <span class="material-symbols-rounded" aria-hidden="true">keyboard_double_arrow_up</span>
         </button>
       {/if}
       {#if canMoveDown}
         <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('moveDown')} title={$_('radio.move_down')} aria-label={$_('radio.move_down')}>
-          <span class="material-symbols-rounded">keyboard_double_arrow_down</span>
+          <span class="material-symbols-rounded" aria-hidden="true">keyboard_double_arrow_down</span>
         </button>
       {/if}
       <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('info')} title={$_('diary.view_exercise_details')} aria-label={$_('diary.view_exercise_details')}>
-        <span class="material-symbols-rounded">info</span>
+        <span class="material-symbols-rounded" aria-hidden="true">info</span>
       </button>
       <button class="btn-icon-sm tap" on:click|stopPropagation={() => dispatch('menu')} title={$_('diary.more_options')} aria-label={$_('diary.more_options')}>
-        <span class="material-symbols-rounded">more_vert</span>
+        <span class="material-symbols-rounded" aria-hidden="true">more_vert</span>
       </button>
       <button class="btn-icon tap" on:click|stopPropagation={remove} title={$_('diary.remove_exercise')} aria-label={$_('diary.remove_exercise')}>
-        <span class="material-symbols-rounded">close</span>
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
-      <span class="material-symbols-rounded expand-icon" class:rotated={!expanded}>expand_more</span>
+      <button type="button" class="ex-toggle tap" aria-expanded={expanded} aria-label={$_('diary_extra.toggle_section', { values: { name: exercise.exercise_name } })}
+        on:click|stopPropagation={() => _setExpanded(!expanded)}>
+        <span class="material-symbols-rounded expand-icon" aria-hidden="true" class:rotated={!expanded}>expand_more</span>
+      </button>
     </div>
   </div>
 
@@ -570,12 +573,12 @@
 
       <div class="add-set-actions">
         <button class="add-set-btn tap" on:click={addSet}>
-          <span class="material-symbols-rounded">add</span>
+          <span class="material-symbols-rounded" aria-hidden="true">add</span>
           Add Set
         </button>
         {#if !notReps && !hasWarmups && workingWeight > 0}
           <button class="add-warmup-btn tap" on:click={addWarmups} title="Add warm-up progression based on working weight">
-            <span class="material-symbols-rounded">bolt</span>
+            <span class="material-symbols-rounded" aria-hidden="true">bolt</span>
             Warm-ups
           </button>
         {/if}
@@ -591,7 +594,7 @@
         {#if setType === 'calories' && exercise.target_calories}<span class="target-chip">{exercise.target_calories} cal</span>{/if}
         {#if progressionSuggestion}
           <span class="progression-chip" title={$_(progressionSuggestion.reasonKey, { values: progressionSuggestion.values })}>
-            <span class="material-symbols-rounded">trending_up</span>
+            <span class="material-symbols-rounded" aria-hidden="true">trending_up</span>
             {$_('diary.progression.chip', { values: { weight: progressionSuggestion.weight, step: progressionSuggestion.step } })}
           </span>
         {/if}
@@ -630,7 +633,8 @@
     box-shadow: 0 0 8px color-mix(in srgb, var(--success) 40%, transparent);
   }
 
-  .ex-header:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .ex-toggle { background: none; border: none; padding: 0; cursor: pointer; display: inline-flex; border-radius: 6px; }
+  .ex-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .ex-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 14px 10px;

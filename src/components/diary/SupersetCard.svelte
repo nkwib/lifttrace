@@ -1,4 +1,5 @@
 <script>
+  import { pointerClick } from '../../lib/a11y.js';
   import { createEventDispatcher } from 'svelte';
   import { _ } from 'svelte-i18n';
   import { slide, fade } from 'svelte/transition';
@@ -111,19 +112,21 @@
   />
 {:else}
   <div class="superset-card" class:all-done={allDone} data-progress={progress}>
-    <div class="superset-header" on:click={() => _setExpanded(!expanded)} role="button" tabindex="0" aria-expanded={expanded}
-      on:keydown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); _setExpanded(!expanded); } }}>
+    <div class="superset-header" use:pointerClick={() => _setExpanded(!expanded)}>
       <div class="superset-badge">
-        <span class="material-symbols-rounded ss-icon">link</span>
+        <span class="material-symbols-rounded ss-icon" aria-hidden="true">link</span>
         <span class="ss-label">{$_('superset_card.superset')}</span>
         <span class="ss-count">{$_('diary_extra.exercise_count', { values: { count: exercises.length } })}</span>
       </div>
       <div class="ss-meta">
         <span class="ss-progress">{$_('superset_card.sets_progress', { values: { done: completedSets, total: totalSets } })}</span>
-        <button class="ss-remove-btn tap" on:click|stopPropagation={() => dispatch('removeSuperset', supersetId)} title={$_('superset_card.remove')}>
-          <span class="material-symbols-rounded">close</span>
+        <button class="ss-remove-btn tap" on:click|stopPropagation={() => dispatch('removeSuperset', supersetId)} title={$_('superset_card.remove')} aria-label={$_('superset_card.remove')}>
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
         </button>
-        <span class="material-symbols-rounded ss-chevron" class:rotated={!expanded}>expand_more</span>
+        <button type="button" class="ss-toggle tap" aria-expanded={expanded} aria-label={$_('diary_extra.toggle_section', { values: { name: exercises.map((e) => e.exercise_name).join(', ') } })}
+          on:click|stopPropagation={() => _setExpanded(!expanded)}>
+          <span class="material-symbols-rounded ss-chevron" aria-hidden="true" class:rotated={!expanded}>expand_more</span>
+        </button>
       </div>
     </div>
 
@@ -189,7 +192,7 @@
                           <button class="reply-save" class:flashed={replySavedFlash === f.id}
                                   on:click={() => onSaveReply(f.id)}
                                   disabled={replySaving === f.id || !(replyDrafts[f.id] || '').trim()}>
-                            {#if replySavedFlash === f.id}<span class="material-symbols-rounded" style="font-size:14px">check</span>{:else}{replySaving === f.id ? 'Saving…' : 'Reply'}{/if}
+                            {#if replySavedFlash === f.id}<span class="material-symbols-rounded" aria-hidden="true" style="font-size:14px">check</span>{:else}{replySaving === f.id ? 'Saving…' : 'Reply'}{/if}
                           </button>
                         </div>
                       </div>
@@ -199,11 +202,11 @@
                           You{#if f.member_replied_at}{' · '}{relTime(f.member_replied_at)}{/if}
                         </span>
                         <span class="my-reply-text">{f.member_reply}</span>
-                        <span class="material-symbols-rounded my-reply-edit-icon">edit</span>
+                        <span class="material-symbols-rounded my-reply-edit-icon" aria-hidden="true">edit</span>
                       </button>
                     {:else}
                       <button class="reply-add" on:click={() => onOpenReply(f)}>
-                        <span class="material-symbols-rounded" style="font-size:14px">reply</span>
+                        <span class="material-symbols-rounded" aria-hidden="true" style="font-size:14px">reply</span>
                         Reply
                       </button>
                     {/if}
@@ -215,7 +218,7 @@
         {/each}
 
         <button class="ss-add-exercise" on:click={() => dispatch('addToSuperset', supersetId)}>
-          <span class="material-symbols-rounded">add</span>
+          <span class="material-symbols-rounded" aria-hidden="true">add</span>
           Add exercise to superset
         </button>
       </div>
@@ -249,7 +252,8 @@
     color: inherit; font-family: inherit; cursor: pointer;
     transition: background var(--dur-fast);
   }
-  .superset-header:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .ss-toggle { background: none; border: none; padding: 0; cursor: pointer; display: inline-flex; border-radius: 6px; }
+  .ss-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .superset-header:hover { background: linear-gradient(135deg, var(--accent-dim), var(--surface-2)); }
   .superset-badge { display: flex; align-items: center; gap: 6px; }
   .ss-icon { font-size: 16px; color: var(--accent); }

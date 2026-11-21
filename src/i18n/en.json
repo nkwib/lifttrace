@@ -773,7 +773,14 @@
     "rir_level_4": "RIR 4: four more reps in the tank",
     "rir_level_5": "RIR 5+: five or more reps left, an easy set",
     "clear":                 "Clear",
-    "remove_set":            "Remove set"
+    "remove_set":            "Remove set",
+    "weight_set":            "Weight, set {n}",
+    "reps_set":              "Reps, set {n}",
+    "reps_left_set":         "Reps left, set {n}",
+    "reps_right_set":        "Reps right, set {n}",
+    "mark_complete_set":     "Mark set {n} complete",
+    "mark_incomplete_set":   "Mark set {n} incomplete",
+    "remove_set_n":          "Remove set {n}"
   },
   "set_video": {
     "title":             "Film a Set",
@@ -1518,6 +1525,7 @@
     "duplicate_confirm":      "Save anyway"
   },
   "diary_extra": {
+    "toggle_section": "Show or hide {name}",
     "toast": {
       "reply_failed":          "Reply failed",
       "cant_load_template":    "Could not load template",

@@ -317,7 +317,7 @@
   {#if media}
     <button type="button" class="clip-badge" on:click|stopPropagation={() => dispatch('openMedia', media)}
       title={$_('exercise_card.watch_set')} aria-label={$_('exercise_card.watch_set')}>
-      <span class="material-symbols-rounded">play_circle</span>
+      <span class="material-symbols-rounded" aria-hidden="true">play_circle</span>
     </button>
   {/if}
   {#if isPR}
@@ -364,6 +364,7 @@
         on:focus={() => { weightFocused = true; }}
       on:blur={() => { weightFocused = false; commitNumber('weight', weightStr, parseFloat); }}
       placeholder="0"
+      aria-label={$_('exercise_card.weight_set', { values: { n: displayNum } })}
       inputmode="decimal"
     />
     <button class="step-btn tap" on:click={() => bumpWeight(step)} aria-label={$_('exercise_card.increase_weight')} tabindex="-1">+</button>
@@ -380,6 +381,7 @@
       <input
         type="number"
         class="set-input"
+        aria-label={$_('exercise_card.reps_left_set', { values: { n: displayNum } })}
         bind:value={repsLStr}
         on:input={() => commitSideReps('reps_l', repsLStr)}
         use:replaceOnType
@@ -392,6 +394,7 @@
       <input
         type="number"
         class="set-input"
+        aria-label={$_('exercise_card.reps_right_set', { values: { n: displayNum } })}
         bind:value={repsRStr}
         on:input={() => commitSideReps('reps_r', repsRStr)}
         use:replaceOnType
@@ -401,7 +404,7 @@
         inputmode="numeric"
       />
       <button class="split-btn tap active" on:click={toggleSplit} title={$_('exercise_card.merge_reps')} aria-label={$_('exercise_card.merge_reps')}>
-        <span class="material-symbols-rounded">link_off</span>
+        <span class="material-symbols-rounded" aria-hidden="true">link_off</span>
       </button>
     </div>
   {:else if isTimeSplit}
@@ -446,13 +449,13 @@
           on:click={() => dispatch(holdRunning ? 'stopHold' : 'startHold')}
           title={holdRunning ? $_('hold_timer.stop') : $_('hold_timer.start')}
           aria-label={holdRunning ? $_('hold_timer.stop') : $_('hold_timer.start')}>
-          <span class="material-symbols-rounded">{holdRunning ? 'stop_circle' : 'timer'}</span>
+          <span class="material-symbols-rounded" aria-hidden="true">{holdRunning ? 'stop_circle' : 'timer'}</span>
         </button>
       {:else}
         <!-- One button fits beside two times on a 320px phone: the timer
              while the set is open, the way back to one time once done. -->
         <button class="split-btn tap active" on:click={toggleTimeSplit} title={$_('hold_timer.merge_sides')} aria-label={$_('hold_timer.merge_sides')}>
-          <span class="material-symbols-rounded">link_off</span>
+          <span class="material-symbols-rounded" aria-hidden="true">link_off</span>
         </button>
       {/if}
     </div>
@@ -476,7 +479,7 @@
       <!-- An Alternating exercise can be timed per side by hand too. -->
       {#if perSide && !holdRunning}
         <button class="split-btn tap" on:click={toggleTimeSplit} title={$_('hold_timer.split_sides')} aria-label={$_('hold_timer.split_sides')}>
-          <span class="material-symbols-rounded">add_link</span>
+          <span class="material-symbols-rounded" aria-hidden="true">add_link</span>
         </button>
       {/if}
       <!-- Hold timer: sits inside the field like the L/R split button does
@@ -486,7 +489,7 @@
           on:click={() => dispatch(holdRunning ? 'stopHold' : 'startHold')}
           title={holdRunning ? $_('hold_timer.stop') : $_('hold_timer.start')}
           aria-label={holdRunning ? $_('hold_timer.stop') : $_('hold_timer.start')}>
-          <span class="material-symbols-rounded">{holdRunning ? 'stop_circle' : 'timer'}</span>
+          <span class="material-symbols-rounded" aria-hidden="true">{holdRunning ? 'stop_circle' : 'timer'}</span>
         </button>
       {/if}
     </div>
@@ -530,6 +533,7 @@
       <input
         type="number"
         class="set-input"
+        aria-label={$_('exercise_card.reps_set', { values: { n: displayNum } })}
         bind:value={repsStr}
         on:input={() => commitReps(repsStr)}
         use:replaceOnType
@@ -547,14 +551,14 @@
            gap was routinely eating the entire input (issue #75). -->
       {#if loadType === 'unilateral'}
         <button class="split-btn tap" on:click={toggleSplit} title={$_('exercise_card.split_reps')} aria-label={$_('exercise_card.split_reps')}>
-          <span class="material-symbols-rounded">add_link</span>
+          <span class="material-symbols-rounded" aria-hidden="true">add_link</span>
         </button>
       {/if}
     </div>
   {/if}
 
-  <button class="check-btn tap" class:checked={set.completed} on:click={toggleComplete} aria-label={set.completed ? $_('exercise_card.mark_incomplete') : $_('exercise_card.mark_complete')}>
-    <span class="material-symbols-rounded">
+  <button class="check-btn tap" class:checked={set.completed} on:click={toggleComplete} aria-label={$_(set.completed ? 'exercise_card.mark_incomplete_set' : 'exercise_card.mark_complete_set', { values: { n: displayNum } })}>
+    <span class="material-symbols-rounded" aria-hidden="true">
       {set.completed ? 'check_circle' : 'radio_button_unchecked'}
     </span>
   </button>
@@ -596,8 +600,8 @@
     <span class="rpe-slot" aria-hidden="true"></span>
   {/if}
 
-  <button class="remove-btn tap" on:click={() => dispatch('remove')} title={$_('exercise_card.remove_set')} aria-label={$_('exercise_card.remove_set')}>
-    <span class="material-symbols-rounded">close</span>
+  <button class="remove-btn tap" on:click={() => dispatch('remove')} title={$_('exercise_card.remove_set')} aria-label={$_('exercise_card.remove_set_n', { values: { n: displayNum } })}>
+    <span class="material-symbols-rounded" aria-hidden="true">close</span>
   </button>
 </div>
 

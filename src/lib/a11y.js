@@ -7,3 +7,12 @@ export function activateOnKey(e, fn) {
   e.preventDefault();
   fn(e);
 }
+
+// Pointer-only click on a plain container whose keyboard path is a real
+// <button> inside it (no role="button" wrapper around interactive children).
+export function pointerClick(node, fn) {
+  let cb = fn;
+  const h = (e) => cb(e);
+  node.addEventListener('click', h);
+  return { update(next) { cb = next; }, destroy() { node.removeEventListener('click', h); } };
+}
