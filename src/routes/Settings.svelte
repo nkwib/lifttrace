@@ -2457,7 +2457,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
   }
 
   /* ── Danger Zone ────────────────────────────────────────────────────── */
-  .danger-zone-label { color: var(--danger) !important; opacity: 0.85; }
+  .danger-zone-label { color: var(--danger) !important; }
   .danger-zone-card { border-color: color-mix(in srgb, var(--danger) 30%, transparent); }
   .setting-action {
     cursor: pointer; background: none; border: none; width: 100%; text-align: left;

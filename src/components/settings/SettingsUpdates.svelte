@@ -579,7 +579,7 @@
   }
   .channel-opt input { display: none; }
   .channel-opt.selected {
-    background: color-mix(in srgb, var(--accent) 20%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
     color: var(--accent-ink);
   }
   .channel-opt:hover:not(.selected) { color: var(--text-1); }
@@ -595,7 +595,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     padding: 14px 16px; margin-top: 12px;
     border-radius: 10px; border: none; cursor: pointer;
-    background: var(--accent-ink); color: white;
+    background: var(--accent-ink); color: var(--accent-text);
     font-size: 14px; font-weight: 600;
     overflow: hidden;
     transition: background 160ms ease, opacity 120ms ease, transform 120ms ease;
@@ -604,7 +604,7 @@
     background: var(--surface-2); color: var(--text-1);
   }
   .btn-primary-action.is-install {
-    background: var(--accent-ink); color: white;
+    background: var(--accent-ink); color: var(--accent-text);
   }
   .btn-primary-action:not(:disabled):hover { opacity: 0.92; }
   .btn-primary-action:not(:disabled):active { transform: scale(0.98); }
