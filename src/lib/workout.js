@@ -504,7 +504,7 @@ export function calc1RM(weight, reps) {
  *   2. Multiply by hours × MET to get the active-energy delta. Default MET
  *      for resistance training is 5.0 (per the Compendium of Physical
  *      Activities, code 02050). Bumped to 6.0 when intensity is high
- *      (>= 200 kg×reps/min — heuristic for "vigorous" training density).
+ *      (>= 200 kg×reps/min, heuristic for "vigorous" training density).
  *
  * Returns null if any required input is missing — caller should hide the
  * UI rather than show a junk number. The estimate has roughly ±25% error

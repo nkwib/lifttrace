@@ -21,7 +21,7 @@ export const syncState = writable({
   // (kind: 'no_network' | 'server_error' | 'server_unreachable'). Feeds
   // the smart connection banner in App.svelte via
   // lib/connection-message.js. `showErrorBanner` gates the full banner
-  // vs the compact hamburger cloud badge — automatic probes update the
+  // vs the compact hamburger cloud badge: automatic probes update the
   // badge; manual retries / user-initiated syncs opt into the banner.
   connectionIssue: null,
   showErrorBanner: false,
