@@ -3,7 +3,9 @@
   import { failedMedia, mediaFailed } from '../../lib/media-fallback.js';
   import { _ } from 'svelte-i18n';
   import { fmtHistorySet, historyHasRepSets } from '../../lib/history-set.js';
-  import { weightUnit, exerciseDistanceUnits } from '../../stores/settings.js';
+  import { onDestroy } from 'svelte';
+  import { weightUnit, exerciseDistanceUnits, exerciseNotes } from '../../stores/settings.js';
+  import { cleanNote, withNote, EXERCISE_NOTE_MAX } from '../../lib/exercise-notes.js';
   /**
    * Shared exercise detail content — reused by the full ExerciseDetail
    * page and the ExerciseInfoSheet bottom-sheet preview. Takes an
@@ -16,6 +18,21 @@
   let showAll = false;
   let lastId = null;
   $: if ((exercise?.id ?? null) !== lastId) { lastId = exercise?.id ?? null; showAll = false; }
+  // Standing personal note, saved on blur and on unmount (the sheet closing).
+  let noteDraft = '';
+  let noteId = null;
+  $: if ((exercise?.id ?? null) !== noteId) {
+    saveNote();
+    noteId = exercise?.id ?? null;
+    noteDraft = noteId != null ? ($exerciseNotes?.[noteId] || '') : '';
+  }
+  function saveNote() {
+    if (noteId == null) return;
+    const cur = $exerciseNotes?.[noteId] || '';
+    if (cleanNote(noteDraft) === cur) return;
+    exerciseNotes.update(m => withNote(m, noteId, noteDraft));
+  }
+  onDestroy(saveNote);
   $: rows = history || [];
   $: shown = showAll ? rows : rows.slice(0, 10);
   $: ctx = { exerciseId: exercise?.id, exerciseName: exercise?.name, imperial: $weightUnit === 'lbs', distanceUnits: $exerciseDistanceUnits };
@@ -75,6 +92,15 @@
       <div class="tags">
         {#each exercise.secondary_muscles as m}<span class="tag">{m}</span>{/each}
       </div>
+    </div>
+  {/if}
+
+  {#if exercise.id != null}
+    <div class="section">
+      <h3 class="section-title">{$_('exercise_info.note_title')}</h3>
+      <textarea class="note-input" rows="2" maxlength={EXERCISE_NOTE_MAX}
+        placeholder={$_('exercise_info.note_placeholder')}
+        bind:value={noteDraft} on:blur={saveNote}></textarea>
     </div>
   {/if}
 
@@ -144,6 +170,12 @@
   .section-title { font-size: 13px; font-weight: 700; color: var(--text-2); margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.04em; }
   .tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .instructions { font-size: 14px; color: var(--text-2); line-height: 1.7; margin: 0; white-space: pre-wrap; }
+
+  .note-input {
+    width: 100%; box-sizing: border-box; resize: vertical; font: inherit; font-size: 14px;
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: var(--radius-md); color: var(--text-1); padding: 10px 12px;
+  }
 
   .pr-card {
     display: flex; align-items: center; gap: 12px;

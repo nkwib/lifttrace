@@ -12,7 +12,7 @@
   import { onSyncChanges, newestRead } from '../../lib/sync-refresh.js';
   import { getCollapseState, setCollapsed } from '../../lib/cardCollapse.js';
   import { generateWarmupSets, volumeDelta, resolveLoadType, resolveSetType, setKind, fmtSetLabel, rowShape, distanceUnitOf, fmtSetDuration, holdSides, parseDuration, lastCompletedSession, setReps, bestSet, repsLabel } from '../../lib/workout.js';
-  import { exerciseLoadTypes, exerciseSetTypes, exerciseDistanceUnits, trackRpe, showPlateSplit } from '../../stores/settings.js';
+  import { exerciseLoadTypes, exerciseSetTypes, exerciseDistanceUnits, exerciseNotes, trackRpe, showPlateSplit } from '../../stores/settings.js';
   import { holdTimer, holdResult, startHold, stopHold, consumeHoldResult, holdMatches } from '../../stores/holdTimer.js';
   import { applyHold } from '../../lib/holdPhase.js';
   import { nextTarget } from '../../lib/progression.js';
@@ -585,6 +585,14 @@
       </div>
     </div>
 
+    {#if $exerciseNotes?.[exercise.exercise_id]}
+      <button type="button" class="sticky-note tap" title={$exerciseNotes[exercise.exercise_id]}
+        aria-label={$_('exercise_info.note_chip_label')} on:click|stopPropagation={() => dispatch('info')}>
+        <span class="material-symbols-rounded" aria-hidden="true">sticky_note_2</span>
+        <span class="sticky-text">{$exerciseNotes[exercise.exercise_id]}</span>
+      </button>
+    {/if}
+
     {#if exercise.target_weight || (!notReps && exercise.target_reps) || (timed && exercise.target_duration) || (setType === 'distance' && exercise.target_distance) || (setType === 'calories' && exercise.target_calories) || exercise.notes || progressionSuggestion}
       <div class="target-info">
         {#if exercise.target_weight}<span class="target-chip">Target: {exercise.target_weight}</span>{/if}
@@ -826,6 +834,13 @@
     background: var(--surface-2); border-radius: var(--radius-full);
     color: var(--text-2);
   }
+  .sticky-note {
+    display: flex; align-items: center; gap: 6px; max-width: 100%; margin: 4px 0 0;
+    padding: 4px 10px; border: 1px solid var(--accent); border-radius: var(--radius-full);
+    background: var(--accent-dim); color: var(--text-1); font: inherit; font-size: 12px; cursor: pointer;
+  }
+  .sticky-note .material-symbols-rounded { font-size: 14px; color: var(--accent); flex: none; }
+  .sticky-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
   .target-note { font-size: 12px; color: var(--text-3); font-style: italic; }
   .btn-icon-sm {
     width: 28px; height: 28px; padding: 0;

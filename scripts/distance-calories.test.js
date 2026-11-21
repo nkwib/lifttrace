@@ -288,9 +288,9 @@ test('the weekly summary lists distance and calorie records', async () => {
 });
 
 test('the remembered distance unit is a per-exercise setting everywhere the others are', () => {
-  assert.match(read('../src/stores/settings.js'), /'exerciseSetTypes', 'exerciseDistanceUnits',/);
+  assert.match(read('../src/stores/settings.js'), /'exerciseSetTypes', 'exerciseDistanceUnits'/);
   for (const f of ['../src/lib/migrate.js', '../src/lib/sync.js']) {
-    assert.match(read(f), /'exerciseSetTypes', 'exerciseDistanceUnits', 'favoriteExercises'\]/, f);
+    assert.match(read(f), /'exerciseSetTypes', 'exerciseDistanceUnits', 'exerciseNotes', 'favoriteExercises'\]/, f);
   }
 });
 

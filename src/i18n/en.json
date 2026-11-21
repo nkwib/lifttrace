@@ -968,6 +968,9 @@
     "back":                  "Back"
   },
   "exercise_info": {
+    "note_title": "My note",
+    "note_placeholder": "Seat height, grip, cues... (only you see this)",
+    "note_chip_label": "Your note for this exercise. Tap to edit.",
     "fallback_title": "Exercise",
     "add_this": "Add this exercise",
     "not_in_library": "\"{name}\" isn't in your library",

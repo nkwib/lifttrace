@@ -40,7 +40,7 @@ const SERVER_SETTINGS = new Set([
   'notifMemberCompletes', 'notifMemberMissed', 'notifMemberReply', 'notifCoachFeedback',
   'notifCoachRecommendation', 'notifClientAnswer', 'notifCoachMessage', 'notifCoachMessageEmail',
   'notifWeeklySummary', 'notifWeeklySummaryEmail', 'weeklySummaryDay', 'weeklySummaryTime',
-  'bodyStatsVisible', 'exerciseLoadTypes', 'exerciseSetTypes', 'exerciseDistanceUnits',
+  'bodyStatsVisible', 'exerciseLoadTypes', 'exerciseSetTypes', 'exerciseDistanceUnits', 'exerciseNotes',
   'radioEnabled', 'radioProvider', 'radioUrl', 'radioUser', 'radioPassword', 'radioCrossfade', 'radioOriginalFormat',
   'radioStationsEnabled',
   'updateCheckInterval', // hours between checks: 1, 4, 12, 24, or 0 for manual only
@@ -375,6 +375,11 @@ export const exerciseSetTypes = createSettingStore('exerciseSetTypes', {});
 // Shape: { [exercise_id]: 'm' | 'km' | 'yd' | 'mi' }. An entry's own
 // distance_unit wins; see distanceUnitOf in src/lib/workout.js.
 export const exerciseDistanceUnits = createSettingStore('exerciseDistanceUnits', {});
+
+// Per-exercise standing note (seat height, grip, cues). Shape: { [exercise_id]:
+// string }, see cleanNote in src/lib/exercise-notes.js. Like the other maps it
+// syncs as one settings value, last writer wins.
+export const exerciseNotes = createSettingStore('exerciseNotes', {});
 
 // Radio / Music
 export const radioEnabled  = createSettingStore('radioEnabled',  false);
