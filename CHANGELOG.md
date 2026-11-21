@@ -60,6 +60,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Superset sheet counts correctly.** "Create Superset (1 exercise)" instead of "1 exercises", and the superset remove button has an accessible name.
 - **Light theme accent text is readable.** Orange nav labels, chips, links and white-on-orange buttons now meet 4.5:1 (darker orange ink; borders and fills keep the accent). The exercise muscle tag is no longer pale purple on pink.
 - **Exercise detail highlights the Exercises tab.** The bottom nav lit up Diary on a single exercise page.
+- **Exercise editor chips announce their state.** Load type, tracked by, equipment and muscle chips report pressed or not to screen readers, and each group is named (Primary muscles and Secondary muscles are now distinguishable).
 - **Workout pill no longer shows a frozen ".00".** The floating timer pill now shows m:ss without the centisecond suffix.
 - **Fast day switching in the Diary.** Coach feedback and set videos from a day you already left no longer show up on the day you land on.
 - **Diary progression chip uses the exercise's equipment.** Cable and machine lifts now suggest +5 kg / +10 lb and dumbbells +2 kg, read from the library (it was always the flat 2.5 kg / 5 lb). Assisted exercises no longer get a "Try more weight" chip.

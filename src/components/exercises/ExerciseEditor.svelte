@@ -169,12 +169,12 @@
          means "no library opinion" so any existing personal Diary
          preferences keep working. -->
     <div class="field">
-      <label class="label">Load type</label>
-      <div class="chips">
-        <button type="button" class="chip" class:active={!load_type} on:click={() => load_type = null}>Unset</button>
-        <button type="button" class="chip" class:active={load_type === 'bilateral'} on:click={() => load_type = 'bilateral'}>Bilateral</button>
-        <button type="button" class="chip" class:active={load_type === 'paired'} on:click={() => load_type = 'paired'}>Per side</button>
-        <button type="button" class="chip" class:active={load_type === 'unilateral'} on:click={() => load_type = 'unilateral'}>Alternating</button>
+      <span class="label" id="ex-lbl-load">Load type</span>
+      <div class="chips" role="group" aria-labelledby="ex-lbl-load">
+        <button type="button" class="chip" aria-pressed={!!(!load_type)} class:active={!load_type} on:click={() => load_type = null}>Unset</button>
+        <button type="button" class="chip" aria-pressed={!!(load_type === 'bilateral')} class:active={load_type === 'bilateral'} on:click={() => load_type = 'bilateral'}>Bilateral</button>
+        <button type="button" class="chip" aria-pressed={!!(load_type === 'paired')} class:active={load_type === 'paired'} on:click={() => load_type = 'paired'}>Per side</button>
+        <button type="button" class="chip" aria-pressed={!!(load_type === 'unilateral')} class:active={load_type === 'unilateral'} on:click={() => load_type = 'unilateral'}>Alternating</button>
       </div>
     </div>
 
@@ -183,22 +183,22 @@
          already has logged sets keeps the shape of its data regardless, so
          setting this never rewrites history. -->
     <div class="field">
-      <label class="label">{$_('exercise_editor.tracked_by')}</label>
-      <div class="chips">
-        <button type="button" class="chip" class:active={!set_type} on:click={() => set_type = null}>{$_('exercise_editor.set_type_unset')}</button>
-        <button type="button" class="chip" class:active={set_type === 'reps'} on:click={() => set_type = 'reps'}>{$_('exercise_card.set_type_reps')}</button>
-        <button type="button" class="chip" class:active={set_type === 'time'} on:click={() => set_type = 'time'}>{$_('exercise_card.set_type_time')}</button>
-        <button type="button" class="chip" class:active={set_type === 'distance'} on:click={() => set_type = 'distance'}>{$_('exercise_card.set_type_distance')}</button>
-        <button type="button" class="chip" class:active={set_type === 'calories'} on:click={() => set_type = 'calories'}>{$_('exercise_card.set_type_calories')}</button>
+      <span class="label" id="ex-lbl-set">{$_('exercise_editor.tracked_by')}</span>
+      <div class="chips" role="group" aria-labelledby="ex-lbl-set">
+        <button type="button" class="chip" aria-pressed={!!(!set_type)} class:active={!set_type} on:click={() => set_type = null}>{$_('exercise_editor.set_type_unset')}</button>
+        <button type="button" class="chip" aria-pressed={!!(set_type === 'reps')} class:active={set_type === 'reps'} on:click={() => set_type = 'reps'}>{$_('exercise_card.set_type_reps')}</button>
+        <button type="button" class="chip" aria-pressed={!!(set_type === 'time')} class:active={set_type === 'time'} on:click={() => set_type = 'time'}>{$_('exercise_card.set_type_time')}</button>
+        <button type="button" class="chip" aria-pressed={!!(set_type === 'distance')} class:active={set_type === 'distance'} on:click={() => set_type = 'distance'}>{$_('exercise_card.set_type_distance')}</button>
+        <button type="button" class="chip" aria-pressed={!!(set_type === 'calories')} class:active={set_type === 'calories'} on:click={() => set_type = 'calories'}>{$_('exercise_card.set_type_calories')}</button>
       </div>
     </div>
 
     <!-- Equipment -->
     <div class="field">
-      <label class="label">{$_('exercise_editor.equipment')}</label>
-      <div class="chips">
+      <span class="label" id="ex-lbl-eq">{$_('exercise_editor.equipment')}</span>
+      <div class="chips" role="group" aria-labelledby="ex-lbl-eq">
         {#each equipmentOptions as e}
-          <button type="button" class="chip" class:active={equipment.includes(e)} on:click={() => toggleEquip(e)}>
+          <button type="button" class="chip" aria-pressed={!!(equipment.includes(e))} class:active={equipment.includes(e)} on:click={() => toggleEquip(e)}>
             {e}
           </button>
         {/each}
@@ -222,10 +222,10 @@
 
     <!-- Primary muscles -->
     <div class="field">
-      <label class="label">{$_('exercise_editor.primary_muscles')} <span class="sub">{$_('exercise_editor.primary_hint')}</span></label>
-      <div class="chips">
+      <span class="label" id="ex-lbl-pri">{$_('exercise_editor.primary_muscles')} <span class="sub">{$_('exercise_editor.primary_hint')}</span></span>
+      <div class="chips" role="group" aria-labelledby="ex-lbl-pri">
         {#each MUSCLES as m}
-          <button type="button" class="chip primary" class:active={primaryMuscles.includes(m)} on:click={() => togglePrimary(m)}>
+          <button type="button" class="chip primary" aria-pressed={!!(primaryMuscles.includes(m))} class:active={primaryMuscles.includes(m)} on:click={() => togglePrimary(m)}>
             {m}
           </button>
         {/each}
@@ -234,10 +234,10 @@
 
     <!-- Secondary muscles -->
     <div class="field">
-      <label class="label">{$_('exercise_editor.secondary_muscles')}</label>
-      <div class="chips">
+      <span class="label" id="ex-lbl-sec">{$_('exercise_editor.secondary_muscles')}</span>
+      <div class="chips" role="group" aria-labelledby="ex-lbl-sec">
         {#each MUSCLES as m}
-          <button type="button" class="chip secondary" class:active={secondaryMuscles.includes(m)} on:click={() => toggleSecondary(m)}>
+          <button type="button" class="chip secondary" aria-pressed={!!(secondaryMuscles.includes(m))} class:active={secondaryMuscles.includes(m)} on:click={() => toggleSecondary(m)}>
             {m}
           </button>
         {/each}
