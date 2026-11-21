@@ -22,7 +22,7 @@ import { foldText } from '../../search-text.js';
  * something actionable (the candidate list) back.
  */
 export function getExerciseProgressCore(userId, { exercise_name, start, end } = {}) {
-  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end);
+  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end, 90, userId);
   const rangeError = validateDateRange(rangeStart, rangeEnd);
   if (rangeError) throw new Error(rangeError);
 
@@ -102,7 +102,7 @@ export function registerGetExerciseProgress(server, { userId }) {
         'max_duration_sec, max_distance_m and max_calories for timed, distance ' +
         'and calorie exercises. Pass ' +
         'the exercise by name (case-insensitive substring match). Range ' +
-        "defaults to the last 90 days ending today in the server's timezone when " +
+        "defaults to the last 90 days ending today in the account's timezone when " +
         'both bounds are omitted; a supplied bound leaves the other side open.',
       inputSchema: {
         exercise_name: z.string().min(1).max(200),

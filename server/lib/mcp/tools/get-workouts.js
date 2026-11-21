@@ -30,7 +30,7 @@ const MAX_LIMIT = 100;
  * can surface it its own way: toolError here, a 400 there.
  */
 export function getWorkoutsCore(userId, { start, end, limit } = {}) {
-  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end);
+  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end, 90, userId);
   const rangeError = validateDateRange(rangeStart, rangeEnd);
   if (rangeError) throw new Error(rangeError);
 

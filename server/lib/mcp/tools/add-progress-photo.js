@@ -11,7 +11,7 @@
  */
 import { z } from 'zod';
 import db from '../../../db.js';
-import { assertDate, DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, todayFor, toolResult, toolError } from '../_util.js';
 import { dispatchWebhookEvent } from '../../webhooks.js';
 import { isLocalPhotoUrl, PHOTO_DIR } from '../../body-stat-media.js';
 
@@ -28,7 +28,7 @@ import { isLocalPhotoUrl, PHOTO_DIR } from '../../body-stat-media.js';
  * every caller gets it.
  */
 export function addProgressPhotoCore(userId, { date, url } = {}) {
-  const day = date || todayLocal();
+  const day = date || todayFor(userId);
   assertDate(day);
 
   const clean = String(url || '').trim();

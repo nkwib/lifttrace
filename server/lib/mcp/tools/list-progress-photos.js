@@ -6,7 +6,7 @@
  */
 import { z } from 'zod';
 import db from '../../../db.js';
-import { assertDate, DATE_RE, daysAgoLocal, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, daysAgoFor, todayFor, toolResult, toolError } from '../_util.js';
 import { isLocalPhotoUrl } from '../../body-stat-media.js';
 
 const DEFAULT_DAYS = 365;
@@ -23,8 +23,8 @@ const DEFAULT_DAYS = 365;
  * entire archive on an unbounded call.
  */
 export function listProgressPhotosCore(userId, { start, end } = {}) {
-  const from = start || daysAgoLocal(DEFAULT_DAYS);
-  const to = end || todayLocal();
+  const from = start || daysAgoFor(userId, DEFAULT_DAYS);
+  const to = end || todayFor(userId);
   assertDate(from, 'start');
   assertDate(to, 'end');
 

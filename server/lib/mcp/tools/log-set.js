@@ -23,7 +23,7 @@ import { randomUUID } from 'crypto';
 import db from '../../../db.js';
 import { mutateWorkoutDay } from '../_workout-write.js';
 import { recordsBeforeSave, sendNewRecords } from '../../log-webhooks.js';
-import { assertDate, DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, todayFor, toolResult, toolError } from '../_util.js';
 import { logIntoSets } from '../../planned-workout.js';
 import { sideHoldSec } from '../../volume.js';
 import { toId } from '../../program-access.js';
@@ -89,7 +89,7 @@ export function logSetCore(userId, { exercise_id: exerciseIdSent, reps: repsSent
   const rpe = normalizeRpe(rpeSent);
   const warmup = normalizeFlag('warmup', warmupSent);
   const completed = normalizeFlag('completed', completedSent);
-  const day = date || todayLocal();
+  const day = date || todayFor(userId);
   assertDate(day);
   const workoutId = workout_id == null || workout_id === '' ? null : toId(workout_id);
   if (workout_id != null && workout_id !== '' && workoutId == null) {
@@ -255,7 +255,7 @@ export function registerLogSet(server, { userId }) {
         "exercise entry for that day if it isn't there yet. It goes to the " +
         'workout named by workout_id, else the unfinished workout with that ' +
         "set planned, else the day's unfinished program workout, else the " +
-        "day's first. Date defaults to today in the server's timezone. For a " +
+        "day's first. Date defaults to today in the account's timezone. For a " +
         'timed exercise (plank, wall sit, dead hang) send duration_sec ' +
         'instead of reps (an Alternating hold timed per side, such as a ' +
         'side plank, sends duration_l_sec and duration_r_sec, and ' +

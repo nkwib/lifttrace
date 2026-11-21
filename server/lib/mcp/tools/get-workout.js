@@ -12,7 +12,7 @@
  */
 import { z } from 'zod';
 import db from '../../../db.js';
-import { assertDate, DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, todayFor, toolResult, toolError } from '../_util.js';
 import { holdSides, sideReps, setReps } from '../../volume.js';
 
 const sidesOf = (s) => {
@@ -31,7 +31,7 @@ const repSidesOf = (s) => (sideReps(s.reps_l, s.reps_r) != null
  * wrapper maps it to toolError, the REST route maps it to a 400.
  */
 export function getWorkoutCore(userId, { date } = {}) {
-  const day = date || todayLocal();
+  const day = date || todayFor(userId);
   assertDate(day);
 
   const row = db.prepare(

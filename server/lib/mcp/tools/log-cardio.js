@@ -29,7 +29,7 @@ import {
   isCardioEnabled,
   publicCardioSession,
 } from '../../cardio-log.js';
-import { CodedError, DATE_RE, errorCode, todayLocal, toolResult, toolError, validateDateRange } from '../_util.js';
+import { CodedError, DATE_RE, errorCode, todayFor, toolResult, toolError, validateDateRange } from '../_util.js';
 import { dispatchWebhookEvent } from '../../webhooks.js';
 
 /**
@@ -55,7 +55,7 @@ export function saveCardioSession(userId, input, { webhook = true } = {}) {
  */
 export function logCardioCore(userId, args = {}) {
   if (!isCardioEnabled(db, userId)) throw new CodedError(CARDIO_OFF_MESSAGE, CARDIO_DISABLED_CODE);
-  const day = args.date || todayLocal();
+  const day = args.date || todayFor(userId);
   if (typeof day !== 'string' || validateDateRange(day, null)) {
     throw new Error(`Invalid date '${day}'; expected YYYY-MM-DD.`);
   }
@@ -78,7 +78,7 @@ export function registerLogCardio(server, { userId }) {
         'Pass external_id (your own id for the session, up to ' +
         `${MAX_EXTERNAL_ID_LENGTH} characters) to make the call safe to repeat: a ` +
         'session already logged with that id is returned with created: false. ' +
-        "Date defaults to today in the server's timezone. Refused while the user " +
+        "Date defaults to today in the account's timezone. Refused while the user " +
         'has cardio turned off in Settings.',
       inputSchema: {
         activity: z.string().min(1).max(MAX_ACTIVITY_LENGTH),

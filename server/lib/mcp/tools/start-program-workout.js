@@ -29,7 +29,7 @@
  */
 import { z } from 'zod';
 import db from '../../../db.js';
-import { DATE_RE, isCalendarDate, todayLocal, toolResult, toolError } from '../_util.js';
+import { DATE_RE, isCalendarDate, todayFor, toolResult, toolError } from '../_util.js';
 import { formatWorkoutRow } from './get-workout.js';
 import { getActiveProgramCore } from './get-active-program.js';
 import { cleanWorkoutRefs, programFor, templateFor, toId } from '../../program-access.js';
@@ -88,7 +88,7 @@ function _answer(userId, row, { started, newSession, template, program }) {
 }
 
 export function startProgramWorkoutCore(userId, { date, template_id } = {}) {
-  const day = date || todayLocal();
+  const day = date || todayFor(userId);
   if (!isCalendarDate(day)) throw new Error(`Invalid date '${day}'; expected YYYY-MM-DD.`);
   const sentTemplate = template_id != null && template_id !== '';
   const templateId = sentTemplate ? toId(template_id) : null;

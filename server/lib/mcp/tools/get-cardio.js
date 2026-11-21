@@ -25,7 +25,7 @@ export function getCardioCore(userId, { start, end, activity } = {}) {
   if (activity != null && (typeof activity !== 'string' || activity.length > 100)) {
     throw new Error('activity must be text of at most 100 characters');
   }
-  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end);
+  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end, 90, userId);
   const rangeError = validateDateRange(rangeStart, rangeEnd);
   if (rangeError) throw new Error(rangeError);
 
@@ -48,7 +48,7 @@ export function registerGetCardio(server, { userId }) {
       description:
         'Read cardio sessions (runs, rides, rows, walks, swims) in an inclusive ' +
         'YYYY-MM-DD range, oldest first. When both bounds are omitted the range is ' +
-        "the last 90 days ending today in the server's timezone; a supplied bound " +
+        "the last 90 days ending today in the account's timezone; a supplied bound " +
         'leaves the other side open. activity is an optional case-insensitive ' +
         'substring filter, e.g. "run". Each session carries its external_id when ' +
         'one was given at log time.',

@@ -7,6 +7,8 @@
  * server/lib/mcp/_util.js — fully generic, no app-specific logic.
  */
 import { withoutPrivateFields } from '../private-fields.js';
+import { userToday } from '../user-zone.js';
+import { shiftDate } from '../weekly-summary.js';
 
 /**
  * Safely parse a JSON string; return `fallback` on any error.
@@ -25,24 +27,32 @@ export function safeJson(s, fallback) {
 }
 
 /**
- * YYYY-MM-DD in server-local time. Used when the caller didn't specify
- * a date. NOTE: this uses the SERVER's timezone, not the caller's —
- * agents that need calendar accuracy for a user in a different TZ
- * should pass an explicit `date` argument rather than relying on
- * "today". Each tool's inputSchema description notes this.
+ * YYYY-MM-DD in server-local time. Only the fallback for a caller with no
+ * account (todayFor reads the account's own zone, the way the app does).
  */
 export function todayLocal() {
   return new Date().toLocaleDateString('sv-SE');
 }
 
-/**
- * YYYY-MM-DD `days` days before today in server-local time. Same TZ
- * caveat as `todayLocal`.
- */
+/** YYYY-MM-DD `days` days before today in server-local time. See todayLocal. */
 export function daysAgoLocal(days) {
   const d = new Date();
   d.setDate(d.getDate() - days);
   return d.toLocaleDateString('sv-SE');
+}
+
+/**
+ * Today (YYYY-MM-DD) for `userId`, in the zone their app said last (see
+ * lib/user-zone.js), else the server's. A null userId gives the server's.
+ * `now` is injectable for tests.
+ */
+export function todayFor(userId, now = Date.now()) {
+  return userToday(userId, { now });
+}
+
+/** YYYY-MM-DD `days` days before todayFor(userId): calendar arithmetic, no zone. */
+export function daysAgoFor(userId, days, now = Date.now()) {
+  return shiftDate(todayFor(userId, now), -days);
 }
 
 /**
@@ -129,11 +139,12 @@ export function validateDateRange(start, end) {
  * the future included) and `end` alone reads everything up to it. Only when
  * both are missing does it fall back to a window, the last `defaultDays`
  * ending today, so an unbounded read can't walk someone's whole history by
- * accident.
+ * accident. "Today" is the account's (todayFor) when `userId` is given,
+ * else the server's.
  */
-export function resolveDateRange(start, end, defaultDays = 90) {
+export function resolveDateRange(start, end, defaultDays = 90, userId = null, now = Date.now()) {
   if (start == null && end == null) {
-    return { start: daysAgoLocal(defaultDays), end: todayLocal() };
+    return { start: daysAgoFor(userId, defaultDays, now), end: todayFor(userId, now) };
   }
   return { start: start ?? null, end: end ?? null };
 }

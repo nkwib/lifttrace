@@ -18,7 +18,7 @@ import { revivedDay } from '../../body-stats-day.js';
 import { BODY_STAT_KEYS } from '../../workout-merge.js';
 import { stampTimes } from '../../field-sync.js';
 import { sendBodyStatLogged } from '../../log-webhooks.js';
-import { assertDate, DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, todayFor, toolResult, toolError } from '../_util.js';
 
 const LB_PER_KG = 0.45359237;
 
@@ -44,7 +44,7 @@ const STAT_RANGES = {
  */
 export function logBodyStatCore(userId, args = {}) {
   const { weight_unit, date, ...rawStats } = args;
-  const day = date || todayLocal();
+  const day = date || todayFor(userId);
   assertDate(day);
 
   if (weight_unit != null && weight_unit !== 'kg' && weight_unit !== 'lb') {
@@ -116,7 +116,7 @@ export function registerLogBodyStat(server, { userId }) {
         'stats for that date (setting weight does not clear bodyFat). Units: ' +
         'weight in kg by default (pass weight_unit: "lb" to convert from ' +
         'pounds), waist/hips/neck/chest/biceps/thighs/calves in cm, bodyFat ' +
-        "as percent 0-100. Date defaults to today in the server's timezone.",
+        "as percent 0-100. Date defaults to today in the account's timezone.",
       inputSchema: {
         weight: z.number().positive().optional(),
         weight_unit: z.enum(['kg', 'lb']).optional(),

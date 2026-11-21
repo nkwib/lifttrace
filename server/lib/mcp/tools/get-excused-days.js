@@ -21,7 +21,7 @@ import {
  * GET /api/v1/excused-days. Throws a plain Error on bad input.
  */
 export function getExcusedDaysCore(userId, { start, end } = {}) {
-  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end);
+  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end, 90, userId);
   const rangeError = validateDateRange(rangeStart, rangeEnd);
   if (rangeError) throw new Error(rangeError);
   const days = listExcusedDays(userId, { start: rangeStart, end: rangeEnd })
@@ -38,7 +38,7 @@ export function registerGetExcusedDays(server, { userId }) {
         "Read the days the user couldn't train and marked as excused, with the " +
         'reason (injury, illness, appointment, other) and an optional note, in an ' +
         'inclusive YYYY-MM-DD range, oldest first. When both bounds are omitted ' +
-        "the range is the last 90 days ending today in the server's timezone; a " +
+        "the range is the last 90 days ending today in the account's timezone; a " +
         'supplied bound leaves the other side open (planned future days included). ' +
         "Each excused day comes off that week's workout goal, so a quiet week with " +
         'excused days is not a missed week. A day with a workout on it counts as ' +

@@ -9,7 +9,8 @@
  *
  * Read where the server works out an account's "today" without the account
  * asking: the coach's view of a client, a client's missed prescriptions,
- * MCP get_active_program, /api/v1 and the program.advanced webhook (through
+ * MCP get_active_program and the date-less defaults of its tools (mcp/_util.js
+ * todayFor), /api/v1 and the program.advanced webhook (through
  * program-pause.js), the streaks, the coach's client list (workouts this
  * week), a client's waiting prescriptions, and the scheduler's reminders and
  * weekly summary. With none kept, the order is:

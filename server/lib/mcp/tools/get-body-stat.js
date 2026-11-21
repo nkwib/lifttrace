@@ -7,14 +7,14 @@
  */
 import { z } from 'zod';
 import db from '../../../db.js';
-import { assertDate, DATE_RE, todayLocal, toolResult, toolError } from '../_util.js';
+import { assertDate, DATE_RE, todayFor, toolResult, toolError } from '../_util.js';
 
 /**
  * Core lookup, shared by the MCP tool below and the public REST API
  * (issue #77) at GET /api/v1/body-stats/:date.
  */
 export function getBodyStatCore(userId, { date } = {}) {
-  const day = date || todayLocal();
+  const day = date || todayFor(userId);
   assertDate(day);
   const row = db.prepare('SELECT * FROM body_stats_log WHERE date = ? AND user_id = ? AND deleted_at IS NULL').get(day, userId);
   if (!row) return { date: day, logged: false, stats: {} };
@@ -28,7 +28,7 @@ export function registerGetBodyStat(server, { userId }) {
       title: 'Get Body Stat',
       description:
         'Read body-stat measurements (weight, body fat, and tape measurements) ' +
-        "for a date. Date defaults to today in the server's timezone.",
+        "for a date. Date defaults to today in the account's timezone.",
       inputSchema: {
         date: z.string().regex(DATE_RE, 'YYYY-MM-DD').optional(),
       },

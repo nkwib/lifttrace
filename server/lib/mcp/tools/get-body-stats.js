@@ -22,7 +22,7 @@ import {
  * GET /api/v1/body-stats. Throws a plain Error on bad input.
  */
 export function getBodyStatsCore(userId, { start, end } = {}) {
-  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end);
+  const { start: rangeStart, end: rangeEnd } = resolveDateRange(start, end, 90, userId);
   const rangeError = validateDateRange(rangeStart, rangeEnd);
   if (rangeError) throw new Error(rangeError);
 
