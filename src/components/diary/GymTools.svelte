@@ -62,18 +62,18 @@
 {#if embed}
   <div class="gt-embed">
     <div class="gt-embed-head">
-      <span class="material-symbols-rounded gt-embed-icon">calculate</span>
+      <span class="material-symbols-rounded gt-embed-icon" aria-hidden="true">calculate</span>
       <span class="gt-embed-title">{$_('diary.actions.gym_tools')}</span>
     </div>
     <div class="gt-tabs gt-tabs-embed">
       <button class="gt-tab" class:active={tab === 'plates'} on:click={() => tab = 'plates'}>
-        <span class="material-symbols-rounded" style="font-size:16px">fitness_center</span> {$_('gym_tools.plates')}
+        <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">fitness_center</span> {$_('gym_tools.plates')}
       </button>
       <button class="gt-tab" class:active={tab === 'convert'} on:click={() => tab = 'convert'}>
-        <span class="material-symbols-rounded" style="font-size:16px">swap_horiz</span> {$_('gym_tools.convert')}
+        <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">swap_horiz</span> {$_('gym_tools.convert')}
       </button>
       <button class="gt-tab" class:active={tab === 'onerm'} on:click={() => tab = 'onerm'}>
-        <span class="material-symbols-rounded" style="font-size:16px">percent</span> {$_('gym_tools.one_rm')}
+        <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">percent</span> {$_('gym_tools.one_rm')}
       </button>
     </div>
     {#if tab === 'plates'}
@@ -142,17 +142,17 @@
       <div class="sheet-handle"></div>
       <button class="gt-close-btn" on:click={() => open = false}
               aria-label={$_('common.close')} title={$_('common.close')}>
-        <span class="material-symbols-rounded">close</span>
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
       <div class="gt-tabs">
         <button class="gt-tab" class:active={tab === 'plates'} on:click={() => tab = 'plates'}>
-          <span class="material-symbols-rounded" style="font-size:18px">fitness_center</span> {$_('gym_tools.plates')}
+          <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">fitness_center</span> {$_('gym_tools.plates')}
         </button>
         <button class="gt-tab" class:active={tab === 'convert'} on:click={() => tab = 'convert'}>
-          <span class="material-symbols-rounded" style="font-size:18px">swap_horiz</span> {$_('gym_tools.convert')}
+          <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">swap_horiz</span> {$_('gym_tools.convert')}
         </button>
         <button class="gt-tab" class:active={tab === 'onerm'} on:click={() => tab = 'onerm'}>
-          <span class="material-symbols-rounded" style="font-size:18px">percent</span> {$_('gym_tools.one_rm')}
+          <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">percent</span> {$_('gym_tools.one_rm')}
         </button>
       </div>
 

@@ -106,7 +106,7 @@
   <button type="button" class="btn-icon date-input-calendar"
     on:click={() => showPicker = true}
     aria-label="Open calendar">
-    <span class="material-symbols-rounded">calendar_month</span>
+    <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
   </button>
 </div>
 

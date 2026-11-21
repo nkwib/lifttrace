@@ -90,7 +90,7 @@
         role="slider"
         on:keydown={onKeyDown}
       >
-        <span class="material-symbols-rounded">code</span>
+        <span class="material-symbols-rounded" aria-hidden="true">code</span>
       </button>
     </div>
 

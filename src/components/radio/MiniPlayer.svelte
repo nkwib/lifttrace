@@ -26,11 +26,11 @@
       {#if coverSrc}
         <img src={coverSrc} alt="" on:error={() => coverSrc = resolveAssetUrl($currentTrack?.coverUrl || '')} />
       {:else}
-        <span class="material-symbols-rounded" style="font-size:20px;color:var(--text-3)">music_note</span>
+        <span class="material-symbols-rounded" style="font-size:20px;color:var(--text-3)" aria-hidden="true">music_note</span>
       {/if}
       {#if $isBuffering}
         <div class="mini-art-loading" title="Loading…">
-          <span class="material-symbols-rounded mini-loading-icon">progress_activity</span>
+          <span class="material-symbols-rounded mini-loading-icon" aria-hidden="true">progress_activity</span>
         </div>
       {/if}
     </div>
@@ -40,13 +40,13 @@
     </div>
     <div class="mini-controls" on:click|stopPropagation>
       <button class="mini-btn" on:click={prev} title={$_('radio.prev')} aria-label={$_('radio.prev')}>
-        <span class="material-symbols-rounded">skip_previous</span>
+        <span class="material-symbols-rounded" aria-hidden="true">skip_previous</span>
       </button>
       <button class="mini-btn play" on:click={togglePlay} title={$isPlaying ? $_('radio.pause') : $_('radio.play')} aria-label={$isPlaying ? $_('radio.pause') : $_('radio.play')}>
-        <span class="material-symbols-rounded">{$isPlaying ? 'pause' : 'play_arrow'}</span>
+        <span class="material-symbols-rounded" aria-hidden="true">{$isPlaying ? 'pause' : 'play_arrow'}</span>
       </button>
       <button class="mini-btn" on:click={next} title={$_('radio.next')} aria-label={$_('radio.next')}>
-        <span class="material-symbols-rounded">skip_next</span>
+        <span class="material-symbols-rounded" aria-hidden="true">skip_next</span>
       </button>
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div class="mini-vol" on:click|stopPropagation>
@@ -54,7 +54,7 @@
           on:input={e => setVolume(parseFloat(e.target.value))} class="mini-vol-slider" aria-label={$_('radio.volume')} />
       </div>
       <button class="mini-btn close" on:click={stop} title={$_('radio.stop')} aria-label={$_('radio.stop')}>
-        <span class="material-symbols-rounded">close</span>
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
     </div>
   </div>

@@ -82,7 +82,7 @@
         <img class="preview-frame" src={resolveAssetUrl(previewUrl)} alt="Exercise media preview" />
       {/if}
       <button type="button" class="clear-btn" on:click={_clearAll} aria-label="Remove media">
-        <span class="material-symbols-rounded">close</span>
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
       <span class="kind-pill">{previewKind.toUpperCase()}</span>
     </div>
@@ -91,7 +91,7 @@
   <div class="controls">
     <input bind:this={fileInput} type="file" accept="image/*,video/*" style="display:none" on:change={handleFile} />
     <button type="button" class="ctrl-btn" on:click={() => fileInput.click()} disabled={uploading}>
-      <span class="material-symbols-rounded">{uploading ? 'progress_activity' : 'upload'}</span>
+      <span class="material-symbols-rounded" aria-hidden="true">{uploading ? 'progress_activity' : 'upload'}</span>
       {uploading ? 'Uploading…' : 'Upload'}
     </button>
     <div class="or-divider">or</div>
@@ -104,7 +104,7 @@
         on:keydown={onUrlKey}
       />
       <button type="button" class="apply-btn" on:click={applyUrl} disabled={!urlInput.trim()} title={$_('exercise_editor.apply_url')} aria-label={$_('exercise_editor.apply_url')}>
-        <span class="material-symbols-rounded">check</span>
+        <span class="material-symbols-rounded" aria-hidden="true">check</span>
       </button>
     </div>
   </div>

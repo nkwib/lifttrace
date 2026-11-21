@@ -877,7 +877,7 @@
 <div class="page">
   <header class="page-header">
     <button class="back-btn" on:click={leave} aria-label={$_('common.back')}>
-      <span class="material-symbols-rounded">arrow_back</span>
+      <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
     </button>
     {#if template}
       <input class="title-input" type="text" bind:value={template.name} placeholder={$_('workout_editor.name_ph')} readonly={othersProgram} />
@@ -895,7 +895,7 @@
     <Spinner block label={$_('workout_editor.loading')} />
   {:else if loadError && !template}
     <div class="empty load-error" role="alert">
-      <span class="material-symbols-rounded">error_outline</span>
+      <span class="material-symbols-rounded" aria-hidden="true">error_outline</span>
       <p>{$_('workout_editor.load_failed')}</p>
       <button class="btn btn-primary" on:click={loadTemplate}>{$_('sync.retry')}</button>
     </div>
@@ -903,7 +903,7 @@
     <div class="content" on:focusin={e => inField = isField(e.target)} on:focusout={onFocusOut}>
       {#if gone}
         <div class="gone-banner" role="status">
-          <span class="material-symbols-rounded" style="font-size:16px">delete</span>
+          <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">delete</span>
           {$_('workout_editor.gone')}
         </div>
       {/if}
@@ -923,7 +923,7 @@
                   ? $_('workout_editor.copy_week', { values: { from: activeWeek, to: activeWeek + 1 } })
                   : $_('workout_editor.week_matches', { values: { from: activeWeek, to: activeWeek + 1 } })}
                 aria-label={$_('workout_editor.copy_week_aria')}>
-                <span class="material-symbols-rounded">arrow_forward</span>
+                <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
               </button>
             {/if}
           {/each}
@@ -931,7 +931,7 @@
       {/if}
       {#if exercises.length === 0}
         <div class="empty">
-          <span class="material-symbols-rounded">playlist_add</span>
+          <span class="material-symbols-rounded" aria-hidden="true">playlist_add</span>
           <p>{$_('workout_editor.empty_hint')}</p>
         </div>
       {:else}
@@ -940,11 +940,11 @@
             <!-- Superset block -->
             <div class="superset-block">
               <div class="ss-header">
-                <span class="material-symbols-rounded ss-icon">link</span>
+                <span class="material-symbols-rounded ss-icon" aria-hidden="true">link</span>
                 <span class="ss-label">{$_('workout_editor.superset')}</span>
                 <span class="ss-count">{$_('workout_editor.ex_count', { values: { count: group.exercises.length } })}</span>
                 <button class="btn-icon-xs ss-menu" on:click={() => openSsActions(group.id)} title={$_('workout_editor.ss_options')}>
-                  <span class="material-symbols-rounded">more_horiz</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">more_horiz</span>
                 </button>
               </div>
 
@@ -966,12 +966,12 @@
                         <div class="reorder-btns">
                           {#if canMove(exercises, idx, -1)}
                             <button class="btn-icon-xs" on:click|stopPropagation={() => moveUp(idx)} title={$_('workout_editor.move_up')}>
-                              <span class="material-symbols-rounded">keyboard_double_arrow_up</span>
+                              <span class="material-symbols-rounded" aria-hidden="true">keyboard_double_arrow_up</span>
                             </button>
                           {/if}
                           {#if canMove(exercises, idx, 1)}
                             <button class="btn-icon-xs" on:click|stopPropagation={() => moveDown(idx)} title={$_('workout_editor.move_down')}>
-                              <span class="material-symbols-rounded">keyboard_double_arrow_down</span>
+                              <span class="material-symbols-rounded" aria-hidden="true">keyboard_double_arrow_down</span>
                             </button>
                           {/if}
                         </div>
@@ -980,13 +980,13 @@
                           <button type="button" class="load-chip" class:non-default={lt !== 'bilateral' || exSetType(ex) !== 'reps'}
                                   on:click|stopPropagation={(e) => toggleLoadMenu(e, idx)}
                                   title={$_('workout_editor.load_type')}>
-                            {#if lt === 'paired'}<span class="material-symbols-rounded">compare_arrows</span>{$_('workout_editor.load_paired')}
-                            {:else if lt === 'unilateral'}<span class="material-symbols-rounded">swap_horiz</span>{$_('workout_editor.load_unilateral')}
-                            {:else if exSetType(ex) === 'reps'}<span class="material-symbols-rounded">straighten</span>{/if}{#if exSetType(ex) !== 'reps'}<span class="material-symbols-rounded">{SET_TYPE_ICON[exSetType(ex)]}</span>{$_(`exercise_card.set_type_${exSetType(ex)}`)}{/if}
+                            {#if lt === 'paired'}<span class="material-symbols-rounded" aria-hidden="true">compare_arrows</span>{$_('workout_editor.load_paired')}
+                            {:else if lt === 'unilateral'}<span class="material-symbols-rounded" aria-hidden="true">swap_horiz</span>{$_('workout_editor.load_unilateral')}
+                            {:else if exSetType(ex) === 'reps'}<span class="material-symbols-rounded" aria-hidden="true">straighten</span>{/if}{#if exSetType(ex) !== 'reps'}<span class="material-symbols-rounded" aria-hidden="true">{SET_TYPE_ICON[exSetType(ex)]}</span>{$_(`exercise_card.set_type_${exSetType(ex)}`)}{/if}
                           </button>
                         {/each}
                         <button type="button" class="btn-icon-sm" on:click|stopPropagation={() => openExInfo(idx)} title={$_('workout_editor.view_details')} aria-label={$_('workout_editor.view_details')}>
-                          <span class="material-symbols-rounded">info</span>
+                          <span class="material-symbols-rounded" aria-hidden="true">info</span>
                         </button>
                         {#if durationWeeks > 1 && activeWeek < durationWeeks}
                           <button type="button" class="ex-week-copy" disabled={!weekDiffersFromNext(ex, activeWeek, durationWeeks)}
@@ -995,11 +995,11 @@
                               ? $_('workout_editor.copy_ex_week', { values: { from: activeWeek, to: activeWeek + 1 } })
                               : $_('workout_editor.week_matches', { values: { from: activeWeek, to: activeWeek + 1 } })}
                             aria-label={$_('workout_editor.copy_ex_week_aria', { values: { to: activeWeek + 1 } })}>
-                            <span class="material-symbols-rounded">arrow_forward</span>{activeWeek + 1}
+                            <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>{activeWeek + 1}
                           </button>
                         {/if}
                         <button type="button" class="btn-icon-sm" on:click|stopPropagation={() => openExActions(idx)} title={$_('workout_editor.options')}>
-                          <span class="material-symbols-rounded">more_vert</span>
+                          <span class="material-symbols-rounded" aria-hidden="true">more_vert</span>
                         </button>
                       </div>
                       {#if ex.set_specs && ex.set_specs.length > 0}
@@ -1020,7 +1020,7 @@
                           {/each}
                           <div class="per-set-actions">
                             <button class="per-set-add" on:click={() => addSpecSet(idx)}>
-                              <span class="material-symbols-rounded">add</span> {$_('workout_editor.add_set')}
+                              <span class="material-symbols-rounded" aria-hidden="true">add</span> {$_('workout_editor.add_set')}
                             </button>
                             <button class="per-set-link" on:click={() => disablePerSet(idx)}>{$_('workout_editor.use_uniform')}</button>
                           </div>
@@ -1068,7 +1068,7 @@
                           </div>
                         </div>
                         <button class="per-set-link" on:click={() => enablePerSet(idx)}>
-                          <span class="material-symbols-rounded" style="font-size:14px">tune</span>
+                          <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">tune</span>
                           {$_('workout_editor.per_set_link')}
                         </button>
                       {/if}
@@ -1091,12 +1091,12 @@
                 <div class="reorder-btns">
                   {#if canMove(exercises, idx, -1)}
                     <button class="btn-icon-xs" on:click|stopPropagation={() => moveUp(idx)} title={$_('workout_editor.move_up')}>
-                      <span class="material-symbols-rounded">keyboard_double_arrow_up</span>
+                      <span class="material-symbols-rounded" aria-hidden="true">keyboard_double_arrow_up</span>
                     </button>
                   {/if}
                   {#if canMove(exercises, idx, 1)}
                     <button class="btn-icon-xs" on:click|stopPropagation={() => moveDown(idx)} title={$_('workout_editor.move_down')}>
-                      <span class="material-symbols-rounded">keyboard_double_arrow_down</span>
+                      <span class="material-symbols-rounded" aria-hidden="true">keyboard_double_arrow_down</span>
                     </button>
                   {/if}
                 </div>
@@ -1106,13 +1106,13 @@
                   <button type="button" class="load-chip" class:non-default={lt !== 'bilateral' || exSetType(ex) !== 'reps'}
                           on:click|stopPropagation={(e) => toggleLoadMenu(e, idx)}
                           title={$_('workout_editor.load_type')}>
-                    {#if lt === 'paired'}<span class="material-symbols-rounded">compare_arrows</span>{$_('workout_editor.load_paired')}
-                    {:else if lt === 'unilateral'}<span class="material-symbols-rounded">swap_horiz</span>{$_('workout_editor.load_unilateral')}
-                    {:else if exSetType(ex) === 'reps'}<span class="material-symbols-rounded">straighten</span>{/if}{#if exSetType(ex) !== 'reps'}<span class="material-symbols-rounded">{SET_TYPE_ICON[exSetType(ex)]}</span>{$_(`exercise_card.set_type_${exSetType(ex)}`)}{/if}
+                    {#if lt === 'paired'}<span class="material-symbols-rounded" aria-hidden="true">compare_arrows</span>{$_('workout_editor.load_paired')}
+                    {:else if lt === 'unilateral'}<span class="material-symbols-rounded" aria-hidden="true">swap_horiz</span>{$_('workout_editor.load_unilateral')}
+                    {:else if exSetType(ex) === 'reps'}<span class="material-symbols-rounded" aria-hidden="true">straighten</span>{/if}{#if exSetType(ex) !== 'reps'}<span class="material-symbols-rounded" aria-hidden="true">{SET_TYPE_ICON[exSetType(ex)]}</span>{$_(`exercise_card.set_type_${exSetType(ex)}`)}{/if}
                   </button>
                 {/each}
                 <button type="button" class="btn-icon-sm" on:click|stopPropagation={() => openExInfo(idx)} title={$_('workout_editor.view_details')} aria-label={$_('workout_editor.view_details')}>
-                  <span class="material-symbols-rounded">info</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">info</span>
                 </button>
                 {#if durationWeeks > 1 && activeWeek < durationWeeks}
                   <button type="button" class="ex-week-copy" disabled={!weekDiffersFromNext(ex, activeWeek, durationWeeks)}
@@ -1121,11 +1121,11 @@
                       ? $_('workout_editor.copy_ex_week', { values: { from: activeWeek, to: activeWeek + 1 } })
                       : $_('workout_editor.week_matches', { values: { from: activeWeek, to: activeWeek + 1 } })}
                     aria-label={$_('workout_editor.copy_ex_week_aria', { values: { to: activeWeek + 1 } })}>
-                    <span class="material-symbols-rounded">arrow_forward</span>{activeWeek + 1}
+                    <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>{activeWeek + 1}
                   </button>
                 {/if}
                 <button type="button" class="btn-icon-sm" on:click|stopPropagation={() => openExActions(idx)} title={$_('workout_editor.options')}>
-                  <span class="material-symbols-rounded">more_vert</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">more_vert</span>
                 </button>
               </div>
               {#if ex.set_specs && ex.set_specs.length > 0}
@@ -1146,7 +1146,7 @@
                   {/each}
                   <div class="per-set-actions">
                     <button class="per-set-add" on:click={() => addSpecSet(idx)}>
-                      <span class="material-symbols-rounded">add</span> {$_('workout_editor.add_set')}
+                      <span class="material-symbols-rounded" aria-hidden="true">add</span> {$_('workout_editor.add_set')}
                     </button>
                     <button class="per-set-link" on:click={() => disablePerSet(idx)}>{$_('workout_editor.use_uniform')}</button>
                   </div>
@@ -1194,7 +1194,7 @@
                   </div>
                 </div>
                 <button class="per-set-link" on:click={() => enablePerSet(idx)}>
-                  <span class="material-symbols-rounded" style="font-size:14px">tune</span>
+                  <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">tune</span>
                   {$_('workout_editor.per_set_link')}
                 </button>
               {/if}
@@ -1205,7 +1205,7 @@
       {/if}
 
       <button class="add-btn" on:click={() => { addingToSsId = null; showPicker = true; }}>
-        <span class="material-symbols-rounded">add</span>
+        <span class="material-symbols-rounded" aria-hidden="true">add</span>
         {$_('workout_editor.add_exercise')}
       </button>
     </div>
@@ -1262,13 +1262,13 @@
       <p class="picker-hint">{$_('workout_editor_ss.join_hint')}</p>
       {#each existingSupersets as ss}
         <button class="ss-option" on:click={() => handleJoinSuperset(ss.id)}>
-          <span class="material-symbols-rounded" style="color:var(--accent-ink)">link</span>
+          <span class="material-symbols-rounded" style="color:var(--accent-ink)" aria-hidden="true">link</span>
           <div class="ss-option-info">
             {#each ss.names as name, i}
               <span class="ss-option-name">{name}{i < ss.names.length - 1 ? ' + ' : ''}</span>
             {/each}
           </div>
-          <span class="material-symbols-rounded" style="color:var(--text-3)">chevron_right</span>
+          <span class="material-symbols-rounded" style="color:var(--text-3)" aria-hidden="true">chevron_right</span>
         </button>
       {/each}
     {:else if ssPickerMode === 'new'}
@@ -1298,13 +1298,13 @@
     <p class="picker-hint">{$_('workout_editor_ss.merge_hint')}</p>
     {#each existingSupersets.filter(s => String(s.id) !== String(ssAsTargetId)) as ss}
       <button class="ss-option" on:click={() => handleMerge(ss.id)}>
-        <span class="material-symbols-rounded" style="color:var(--accent-ink)">merge</span>
+        <span class="material-symbols-rounded" style="color:var(--accent-ink)" aria-hidden="true">merge</span>
         <div class="ss-option-info">
           {#each ss.names as name, i}
             <span class="ss-option-name">{name}{i < ss.names.length - 1 ? ' + ' : ''}</span>
           {/each}
         </div>
-        <span class="material-symbols-rounded" style="color:var(--text-3)">chevron_right</span>
+        <span class="material-symbols-rounded" style="color:var(--text-3)" aria-hidden="true">chevron_right</span>
       </button>
     {/each}
   </div>

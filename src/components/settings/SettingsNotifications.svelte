@@ -98,9 +98,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">notifications</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">notifications</span></span>
     <span class="section-name">{$_('settings.notifications.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -165,7 +165,7 @@
                 <input class="form-input" style="flex:1" type="password" bind:value={$gotifyToken} on:focus={selectSecret} placeholder={$_('settings_notifications.push.gotify_token_ph')} />
               {/if}
               <button class="btn-icon-toggle" on:click={() => pushShowToken = !pushShowToken} title={pushShowToken ? $_('settings_notifications.push.hide') : $_('settings_notifications.push.show')}>
-                <span class="material-symbols-rounded">{pushShowToken ? 'visibility_off' : 'visibility'}</span>
+                <span class="material-symbols-rounded" aria-hidden="true">{pushShowToken ? 'visibility_off' : 'visibility'}</span>
               </button>
             </div>
           </div>
@@ -189,7 +189,7 @@
                 <input class="form-input" style="flex:1" type="password" bind:value={$ntfyToken} on:focus={selectSecret} placeholder={$_('settings_notifications.push.ntfy_token_ph')} />
               {/if}
               <button class="btn-icon-toggle" on:click={() => pushShowToken = !pushShowToken} title={pushShowToken ? $_('settings_notifications.push.hide') : $_('settings_notifications.push.show')}>
-                <span class="material-symbols-rounded">{pushShowToken ? 'visibility_off' : 'visibility'}</span>
+                <span class="material-symbols-rounded" aria-hidden="true">{pushShowToken ? 'visibility_off' : 'visibility'}</span>
               </button>
             </div>
           </div>

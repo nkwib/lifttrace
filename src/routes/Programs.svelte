@@ -218,12 +218,12 @@
     <h1>{$_('routes.programs.title')}</h1>
     <div class="header-actions">
       <button class="btn-primary-sm" on:click={() => importInput?.click()} disabled={importing}>
-        <span class="material-symbols-rounded">upload_file</span>
+        <span class="material-symbols-rounded" aria-hidden="true">upload_file</span>
         {$_('programs.import_program')}
       </button>
       <input type="file" accept="application/json,.json" bind:this={importInput} on:change={onImportFile} hidden />
       <button class="btn-primary-sm" on:click={() => showCreate = true}>
-        <span class="material-symbols-rounded">add</span>
+        <span class="material-symbols-rounded" aria-hidden="true">add</span>
         {$_('programs.new')}
       </button>
     </div>
@@ -240,13 +240,13 @@
       <div class="loading">{$_('programs.loading')}</div>
     {:else if loadError && programs.length === 0}
       <div class="empty load-error">
-        <span class="material-symbols-rounded">error_outline</span>
+        <span class="material-symbols-rounded" aria-hidden="true">error_outline</span>
         <p>{$_('programs.load_failed')}</p>
         <button class="btn btn-primary" on:click={() => load()}>{$_('sync.retry')}</button>
       </div>
     {:else if programs.length === 0}
       <div class="empty">
-        <span class="material-symbols-rounded">calendar_month</span>
+        <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
         <h3>{$_('programs.empty_title')}</h3>
         <p>{$_('programs.empty_desc')}</p>
         <button class="btn btn-primary" on:click={() => showCreate = true}>{$_('programs.create_program')}</button>
@@ -271,7 +271,7 @@
               <span class="template-count">{$_('programs.workouts_count', { values: { count: p.template_count } })}</span>
               {#if p.is_assigned && p.assigned_by_name}
                 <span class="coach-badge" title={$_('programs.assigned_by_coach')}>
-                  <span class="material-symbols-rounded" style="font-size:12px">supervisor_account</span>
+                  <span class="material-symbols-rounded" style="font-size:12px" aria-hidden="true">supervisor_account</span>
                   {$_('programs.coach_badge', { values: { name: p.assigned_by_name } })}
                 </span>
               {/if}
@@ -334,11 +334,11 @@
           <div class="ppp-head-actions">
             <button class="ppp-close" on:click={() => { _previewMenuOpen = true; }}
                     aria-label={$_('programs.actions')} title={$_('programs.actions')} aria-haspopup="menu">
-              <span class="material-symbols-rounded">more_vert</span>
+              <span class="material-symbols-rounded" aria-hidden="true">more_vert</span>
             </button>
             <button class="ppp-close" on:click={() => { _previewSelected = null; }}
                     aria-label={$_('exercises_page.close_preview')} title={$_('exercises_page.close_preview')}>
-              <span class="material-symbols-rounded">close</span>
+              <span class="material-symbols-rounded" aria-hidden="true">close</span>
             </button>
           </div>
         </div>
@@ -363,14 +363,14 @@
                       <span class="ppp-template-meta">{$_('diary_extra.exercise_count', { values: { count: t.exercises.length } })}</span>
                     {/if}
                   </div>
-                  <span class="material-symbols-rounded ppp-template-chev">chevron_right</span>
+                  <span class="material-symbols-rounded ppp-template-chev" aria-hidden="true">chevron_right</span>
                 </button>
               </li>
             {/each}
           </ol>
         {/if}
         <button class="btn btn-primary ppp-full-btn" on:click={() => push(`/programs/${p.id}`)}>
-          <span class="material-symbols-rounded">open_in_new</span>
+          <span class="material-symbols-rounded" aria-hidden="true">open_in_new</span>
           {$_('programs.full_details')}
         </button>
         <ActionSheet bind:open={_previewMenuOpen} title={p.name}
@@ -387,7 +387,7 @@
         </Sheet>
       {:else}
         <div class="ppp-empty">
-          <span class="material-symbols-rounded ppp-empty-icon">calendar_month</span>
+          <span class="material-symbols-rounded ppp-empty-icon" aria-hidden="true">calendar_month</span>
           <p class="ppp-empty-title">{$_('programs.preview_empty_title')}</p>
           <p class="ppp-empty-desc">{$_('programs.preview_empty_desc')}</p>
         </div>

@@ -789,7 +789,7 @@
     <header class="page-header" class:banner-gradient={$bannerStyle === 'gradient'} class:banner-animated={$bannerStyle === 'animated'}>
       {#if showBack}
         <button class="back-btn" on:click={back} aria-label={$_('common.back')}>
-          <span class="material-symbols-rounded">arrow_back</span>
+          <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
         </button>
       {/if}
       <h1>{selectedAlbum?.name || selectedArtist?.name || selectedPlaylist?.name || 'Radio'}</h1>
@@ -809,19 +809,19 @@
             <button class="icon-btn" class:active={tab === 'search'}
               on:click={() => tab = 'search'}
               title={$_('radio.search_library')} aria-label={$_('radio.search')}>
-              <span class="material-symbols-rounded">search</span>
+              <span class="material-symbols-rounded" aria-hidden="true">search</span>
             </button>
           {/if}
           {#if tab === 'stations'}
             <button class="shuffle-btn" on:click={playRandomStation}
               disabled={!($radioStations || []).length}
               title={$_('radio.play_random_station')}>
-              <span class="material-symbols-rounded">shuffle</span> Random
+              <span class="material-symbols-rounded" aria-hidden="true">shuffle</span> Random
             </button>
           {:else if musicAvailable && tab !== 'search'}
             <button class="shuffle-btn" on:click={playRandom}
               title={$_('radio.play_random_mix')}>
-              <span class="material-symbols-rounded">shuffle</span> Mix
+              <span class="material-symbols-rounded" aria-hidden="true">shuffle</span> Mix
             </button>
           {/if}
         </div>
@@ -833,7 +833,7 @@
             bind:value={search} on:keydown={e => e.key === 'Enter' && doSearch()} />
           <button class="btn btn-primary" style="height:38px;font-size:13px;flex-shrink:0" on:click={doSearch} disabled={loading}>
             {#if loading}
-              <span class="material-symbols-rounded spin" style="font-size:16px">progress_activity</span>
+              <span class="material-symbols-rounded spin" style="font-size:16px" aria-hidden="true">progress_activity</span>
             {:else}
               Search
             {/if}
@@ -859,29 +859,29 @@
         <span class="rsr-group-title">Music</span>
         <button type="button" class="rsr-btn" class:active={tab === 'albums'}
                 on:click={() => { tab = 'albums'; loadTab('albums'); }}>
-          <span class="material-symbols-rounded">album</span>
+          <span class="material-symbols-rounded" aria-hidden="true">album</span>
           <span class="rsr-label">Albums</span>
         </button>
         <button type="button" class="rsr-btn" class:active={tab === 'artists'}
                 on:click={() => { tab = 'artists'; loadTab('artists'); }}>
-          <span class="material-symbols-rounded">person</span>
+          <span class="material-symbols-rounded" aria-hidden="true">person</span>
           <span class="rsr-label">Artists</span>
         </button>
         <button type="button" class="rsr-btn" class:active={tab === 'playlists'}
                 on:click={() => { tab = 'playlists'; loadTab('playlists'); }}>
-          <span class="material-symbols-rounded">queue_music</span>
+          <span class="material-symbols-rounded" aria-hidden="true">queue_music</span>
           <span class="rsr-label">Playlists</span>
         </button>
         {#if sub.supportsStarred?.()}
           <button type="button" class="rsr-btn" class:active={tab === 'starred'}
                   on:click={() => { tab = 'starred'; loadTab('starred'); }}>
-            <span class="material-symbols-rounded">star</span>
+            <span class="material-symbols-rounded" aria-hidden="true">star</span>
             <span class="rsr-label">Starred</span>
           </button>
         {/if}
         <button type="button" class="rsr-btn" class:active={tab === 'search'}
                 on:click={() => tab = 'search'}>
-          <span class="material-symbols-rounded">search</span>
+          <span class="material-symbols-rounded" aria-hidden="true">search</span>
           <span class="rsr-label">Search</span>
         </button>
       </div>
@@ -891,7 +891,7 @@
         <span class="rsr-group-title">Radio</span>
         <button type="button" class="rsr-btn" class:active={tab === 'stations'}
                 on:click={() => tab = 'stations'}>
-          <span class="material-symbols-rounded">radio</span>
+          <span class="material-symbols-rounded" aria-hidden="true">radio</span>
           <span class="rsr-label">Stations</span>
         </button>
       </div>
@@ -901,14 +901,14 @@
   <div class="radio-content">
     {#if loading}
       <div class="loading-state">
-        <span class="material-symbols-rounded spin">autorenew</span>
+        <span class="material-symbols-rounded spin" aria-hidden="true">autorenew</span>
       </div>
 
     <!-- Search results — search input lives in the sticky bar above. -->
     {:else if tab === 'search' && !showBack}
       {#if loading && search.trim()}
         <div class="loading-inline">
-          <span class="material-symbols-rounded spin">progress_activity</span>
+          <span class="material-symbols-rounded spin" aria-hidden="true">progress_activity</span>
           Searching…
         </div>
       {/if}
@@ -931,7 +931,7 @@
               <button class="star-btn" class:starred={isStarred('song', song)}
                 on:click|stopPropagation={() => toggleStar('song', song)}
                 title={isStarred('song', song) ? 'Unstar' : 'Star'}>
-                <span class="material-symbols-rounded" class:filled={isStarred('song', song)}>
+                <span class="material-symbols-rounded" class:filled={isStarred('song', song)} aria-hidden="true">
                   {isStarred('song', song) ? 'star' : 'star_outline'}
                 </span>
               </button>
@@ -955,7 +955,7 @@
         <p class="result-label">{$_('radio.artists')}</p>
         {#each searchResults.artists as artist}
           <button class="artist-row" on:click={() => openArtist(artist)}>
-            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)">person</span>
+            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)" aria-hidden="true">person</span>
             <span class="artist-name">{artist.name}</span>
           </button>
         {/each}
@@ -971,10 +971,10 @@
         </div>
         <div class="detail-actions">
           <button class="btn btn-primary" style="height:36px;font-size:13px" on:click={() => playAll(albumTracks)}>
-            <span class="material-symbols-rounded" style="font-size:16px">play_arrow</span> Play All
+            <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">play_arrow</span> Play All
           </button>
           <button class="btn btn-secondary" style="height:36px;font-size:13px" on:click={() => shufflePlay(albumTracks)}>
-            <span class="material-symbols-rounded" style="font-size:16px">shuffle</span> Shuffle
+            <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">shuffle</span> Shuffle
           </button>
         </div>
       </div>
@@ -994,7 +994,7 @@
             <button class="star-btn" class:starred={isStarred('song', track)}
               on:click|stopPropagation={() => toggleStar('song', track)}
               title={isStarred('song', track) ? 'Unstar' : 'Star'}>
-              <span class="material-symbols-rounded" class:filled={isStarred('song', track)}>
+              <span class="material-symbols-rounded" class:filled={isStarred('song', track)} aria-hidden="true">
                 {isStarred('song', track) ? 'star' : 'star_outline'}
               </span>
             </button>
@@ -1018,10 +1018,10 @@
     {:else if selectedPlaylist}
       <div class="detail-actions" style="padding:0 0 12px">
         <button class="btn btn-primary" style="height:36px;font-size:13px" on:click={() => playAll(playlistTracks)}>
-          <span class="material-symbols-rounded" style="font-size:16px">play_arrow</span> Play All
+          <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">play_arrow</span> Play All
         </button>
         <button class="btn btn-secondary" style="height:36px;font-size:13px" on:click={() => shufflePlay(playlistTracks)}>
-          <span class="material-symbols-rounded" style="font-size:16px">shuffle</span> Shuffle
+          <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">shuffle</span> Shuffle
         </button>
       </div>
       {#each playlistTracks as track, i}
@@ -1040,7 +1040,7 @@
             <button class="star-btn" class:starred={isStarred('song', track)}
               on:click|stopPropagation={() => toggleStar('song', track)}
               title={isStarred('song', track) ? 'Unstar' : 'Star'}>
-              <span class="material-symbols-rounded" class:filled={isStarred('song', track)}>
+              <span class="material-symbols-rounded" class:filled={isStarred('song', track)} aria-hidden="true">
                 {isStarred('song', track) ? 'star' : 'star_outline'}
               </span>
             </button>
@@ -1061,14 +1061,14 @@
       </div>
       {#if albums.length === 0 && !loading}
         <div class="empty-state">
-          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)">
+          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)" aria-hidden="true">
             {lastTabError && lastTabKey === 'albums' ? 'wifi_off' : 'library_music'}
           </span>
           {#if lastTabError && lastTabKey === 'albums'}
             <p><strong>Couldn't reach your media server.</strong></p>
             <p style="font-size:13px;color:var(--text-3)">{lastTabError}</p>
             <button class="btn btn-secondary" style="margin-top:8px" on:click={() => loadTab('albums', { force: true })}>
-              <span class="material-symbols-rounded" style="font-size:16px">refresh</span> Retry
+              <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">refresh</span> Retry
             </button>
           {:else}
             <p>No albums found. Check your Subsonic server connection in Settings.</p>
@@ -1081,7 +1081,7 @@
       {#each artists as group}
         {#each group.artist || [] as artist}
           <button class="artist-row" on:click={() => openArtist(artist)}>
-            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)">person</span>
+            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)" aria-hidden="true">person</span>
             <span class="artist-name">{artist.name}</span>
             <span class="artist-count">{artist.albumCount || ''}</span>
           </button>
@@ -1089,14 +1089,14 @@
       {/each}
       {#if !loading && artists.reduce((n, g) => n + (g.artist?.length || 0), 0) === 0}
         <div class="empty-state">
-          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)">
+          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)" aria-hidden="true">
             {lastTabError && lastTabKey === 'artists' ? 'wifi_off' : 'person'}
           </span>
           {#if lastTabError && lastTabKey === 'artists'}
             <p><strong>Couldn't reach your media server.</strong></p>
             <p style="font-size:13px;color:var(--text-3)">{lastTabError}</p>
             <button class="btn btn-secondary" style="margin-top:8px" on:click={() => loadTab('artists', { force: true })}>
-              <span class="material-symbols-rounded" style="font-size:16px">refresh</span> Retry
+              <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">refresh</span> Retry
             </button>
           {:else}
             <p>No artists found. Check your Subsonic server connection in Settings.</p>
@@ -1108,21 +1108,21 @@
     {:else if tab === 'playlists'}
       {#each playlists as pl}
         <button class="artist-row" on:click={() => openPlaylist(pl)}>
-          <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)">queue_music</span>
+          <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)" aria-hidden="true">queue_music</span>
           <span class="artist-name">{pl.name}</span>
           <span class="artist-count">{pl.songCount || ''} tracks</span>
         </button>
       {/each}
       {#if playlists.length === 0 && !loading}
         <div class="empty-state">
-          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)">
+          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)" aria-hidden="true">
             {lastTabError && lastTabKey === 'playlists' ? 'wifi_off' : 'queue_music'}
           </span>
           {#if lastTabError && lastTabKey === 'playlists'}
             <p><strong>Couldn't reach your media server.</strong></p>
             <p style="font-size:13px;color:var(--text-3)">{lastTabError}</p>
             <button class="btn btn-secondary" style="margin-top:8px" on:click={() => loadTab('playlists', { force: true })}>
-              <span class="material-symbols-rounded" style="font-size:16px">refresh</span> Retry
+              <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">refresh</span> Retry
             </button>
           {:else}
             <p>No playlists found.</p>
@@ -1148,10 +1148,10 @@
         <p class="result-label">{$_('radio.artists')}</p>
         {#each starredArtists as artist (artist.id)}
           <div class="artist-row" on:click={() => openArtist(artist)} on:keydown={e => activateOnKey(e, () => openArtist(artist))} role="button" tabindex="0">
-            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)">person</span>
+            <span class="material-symbols-rounded" style="font-size:20px;color:var(--accent-ink)" aria-hidden="true">person</span>
             <span class="artist-name">{artist.name}</span>
             <button class="star-btn" on:click|stopPropagation={() => toggleStar('artist', artist)} title={$_('radio.unstar')}>
-              <span class="material-symbols-rounded filled">star</span>
+              <span class="material-symbols-rounded filled" aria-hidden="true">star</span>
             </button>
           </div>
         {/each}
@@ -1172,14 +1172,14 @@
               <span class="track-meta">{song.artist} · {fmtDuration(song.duration)}</span>
             </div>
             <button class="star-btn" on:click|stopPropagation={() => toggleStar('song', song)} title={$_('radio.unstar')}>
-              <span class="material-symbols-rounded filled">star</span>
+              <span class="material-symbols-rounded filled" aria-hidden="true">star</span>
             </button>
           </div>
         {/each}
       {/if}
       {#if starredAlbums.length === 0 && starredArtists.length === 0 && starredSongs.length === 0}
         <div class="empty-state">
-          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)">star_border</span>
+          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)" aria-hidden="true">star_border</span>
           <p>No favorites yet. Tap the star on a song, album, or artist to add it here.</p>
         </div>
       {/if}
@@ -1197,7 +1197,7 @@
         </div>
         {#if stationsSubTab === 'my'}
           <button class="btn btn-primary add-station-btn" on:click={openAddStation}>
-            <span class="material-symbols-rounded" style="font-size:18px">add</span> Add station
+            <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">add</span> Add station
           </button>
         {/if}
       </div>
@@ -1213,11 +1213,11 @@
             on:drop={e => onGroupDrop(e, groupName || '')}
             role="button" tabindex="0"
           >
-            <span class="material-symbols-rounded group-chev" class:collapsed={isGroupCollapsed(groupName)}>expand_more</span>
+            <span class="material-symbols-rounded group-chev" class:collapsed={isGroupCollapsed(groupName)} aria-hidden="true">expand_more</span>
             <span class="group-name">{groupName || 'Ungrouped'}</span>
             <span class="group-count">{stations.length}</span>
             <button class="group-rename-btn" on:click|stopPropagation={() => openRenameGroup(groupName)} title={$_('radio.rename_group')}>
-              <span class="material-symbols-rounded">edit</span>
+              <span class="material-symbols-rounded" aria-hidden="true">edit</span>
             </button>
           </div>
           {#if !isGroupCollapsed(groupName)}
@@ -1237,20 +1237,20 @@
               on:drop={e => onStationDrop(e, s)}
               on:dragend={onStationDragEnd}
             >
-              <span class="material-symbols-rounded drag-handle" title={$_('radio.drag_reorder')}>drag_indicator</span>
+              <span class="material-symbols-rounded drag-handle" title={$_('radio.drag_reorder')} aria-hidden="true">drag_indicator</span>
               <div class="station-reorder">
                 <button class="reorder-btn" disabled={!canMove(s, 'up')} on:click={() => moveStation(s, 'up')} title={$_('radio.move_up')}>
-                  <span class="material-symbols-rounded">keyboard_double_arrow_up</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">keyboard_double_arrow_up</span>
                 </button>
                 <button class="reorder-btn" disabled={!canMove(s, 'down')} on:click={() => moveStation(s, 'down')} title={$_('radio.move_down')}>
-                  <span class="material-symbols-rounded">keyboard_double_arrow_down</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">keyboard_double_arrow_down</span>
                 </button>
               </div>
               <button class="station-main" on:click={() => playStation(s)}>
                 {#if s.iconUrl}
                   <img class="station-icon" src={s.iconUrl} alt="" loading="lazy" decoding="async" />
                 {:else}
-                  <span class="station-icon-fallback material-symbols-rounded">radio</span>
+                  <span class="station-icon-fallback material-symbols-rounded" aria-hidden="true">radio</span>
                 {/if}
                 <div class="track-info">
                   <span class="track-title">{s.name}</span>
@@ -1262,10 +1262,10 @@
                 </div>
               </button>
               <button class="station-action" on:click={() => openEditStation(s)} title="Edit">
-                <span class="material-symbols-rounded">edit</span>
+                <span class="material-symbols-rounded" aria-hidden="true">edit</span>
               </button>
               <button class="station-action danger" on:click={() => deleteStation(s)} title="Delete">
-                <span class="material-symbols-rounded">delete</span>
+                <span class="material-symbols-rounded" aria-hidden="true">delete</span>
               </button>
             </div>
           {/each}
@@ -1275,7 +1275,7 @@
       {:else}
         <!-- Browse Radio-Browser.info directory -->
         <div class="rb-search">
-          <span class="material-symbols-rounded rb-search-icon">search</span>
+          <span class="material-symbols-rounded rb-search-icon" aria-hidden="true">search</span>
           <input
             class="rb-search-input"
             type="search"
@@ -1288,7 +1288,7 @@
           />
           {#if rbQuery}
             <button class="rb-search-clear" on:click={() => { rbQuery = ''; rbResults = []; }} aria-label="Clear">
-              <span class="material-symbols-rounded">close</span>
+              <span class="material-symbols-rounded" aria-hidden="true">close</span>
             </button>
           {/if}
         </div>
@@ -1297,14 +1297,14 @@
         </div>
         {#if rbSearching}
           <div class="loading-inline">
-            <span class="material-symbols-rounded spin">progress_activity</span>
+            <span class="material-symbols-rounded spin" aria-hidden="true">progress_activity</span>
             Searching…
           </div>
         {:else if rbResults.length === 0 && rbQuery.trim()}
           <div class="empty-state"><p>No results. Try different keywords.</p></div>
         {:else if rbResults.length === 0}
           <div class="empty-state">
-            <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)">travel_explore</span>
+            <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)" aria-hidden="true">travel_explore</span>
             <p>Type above to search the Radio-Browser directory.</p>
           </div>
         {/if}
@@ -1315,7 +1315,7 @@
               {#if r.favicon}
                 <img class="station-icon" src={r.favicon} alt="" loading="lazy" decoding="async" on:error={e => e.currentTarget.style.display = 'none'} />
               {:else}
-                <span class="station-icon-fallback material-symbols-rounded">radio</span>
+                <span class="station-icon-fallback material-symbols-rounded" aria-hidden="true">radio</span>
               {/if}
               <div class="track-info">
                 <span class="track-title">{r.name}</span>
@@ -1326,12 +1326,12 @@
             </button>
             {#if already}
               <span class="rb-added-chip" title="Already in My Stations">
-                <span class="material-symbols-rounded">check_circle</span>
+                <span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
                 Added
               </span>
             {:else}
               <button class="station-action" on:click={() => addFromRadioBrowser(r)} title="Add station">
-                <span class="material-symbols-rounded">add</span>
+                <span class="material-symbols-rounded" aria-hidden="true">add</span>
               </button>
             {/if}
           </div>
@@ -1339,7 +1339,7 @@
       {/if}
       {#if stationsSubTab === 'my' && !($radioStations || []).length}
         <div class="empty-state">
-          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)">radio</span>
+          <span class="material-symbols-rounded" style="font-size:48px;color:var(--text-3)" aria-hidden="true">radio</span>
           <p>No stations yet — tap Add station, or use Browse to search the directory.</p>
         </div>
       {/if}
@@ -1356,7 +1356,7 @@
         {#if _rnpCoverSrc}
           <img class="rnp-cover" src={_rnpCoverSrc} alt="" />
         {:else}
-          <span class="material-symbols-rounded rnp-cover-fallback">radio</span>
+          <span class="material-symbols-rounded rnp-cover-fallback" aria-hidden="true">radio</span>
         {/if}
       </div>
       <div class="rnp-meta">
@@ -1373,14 +1373,14 @@
       </div>
       <div class="rnp-controls">
         <button type="button" class="rnp-btn" on:click={playerPrev} aria-label="Previous">
-          <span class="material-symbols-rounded">skip_previous</span>
+          <span class="material-symbols-rounded" aria-hidden="true">skip_previous</span>
         </button>
         <button type="button" class="rnp-btn rnp-btn-primary" on:click={togglePlay}
                 aria-label={$isPlaying ? 'Pause' : 'Play'}>
-          <span class="material-symbols-rounded">{$isPlaying ? 'pause' : 'play_arrow'}</span>
+          <span class="material-symbols-rounded" aria-hidden="true">{$isPlaying ? 'pause' : 'play_arrow'}</span>
         </button>
         <button type="button" class="rnp-btn" on:click={playerNext} aria-label="Next">
-          <span class="material-symbols-rounded">skip_next</span>
+          <span class="material-symbols-rounded" aria-hidden="true">skip_next</span>
         </button>
       </div>
       <!-- Queue — feature parity with the FullPlayer modal (which
@@ -1394,7 +1394,7 @@
       {@const _upcoming = ($queue || []).slice(Math.max(0, _qi) + 1)}
       <div class="rnp-queue">
         <div class="rnp-queue-head">
-          <span class="material-symbols-rounded">queue_music</span>
+          <span class="material-symbols-rounded" aria-hidden="true">queue_music</span>
           <span class="rnp-queue-title">Up Next</span>
           {#if _upcoming.length > 0}
             <span class="rnp-queue-count">{_upcoming.length}</span>
@@ -1410,7 +1410,7 @@
                   {#if t.coverUrl}
                     <img class="rnp-queue-cover" src={resolveAssetUrl(t.coverUrl)} alt="" loading="lazy" decoding="async" />
                   {:else}
-                    <span class="material-symbols-rounded rnp-queue-cover-fallback">music_note</span>
+                    <span class="material-symbols-rounded rnp-queue-cover-fallback" aria-hidden="true">music_note</span>
                   {/if}
                   <div class="rnp-queue-info">
                     <span class="rnp-queue-name">{t.title || t.name || 'Track'}</span>
@@ -1420,7 +1420,7 @@
                 <button type="button" class="rnp-queue-remove"
                         on:click={() => removeFromQueue(_qi + 1 + i)}
                         aria-label="Remove from queue" title="Remove">
-                  <span class="material-symbols-rounded">close</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">close</span>
                 </button>
               </li>
             {/each}
@@ -1431,7 +1431,7 @@
       </div>
     {:else}
       <div class="rnp-empty">
-        <span class="material-symbols-rounded rnp-empty-icon">headphones</span>
+        <span class="material-symbols-rounded rnp-empty-icon" aria-hidden="true">headphones</span>
         <p class="rnp-empty-title">Nothing playing</p>
         <p class="rnp-empty-desc">Pick a station or track and it'll show here with cover art, live metadata, and quick controls.</p>
       </div>
@@ -1452,7 +1452,7 @@
     <div class="field-header">
       <label class="form-label">{$_('radio.stream_url')}</label>
       <button type="button" class="auto-btn" on:click={autoFillFromUrl} disabled={detectingInfo || !stationUrl.trim()} title="Detect station info">
-        <span class="material-symbols-rounded">auto_awesome</span>
+        <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
         {detectingInfo ? 'Detecting…' : 'Auto-fill'}
       </button>
     </div>
@@ -1469,7 +1469,7 @@
     <div class="field-header">
       <label class="form-label">{$_('radio.icon_url')} <span class="optional">{$_('radio.optional')}</span></label>
       <button type="button" class="auto-btn" on:click={autoFetchIcon} disabled={!stationUrl.trim()} title="Use favicon from stream URL's domain">
-        <span class="material-symbols-rounded">image_search</span> Auto
+        <span class="material-symbols-rounded" aria-hidden="true">image_search</span> Auto
       </button>
     </div>
     <input class="form-input" type="url" bind:value={stationIcon} placeholder="https://…/icon.png" />
@@ -1495,10 +1495,10 @@
   <div class="ctx-backdrop" on:click={() => ctxTrack = null} use:closeOnBack={() => ctxTrack = null}></div>
   <div class="ctx-menu" bind:this={ctxMenuEl} style="left:{ctxPos.x}px;top:{ctxPos.y}px">
     <button class="ctx-item" on:click={ctxPlayNext}>
-      <span class="material-symbols-rounded" style="font-size:18px">skip_next</span> Play next
+      <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">skip_next</span> Play next
     </button>
     <button class="ctx-item" on:click={ctxAddToQueue}>
-      <span class="material-symbols-rounded" style="font-size:18px">queue_music</span> Add to queue
+      <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">queue_music</span> Add to queue
     </button>
   </div>
 {/if}

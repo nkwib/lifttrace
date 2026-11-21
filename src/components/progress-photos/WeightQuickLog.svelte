@@ -97,7 +97,7 @@
     {saving ? $_('progress.weight.saving') : $_('progress.weight.save')}
   </button>
   <button class="wql-cancel" on:click={() => dispatch('cancel')} aria-label={$_('common.cancel')}>
-    <span class="material-symbols-rounded">close</span>
+    <span class="material-symbols-rounded" aria-hidden="true">close</span>
   </button>
 </div>
 

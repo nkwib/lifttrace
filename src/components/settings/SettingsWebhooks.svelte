@@ -195,7 +195,7 @@
       {#if justCreatedSecret}
         <div class="just-created" transition:slide={{ duration: 160 }}>
           <div class="just-created-title">
-            <span class="material-symbols-rounded">webhook</span>
+            <span class="material-symbols-rounded" aria-hidden="true">webhook</span>
             {$_('settings_webhooks.just_created.title')} <strong>{justCreatedUrl}</strong>
           </div>
           <p class="just-created-warn">
@@ -204,7 +204,7 @@
           <div class="just-created-row">
             <code class="just-created-value" title={justCreatedSecret}>{justCreatedSecret}</code>
             <button class="btn btn-secondary" style="height:32px;font-size:12px;padding:0 12px" on:click={copySecret}>
-              <span class="material-symbols-rounded" style="font-size:14px">content_copy</span>
+              <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">content_copy</span>
               {$_('settings_webhooks.just_created.copy')}
             </button>
           </div>
@@ -246,13 +246,13 @@
               </div>
               <div class="webhook-actions">
                 <button class="btn-icon" title={$_('settings_webhooks.row.test_title')} disabled={testingId === w.id} on:click={() => testOne(w)}>
-                  <span class="material-symbols-rounded">{testingId === w.id ? 'hourglass_empty' : 'send'}</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">{testingId === w.id ? 'hourglass_empty' : 'send'}</span>
                 </button>
                 <label class="webhook-toggle" title={$_('settings_webhooks.row.enabled_title')}>
                   <input type="checkbox" checked={w.enabled} on:change={() => toggleEnabled(w)} />
                 </label>
                 <button class="btn-icon" title={$_('settings_webhooks.row.delete_title')} on:click={() => deleteOne(w)}>
-                  <span class="material-symbols-rounded" style="color:var(--danger)">delete</span>
+                  <span class="material-symbols-rounded" style="color:var(--danger)" aria-hidden="true">delete</span>
                 </button>
               </div>
             </div>
@@ -262,7 +262,7 @@
         <div style="padding:12px 16px">
           {#if !showCreateForm}
             <button class="btn btn-secondary" style="width:100%" on:click={() => showCreateForm = true}>
-              <span class="material-symbols-rounded" style="font-size:18px">add</span>
+              <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">add</span>
               {$_('settings_webhooks.form.new_webhook')}
             </button>
           {:else}

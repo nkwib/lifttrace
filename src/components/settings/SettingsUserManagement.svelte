@@ -412,9 +412,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">group</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">group</span></span>
     <span class="section-name">{$_('settings.users.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -432,7 +432,7 @@
               <span class="my-profile-name">{$currentUser.full_name || $currentUser.username}</span>
               <span class="my-profile-role">{roleName($currentUser.role)}</span>
             </div>
-            <span class="material-symbols-rounded my-profile-chev">chevron_right</span>
+            <span class="material-symbols-rounded my-profile-chev" aria-hidden="true">chevron_right</span>
           </button>
         </div>
       {/if}
@@ -482,15 +482,15 @@
                 </div>
                 {#if u.id !== $currentUser.id && u.two_step_enabled}
                   <button class="btn-icon-danger" on:click={() => openTwoStepReset(u)} title={$_('two_step.admin.reset')} aria-label={$_('two_step.admin.reset')} style="color:var(--text-3)">
-                    <span class="material-symbols-rounded" style="font-size:20px">phonelink_erase</span>
+                    <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">phonelink_erase</span>
                   </button>
                 {/if}
                 {#if u.id !== $currentUser.id}
                   <button class="btn-icon-danger" on:click={() => resetUserPassword(u)} title={$_('settings.users.reset_password')} style="color:var(--text-3)">
-                    <span class="material-symbols-rounded" style="font-size:20px">lock_reset</span>
+                    <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">lock_reset</span>
                   </button>
                   <button class="btn-icon-danger" on:click={() => deleteUser(u.id)} title={$_('settings.users.delete_user')}>
-                    <span class="material-symbols-rounded" style="font-size:20px">delete</span>
+                    <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">delete</span>
                   </button>
                 {/if}
               </div>
@@ -517,7 +517,7 @@
                   <option value="trainer">{$_('settings.users.role_trainer')}</option>
                   <option value="admin">{$_('settings.users.role_admin')}</option>
                 </select>
-                <span class="material-symbols-rounded um-role-chev">expand_more</span>
+                <span class="material-symbols-rounded um-role-chev" aria-hidden="true">expand_more</span>
               </div>
             </div>
             {#if inviteRole === 'member' && trainers.length}
@@ -530,7 +530,7 @@
                       <option value={String(t.id)}>{t.full_name || t.username}</option>
                     {/each}
                   </select>
-                  <span class="material-symbols-rounded um-role-chev">expand_more</span>
+                  <span class="material-symbols-rounded um-role-chev" aria-hidden="true">expand_more</span>
                 </div>
               </div>
               {#if inviteCoach !== ''}<p class="setting-hint um-coach-hint">{$_('settings.users.new_coach_hint')}</p>{/if}
@@ -555,7 +555,7 @@
                     </div>
                     <button class="pending-invite-revoke" on:click={() => revokeInvite(inv.token)}
                       aria-label={$_('settings.users.revoke_invite')} title={$_('settings.users.revoke_invite')}>
-                      <span class="material-symbols-rounded">close</span>
+                      <span class="material-symbols-rounded" aria-hidden="true">close</span>
                     </button>
                   </div>
                 {/each}
@@ -564,7 +564,7 @@
             {#if inviteResult}
               <div class="invite-result">
                 {#if inviteResult.sent}
-                  <span class="material-symbols-rounded" style="font-size:16px;color:var(--success-text)">check_circle</span>
+                  <span class="material-symbols-rounded" style="font-size:16px;color:var(--success-text)" aria-hidden="true">check_circle</span>
                   <span>{$_('settings.users.invite_sent_to', { values: { email: inviteEmail || $_('settings.users.user_fallback') } })}</span>
                 {:else}
                   <span class="setting-hint" style="margin:0">{$_('settings.users.share_link_intro')}</span>
@@ -582,7 +582,7 @@
 
           <!-- Secondary path: add user manually (escape hatch for no-SMTP / offline) -->
           <button class="um-secondary-toggle" on:click={() => showAddUser = !showAddUser}>
-            <span class="material-symbols-rounded" style="font-size:14px">{showAddUser ? 'expand_less' : 'expand_more'}</span>
+            <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">{showAddUser ? 'expand_less' : 'expand_more'}</span>
             {showAddUser ? $_('settings.users.add_user_hide') : $_('settings.users.add_user_show')}
           </button>
           {#if showAddUser}
@@ -596,7 +596,7 @@
                   <input class="form-input-sm um-pw-input" type="password" bind:value={addPassword} placeholder={$_('settings.users.password_required')} autocomplete="new-password" passwordrules="minlength: 8; required: upper; required: lower; required: digit; required: special;" />
                 {/if}
                 <button class="um-pw-eye" type="button" on:click={() => addShowPass = !addShowPass} aria-label={addShowPass ? $_('settings.users.hide') : $_('settings.users.show')}>
-                  <span class="material-symbols-rounded">{addShowPass ? 'visibility_off' : 'visibility'}</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">{addShowPass ? 'visibility_off' : 'visibility'}</span>
                 </button>
               </div>
               <div class="um-role-pair">
@@ -607,7 +607,7 @@
                     <option value="trainer">{$_('settings.users.role_trainer')}</option>
                     <option value="admin">{$_('settings.users.role_admin')}</option>
                   </select>
-                  <span class="material-symbols-rounded um-role-chev">expand_more</span>
+                  <span class="material-symbols-rounded um-role-chev" aria-hidden="true">expand_more</span>
                 </div>
               </div>
             {#if addRole === 'member' && trainers.length}
@@ -620,7 +620,7 @@
                       <option value={String(t.id)}>{t.full_name || t.username}</option>
                     {/each}
                   </select>
-                  <span class="material-symbols-rounded um-role-chev">expand_more</span>
+                  <span class="material-symbols-rounded um-role-chev" aria-hidden="true">expand_more</span>
                 </div>
               </div>
               {#if addCoach !== ''}<p class="setting-hint um-coach-hint">{$_('settings.users.new_coach_hint')}</p>{/if}
@@ -665,7 +665,7 @@
                 <option value="8760">{$_('settings.users.session_1y')}</option>
               </select>
               <button class="btn btn-secondary" style="height:32px;font-size:12px;min-width:54px" on:click={saveSessionHours}>
-                {#if sessionSaved}<span class="material-symbols-rounded" style="font-size:14px">check</span>{:else}{$_('settings.users.save')}{/if}
+                {#if sessionSaved}<span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">check</span>{:else}{$_('settings.users.save')}{/if}
               </button>
             </div>
           </div>
@@ -677,7 +677,7 @@
               <span class="setting-label">{$_('settings.users.disable_um')}</span>
               <span class="setting-hint">{$_('settings.users.disable_um_hint')}</span>
             </div>
-            <span class="material-symbols-rounded">dangerous</span>
+            <span class="material-symbols-rounded" aria-hidden="true">dangerous</span>
           </button>
         </div>
 
@@ -714,7 +714,7 @@
                     <input class="form-input-sm" style="flex:1;min-width:0" type="password" bind:value={enableAdminPass} placeholder={$_('settings.users.password_required')} autocomplete="new-password" passwordrules="minlength: 8; required: upper; required: lower; required: digit; required: special;" />
                   {/if}
                   <button class="btn-icon" type="button" on:click={() => enableShowPass = !enableShowPass} title={enableShowPass ? $_('settings.users.hide') : $_('settings.users.show')} style="flex-shrink:0">
-                    <span class="material-symbols-rounded" style="font-size:18px">{enableShowPass ? 'visibility_off' : 'visibility'}</span>
+                    <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">{enableShowPass ? 'visibility_off' : 'visibility'}</span>
                   </button>
                 </div>
                 <div style="display:flex;gap:4px;align-items:center;flex:1;min-width:0">
@@ -724,7 +724,7 @@
                     <input class="form-input-sm" style="flex:1;min-width:0" type="password" bind:value={enableAdminConf} placeholder={$_('settings.users.confirm_password_ph')} autocomplete="new-password" passwordrules="minlength: 8; required: upper; required: lower; required: digit; required: special;" />
                   {/if}
                   <button class="btn-icon" type="button" on:click={() => enableShowPass = !enableShowPass} title={enableShowPass ? $_('settings.users.hide') : $_('settings.users.show')} style="flex-shrink:0">
-                    <span class="material-symbols-rounded" style="font-size:18px">{enableShowPass ? 'visibility_off' : 'visibility'}</span>
+                    <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">{enableShowPass ? 'visibility_off' : 'visibility'}</span>
                   </button>
                 </div>
               </div>

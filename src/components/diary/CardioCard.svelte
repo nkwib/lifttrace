@@ -183,7 +183,7 @@
 <section class="cardio-card">
   <header class="cardio-head">
     <div class="cardio-title">
-      <span class="material-symbols-rounded cardio-icon">directions_run</span>
+      <span class="material-symbols-rounded cardio-icon" aria-hidden="true">directions_run</span>
       <span>{$_('diary.cardio.title')}</span>
       {#if sessions.length > 0}
         <span class="cardio-total">{$_('diary.cardio.total_today', { values: { minutes: totalMinutes } })}</span>
@@ -191,7 +191,7 @@
     </div>
     {#if !showForm}
       <button class="cardio-add" on:click={openForm} aria-label={$_('diary.cardio.add_aria')}>
-        <span class="material-symbols-rounded">add</span>
+        <span class="material-symbols-rounded" aria-hidden="true">add</span>
       </button>
     {/if}
   </header>
@@ -200,7 +200,7 @@
     <div class="cardio-templates" aria-label={$_('diary.cardio.templates_aria')}>
       {#each templates as t (t.id)}
         <button class="tpl-chip" on:click={() => logFromTemplate(t)} title={$_('diary.cardio.tpl_title', { values: { activity: t.activity, minutes: t.duration_min } })}>
-          <span class="material-symbols-rounded">bolt</span>
+          <span class="material-symbols-rounded" aria-hidden="true">bolt</span>
           <span class="tpl-label">{t.activity}</span>
           <span class="tpl-meta">{t.duration_min}m</span>
         </button>
@@ -248,10 +248,10 @@
             aria-label={s.is_template ? $_('diary.cardio.unpin_template') : $_('diary.cardio.pin_template')}
             title={s.is_template ? $_('diary.cardio.unpin_template') : $_('diary.cardio.pin_template')}
           >
-            <span class="material-symbols-rounded">{s.is_template ? 'keep' : 'keep_off'}</span>
+            <span class="material-symbols-rounded" aria-hidden="true">{s.is_template ? 'keep' : 'keep_off'}</span>
           </button>
           <button class="cardio-del" on:click={() => remove(s)} aria-label={$_('diary.cardio.delete_aria')}>
-            <span class="material-symbols-rounded">close</span>
+            <span class="material-symbols-rounded" aria-hidden="true">close</span>
           </button>
         </li>
       {/each}

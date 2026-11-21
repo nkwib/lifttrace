@@ -296,7 +296,7 @@
     {#if step === 'choose'}
       <div class="setup-cards">
         <button class="setup-card" on:click={chooseLocal}>
-          <span class="material-symbols-rounded setup-card-icon">smartphone</span>
+          <span class="material-symbols-rounded setup-card-icon" aria-hidden="true">smartphone</span>
           <div class="setup-card-title">{$_('native_setup.use_locally')}</div>
           <p class="setup-card-desc">
             All data stays on this device. Works fully offline, no server needed.
@@ -305,7 +305,7 @@
         </button>
 
         <button class="setup-card" on:click={chooseServer}>
-          <span class="material-symbols-rounded setup-card-icon">cloud_sync</span>
+          <span class="material-symbols-rounded setup-card-icon" aria-hidden="true">cloud_sync</span>
           <div class="setup-card-title">{$_('native_setup.connect_server')}</div>
           <p class="setup-card-desc">
             Sync with your LiftTrace server. Your workouts are available on
@@ -349,7 +349,7 @@
     {:else if step === 'server-auth'}
       <div class="setup-form">
         <p class="server-line">
-          <span class="material-symbols-rounded server-icon">cloud_done</span>
+          <span class="material-symbols-rounded server-icon" aria-hidden="true">cloud_done</span>
           <span class="server-url">{validatedUrl}</span>
         </p>
 
@@ -360,7 +360,7 @@
                 {#if p.logo_url}
                   <img src={resolveAssetUrl(p.logo_url)} alt="" class="oidc-logo" on:error={e => e.target.style.display='none'} />
                 {:else}
-                  <span class="material-symbols-rounded" style="font-size:20px">login</span>
+                  <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">login</span>
                 {/if}
                 {$_('server_signin.sign_in_with', { values: { provider: p.display_name || p.name || p.id } })}
               </button>
@@ -370,7 +370,7 @@
 
         {#if optionsError}
           <div class="options-failed" role="alert">
-            <span class="material-symbols-rounded">warning</span>
+            <span class="material-symbols-rounded" aria-hidden="true">warning</span>
             <div class="options-failed-text">{optionsError}</div>
             <button class="btn btn-secondary" on:click={retrySignInOptions} disabled={connecting}>{$_('server_signin.retry')}</button>
           </div>
@@ -408,7 +408,7 @@
 
         {#if !providers.length && !passwordLoginEnabled && !optionsError}
           <div class="no-auth-warning">
-            <span class="material-symbols-rounded">warning</span>
+            <span class="material-symbols-rounded" aria-hidden="true">warning</span>
             <div>
               This server has no sign-in methods configured. Ask your admin
               to enable password login or configure an OIDC provider.
@@ -446,19 +446,19 @@
 
       <div class="setup-cards">
         <button class="setup-card" on:click={() => migrateUpload(false)} disabled={migrateBusy}>
-          <span class="material-symbols-rounded setup-card-icon">cloud_upload</span>
+          <span class="material-symbols-rounded setup-card-icon" aria-hidden="true">cloud_upload</span>
           <div class="setup-card-title">{$_('native_setup.upload_to_server')}</div>
           <p class="setup-card-desc">Push everything on this device to your server. Each workout goes up as its own session, and uploading again doesn't double it.</p>
         </button>
 
         <button class="setup-card" on:click={migrateDownload} disabled={migrateBusy}>
-          <span class="material-symbols-rounded setup-card-icon">cloud_download</span>
+          <span class="material-symbols-rounded setup-card-icon" aria-hidden="true">cloud_download</span>
           <div class="setup-card-title">{$_('native_setup.replace_with_server')}</div>
           <p class="setup-card-desc">Discard local data and load everything fresh from the server. <strong>Local entries are deleted.</strong></p>
         </button>
 
         <button class="setup-card" on:click={() => migrateUpload(true)} disabled={migrateBusy}>
-          <span class="material-symbols-rounded setup-card-icon">merge</span>
+          <span class="material-symbols-rounded setup-card-icon" aria-hidden="true">merge</span>
           <div class="setup-card-title">{$_('native_setup.merge_both')}</div>
           <p class="setup-card-desc">Upload local data, then pull the merged result back. Workouts already on the server stay as they are; programs and exercises may duplicate.</p>
         </button>
@@ -470,7 +470,7 @@
 
     {:else if step === 'migrating'}
       <div class="migrate-progress">
-        <span class="material-symbols-rounded migrate-spinner">sync</span>
+        <span class="material-symbols-rounded migrate-spinner" aria-hidden="true">sync</span>
         <div class="migrate-title">Uploading…</div>
         <p class="migrate-sub">{STAGE_LABELS[migrateStage] || ''}</p>
         {#if migrateProgress.total > 0}
@@ -483,7 +483,7 @@
 
     {:else if step === 'migration-done' && migrateSummary}
       <div class="migrate-summary">
-        <span class="material-symbols-rounded migrate-done-icon">check_circle</span>
+        <span class="material-symbols-rounded migrate-done-icon" aria-hidden="true">check_circle</span>
         <div class="migrate-title">{$_('native_setup.migration_complete')}</div>
         <ul class="count-list">
           {#if migrateSummary.success.workouts}<li>{migrateSummary.success.workouts} workout{migrateSummary.success.workouts === 1 ? '' : 's'} uploaded</li>{/if}

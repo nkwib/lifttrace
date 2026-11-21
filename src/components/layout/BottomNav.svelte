@@ -58,7 +58,7 @@
       aria-label={tab.label}
       aria-current={i === activeIdx ? 'page' : undefined}
     >
-      <span class="material-symbols-rounded nav-icon">
+      <span class="material-symbols-rounded nav-icon" aria-hidden="true">
         {tab.icon}
         {#if tab.path === '/settings' && ($updateAvailable.available || $pwaUpdateReady)}
           <span class="nav-update-dot" aria-label={$_('nav.update_available')}></span>

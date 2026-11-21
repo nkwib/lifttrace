@@ -194,7 +194,7 @@
       {#if justCreatedRaw}
         <div class="just-created" transition:slide={{ duration: 160 }}>
           <div class="just-created-title">
-            <span class="material-symbols-rounded">key</span>
+            <span class="material-symbols-rounded" aria-hidden="true">key</span>
             {$_('settings_api_tokens.just_created.title')} <strong>{justCreatedName}</strong>
           </div>
           <p class="just-created-warn">
@@ -203,7 +203,7 @@
           <div class="just-created-row">
             <code class="just-created-value" title={justCreatedRaw}>{justCreatedRaw}</code>
             <button class="btn btn-secondary" style="height:32px;font-size:12px;padding:0 12px" on:click={copyRaw}>
-              <span class="material-symbols-rounded" style="font-size:14px">content_copy</span>
+              <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">content_copy</span>
               {$_('settings_api_tokens.just_created.copy')}
             </button>
           </div>
@@ -234,7 +234,7 @@
                 </span>
               </div>
               <button class="btn-icon" title={$_('settings_api_tokens.row.revoke_title')} on:click={() => revokeOne(t)}>
-                <span class="material-symbols-rounded" style="color:var(--danger)">delete</span>
+                <span class="material-symbols-rounded" style="color:var(--danger)" aria-hidden="true">delete</span>
               </button>
             </div>
           {/each}
@@ -243,7 +243,7 @@
         <div style="padding:12px 16px">
           {#if !showCreateForm}
             <button class="btn btn-secondary" style="width:100%" on:click={() => showCreateForm = true}>
-              <span class="material-symbols-rounded" style="font-size:18px">add</span>
+              <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">add</span>
               {$_('settings_api_tokens.form.new_token')}
             </button>
           {:else}

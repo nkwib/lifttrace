@@ -25,7 +25,7 @@
     {#each tabs as t (t.key)}
       <button class="tab" class:active={current === t.key} role="tab" aria-selected={current === t.key}
         on:click={() => { if (current !== t.key) push(t.path); }}>
-        <span class="material-symbols-rounded icon">{t.icon}</span>
+        <span class="material-symbols-rounded icon" aria-hidden="true">{t.icon}</span>
         <span>{t.label}</span>
         {#if t.unread}<span class="tab-unread" aria-label={$_('coaching.unread', { values: { n: t.unread } })}>{t.unread}</span>{/if}
       </button>

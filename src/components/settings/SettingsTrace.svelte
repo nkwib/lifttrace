@@ -256,15 +256,15 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">smart_toy</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">smart_toy</span></span>
     <span class="section-name">{$_('settings.trace.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
       {#if envLocks.ai}
         <div class="env-lock-banner">
-          <span class="material-symbols-rounded">lock</span>
+          <span class="material-symbols-rounded" aria-hidden="true">lock</span>
           {$_('settings_trace.env_lock_banner')}
         </div>
       {/if}
@@ -311,7 +311,7 @@
               <input class="form-input-sm" type="text" bind:value={$aiModel} on:change={_autoTest} placeholder={$_('settings_trace.labels.model_ph')} disabled={envLocks.ai} />
             </div>
             <div style="padding:10px 16px;display:flex;gap:8px;align-items:flex-start;background:color-mix(in srgb,#f59e0b 8%, transparent);border-left:3px solid #f59e0b;border-radius:6px">
-              <span class="material-symbols-rounded" style="font-size:18px;color:#f59e0b;flex-shrink:0">info</span>
+              <span class="material-symbols-rounded" style="font-size:18px;color:#f59e0b;flex-shrink:0" aria-hidden="true">info</span>
               <div class="setting-hint" style="margin:0;line-height:1.5">
                 <strong>{$_('settings_trace.labels.reliability_title')}</strong> {$_('settings_trace.labels.reliability_body')}
               </div>
@@ -333,7 +333,7 @@
                   bind:value={aiCustomModelVal} on:input={_syncModelFromSelect} on:change={_autoTest} disabled={envLocks.ai} />
               </div>
               <div style="padding:8px 16px 12px;display:flex;gap:8px;align-items:flex-start">
-                <span class="material-symbols-rounded" style="font-size:16px;color:var(--muted);flex-shrink:0;margin-top:2px">info</span>
+                <span class="material-symbols-rounded" style="font-size:16px;color:var(--muted);flex-shrink:0;margin-top:2px" aria-hidden="true">info</span>
                 <div class="setting-hint" style="margin:0;line-height:1.5">
                   {$_('settings_trace.labels.custom_hint')}
                 </div>
@@ -372,7 +372,7 @@
                 placeholder={$aiProvider === 'oai-compat' ? $_('settings_trace.labels.key_ph_local') : $_('settings_trace.labels.key_ph_cloud')} autocomplete="off"
                 on:focus={() => aiKeyFocused = true} on:blur={saveAiKey} on:keydown={blurOnEnter} />
               <button class="btn-icon-toggle" on:mousedown|preventDefault on:click={() => aiShowKey = !aiShowKey} title={aiShowKey ? $_('settings_trace.labels.hide') : $_('settings_trace.labels.show')}>
-                <span class="material-symbols-rounded">{aiShowKey ? 'visibility_off' : 'visibility'}</span>
+                <span class="material-symbols-rounded" aria-hidden="true">{aiShowKey ? 'visibility_off' : 'visibility'}</span>
               </button>
             </div>
           </div>

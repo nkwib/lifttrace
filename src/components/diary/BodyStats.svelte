@@ -170,7 +170,7 @@
         <h3 class="sheet-title">{$_('diary_extra.body_stats_title')}</h3>
         <span class="sheet-date">{_fmtDate($currentDate)}</span>
         <button class="sheet-close" on:click={() => close()} aria-label={$_('common.close')} title={$_('common.close')}>
-          <span class="material-symbols-rounded">close</span>
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
         </button>
       </div>
       <div class="bs-sheet-body">
@@ -193,7 +193,7 @@
              just the "while I'm logging today" shortcut. -->
         <div class="bs-photo-row">
           <button class="btn btn-secondary bs-photo-btn" disabled={photoUploading} on:click={() => photoInput?.click()}>
-            <span class="material-symbols-rounded">add_a_photo</span>
+            <span class="material-symbols-rounded" aria-hidden="true">add_a_photo</span>
             {photoUploading ? $_('progress.adding') : $_('progress.add_photo')}
           </button>
           <button class="bs-photo-link" on:click={() => close(() => push('/progress'))}>

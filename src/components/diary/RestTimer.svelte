@@ -42,10 +42,10 @@
         <button class="rest-btn icon tap" on:click={() => (paused ? resumeRest() : pauseRest())}
           title={paused ? $_('rest_bar.resume') : $_('rest_bar.pause')}
           aria-label={paused ? $_('rest_bar.resume') : $_('rest_bar.pause')}>
-          <span class="material-symbols-rounded">{paused ? 'play_arrow' : 'pause'}</span>
+          <span class="material-symbols-rounded" aria-hidden="true">{paused ? 'play_arrow' : 'pause'}</span>
         </button>
         <button class="rest-btn icon tap" on:click={() => stopRest(false)} title={$_('rest_bar.skip')} aria-label={$_('rest_bar.skip')}>
-          <span class="material-symbols-rounded">skip_next</span>
+          <span class="material-symbols-rounded" aria-hidden="true">skip_next</span>
         </button>
       </div>
     </div>

@@ -361,9 +361,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">vpn_key</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">vpn_key</span></span>
     <span class="section-name">{$_('settings_auth.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
 <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -400,13 +400,13 @@
 
         {#each oidcProviders as p (p.id)}
           <div class="oidc-row">
-            {#if p.logo_url}<img src={resolveAssetUrl(p.logo_url)} alt="" class="oidc-logo" />{:else}<span class="material-symbols-rounded oidc-icon">verified_user</span>{/if}
+            {#if p.logo_url}<img src={resolveAssetUrl(p.logo_url)} alt="" class="oidc-logo" />{:else}<span class="material-symbols-rounded oidc-icon" aria-hidden="true">verified_user</span>{/if}
             <div class="oidc-info">
               <span class="oidc-name">
                 {p.display_name || p.issuer_url}
                 {#if p.env_locked}
                   <span class="env-lock-badge" title={$_('settings_auth.providers.env_lock_title')}>
-                    <span class="material-symbols-rounded" style="font-size:12px">lock</span>
+                    <span class="material-symbols-rounded" style="font-size:12px" aria-hidden="true">lock</span>
                     {$_('settings_auth.providers.env_lock_pill')}
                   </span>
                 {/if}
@@ -420,18 +420,18 @@
             </div>
             <div class="oidc-actions">
               <button class="btn-icon" title={$_('settings_auth.providers.test_title')} on:click={() => testProvider(p.id)} disabled={oidcBusy}>
-                <span class="material-symbols-rounded">network_check</span>
+                <span class="material-symbols-rounded" aria-hidden="true">network_check</span>
               </button>
               {#if p.env_locked}
                 <button class="btn-icon" title={$_('settings_auth.providers.readonly_title')} disabled>
-                  <span class="material-symbols-rounded" style="opacity:0.4">lock</span>
+                  <span class="material-symbols-rounded" style="opacity:0.4" aria-hidden="true">lock</span>
                 </button>
               {:else}
                 <button class="btn-icon" title={$_('settings_auth.providers.edit_title')} on:click={() => startEditProvider(p)} disabled={oidcBusy}>
-                  <span class="material-symbols-rounded">edit</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">edit</span>
                 </button>
                 <button class="btn-icon" title={$_('settings_auth.providers.delete_title')} on:click={() => deleteProvider(p)} disabled={oidcBusy}>
-                  <span class="material-symbols-rounded" style="color:var(--danger)">delete</span>
+                  <span class="material-symbols-rounded" style="color:var(--danger)" aria-hidden="true">delete</span>
                 </button>
               {/if}
             </div>
@@ -474,7 +474,7 @@
                       {#if preset.defaults.logo_url}
                         <img src={resolveAssetUrl(preset.defaults.logo_url)} alt="" class="oidc-preset-logo" />
                       {:else}
-                        <span class="material-symbols-rounded oidc-preset-icon">{preset.icon}</span>
+                        <span class="material-symbols-rounded oidc-preset-icon" aria-hidden="true">{preset.icon}</span>
                       {/if}
                       <span class="oidc-preset-name">{preset.nameKey ? $_(preset.nameKey) : preset.name}</span>
                     </button>
@@ -482,7 +482,7 @@
                 </div>
                 {#if oidcPreset.helpKey}
                   <div class="text-3 text-sm" style="margin-top:8px;line-height:1.4">
-                    <span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle">info</span>
+                    <span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle" aria-hidden="true">info</span>
                     {$_(oidcPreset.helpKey)}
                   </div>
                 {/if}
@@ -510,7 +510,7 @@
                 <div style="display:flex;gap:6px;margin-bottom:4px">
                   <input class="input" style="flex:1" bind:value={oidcEditing.redirect_uris[i]} placeholder="https://lifttrace.app/api/auth/oidc/callback/{oidcEditing.id || ':providerId'}" />
                   {#if oidcEditing.redirect_uris.length > 1}
-                    <button class="btn-icon" on:click={() => removeRedirectUri(i)} title={$_('settings_auth.form.remove_title')}><span class="material-symbols-rounded">close</span></button>
+                    <button class="btn-icon" on:click={() => removeRedirectUri(i)} title={$_('settings_auth.form.remove_title')}><span class="material-symbols-rounded" aria-hidden="true">close</span></button>
                   {/if}
                 </div>
               {/each}

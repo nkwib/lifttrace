@@ -98,7 +98,7 @@
 
     {:else if !tokenValid}
       <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
-        <span class="material-symbols-rounded" style="font-size:48px;color:var(--danger)">link_off</span>
+        <span class="material-symbols-rounded" style="font-size:48px;color:var(--danger)" aria-hidden="true">link_off</span>
         <p style="color:var(--text-2);font-size:14px">{$_('accept_invite.invalid_link')}</p>
         <button class="btn btn-secondary w-full" on:click={() => push('/login')}>{$_('forgot_password.back_to_signin')}</button>
       </div>
@@ -109,7 +109,7 @@
 
     {:else if done}
       <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
-        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)">check_circle</span>
+        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)" aria-hidden="true">check_circle</span>
         <p style="color:var(--text-2);font-size:14px">{$_('accept_invite.success')}</p>
       </div>
 

@@ -383,7 +383,7 @@
         {filtered.length}{#if filtered.length !== exercises.length}{' '}<span class="exercise-count-total">/ {exercises.length}</span>{/if}
       </span>
       <button class="create-btn" on:click={() => addMenuOpen = true} aria-label={$_('exercises_page.add_exercise')} title={$_('exercises_page.add_exercise')} disabled={importBusy}>
-        <span class="material-symbols-rounded">{importBusy ? 'hourglass_top' : 'add'}</span>
+        <span class="material-symbols-rounded" aria-hidden="true">{importBusy ? 'hourglass_top' : 'add'}</span>
       </button>
     </header>
 
@@ -418,7 +418,7 @@
 
   <div class="filter-bar">
     <div class="search-bar">
-      <span class="material-symbols-rounded search-icon">search</span>
+      <span class="material-symbols-rounded search-icon" aria-hidden="true">search</span>
       <input class="search-input" type="text" placeholder={$_('exercises_page.search_placeholder')} bind:value={search} />
     </div>
 
@@ -433,7 +433,7 @@
         <button class="chip" class:active={!selectedCategory} on:click={() => selectedCategory = ''}>{$_('exercises_page.all')}</button>
         {#each CATEGORIES.filter(c => categoryCounts[c.id]) as cat}
           <button class="chip" class:active={selectedCategory === cat.id} on:click={() => selectedCategory = cat.id}>
-            <span class="material-symbols-rounded chip-icon">{cat.icon}</span>
+            <span class="material-symbols-rounded chip-icon" aria-hidden="true">{cat.icon}</span>
             {cat.label}
           </button>
         {/each}
@@ -446,7 +446,7 @@
                 aria-label={$_('exercises_page.sort_exercises')}
                 aria-haspopup="menu"
                 aria-expanded={sortMenuOpen}>
-          <span class="material-symbols-rounded">sort</span>
+          <span class="material-symbols-rounded" aria-hidden="true">sort</span>
         </button>
         {#if sortMenuOpen}
           <div class="sort-menu" role="menu">
@@ -456,7 +456,7 @@
                       on:click={() => { setSort(val); sortMenuOpen = false; }}>
                 <span class="sort-menu-label">{label}</span>
                 {#if sortMode === val}
-                  <span class="material-symbols-rounded sort-check">check</span>
+                  <span class="material-symbols-rounded sort-check" aria-hidden="true">check</span>
                 {/if}
               </button>
             {/each}
@@ -474,7 +474,7 @@
             aria-label={$_('exercises_page.density_compact')}
             aria-pressed={$exerciseBrowserDensity === 'compact'}
           >
-            <span class="material-symbols-rounded">view_list</span>
+            <span class="material-symbols-rounded" aria-hidden="true">view_list</span>
           </button>
           <button
             class="density-btn"
@@ -484,7 +484,7 @@
             aria-label={$_('exercises_page.density_comfortable')}
             aria-pressed={$exerciseBrowserDensity === 'comfortable'}
           >
-            <span class="material-symbols-rounded">grid_view</span>
+            <span class="material-symbols-rounded" aria-hidden="true">grid_view</span>
           </button>
         </div>
       {/if}
@@ -516,13 +516,13 @@
       <div class="loading">{$_('exercises_page.loading')}</div>
     {:else if loadError && exercises.length === 0}
       <div class="empty load-error">
-        <span class="material-symbols-rounded">error_outline</span>
+        <span class="material-symbols-rounded" aria-hidden="true">error_outline</span>
         <p>{$_('exercises_page.load_failed')}</p>
         <button class="btn btn-primary" on:click={async () => { loading = true; await loadExercises(); loading = false; }}>{$_('sync.retry')}</button>
       </div>
     {:else if filtered.length === 0}
       <div class="empty">
-        <span class="material-symbols-rounded">search_off</span>
+        <span class="material-symbols-rounded" aria-hidden="true">search_off</span>
         {#if exercises.length === 0}
           <p>{$_('exercises_page.library_empty')}</p>
           <!-- Straight to the catalog, not the top of Settings (#133). -->
@@ -530,7 +530,7 @@
         {:else}
           <p>{$_('exercises_page.no_match')}</p>
           <button class="btn btn-secondary" on:click={() => { search = ''; selectedCategory = ''; clearEq(); }}>
-            <span class="material-symbols-rounded" style="font-size:16px">filter_alt_off</span>
+            <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">filter_alt_off</span>
             {$_('exercises_page.clear_filters')}
           </button>
         {/if}
@@ -544,7 +544,7 @@
               {@const u = usage[ex.id]}
               <div class="exercise-row" class:selected-for-detail={_wideMode && _detailSelected?.id === ex.id}>
                 <button class="fav-btn" on:click|stopPropagation={() => toggleFavorite(ex.id)} title={isFav(ex.id) ? $_('exercises_page.remove_favorite') : $_('exercises_page.add_favorite')}>
-                  <span class="material-symbols-rounded" class:fav-active={isFav(ex.id)}>{isFav(ex.id) ? 'star' : 'star_outline'}</span>
+                  <span class="material-symbols-rounded" class:fav-active={isFav(ex.id)} aria-hidden="true">{isFav(ex.id) ? 'star' : 'star_outline'}</span>
                 </button>
                 <button class="ex-row-main" on:click={() => _openExercise(ex)}>
                   <!-- Thumbnail: gif preferred (animated form demo), falls back
@@ -554,7 +554,7 @@
                     {#if workingMedia($failedMedia, ex.gif_url, ex.img_url)}
                       <img src={resolveAssetUrl(workingMedia($failedMedia, ex.gif_url, ex.img_url))} alt="" loading="lazy" data-media={workingMedia($failedMedia, ex.gif_url, ex.img_url)} on:error={(e) => mediaFailed(e.currentTarget.dataset.media)} />
                     {:else}
-                      <span class="material-symbols-rounded">fitness_center</span>
+                      <span class="material-symbols-rounded" aria-hidden="true">fitness_center</span>
                     {/if}
                   </div>
                   <div class="ex-info">
@@ -570,7 +570,7 @@
                       {#if u?.last_date} · {relUsed(u.last_date)}{/if}
                     </span>
                   </div>
-                  <span class="material-symbols-rounded arrow">chevron_right</span>
+                  <span class="material-symbols-rounded arrow" aria-hidden="true">chevron_right</span>
                 </button>
               </div>
             {/each}
@@ -598,7 +598,7 @@
           <h3 class="edp-title">{_detailSelected.name}</h3>
           <button class="edp-close" on:click={() => { _detailSelected = null; _detailHistory = []; }}
                   aria-label={$_('exercises_page.close_preview')} title={$_('exercises_page.close_preview')}>
-            <span class="material-symbols-rounded">close</span>
+            <span class="material-symbols-rounded" aria-hidden="true">close</span>
           </button>
         </div>
         {#if _detailLoading}
@@ -611,13 +611,13 @@
             <ExerciseInfo exercise={_detailSelected} pr={_detailPr} history={_detailHistory} />
           </div>
           <button class="btn btn-primary edp-full-btn" on:click={() => push(`/exercise/${_detailSelected.id}`)}>
-            <span class="material-symbols-rounded">open_in_new</span>
+            <span class="material-symbols-rounded" aria-hidden="true">open_in_new</span>
             {$_('programs.full_details')}
           </button>
         {/if}
       {:else}
         <div class="edp-empty">
-          <span class="material-symbols-rounded edp-empty-icon">info</span>
+          <span class="material-symbols-rounded edp-empty-icon" aria-hidden="true">info</span>
           <p class="edp-empty-title">{$_('exercises_page.preview_title')}</p>
           <p class="edp-empty-desc">{$_('exercises_page.preview_desc')}</p>
         </div>

@@ -80,17 +80,17 @@
       <ExerciseInfo exercise={loaded} {pr} {history} />
       {#if showAddButton}
         <button class="btn btn-primary add-btn" on:click={onAdd}>
-          <span class="material-symbols-rounded">add_circle</span>
+          <span class="material-symbols-rounded" aria-hidden="true">add_circle</span>
           {$_('exercise_info.add_this')}
         </button>
       {/if}
     {:else if notFound && exerciseName}
       <div class="not-linked">
-        <span class="material-symbols-rounded not-linked-icon">link_off</span>
+        <span class="material-symbols-rounded not-linked-icon" aria-hidden="true">link_off</span>
         <div class="not-linked-title">{$_('exercise_info.not_in_library', { values: { name: exerciseName } })}</div>
         <div class="not-linked-hint">{$_('exercise_info.free_text_hint')}</div>
         <button class="btn btn-primary replace-btn" on:click={() => { dispatch('replace'); open = false; }}>
-          <span class="material-symbols-rounded">swap_horiz</span>
+          <span class="material-symbols-rounded" aria-hidden="true">swap_horiz</span>
           {$_('exercise_info.replace_with_library')}
         </button>
       </div>

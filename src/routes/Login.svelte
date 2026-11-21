@@ -368,7 +368,7 @@
     {#if $sessionEnded && !challenge}
       <!-- This device was signed out (a password change, Sign Out Everywhere: server/lib/session-version.js). -->
       <div class="session-ended" role="status">
-        <span class="material-symbols-rounded">logout</span>
+        <span class="material-symbols-rounded" aria-hidden="true">logout</span>
         <div>{$_('login.session_ended')}</div>
       </div>
     {/if}
@@ -398,7 +398,7 @@
       {#if _biometricReady}
         <button class="btn btn-secondary w-full" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px"
           on:click={biometricLogin} disabled={loading}>
-          <span class="material-symbols-rounded" style="font-size:20px">fingerprint</span>
+          <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">fingerprint</span>
           <span>{$_('login.biometric_signin')}</span>
         </button>
       {/if}
@@ -421,7 +421,7 @@
               {#if p.logo_url}
                 <img src={p.logo_url} alt="" class="sso-logo" />
               {:else}
-                <span class="material-symbols-rounded sso-logo">vpn_key</span>
+                <span class="material-symbols-rounded sso-logo" aria-hidden="true">vpn_key</span>
               {/if}
               <span>{$_('login.continue_with', { values: { provider: p.display_name || 'OIDC' } })}</span>
             </button>
@@ -456,7 +456,7 @@
 
           <div class="recovery-part">
             <strong class="recovery-heading recovery-heading-danger">
-              <span class="material-symbols-rounded" style="font-size:18px;color:var(--warning-text, #7A5000)">warning</span>
+              <span class="material-symbols-rounded" style="font-size:18px;color:var(--warning-text, #7A5000)" aria-hidden="true">warning</span>
               {$_('two_step.locked_out.disable_title')}
             </strong>
             <p style="margin:0">{@html $_('login.recovery.explainer')}</p>
@@ -469,7 +469,7 @@
       {/if}
     {:else}
       <div style="text-align:center;padding:8px 0">
-        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)">check_circle</span>
+        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)" aria-hidden="true">check_circle</span>
         <p style="margin-top:8px;color:var(--text-2)">{@html $_('login.recovery.done')}</p>
       </div>
     {/if}

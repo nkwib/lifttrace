@@ -113,18 +113,18 @@
   <!-- Month / year navigation -->
   <div class="dp-nav">
     <button class="btn-icon dp-nav-btn" on:click={calPrevMonth} disabled={calAtMin} aria-label="Previous month">
-      <span class="material-symbols-rounded">chevron_left</span>
+      <span class="material-symbols-rounded" aria-hidden="true">chevron_left</span>
     </button>
     <div class="dp-month-year">
       <button class="dp-month-btn" on:click={() => { showMonthPicker = !showMonthPicker; showYearPicker = false; }} title="Pick month">
-        {calMonthName}<span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;margin-left:2px">{showMonthPicker ? 'expand_less' : 'expand_more'}</span>
+        {calMonthName}<span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;margin-left:2px" aria-hidden="true">{showMonthPicker ? 'expand_less' : 'expand_more'}</span>
       </button>
       <button class="dp-year-btn" on:click={() => { showYearPicker = !showYearPicker; showMonthPicker = false; }} title="Pick year">
-        {calYear}<span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;margin-left:2px">{showYearPicker ? 'expand_less' : 'expand_more'}</span>
+        {calYear}<span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;margin-left:2px" aria-hidden="true">{showYearPicker ? 'expand_less' : 'expand_more'}</span>
       </button>
     </div>
     <button class="btn-icon dp-nav-btn" on:click={calNextMonth} disabled={calAtMax} aria-label="Next month">
-      <span class="material-symbols-rounded">chevron_right</span>
+      <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
     </button>
   </div>
 

@@ -270,7 +270,7 @@
     <Spinner block />
   {:else if photos.length === 0}
     <div class="pp-empty">
-      <span class="material-symbols-rounded pp-empty-icon">photo_camera</span>
+      <span class="material-symbols-rounded pp-empty-icon" aria-hidden="true">photo_camera</span>
       <h3>{$_('progress.empty.title')}</h3>
       <p>{$_('progress.empty.desc')}</p>
       <button class="btn btn-primary" disabled={uploading} on:click={() => fileInput?.click()}>
@@ -281,7 +281,7 @@
     <div class="pp-toolbar">
       <div class="pp-actions">
         <button class="btn btn-secondary" disabled={uploading} on:click={() => fileInput?.click()}>
-          <span class="material-symbols-rounded">add_a_photo</span>
+          <span class="material-symbols-rounded" aria-hidden="true">add_a_photo</span>
           {uploading ? $_('progress.adding') : $_('progress.add_photo')}
         </button>
         <!-- Muted while it says Today, accented once it does not, so
@@ -292,12 +292,12 @@
           on:click={() => showDatePicker = true}
           title={$_('progress.date_for_next')}
         >
-          <span class="material-symbols-rounded">event</span>
+          <span class="material-symbols-rounded" aria-hidden="true">event</span>
           {targetIsToday ? $_('progress.date_today') : dayLabel(targetDate)}
         </button>
         {#if photos.length >= 3}
           <button class="btn btn-secondary" on:click={compareEnds}>
-            <span class="material-symbols-rounded">compare</span>
+            <span class="material-symbols-rounded" aria-hidden="true">compare</span>
             {$_('progress.compare_ends')}
           </button>
         {/if}
@@ -334,7 +334,7 @@
               <button class="pp-thumb" on:click={() => onPick(p)}>
                 <PhotoImage photo={p} alt={dayLabel(p.date)} />
                 {#if compareMode && picked.some(x => x.id === p.id)}
-                  <span class="pp-check material-symbols-rounded">check_circle</span>
+                  <span class="pp-check material-symbols-rounded" aria-hidden="true">check_circle</span>
                 {/if}
               </button>
               <div class="pp-meta">
@@ -344,7 +344,7 @@
                 {/if}
                 {#if !compareMode}
                   <button class="pp-del btn-icon" title={$_('progress.delete_title')} on:click={() => remove(p)}>
-                    <span class="material-symbols-rounded">delete</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">delete</span>
                   </button>
                 {/if}
               </div>

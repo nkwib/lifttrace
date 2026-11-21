@@ -107,9 +107,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">restaurant</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">restaurant</span></span>
     <span class="section-name">{$_('settings.federation.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -168,7 +168,7 @@
                 bind:value={tokenDraft} on:focus={selectSecret} placeholder="nt_pat_…" on:input={_invalidate} />
             {/if}
             <button class="btn-icon-toggle" on:click={() => showToken = !showToken} title={showToken ? $_('settings_trace.labels.hide') : $_('settings_trace.labels.show')}>
-              <span class="material-symbols-rounded">{showToken ? 'visibility_off' : 'visibility'}</span>
+              <span class="material-symbols-rounded" aria-hidden="true">{showToken ? 'visibility_off' : 'visibility'}</span>
             </button>
             <button class="btn btn-primary save-btn" on:click={save}
               disabled={testing || !urlDraft.trim() || !tokenDraft.trim()}>

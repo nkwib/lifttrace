@@ -296,9 +296,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">library_books</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">library_books</span></span>
     <span class="section-name">{$_('settings.catalog.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -331,7 +331,7 @@
               {#if src.count > 0 && canManageLibrary}
                 <button class="btn btn-secondary btn-sm src-clear" disabled={sourceBusy[src.id] === 'clear'} on:click={() => clearSource(src)}
                   title={$_('settings_catalog.clear_source_title', { values: { count: src.count } })}>
-                  <span class="material-symbols-rounded" style="font-size:16px">delete_sweep</span>
+                  <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">delete_sweep</span>
                   {sourceBusy[src.id] === 'clear' ? $_('settings_catalog.clearing') : $_('settings_catalog.clear')}
                 </button>
               {/if}
@@ -357,7 +357,7 @@
             </div>
           {/if}
           <button class="btn btn-secondary" style="height:36px;font-size:13px;align-self:flex-start" on:click={precacheMedia} disabled={precacheBusy}>
-            <span class="material-symbols-rounded" style="font-size:16px">{precacheBusy ? 'downloading' : 'download_for_offline'}</span>
+            <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">{precacheBusy ? 'downloading' : 'download_for_offline'}</span>
             {precacheBusy ? $_('settings_catalog.caching') : $_('settings_catalog.precache')}
           </button>
         </div>
@@ -371,7 +371,7 @@
             {$_('settings_catalog.my_exercises_count', { values: { count: customExercises.length } })}
           </div>
           <button class="btn btn-primary btn-sm" on:click={openCreate}>
-            <span class="material-symbols-rounded" style="font-size:16px">add</span> {$_('settings_catalog.create')}
+            <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">add</span> {$_('settings_catalog.create')}
           </button>
         </div>
         {#if customExercises.length > 0}
@@ -381,9 +381,9 @@
               {#if workingMedia($failedMedia, ex.gif_url, ex.img_url)}
                 <img class="my-ex-thumb" src={resolveAssetUrl(workingMedia($failedMedia, ex.gif_url, ex.img_url))} alt="" data-media={workingMedia($failedMedia, ex.gif_url, ex.img_url)} on:error={(e) => mediaFailed(e.currentTarget.dataset.media)} />
               {:else if ex.video_url}
-                <span class="my-ex-thumb-fallback material-symbols-rounded">play_circle</span>
+                <span class="my-ex-thumb-fallback material-symbols-rounded" aria-hidden="true">play_circle</span>
               {:else}
-                <span class="my-ex-thumb-fallback material-symbols-rounded">fitness_center</span>
+                <span class="my-ex-thumb-fallback material-symbols-rounded" aria-hidden="true">fitness_center</span>
               {/if}
               <div class="my-ex-info">
                 <span class="my-ex-name">{ex.name}</span>
@@ -392,17 +392,17 @@
                 </span>
               </div>
               <button class="my-ex-btn" on:click={() => openEdit(ex)} title={$_('common.edit')}>
-                <span class="material-symbols-rounded">edit</span>
+                <span class="material-symbols-rounded" aria-hidden="true">edit</span>
               </button>
               <button class="my-ex-btn danger" on:click={() => removeCustom(ex)} title={$_('common.delete')}>
-                <span class="material-symbols-rounded">delete</span>
+                <span class="material-symbols-rounded" aria-hidden="true">delete</span>
               </button>
             </div>
           {/each}
           <div class="setting-divider"></div>
           <div style="padding:10px 16px">
             <button class="btn btn-secondary btn-sm" style="color:var(--danger);border-color:color-mix(in srgb, var(--danger) 30%, var(--border))" on:click={removeAllCustom}>
-              <span class="material-symbols-rounded" style="font-size:16px">delete_sweep</span>
+              <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">delete_sweep</span>
               {$_('settings_catalog.delete_all_mine')}
             </button>
           </div>
@@ -417,13 +417,13 @@
             href={resolveAssetUrl('/lifttrace-catalog-template.json')}
             download="lifttrace-catalog-template.json"
             on:click={downloadTemplate}>
-            <span class="material-symbols-rounded" style="font-size:16px">download</span>
+            <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">download</span>
             {$_('settings_catalog.download_template')}
           </a>
         </div>
         <details class="cc-format">
           <summary>
-            <span class="material-symbols-rounded cc-format-chev">expand_more</span>
+            <span class="material-symbols-rounded cc-format-chev" aria-hidden="true">expand_more</span>
             {$_('settings_catalog.expected_format')}
           </summary>
           <pre class="cc-format-example">{`{
@@ -460,7 +460,7 @@
 
         <div class="cc-actions">
           <label class="btn btn-secondary cc-file-btn">
-            <span class="material-symbols-rounded" style="font-size:16px">upload_file</span>
+            <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">upload_file</span>
             {$_('settings_catalog.pick_json_file')}
             <input type="file" accept=".json,application/json" style="display:none"
               bind:this={customCatalogFile} on:change={_onCatalogFile} />
@@ -476,7 +476,7 @@
             on:click={importCustomCatalog}
             disabled={customCatalogImporting || !customCatalogName.trim() || !customCatalogJson.trim()}>
             {#if customCatalogImporting}
-              <span class="material-symbols-rounded spin" style="font-size:16px">autorenew</span>
+              <span class="material-symbols-rounded spin" style="font-size:16px" aria-hidden="true">autorenew</span>
               {$_('settings_catalog.importing')}
             {:else}
               {$_('settings_catalog.import')}
@@ -511,7 +511,7 @@
               <div class="src-actions" style="flex-direction:row;align-items:center">
                 <Toggle checked={cat.enabled} on:change={() => toggleCatalog(cat)} />
                 <button class="btn-icon-danger" on:click={() => deleteCatalog(cat)} title={$_('settings_catalog.delete_catalog')}>
-                  <span class="material-symbols-rounded" style="font-size:20px">delete</span>
+                  <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">delete</span>
                 </button>
               </div>
             </div>

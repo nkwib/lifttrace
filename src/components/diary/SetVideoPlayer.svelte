@@ -162,12 +162,12 @@
     {#if note && !coach}
       <div class="vp-note">
         <div class="vp-note-head">
-          <span class="material-symbols-rounded">sports</span>
+          <span class="material-symbols-rounded" aria-hidden="true">sports</span>
           <span class="vp-note-who">{note.author || $_('set_video.your_coach')}</span>
           {#if note.time_sec != null}
             <button type="button" class="vp-stamp" on:click={() => seekTo(note.time_sec)}
               title={$_('set_video.jump_to', { values: { time: clock(note.time_sec) } })}>
-              <span class="material-symbols-rounded">play_arrow</span>{clock(note.time_sec)}
+              <span class="material-symbols-rounded" aria-hidden="true">play_arrow</span>{clock(note.time_sec)}
             </button>
           {/if}
         </div>
@@ -198,7 +198,7 @@
           <span class="vp-compose-label">{$_('set_video.note_at')}</span>
           <button type="button" class="vp-stamp" on:click={markHere}
             title={$_('set_video.mark_here')}>
-            <span class="material-symbols-rounded">my_location</span>{clock(noteAt)}
+            <span class="material-symbols-rounded" aria-hidden="true">my_location</span>{clock(noteAt)}
           </button>
         </div>
         <textarea class="input" rows="2" bind:value={noteText}
@@ -212,7 +212,7 @@
 
     {#if canDelete}
       <button type="button" class="vp-delete" on:click={remove}>
-        <span class="material-symbols-rounded">delete</span>{$_('set_video.delete')}
+        <span class="material-symbols-rounded" aria-hidden="true">delete</span>{$_('set_video.delete')}
       </button>
     {/if}
   </div>

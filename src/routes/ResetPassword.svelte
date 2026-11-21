@@ -81,20 +81,20 @@
 
     {:else if !tokenValid}
       <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
-        <span class="material-symbols-rounded" style="font-size:48px;color:var(--danger)">link_off</span>
+        <span class="material-symbols-rounded" style="font-size:48px;color:var(--danger)" aria-hidden="true">link_off</span>
         <p style="color:var(--text-2);font-size:14px">{$_('reset_password.invalid_link')}</p>
         <button class="btn btn-secondary w-full" on:click={() => push('/forgot-password')}>{$_('reset_password.request_new')}</button>
       </div>
 
     {:else if done}
       <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
-        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)">check_circle</span>
+        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)" aria-hidden="true">check_circle</span>
         <p style="color:var(--text-2);font-size:14px">{$_('reset_password.success')}</p>
       </div>
 
     {:else if signInNext}
       <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
-        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)">check_circle</span>
+        <span class="material-symbols-rounded" style="font-size:48px;color:var(--accent-ink)" aria-hidden="true">check_circle</span>
         <p style="color:var(--text-2);font-size:14px">{$_('two_step.reset_password_done')}</p>
         <button class="btn btn-primary w-full" on:click={() => push('/login')}>{$_('login.sign_in')}</button>
       </div>

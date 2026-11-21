@@ -173,7 +173,7 @@
       {$pwaUpdateReady ? $_('updates.banner_reload', { default: 'Reload' }) : $_('updates.banner_view')}
     </button>
     <button class="dismiss" on:click={dismiss} aria-label={$_('updates.skip_this_version')}>
-      <span class="material-symbols-rounded">close</span>
+      <span class="material-symbols-rounded" aria-hidden="true">close</span>
     </button>
   </div>
 {/if}

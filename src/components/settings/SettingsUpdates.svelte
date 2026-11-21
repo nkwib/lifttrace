@@ -254,13 +254,13 @@
         <label class="channel-opt" class:selected={channel === 'stable'}>
           <input type="radio" name="update-channel" value="stable"
                  checked={channel === 'stable'} on:change={() => onChannelChange('stable')} />
-          <span class="material-symbols-rounded" style="font-size:16px">verified</span>
+          <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">verified</span>
           {$_('updates.channel.stable')}
         </label>
         <label class="channel-opt" class:selected={channel === 'dev'}>
           <input type="radio" name="update-channel" value="dev"
                  checked={channel === 'dev'} on:change={() => onChannelChange('dev')} />
-          <span class="material-symbols-rounded" style="font-size:16px">science</span>
+          <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">science</span>
           {$_('updates.channel.dev')}
         </label>
       </div>
@@ -340,22 +340,22 @@
       {#if primaryState === 'downloading'}
         <div class="btn-progress-fill" style="width:{downloadPct}%"></div>
         <span class="btn-label">
-          <span class="material-symbols-rounded spin">progress_activity</span>
+          <span class="material-symbols-rounded spin" aria-hidden="true">progress_activity</span>
           {$_('updates.downloading', { values: { percent: downloadPct } })}
         </span>
       {:else if primaryState === 'checking'}
         <span class="btn-label">
-          <span class="material-symbols-rounded spin">progress_activity</span>
+          <span class="material-symbols-rounded spin" aria-hidden="true">progress_activity</span>
           {$_('updates.checking')}
         </span>
       {:else if primaryState === 'install'}
         <span class="btn-label">
-          <span class="material-symbols-rounded">{apkStaged ? 'install_mobile' : 'download'}</span>
+          <span class="material-symbols-rounded" aria-hidden="true">{apkStaged ? 'install_mobile' : 'download'}</span>
           {apkStaged ? $_('updates.install_downloaded') : $_('updates.download_install')}
         </span>
       {:else}
         <span class="btn-label">
-          <span class="material-symbols-rounded">refresh</span>
+          <span class="material-symbols-rounded" aria-hidden="true">refresh</span>
           {$_('updates.check_now')}
         </span>
       {/if}
@@ -374,13 +374,13 @@
 
     {#if error}
       <div class="alert alert-error">
-        <span class="material-symbols-rounded" style="font-size:18px">error</span>
+        <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">error</span>
         {error}
       </div>
     {/if}
     {#if installFailed}
       <div class="alert alert-error">
-        <span class="material-symbols-rounded" style="font-size:18px">error</span>
+        <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">error</span>
         {installFailed}
       </div>
     {/if}
@@ -393,7 +393,7 @@
   {#if showApkPanel && available}
     <details class="whats-new">
       <summary>
-        <span class="material-symbols-rounded whats-new-chev">chevron_right</span>
+        <span class="material-symbols-rounded whats-new-chev" aria-hidden="true">chevron_right</span>
         <span class="whats-new-title">
           {$_('updates.available_headline', { values: { version: latest.version } })}
         </span>
@@ -410,7 +410,7 @@
         {#if latest.notesUrl}
           <a class="update-link" href={latest.notesUrl} target="_blank" rel="noopener">
             {$_('updates.view_on_github')}
-            <span class="material-symbols-rounded" style="font-size:14px">open_in_new</span>
+            <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">open_in_new</span>
           </a>
         {/if}
       </div>
@@ -423,7 +423,7 @@
     <div class="storage-block">
       <div class="storage-header">
         <div class="storage-title">
-          <span class="material-symbols-rounded" style="font-size:18px">sd_storage</span>
+          <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">sd_storage</span>
           {$_('updates.storage.heading')}
         </div>
         <div class="storage-total">{formatBytes(cacheInfo.totalBytes)}</div>
@@ -441,7 +441,7 @@
           {/each}
         </ul>
         <button class="btn btn-secondary" on:click={doClearCache} disabled={clearing}>
-          <span class="material-symbols-rounded" style="font-size:16px">delete_sweep</span>
+          <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">delete_sweep</span>
           {clearing ? $_('updates.storage.clearing') : $_('updates.storage.clear_now')}
         </button>
       {/if}
@@ -473,7 +473,7 @@
       {#if serverInfo.notes}
         <details class="whats-new" open>
           <summary>
-            <span class="material-symbols-rounded whats-new-chev">chevron_right</span>
+            <span class="material-symbols-rounded whats-new-chev" aria-hidden="true">chevron_right</span>
             <span class="whats-new-title">{$_('updates.release_notes_heading')}</span>
           </summary>
           <div class="whats-new-body">
@@ -481,7 +481,7 @@
             {#if serverInfo.notes_url}
               <a class="update-link" href={serverInfo.notes_url} target="_blank" rel="noopener">
                 {$_('updates.view_on_github')}
-                <span class="material-symbols-rounded" style="font-size:14px">open_in_new</span>
+                <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">open_in_new</span>
               </a>
             {/if}
           </div>
@@ -491,11 +491,11 @@
       <div class="label-desc">{$_('updates.server.instructions')}</div>
       <pre class="server-cmd">docker-compose pull && docker-compose up -d</pre>
       <button class="btn btn-secondary" style="align-self:flex-start" on:click={copyDockerCommand}>
-        <span class="material-symbols-rounded" style="font-size:16px">content_copy</span>
+        <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">content_copy</span>
         {$_('updates.server.copy_command')}
       </button>
       <div class="channel-note">
-        <span class="material-symbols-rounded" style="font-size:14px">info</span>
+        <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">info</span>
         {$_('updates.server.channel_note')}
       </div>
     </div>

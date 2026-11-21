@@ -190,7 +190,7 @@
   <div class="sv">
     {#if !online}
       <p class="sv-offline">
-        <span class="material-symbols-rounded">cloud_off</span>
+        <span class="material-symbols-rounded" aria-hidden="true">cloud_off</span>
         {$_('set_video.needs_connection')}
       </p>
     {:else}
@@ -203,7 +203,7 @@
                 role="radio" aria-checked={setUuid === s.uuid}
                 on:click={() => (setUuid = s.uuid)}>
                 {i + 1}
-                {#if s.completed}<span class="material-symbols-rounded tick">check</span>{/if}
+                {#if s.completed}<span class="material-symbols-rounded tick" aria-hidden="true">check</span>{/if}
               </button>
             {/each}
           </div>
@@ -214,13 +214,13 @@
         <div class="sv-actions">
           {#if canRecord}
             <button type="button" class="sv-big" on:click={startRecording}>
-              <span class="material-symbols-rounded">videocam</span>
+              <span class="material-symbols-rounded" aria-hidden="true">videocam</span>
               <span class="sv-big-label">{$_('set_video.record')}</span>
               <span class="sv-big-sub">{$_('set_video.record_hint', { values: { seconds: MAX_SECONDS } })}</span>
             </button>
           {/if}
           <label class="sv-big secondary">
-            <span class="material-symbols-rounded">video_library</span>
+            <span class="material-symbols-rounded" aria-hidden="true">video_library</span>
             <span class="sv-big-label">{$_('set_video.choose')}</span>
             <span class="sv-big-sub">{$_('set_video.choose_hint')}</span>
             <input type="file" accept="video/*" on:change={pickFile} hidden />
@@ -236,7 +236,7 @@
             <span class="sv-left">{$_('set_video.seconds_left', { values: { seconds: MAX_SECONDS - elapsed } })}</span>
           </div>
           <button type="button" class="sv-stop" on:click={stopRecording}>
-            <span class="material-symbols-rounded">stop_circle</span>{$_('set_video.stop')}
+            <span class="material-symbols-rounded" aria-hidden="true">stop_circle</span>{$_('set_video.stop')}
           </button>
         </div>
       {:else if stage === 'review'}

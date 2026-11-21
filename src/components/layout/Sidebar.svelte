@@ -126,7 +126,7 @@
           class:active={activePath === item.path || (item.path !== '/' && activePath.startsWith(item.path))}
           on:click={() => go(item.path)}
         >
-          <span class="material-symbols-rounded sidebar-icon">
+          <span class="material-symbols-rounded sidebar-icon" aria-hidden="true">
             {item.icon}
             {#if item.path === '/programs' && $coachingBadge}
               <span class="nav-update-dot" aria-label={$_('coaching.badge_aria')}></span>
@@ -164,7 +164,7 @@
             <span class="user-role">{$currentUser.role}</span>
           </div>
           <button class="logout-btn" on:click={handleLogout} title={$_('common.sign_out')} aria-label={$_('common.sign_out')}>
-            <span class="material-symbols-rounded">logout</span>
+            <span class="material-symbols-rounded" aria-hidden="true">logout</span>
           </button>
         </div>
       {:else}

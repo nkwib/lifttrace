@@ -214,7 +214,7 @@
           />
         {:else}
           <button type="button" class="chip chip-add" on:click={() => { newCustomEq = ''; addingCustomEq = true; }} title="Add custom equipment">
-            <span class="material-symbols-rounded chip-add-icon">add</span>
+            <span class="material-symbols-rounded chip-add-icon" aria-hidden="true">add</span>
           </button>
         {/if}
       </div>

@@ -2509,7 +2509,7 @@
     {#if $wideContent && exercises.length > 0}
       <button class="btn-icon accent tap" on:click={() => showAddMenu = true}
               aria-label={$_('diary_extra.add_menu_title')} title={$_('diary_extra.add_menu_title')}>
-        <span class="material-symbols-rounded">add</span>
+        <span class="material-symbols-rounded" aria-hidden="true">add</span>
       </button>
     {/if}
     <!-- Coach Feedback joins this strip wherever the strip is up: in the
@@ -2519,7 +2519,7 @@
       <button class="btn-icon accent tap diary-topbar-coach"
               on:click={openCoachInbox}
               aria-label={$_('coaching.sheets.coach_feedback')} title={$_('coaching.sheets.coach_feedback')}>
-        <span class="material-symbols-rounded">
+        <span class="material-symbols-rounded" aria-hidden="true">
           {unreadFeedbackCount > 0 ? 'mark_email_unread' : 'forum'}
         </span>
         {#if unreadFeedbackCount > 0}
@@ -2528,13 +2528,13 @@
       </button>
     {/if}
     <button class="btn-icon accent tap" on:click={() => showGymTools = true} aria-label={$_('diary.actions.gym_tools')} title={$_('diary.actions.gym_tools_long')}>
-      <span class="material-symbols-rounded">calculate</span>
+      <span class="material-symbols-rounded" aria-hidden="true">calculate</span>
     </button>
     <button class="btn-icon accent tap" on:click={() => showBodyStats = true} aria-label={$_('diary.actions.body_stats')} title={$_('diary.actions.body_stats_long')}>
-      <span class="material-symbols-rounded">scale</span>
+      <span class="material-symbols-rounded" aria-hidden="true">scale</span>
     </button>
     <button class="btn-icon accent tap" on:click={() => showWorkoutActions = true} aria-label={$_('diary.actions.workout_actions')} title={$_('diary.actions.workout_options')}>
-      <span class="material-symbols-rounded">more_vert</span>
+      <span class="material-symbols-rounded" aria-hidden="true">more_vert</span>
     </button>
   </div>
   {/if}
@@ -2556,14 +2556,14 @@
       <button class="diary-header-action diary-header-add"
               on:click={() => showAddMenu = true}
               title={$_('diary_extra.add_menu_title')} aria-label={$_('diary_extra.add_menu_title')}>
-        <span class="material-symbols-rounded">add</span>
+        <span class="material-symbols-rounded" aria-hidden="true">add</span>
       </button>
     {/if}
     {#if _railPinnedShown && showCoachInboxButton}
       <button class="diary-header-action" class:dim={unreadFeedbackCount === 0}
               on:click={openCoachInbox}
               title={$_('coaching.sheets.coach_feedback')} aria-label={$_('coaching.sheets.coach_feedback')}>
-        <span class="material-symbols-rounded">
+        <span class="material-symbols-rounded" aria-hidden="true">
           {unreadFeedbackCount > 0 ? 'mark_email_unread' : 'forum'}
         </span>
         {#if unreadFeedbackCount > 0}
@@ -2578,7 +2578,7 @@
        separate top offsets. -->
   <div class="date-nav">
     <button class="btn-icon accent tap" on:click={prevDay} aria-label={$_('diary.nav.previous_day')} title={$_('diary.nav.previous_day')}>
-      <span class="material-symbols-rounded">chevron_left</span>
+      <span class="material-symbols-rounded" aria-hidden="true">chevron_left</span>
     </button>
     <button class="date-btn tap" on:click={openDatePicker} title={$_('diary.nav.jump_to_date')}>
       <span class="date-text">{formatDateHeader($currentDate)}</span>
@@ -2591,12 +2591,12 @@
     {/if}
     {#if !isToday}
       <button class="today-pill" on:click={goToday} title={$_('diary.nav.jump_to_today')}>
-        <span class="material-symbols-rounded today-pill-icon">today</span>
+        <span class="material-symbols-rounded today-pill-icon" aria-hidden="true">today</span>
         Today
       </button>
     {/if}
     <button class="btn-icon accent tap" on:click={nextDay} aria-label={$_('diary.nav.next_day')} title={$_('diary.nav.next_day')}>
-      <span class="material-symbols-rounded">chevron_right</span>
+      <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
     </button>
   </div>
   </div>
@@ -2637,18 +2637,18 @@
       <div class="summary-bar" class:done={stats.total > 0 && stats.completed === stats.total}>
         <div class="sb-fill" style:width={`${stats.total > 0 ? Math.round(stats.completed / stats.total * 100) : 0}%`}></div>
         <div class="stat">
-          <span class="material-symbols-rounded stat-icon">check_circle</span>
+          <span class="material-symbols-rounded stat-icon" aria-hidden="true">check_circle</span>
           <span class="stat-val">{stats.completed}/{stats.total}</span>
           <span class="stat-label">{$_('diary_extra.sets')}</span>
         </div>
         <div class="stat">
-          <span class="material-symbols-rounded stat-icon">fitness_center</span>
+          <span class="material-symbols-rounded stat-icon" aria-hidden="true">fitness_center</span>
           <span class="stat-val">{exercises.length}</span>
           <span class="stat-label">{$_('diary_extra.exercises')}</span>
         </div>
         {#if totalVolume > 0}
           <div class="stat">
-            <span class="material-symbols-rounded stat-icon">monitoring</span>
+            <span class="material-symbols-rounded stat-icon" aria-hidden="true">monitoring</span>
             <span class="stat-val">{totalVolume >= 1000 ? (totalVolume/1000).toFixed(1) + 'k' : Math.round(totalVolume)}</span>
             <span class="stat-label">{$weightUnit}</span>
           </div>
@@ -2657,7 +2657,7 @@
           <WorkoutTimer bind:minutes={durationMin} on:update={e => updateDuration(e.detail)} />
         {/if}
         <button class="wake-toggle tap" class:active={$screenOn} on:click={onWakeToggle} title={$screenOn ? 'Screen lock on' : 'Screen lock off'}>
-          <span class="material-symbols-rounded">
+          <span class="material-symbols-rounded" aria-hidden="true">
             {$screenOn ? 'stay_current_portrait' : 'screen_lock_portrait'}
           </span>
         </button>
@@ -2669,13 +2669,13 @@
          progress on mobile too, which reads at least as well). -->
     {#if currentStatus}
       <button class="now-strip" on:click={scrollToCurrent} title="Jump to this exercise">
-        <span class="material-symbols-rounded now-icon">play_arrow</span>
+        <span class="material-symbols-rounded now-icon" aria-hidden="true">play_arrow</span>
         <div class="now-info">
           <span class="now-label">Now</span>
           <span class="now-exercise">{currentStatus.label}</span>
         </div>
         <span class="now-set">{currentStatus.setInfo}</span>
-        <span class="material-symbols-rounded now-chev">chevron_right</span>
+        <span class="material-symbols-rounded now-chev" aria-hidden="true">chevron_right</span>
       </button>
     {/if}
     <!-- Desktop-only empty-state card. Renders when there's no
@@ -2683,11 +2683,11 @@
          of blank. Hidden on mobile via CSS. -->
     {#if exercises.length === 0 && !loading && !isFuture}
       <div class="hud-empty-card">
-        <span class="material-symbols-rounded hud-empty-icon">fitness_center</span>
+        <span class="material-symbols-rounded hud-empty-icon" aria-hidden="true">fitness_center</span>
         <p class="hud-empty-title">{$_('diary_finish.nothing_logged')}</p>
         <p class="hud-empty-desc">Load a workout from a program or add an exercise to get started.</p>
         <button type="button" class="rail-action" on:click={openLoadWorkout}>
-          <span class="material-symbols-rounded">library_books</span>
+          <span class="material-symbols-rounded" aria-hidden="true">library_books</span>
           Load Workout
         </button>
       </div>
@@ -2702,7 +2702,7 @@
       <button class="hud-finish-btn"
               class:reopen={$todayLog?.completed}
               on:click={() => finishWorkout({ auto: false })}>
-        <span class="material-symbols-rounded">
+        <span class="material-symbols-rounded" aria-hidden="true">
           {$todayLog?.completed ? 'task_alt' : 'flag'}
         </span>
         <span class="hud-finish-text">
@@ -2721,7 +2721,7 @@
     {#if exercises.length > 0}
       <div class="hud-notes-card">
         <div class="hud-notes-head">
-          <span class="material-symbols-rounded">edit_note</span>
+          <span class="material-symbols-rounded" aria-hidden="true">edit_note</span>
           <span class="hud-notes-title">Session Notes</span>
         </div>
         <textarea
@@ -2758,7 +2758,7 @@
             on:click={() => handleSwitchSession(s.id)}
           >
             <span class="session-tab-name">{s.name || $_('diary_extra.toast.workout_fallback')}</span>
-            {#if s.completed}<span class="material-symbols-rounded session-tab-check">check_circle</span>{/if}
+            {#if s.completed}<span class="material-symbols-rounded session-tab-check" aria-hidden="true">check_circle</span>{/if}
           </button>
           <button
             class="session-tab-delete"
@@ -2766,12 +2766,12 @@
             title={$_('diary.confirm.delete_workout_confirm')}
             aria-label={$_('diary.confirm.delete_workout_confirm')}
           >
-            <span class="material-symbols-rounded">close</span>
+            <span class="material-symbols-rounded" aria-hidden="true">close</span>
           </button>
         </div>
       {/each}
       <button class="session-tab session-tab-add" on:click={openLoadWorkoutForNewSession} title={$_('diary.actions.add_session')} aria-label={$_('diary.actions.add_session')}>
-        <span class="material-symbols-rounded">add</span>
+        <span class="material-symbols-rounded" aria-hidden="true">add</span>
       </button>
     </div>
   {/if}
@@ -2780,7 +2780,7 @@
        the banner below says what that day is). -->
   {#if isFuture && !excusedHere}
     <div class="planning-badge">
-      <span class="material-symbols-rounded">event_note</span>
+      <span class="material-symbols-rounded" aria-hidden="true">event_note</span>
       Planning ahead — this workout is scheduled for {formatDateHeader($currentDate)}
     </div>
   {/if}
@@ -2815,7 +2815,7 @@
     {@const px = $todayPrescription}
     {@const alreadyLoaded = $todayLog?.template_id && $todayLog.template_id === px.template_id && ($todayLog?.exercises?.length > 0)}
     <div class="coach-banner" class:loaded={alreadyLoaded && pxStatus(px) !== 'pending'} class:asking={pxStatus(px) === 'pending'}>
-      <span class="material-symbols-rounded coach-icon">supervisor_account</span>
+      <span class="material-symbols-rounded coach-icon" aria-hidden="true">supervisor_account</span>
       <div class="coach-body">
         <div class="coach-title">
           {$_('diary.prescription.title', { values: { name: px.trainer_name || $_('diary.prescription.your_coach') } })}
@@ -2832,7 +2832,7 @@
         </div>
       {:else if alreadyLoaded}
         <span class="coach-loaded-chip">
-          <span class="material-symbols-rounded" style="font-size:14px">check_circle</span>
+          <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">check_circle</span>
           {$_('diary.prescription.loaded')}
         </span>
       {:else}
@@ -2876,7 +2876,7 @@
                 <button class="reply-save" class:flashed={replySavedFlash === f.id}
                         on:click={() => saveReply(f.id)}
                         disabled={replySaving === f.id || !(replyDrafts[f.id] || '').trim()}>
-                  {#if replySavedFlash === f.id}<span class="material-symbols-rounded" style="font-size:14px">check</span>{:else}{replySaving === f.id ? 'Saving…' : 'Reply'}{/if}
+                  {#if replySavedFlash === f.id}<span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">check</span>{:else}{replySaving === f.id ? 'Saving…' : 'Reply'}{/if}
                 </button>
               </div>
             </div>
@@ -2886,11 +2886,11 @@
                 You{#if f.member_replied_at}{' · '}{relInboxTime(f.member_replied_at)}{/if}
               </span>
               <span class="my-reply-text">{f.member_reply}</span>
-              <span class="material-symbols-rounded my-reply-edit-icon">edit</span>
+              <span class="material-symbols-rounded my-reply-edit-icon" aria-hidden="true">edit</span>
             </button>
           {:else}
             <button class="reply-add" on:click={() => openReply(f)}>
-              <span class="material-symbols-rounded" style="font-size:14px">reply</span>
+              <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">reply</span>
               Reply
             </button>
           {/if}
@@ -2903,7 +2903,7 @@
     <!-- Waiting for an answer: on any day, so the dot always leads somewhere. -->
     <div class="suggested-section">
       <div class="suggested-head">
-        <span class="material-symbols-rounded suggested-icon">assignment</span>
+        <span class="material-symbols-rounded suggested-icon" aria-hidden="true">assignment</span>
         {$_('diary.prescription.waiting_head')}
       </div>
       {#each askingShown as px (px.id)}
@@ -2929,7 +2929,7 @@
   {#if suggestedPrescriptions.length > 0 && exercises.length === 0 && !isFuture}
     <div class="suggested-section">
       <div class="suggested-head">
-        <span class="material-symbols-rounded suggested-icon">recommend</span>
+        <span class="material-symbols-rounded suggested-icon" aria-hidden="true">recommend</span>
         {$_('diary.prescription.suggested_head')}
       </div>
       {#each suggestedPrescriptions as px (px.id)}
@@ -2942,7 +2942,7 @@
               {#if px.notes} · {px.notes}{/if}
             </span>
           </div>
-          <span class="material-symbols-rounded suggested-chev">chevron_right</span>
+          <span class="material-symbols-rounded suggested-chev" aria-hidden="true">chevron_right</span>
         </button>
       {/each}
     </div>
@@ -2963,7 +2963,7 @@
       {:else}
         <button class="workout-title tap" on:click={startEditName} title={$_('diary.tap_to_rename')}>
           <span class="workout-title-text">{workoutName || $_('diary_finish.untitled')}</span>
-          <span class="material-symbols-rounded title-edit-icon">edit</span>
+          <span class="material-symbols-rounded title-edit-icon" aria-hidden="true">edit</span>
         </button>
       {/if}
       {#if $todayLog?.program_week}
@@ -2994,11 +2994,11 @@
     {:else if exercises.length === 0}
       <div class="empty-state">
         {#if excusedHere}
-          <span class="material-symbols-rounded empty-icon excused-empty-icon">{excuseIcon(excusedHere.reason)}</span>
+          <span class="material-symbols-rounded empty-icon excused-empty-icon" aria-hidden="true">{excuseIcon(excusedHere.reason)}</span>
           <h3>{$_('excused.empty_title')}</h3>
           <p>{$_('excused.empty_desc')}</p>
         {:else}
-          <span class="material-symbols-rounded empty-icon">{isFuture ? 'event_note' : 'fitness_center'}</span>
+          <span class="material-symbols-rounded empty-icon" aria-hidden="true">{isFuture ? 'event_note' : 'fitness_center'}</span>
           <h3>{isFuture ? $_('diary_finish.plan_ahead') : $_('diary_finish.ready_to_train')}</h3>
           <p>{isFuture ? 'Schedule a workout for this day or add exercises manually.' : 'Pick a quick start, or build from scratch.'}</p>
         {/if}
@@ -3036,11 +3036,11 @@
 
         <div class="empty-actions">
           <button class="btn btn-primary" on:click={openLoadWorkout}>
-            <span class="material-symbols-rounded">calendar_month</span>
+            <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
             Load Workout
           </button>
           <button class="btn btn-secondary" on:click={() => showPicker = true}>
-            <span class="material-symbols-rounded">add</span>
+            <span class="material-symbols-rounded" aria-hidden="true">add</span>
             Add Exercise
           </button>
         </div>
@@ -3165,11 +3165,11 @@
                       <button class="my-reply" on:click={() => openReply(f)}>
                         <span class="my-reply-label">You replied:</span>
                         <span class="my-reply-text">{f.member_reply}</span>
-                        <span class="material-symbols-rounded my-reply-edit-icon">edit</span>
+                        <span class="material-symbols-rounded my-reply-edit-icon" aria-hidden="true">edit</span>
                       </button>
                     {:else}
                       <button class="reply-add" on:click={() => openReply(f)}>
-                        <span class="material-symbols-rounded" style="font-size:14px">reply</span>
+                        <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">reply</span>
                         Reply
                       </button>
                     {/if}
@@ -3195,7 +3195,7 @@
         </div>
       {:else}
         <button class="notes-trigger tap" on:click={() => notesExpanded = true}>
-          <span class="material-symbols-rounded">edit_note</span>
+          <span class="material-symbols-rounded" aria-hidden="true">edit_note</span>
           Add workout notes
         </button>
       {/if}
@@ -3204,7 +3204,7 @@
            set is logged; re-opens the summary if already completed. -->
       {#if stats.completed > 0 && !isFuture}
         <button class="finish-btn" class:reopen={$todayLog?.completed} on:click={() => finishWorkout({ auto: false })}>
-          <span class="material-symbols-rounded">
+          <span class="material-symbols-rounded" aria-hidden="true">
             {$todayLog?.completed ? 'task_alt' : 'flag'}
           </span>
           <span class="finish-text">
@@ -3267,7 +3267,7 @@
       aria-expanded={_railOverlay}
       title={_railOverlay ? 'Close widgets' : 'Show widgets'}
     >
-      <span class="material-symbols-rounded" style="pointer-events:none">
+      <span class="material-symbols-rounded" style="pointer-events:none" aria-hidden="true">
         {_railOverlay ? 'chevron_right' : 'chevron_left'}
       </span>
     </button>
@@ -3298,7 +3298,7 @@
           aria-label="Hide widget panel"
           title="Hide widgets (edge tab reopens)"
         >
-          <span class="material-symbols-rounded">right_panel_close</span>
+          <span class="material-symbols-rounded" aria-hidden="true">right_panel_close</span>
         </button>
       {:else}
         <!-- Pin only where the grid has room for the rail's column. -->
@@ -3310,7 +3310,7 @@
           aria-label="Pin widget panel"
           title="Pin widgets"
         >
-          <span class="material-symbols-rounded">push_pin</span>
+          <span class="material-symbols-rounded" aria-hidden="true">push_pin</span>
         </button>
         {/if}
         <button
@@ -3320,7 +3320,7 @@
           aria-label="Close widget panel"
           title="Close"
         >
-          <span class="material-symbols-rounded">close</span>
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
         </button>
       {/if}
     </div>
@@ -3330,7 +3330,7 @@
        both). Today gets a ring. Clicking a day jumps the diary there. -->
   <div class="rail-card">
       <div class="rail-card-head">
-        <span class="material-symbols-rounded">calendar_view_week</span>
+        <span class="material-symbols-rounded" aria-hidden="true">calendar_view_week</span>
         <span class="rail-card-title">This Week</span>
         <span class="rail-card-count">{weekWorkoutCount}/7</span>
       </div>
@@ -3357,7 +3357,7 @@
     {#if recentWorkouts.length > 0}
       <div class="rail-card">
         <div class="rail-card-head">
-          <span class="material-symbols-rounded">history</span>
+          <span class="material-symbols-rounded" aria-hidden="true">history</span>
           <span class="rail-card-title">Recent</span>
         </div>
         <div class="rail-recent-list">
@@ -3376,7 +3376,7 @@
     {#if $activeProgram}
       <div class="rail-card">
         <div class="rail-card-head">
-          <span class="material-symbols-rounded">event_note</span>
+          <span class="material-symbols-rounded" aria-hidden="true">event_note</span>
           <span class="rail-card-title">{$activeProgram.name}</span>
         </div>
         {#if $todayLog?.program_week}
@@ -3395,7 +3395,7 @@
     {#if $todayPrescription}
       <div class="rail-card">
         <div class="rail-card-head">
-          <span class="material-symbols-rounded">assignment</span>
+          <span class="material-symbols-rounded" aria-hidden="true">assignment</span>
           <span class="rail-card-title">Today's Plan</span>
         </div>
         <div class="rail-card-body">
@@ -3414,7 +3414,7 @@
          instead, the top-right strip already has every one of them. -->
     {#if _railPinnedShown}
     <button class="rail-action" on:click={openLoadWorkout}>
-      <span class="material-symbols-rounded">library_books</span>
+      <span class="material-symbols-rounded" aria-hidden="true">library_books</span>
       Load Workout
     </button>
     <!-- Body Stats — summary widget (weight + measurements +
@@ -3435,7 +3435,7 @@
          .danger variant so destruction reads clearly. -->
     <div class="rail-card rail-actions-card">
       <div class="rail-card-head">
-        <span class="material-symbols-rounded">tune</span>
+        <span class="material-symbols-rounded" aria-hidden="true">tune</span>
         <span class="rail-card-title">Workout Actions</span>
       </div>
       <div class="rail-actions-list">
@@ -3446,7 +3446,7 @@
                   on:click={() => _runWorkoutAction(a.value)}
                   aria-label={a.label}
                   title={a.label}>
-            <span class="material-symbols-rounded">{a.icon}</span>
+            <span class="material-symbols-rounded" aria-hidden="true">{a.icon}</span>
             <span class="rail-action-row-label">{a.label}</span>
           </button>
         {/each}
@@ -3470,7 +3470,7 @@
         aria-label="Add · drag to reposition"
         title="Tap to add · hold and drag to move"
       >
-        <span class="material-symbols-rounded">add</span>
+        <span class="material-symbols-rounded" aria-hidden="true">add</span>
       </button>
     </div>
   {/if}
@@ -3520,13 +3520,13 @@
             <button class="lw-week-nav" title="Regress a week"
               disabled={(selectedProgram.current_week || 1) <= 1}
               on:click={() => setPlanWeek((selectedProgram.current_week || 1) - 1)}>
-              <span class="material-symbols-rounded">chevron_left</span>
+              <span class="material-symbols-rounded" aria-hidden="true">chevron_left</span>
             </button>
             <span class="lw-week-label">{$_('programs.week_of', { values: { week: selectedProgram.current_week || 1, total: selectedProgram.duration_weeks } })}</span>
             <button class="lw-week-nav" title="Advance a week"
               disabled={selectedProgram.on_complete !== 'repeat' && (selectedProgram.current_week || 1) >= selectedProgram.duration_weeks}
               on:click={advancePlanWeek}>
-              <span class="material-symbols-rounded">chevron_right</span>
+              <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
             </button>
             <button class="lw-week-auto" title="Resume automatic week tracking"
               on:click={() => setPlanWeek(null)}>{$_('diary_extra.auto')}</button>
@@ -3559,9 +3559,9 @@
                   aria-label="Show {t.name} details" title="Show details"
                   on:click|stopPropagation={() => openTemplateInfo(t)}
                   on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTemplateInfo(t); } }}>
-                  <span class="material-symbols-rounded">info</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">info</span>
                 </span>
-                <span class="material-symbols-rounded lw-tpl-arrow">chevron_right</span>
+                <span class="material-symbols-rounded lw-tpl-arrow" aria-hidden="true">chevron_right</span>
               </button>
             {/each}
           </div>
@@ -3597,7 +3597,7 @@
               {@const showSsHeader = ex.superset_id && ex.superset_id !== prevSsId}
               {#if showSsHeader}
                 <div class="tpl-info-ss-header">
-                  <span class="material-symbols-rounded" style="font-size:14px">link</span>
+                  <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">link</span>
                   Superset
                 </div>
               {/if}
@@ -3615,7 +3615,7 @@
         <button class="btn btn-primary tpl-info-cta"
           on:click={loadFromInfo}
           disabled={!(templateInfo.exercises || []).length}>
-          <span class="material-symbols-rounded" style="font-size:18px">play_arrow</span>
+          <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">play_arrow</span>
           Load Workout
         </button>
       </div>
@@ -3686,7 +3686,7 @@
       <p class="ss-picker-hint">Choose which superset to join:</p>
       {#each existingSupersets as ss}
         <button class="ss-option" on:click={() => handleJoinSs(ss.id)}>
-          <span class="material-symbols-rounded ss-option-icon">link</span>
+          <span class="material-symbols-rounded ss-option-icon" aria-hidden="true">link</span>
           <div class="ss-option-info">
             <span class="ss-option-count">{ss.names.length} exercises</span>
             <span class="ss-option-names">{ss.names.join(' · ')}</span>
@@ -3732,18 +3732,18 @@
         <div class="dp-handle"></div>
         <div class="dp-nav">
           <button class="btn-icon dp-nav-btn" on:click={calPrevMonth} title={$_('diary.prev_month')} aria-label={$_('diary.prev_month')}>
-            <span class="material-symbols-rounded">chevron_left</span>
+            <span class="material-symbols-rounded" aria-hidden="true">chevron_left</span>
           </button>
           <div class="dp-month-year">
             <button class="dp-month-btn" on:click={() => { showMonthPicker = !showMonthPicker; showYearPicker = false; }}>
-              {calMonthName}<span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;margin-left:2px">{showMonthPicker ? 'expand_less' : 'expand_more'}</span>
+              {calMonthName}<span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;margin-left:2px" aria-hidden="true">{showMonthPicker ? 'expand_less' : 'expand_more'}</span>
             </button>
             <button class="dp-year-btn" on:click={() => { showYearPicker = !showYearPicker; showMonthPicker = false; }}>
-              {calYear}<span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;margin-left:2px">{showYearPicker ? 'expand_less' : 'expand_more'}</span>
+              {calYear}<span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;margin-left:2px" aria-hidden="true">{showYearPicker ? 'expand_less' : 'expand_more'}</span>
             </button>
           </div>
           <button class="btn-icon dp-nav-btn" on:click={calNextMonth} title={$_('diary.next_month')} aria-label={$_('diary.next_month')}>
-            <span class="material-symbols-rounded">chevron_right</span>
+            <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
           </button>
         </div>
 
@@ -3826,7 +3826,7 @@
       {#each inboxRows as r (r.id)}
         <button class="inbox-row" class:unread={!r.seen_by_member_at}
                 on:click={() => inboxOpenDate(r)}>
-          <span class="material-symbols-rounded inbox-icon">comment</span>
+          <span class="material-symbols-rounded inbox-icon" aria-hidden="true">comment</span>
           <div class="inbox-body">
             <span class="inbox-title">
               {r.trainer_name || 'Coach'} ·

@@ -53,9 +53,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">palette</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">palette</span></span>
     <span class="section-name">{$_('settings.appearance.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -80,7 +80,7 @@
                 style="background: {a.color}" on:click={() => applyAccentColor(a.id)}
                 title={a.label}>
                 {#if $accentColor === a.id}
-                  <span class="material-symbols-rounded swatch-check">check</span>
+                  <span class="material-symbols-rounded swatch-check" aria-hidden="true">check</span>
                 {/if}
               </button>
             {/each}
@@ -91,9 +91,9 @@
               style={isCustomHex ? `background: ${$accentColor}` : ''}
               on:click={onOpenColorSheet}>
               {#if isCustomHex}
-                <span class="material-symbols-rounded swatch-check">check</span>
+                <span class="material-symbols-rounded swatch-check" aria-hidden="true">check</span>
               {:else}
-                <span class="material-symbols-rounded swatch-colorize">colorize</span>
+                <span class="material-symbols-rounded swatch-colorize" aria-hidden="true">colorize</span>
               {/if}
             </button>
           </div>

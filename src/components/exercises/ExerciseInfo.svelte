@@ -122,7 +122,7 @@
   <!-- Personal Record (optional) -->
   {#if pr}
     <div class="pr-card">
-      <span class="material-symbols-rounded pr-icon">emoji_events</span>
+      <span class="material-symbols-rounded pr-icon" aria-hidden="true">emoji_events</span>
       <div class="pr-info">
         <span class="pr-label">{$_('exercise_info.personal_record')}</span>
         <span class="pr-value">{pr.label ?? `${pr.weight} ${pr.unit || ''}`}</span>

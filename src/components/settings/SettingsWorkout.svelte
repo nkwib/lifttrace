@@ -106,9 +106,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">fitness_center</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">fitness_center</span></span>
     <span class="section-name">{$_('settings.workout.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -326,11 +326,11 @@
                           <span class="tone-desc">{(TONE_LABELS[tone.id] || tone).desc}</span>
                         </div>
                         {#if $restAlertToneId === tone.id}
-                          <span class="material-symbols-rounded tone-selected">check_circle</span>
+                          <span class="material-symbols-rounded tone-selected" aria-hidden="true">check_circle</span>
                         {/if}
                       </button>
                       <button class="tone-preview" on:click={() => previewRestTone(tone.id)} title={$_('settings_workout.rest.preview')}>
-                        <span class="material-symbols-rounded">play_arrow</span>
+                        <span class="material-symbols-rounded" aria-hidden="true">play_arrow</span>
                       </button>
                     </div>
                   {/each}

@@ -429,7 +429,7 @@
           <span class="avatar-initial">{getInitial()}</span>
         {/if}
         <div class="avatar-overlay">
-          <span class="material-symbols-rounded" style="font-size:24px">photo_camera</span>
+          <span class="material-symbols-rounded" style="font-size:24px" aria-hidden="true">photo_camera</span>
         </div>
       </button>
       <input bind:this={fileInput} type="file" accept="image/*" style="display:none" on:change={handleAvatarFile} />
@@ -513,7 +513,7 @@
                 {#if l.logo_url}
                   <img src={resolveAssetUrl(l.logo_url)} alt="" class="oidc-link-logo" />
                 {:else}
-                  <span class="material-symbols-rounded oidc-link-icon">verified_user</span>
+                  <span class="material-symbols-rounded oidc-link-icon" aria-hidden="true">verified_user</span>
                 {/if}
                 <div class="oidc-link-info">
                   <span class="oidc-link-name">{l.display_name || 'OIDC'}</span>
@@ -537,7 +537,7 @@
                 {#if p.logo_url}
                   <img src={resolveAssetUrl(p.logo_url)} alt="" class="oidc-link-logo" />
                 {:else}
-                  <span class="material-symbols-rounded oidc-link-icon">add_link</span>
+                  <span class="material-symbols-rounded oidc-link-icon" aria-hidden="true">add_link</span>
                 {/if}
                 <span>{$_('profile.link_with')} {p.display_name || 'SSO'}</span>
               </button>
@@ -616,7 +616,7 @@
     {#if isNative && !_isLocal && _biometricRowVisible}
     <div class="card">
       <div class="setting-row">
-        <span class="material-symbols-rounded security-icon">fingerprint</span>
+        <span class="material-symbols-rounded security-icon" aria-hidden="true">fingerprint</span>
         <div style="flex:1;min-width:0">
           <span class="security-label">{$_('profile.biometric_signin')}</span>
           <div class="setting-hint">
@@ -637,17 +637,17 @@
     {#if !_isLocal && $userMgmtActive}
     <div class="card">
       <button class="security-row" on:click={signOutEverywhere} disabled={signingOutEverywhere}>
-        <span class="material-symbols-rounded security-icon">devices</span>
+        <span class="material-symbols-rounded security-icon" aria-hidden="true">devices</span>
         <span class="security-label">
           {$_('profile.sign_out_everywhere')}
           <span class="security-hint">{$_('profile.sign_out_everywhere_hint')}</span>
         </span>
-        <span class="material-symbols-rounded security-chev">chevron_right</span>
+        <span class="material-symbols-rounded security-chev" aria-hidden="true">chevron_right</span>
       </button>
       <button class="security-row" on:click={doLogout} disabled={loggingOut}>
-        <span class="material-symbols-rounded security-icon">logout</span>
+        <span class="material-symbols-rounded security-icon" aria-hidden="true">logout</span>
         <span class="security-label">{loggingOut ? 'Signing out…' : 'Log Out'}</span>
-        <span class="material-symbols-rounded security-chev">chevron_right</span>
+        <span class="material-symbols-rounded security-chev" aria-hidden="true">chevron_right</span>
       </button>
     </div>
     {/if}
@@ -662,7 +662,7 @@
       </p>
       <button class="btn btn-secondary danger-zone-btn"
         on:click={deleteMyAccount} disabled={deletingAccount}>
-        <span class="material-symbols-rounded" style="font-size:18px">delete</span>
+        <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">delete</span>
         <span>{deletingAccount ? $_('profile.deleting') : $_('profile.delete_account')}</span>
       </button>
     </div>

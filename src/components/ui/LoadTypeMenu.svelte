@@ -119,7 +119,7 @@
         <span class="ltm-label">{$_(labelKey)}</span>
         <span class="ltm-hint">{$_(hintKey)}</span>
       </div>
-      {#if loadType === val}<span class="material-symbols-rounded ltm-check">check</span>{/if}
+      {#if loadType === val}<span class="material-symbols-rounded ltm-check" aria-hidden="true">check</span>{/if}
     </button>
   {/each}
 
@@ -131,7 +131,7 @@
         <span class="ltm-label">{$_(labelKey)}</span>
         <span class="ltm-hint">{$_(hintKey)}</span>
       </div>
-      {#if setType === val}<span class="material-symbols-rounded ltm-check">check</span>{/if}
+      {#if setType === val}<span class="material-symbols-rounded ltm-check" aria-hidden="true">check</span>{/if}
     </button>
     {#if val === 'distance' && setType === 'distance'}
       <div class="ltm-units" role="group" aria-label={$_('exercise_card.distance_unit')}>

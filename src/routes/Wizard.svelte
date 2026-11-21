@@ -336,7 +336,7 @@
         <div class="wizard-confetti" aria-hidden="true">
           {#each Array(14) as _, i}<span class="conf c{i % 7}" style:--i={i}></span>{/each}
         </div>
-        <span class="material-symbols-rounded wizard-done-icon">emoji_events</span>
+        <span class="material-symbols-rounded wizard-done-icon" aria-hidden="true">emoji_events</span>
         <h2 class="wizard-done-title">{$_('wizard.done.title')}</h2>
         <p class="wizard-done-sub">{$_('wizard.done.sub')}</p>
       </div>
@@ -451,7 +451,7 @@
         <p class="wizard-step-desc">{$_('wizard.units.desc')}</p>
         <div class="unit-cards">
           <button type="button" class="unit-card" class:selected={unitSystem === 'metric'} aria-pressed={unitSystem === 'metric'} on:click={() => unitSystem = 'metric'}>
-            <span class="material-symbols-rounded unit-card-icon">straighten</span>
+            <span class="material-symbols-rounded unit-card-icon" aria-hidden="true">straighten</span>
             <span class="unit-card-label">{$_('wizard.units.metric')}</span>
             <span class="unit-card-sub">{$_('wizard.units.metric_sub')}</span>
             {#if unitSystem === 'metric'}
@@ -459,7 +459,7 @@
             {/if}
           </button>
           <button type="button" class="unit-card" class:selected={unitSystem === 'imperial'} aria-pressed={unitSystem === 'imperial'} on:click={() => unitSystem = 'imperial'}>
-            <span class="material-symbols-rounded unit-card-icon">scale</span>
+            <span class="material-symbols-rounded unit-card-icon" aria-hidden="true">scale</span>
             <span class="unit-card-label">{$_('wizard.units.imperial')}</span>
             <span class="unit-card-sub">{$_('wizard.units.imperial_sub')}</span>
             {#if unitSystem === 'imperial'}
@@ -568,7 +568,7 @@
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <div class="lib-row" class:selected={libSelected.has(src.id)} on:click={() => toggleLibSource(src.id)}>
               <div class="lib-check" class:checked={libSelected.has(src.id)}>
-                {#if libSelected.has(src.id)}<span class="material-symbols-rounded">check</span>{/if}
+                {#if libSelected.has(src.id)}<span class="material-symbols-rounded" aria-hidden="true">check</span>{/if}
               </div>
               <div class="lib-body">
                 <div class="lib-head">
@@ -615,7 +615,7 @@
         <div class="theme-options">
           {#each [['system','wizard.appearance.auto','contrast'],['dark','wizard.appearance.dark','dark_mode'],['light','wizard.appearance.light','light_mode']] as [val, labelKey, icon]}
             <button class="theme-btn" class:active={appearance === val} on:click={() => { appearance = val; applyAppearance(val); }}>
-              <span class="material-symbols-rounded theme-icon">{icon}</span>
+              <span class="material-symbols-rounded theme-icon" aria-hidden="true">{icon}</span>
               <span>{$_(labelKey)}</span>
             </button>
           {/each}

@@ -11,9 +11,9 @@
       out:fade={{ duration: 160 }}
     >
       {#if toast.type === 'success'}
-        <span class="material-symbols-rounded toast-icon">check_circle</span>
+        <span class="material-symbols-rounded toast-icon" aria-hidden="true">check_circle</span>
       {:else if toast.type === 'error'}
-        <span class="material-symbols-rounded toast-icon">error</span>
+        <span class="material-symbols-rounded toast-icon" aria-hidden="true">error</span>
       {/if}
       <span class="toast-msg">{toast.message}</span>
       {#if toast.action}

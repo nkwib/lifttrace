@@ -199,7 +199,7 @@
       <div class="chat-photo">
         <img src={photo} alt={$_('coaching.chat.photo')} />
         <button class="btn-icon" on:click={() => photo = null} aria-label={$_('coaching.chat.remove_photo')} title={$_('coaching.chat.remove_photo')}>
-          <span class="material-symbols-rounded">close</span>
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
         </button>
       </div>
     {/if}

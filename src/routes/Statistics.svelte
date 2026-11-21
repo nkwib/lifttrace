@@ -869,7 +869,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     <span class="metric-indicator" style:transform="translateX({indicatorPos.left}px)" style:width="{indicatorPos.width}px"></span>
     {#each METRICS as m, i}
       <button class="metric-pill" class:active={metric === m.id} on:click={() => switchMetric(m.id)} bind:this={pillRefs[i]}>
-        <span class="material-symbols-rounded metric-icon">{m.icon}</span>
+        <span class="material-symbols-rounded metric-icon" aria-hidden="true">{m.icon}</span>
         <span class="metric-label">{$_(m.labelKey)}</span>
       </button>
     {/each}
@@ -900,7 +900,7 @@ import { onMount, onDestroy, tick } from 'svelte';
                   class:active={metric === m.id}
                   on:click={() => switchMetric(m.id)}
                   aria-current={metric === m.id ? 'page' : undefined}>
-            <span class="material-symbols-rounded mr-icon">{m.icon}</span>
+            <span class="material-symbols-rounded mr-icon" aria-hidden="true">{m.icon}</span>
             <span class="mr-label">{$_(m.labelKey)}</span>
           </button>
         {/each}
@@ -913,7 +913,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     <div class="content" class:reloading={loading}>
       {#if loadError}
         <div class="stats-load-error" role="alert">
-          <span class="material-symbols-rounded">error</span>
+          <span class="material-symbols-rounded" aria-hidden="true">error</span>
           <span class="stats-load-error-text">{$_('statistics.load_failed_detail')}</span>
           <button class="stats-load-error-btn" on:click={loadData}>{$_('statistics.retry')}</button>
         </div>
@@ -982,7 +982,7 @@ import { onMount, onDestroy, tick } from 'svelte';
 
         <div class="summary-row">
           <div class="summary-card">
-            <span class="material-symbols-rounded sc-icon">local_fire_department</span>
+            <span class="material-symbols-rounded sc-icon" aria-hidden="true">local_fire_department</span>
             <span class="sc-value">{streaks.currentStreak}</span>
             <span class="sc-label">{$_('statistics.day_streak')}</span>
             <div class="sc-spark" title={$_('statistics.streak_hint')}>
@@ -990,12 +990,12 @@ import { onMount, onDestroy, tick } from 'svelte';
             </div>
           </div>
           <div class="summary-card">
-            <span class="material-symbols-rounded sc-icon">emoji_events</span>
+            <span class="material-symbols-rounded sc-icon" aria-hidden="true">emoji_events</span>
             <span class="sc-value">{streaks.longestStreak}</span>
             <span class="sc-label">{$_('statistics.longest')}</span>
           </div>
           <div class="summary-card">
-            <span class="material-symbols-rounded sc-icon">calendar_today</span>
+            <span class="material-symbols-rounded sc-icon" aria-hidden="true">calendar_today</span>
             <span class="sc-value">{totalWorkoutsInRange}</span>
             <span class="sc-label">{$_('statistics.this_range', { values: { range } })}</span>
             {#if periodDeltas && periodDeltas.cntPct != null}
@@ -1009,7 +1009,7 @@ import { onMount, onDestroy, tick } from 'svelte';
             {/if}
           </div>
           <div class="summary-card">
-            <span class="material-symbols-rounded sc-icon">speed</span>
+            <span class="material-symbols-rounded sc-icon" aria-hidden="true">speed</span>
             <span class="sc-value">{avgFreq}</span>
             <span class="sc-label">{$_('statistics.avg_week')}</span>
           </div>
@@ -1017,7 +1017,7 @@ import { onMount, onDestroy, tick } from 'svelte';
 
         {#if rangeCalories != null}
           <div class="cal-strip" title={$_('statistics.cal_hint')}>
-            <span class="material-symbols-rounded cal-icon">local_fire_department</span>
+            <span class="material-symbols-rounded cal-icon" aria-hidden="true">local_fire_department</span>
             <span class="cal-val">{$_('statistics.kcal_amount', { values: { n: rangeCalories.toLocaleString() } })}</span>
             <span class="cal-label">{$_('statistics.burned_this', { values: { range } })}</span>
             <span class="cal-badge">{$_('statistics.est')}</span>
@@ -1059,7 +1059,7 @@ import { onMount, onDestroy, tick } from 'svelte';
 
         {#if totalWorkoutsInRange === 0}
           <div class="empty-state">
-            <span class="material-symbols-rounded">fitness_center</span>
+            <span class="material-symbols-rounded" aria-hidden="true">fitness_center</span>
             <p>{$_('statistics.no_workouts_yet')}</p>
           </div>
         {/if}
@@ -1069,14 +1069,14 @@ import { onMount, onDestroy, tick } from 'svelte';
       <!-- ═════════ EXERCISE PROGRESS ═════════ -->
       {#if metric === 'progress'}
         <button class="ex-picker-btn" on:click={() => { showExPicker = true; exSearch = ''; }}>
-          <span class="material-symbols-rounded">search</span>
+          <span class="material-symbols-rounded" aria-hidden="true">search</span>
           <span>{selectedExercise?.name || $_('statistics.choose_exercise_fallback')}</span>
-          <span class="material-symbols-rounded" style="margin-left:auto">chevron_right</span>
+          <span class="material-symbols-rounded" style="margin-left:auto" aria-hidden="true">chevron_right</span>
         </button>
 
         {#if !selectedExerciseId}
           <div class="empty-state">
-            <span class="material-symbols-rounded">trending_up</span>
+            <span class="material-symbols-rounded" aria-hidden="true">trending_up</span>
             <h4 class="empty-title">{$_('statistics.track_progress_title')}</h4>
             <p>{$_('statistics.track_progress_desc')}</p>
           </div>
@@ -1084,7 +1084,7 @@ import { onMount, onDestroy, tick } from 'svelte';
           <Spinner block label={$_('statistics.loading_chart')} />
         {:else if !chartData.length}
           <div class="empty-state">
-            <span class="material-symbols-rounded">info</span>
+            <span class="material-symbols-rounded" aria-hidden="true">info</span>
             <p>{@html $_('statistics.no_sets', { values: { name: `<strong>${selectedExercise?.name}</strong>` } })}</p>
           </div>
         {:else}
@@ -1151,14 +1151,14 @@ import { onMount, onDestroy, tick } from 'svelte';
       {#if metric === 'records'}
         {#if !records.length}
           <div class="empty-state">
-            <span class="material-symbols-rounded">emoji_events</span>
+            <span class="material-symbols-rounded" aria-hidden="true">emoji_events</span>
             <p>{$_('statistics.no_records_yet')}</p>
           </div>
         {:else}
           {#if recentPRs.length}
             <div class="section">
               <h3 class="section-title">
-                <span class="material-symbols-rounded">trending_up</span>
+                <span class="material-symbols-rounded" aria-hidden="true">trending_up</span>
                 {$_('statistics.recent_prs')}
               </h3>
               <div class="records-list">
@@ -1170,7 +1170,7 @@ import { onMount, onDestroy, tick } from 'svelte';
                         <span class="record-weight">{recordLabel(r)}</span>
                         <span class="record-meta">{r.date}</span>
                       </div>
-                      <span class="material-symbols-rounded record-chev">chevron_right</span>
+                      <span class="material-symbols-rounded record-chev" aria-hidden="true">chevron_right</span>
                     </button>
                   {:else}
                     <div class="record-row">
@@ -1202,7 +1202,7 @@ import { onMount, onDestroy, tick } from 'svelte';
                           {#if heaviestLoad(r)}{$_('statistics.heaviest_load', { values: { v: `${heaviestLoad(r)} ${$weightUnit}` } })}{/if}
                         </span>
                       </div>
-                      <span class="material-symbols-rounded record-chev">chevron_right</span>
+                      <span class="material-symbols-rounded record-chev" aria-hidden="true">chevron_right</span>
                     </button>
                   {:else}
                     <div class="record-row">
@@ -1298,7 +1298,7 @@ import { onMount, onDestroy, tick } from 'svelte';
 
         {#if volumeRaw.length === 0}
           <div class="empty-state">
-            <span class="material-symbols-rounded">fitness_center</span>
+            <span class="material-symbols-rounded" aria-hidden="true">fitness_center</span>
             <p>{$_('statistics.no_volume_range')}</p>
           </div>
         {/if}
@@ -1346,7 +1346,7 @@ import { onMount, onDestroy, tick } from 'svelte';
 
         {#if totalWorkoutsInRange === 0}
           <div class="empty-state">
-            <span class="material-symbols-rounded">calendar_month</span>
+            <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
             <p>{$_('statistics.no_workouts_in_range')}</p>
           </div>
         {/if}
@@ -1358,16 +1358,16 @@ import { onMount, onDestroy, tick } from 'svelte';
              point into it, here because this is where someone already
              comes to look at how their body has changed. -->
         <button class="progress-link" on:click={() => push('/progress')}>
-          <span class="material-symbols-rounded">photo_library</span>
+          <span class="material-symbols-rounded" aria-hidden="true">photo_library</span>
           <span class="pl-text">
             <span class="pl-title">{$_('statistics.progress_link')}</span>
             <span class="pl-sub">{$_('statistics.progress_link_sub')}</span>
           </span>
-          <span class="material-symbols-rounded pl-chev">chevron_right</span>
+          <span class="material-symbols-rounded pl-chev" aria-hidden="true">chevron_right</span>
         </button>
         {#if bodyWeights.length === 0}
           <div class="empty-state">
-            <span class="material-symbols-rounded">monitor_weight</span>
+            <span class="material-symbols-rounded" aria-hidden="true">monitor_weight</span>
             <p>{$_('statistics.no_body_weight')}</p>
           </div>
         {:else}
@@ -1463,7 +1463,7 @@ import { onMount, onDestroy, tick } from 'svelte';
         {@const cwHit   = $weeklyCardioMinutesGoal > 0 ? cardioFilled.filter(w => w.minutes >= $weeklyCardioMinutesGoal).length : 0}
         {#if cardioWeekly.length === 0}
           <div class="empty-state">
-            <span class="material-symbols-rounded">directions_run</span>
+            <span class="material-symbols-rounded" aria-hidden="true">directions_run</span>
             <p>{$_('statistics.no_cardio_range')}</p>
           </div>
         {:else}
@@ -1543,7 +1543,7 @@ import { onMount, onDestroy, tick } from 'svelte';
   <aside class="stats-rail" aria-label={$_('statistics.rail.aside_aria')}>
     <div class="rail-card">
       <div class="rail-card-head">
-        <span class="material-symbols-rounded">date_range</span>
+        <span class="material-symbols-rounded" aria-hidden="true">date_range</span>
         <span class="rail-card-title">{$_('statistics.rail.range')}</span>
       </div>
       <div class="rail-range-chips">
@@ -1555,7 +1555,7 @@ import { onMount, onDestroy, tick } from 'svelte';
     {#if periodDeltas}
       <div class="rail-card">
         <div class="rail-card-head">
-          <span class="material-symbols-rounded">compare_arrows</span>
+          <span class="material-symbols-rounded" aria-hidden="true">compare_arrows</span>
           <span class="rail-card-title">{$_('statistics.rail.vs_prior', { values: { range: $_(RANGE_LABEL_KEYS[range]) } })}</span>
         </div>
         <div class="rail-delta-stats">
@@ -1599,7 +1599,7 @@ import { onMount, onDestroy, tick } from 'svelte';
      already had working across environments. -->
 <Sheet bind:open={showExPicker} title={$_('statistics.choose_exercise')} height="full">
   <div class="ex-picker-search">
-    <span class="material-symbols-rounded">search</span>
+    <span class="material-symbols-rounded" aria-hidden="true">search</span>
     <input type="search" bind:value={exSearch} placeholder={$_('statistics.search_exercises_ph')} />
   </div>
   <div class="ex-picker-list">

@@ -30,7 +30,7 @@
   <button class="timer-btn tap" on:click={toggle}
     title={running ? 'Pause workout timer' : paused ? 'Resume workout timer' : 'Start workout timer'}
     aria-label={running ? 'Pause workout timer' : paused ? 'Resume workout timer' : 'Start workout timer'}>
-    <span class="material-symbols-rounded timer-icon">
+    <span class="material-symbols-rounded timer-icon" aria-hidden="true">
       {running ? 'pause' : 'play_arrow'}
     </span>
     <span class="timer-val">{displayTime}</span>

@@ -80,9 +80,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">troubleshoot</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">troubleshoot</span></span>
     <span class="section-name">{$_('settings.diagnostics.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
 
   {#if expanded}
@@ -124,7 +124,7 @@
             <a href="https://github.com/TraceApps/lifttrace/issues" target="_blank" rel="noopener" style="color:var(--accent-ink)">{$_('settings_diagnostics.github_issue')}</a>{$_('settings_diagnostics.view_logs_hint_suffix')}
           </p>
           <button class="btn btn-secondary" style="height:40px;font-size:13px" on:click={openLogsSheet}>
-            <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px">terminal</span>
+            <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px" aria-hidden="true">terminal</span>
             {$_('settings_diagnostics.view_logs_button')}
           </button>
         </div>
@@ -146,16 +146,16 @@
       <div style="display:flex;gap:8px;margin-top:10px">
         <button class="btn btn-primary" style="flex:1;height:40px;font-size:13px" on:click={copyLogs}>
           {#if logsCopied}
-            <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px">check</span> {$_('settings_diagnostics.copied')}
+            <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px" aria-hidden="true">check</span> {$_('settings_diagnostics.copied')}
           {:else}
-            <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px">content_copy</span> {$_('settings_diagnostics.copy')}
+            <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px" aria-hidden="true">content_copy</span> {$_('settings_diagnostics.copy')}
           {/if}
         </button>
         <button class="btn btn-secondary" style="flex:1;height:40px;font-size:13px" on:click={shareLogs}>
-          <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px">share</span> {$_('settings_diagnostics.share')}
+          <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px" aria-hidden="true">share</span> {$_('settings_diagnostics.share')}
         </button>
         <button class="btn btn-secondary" style="flex:1;height:40px;font-size:13px" on:click={clearLogs}>
-          <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px">delete</span> {$_('settings_diagnostics.clear')}
+          <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px" aria-hidden="true">delete</span> {$_('settings_diagnostics.clear')}
         </button>
       </div>
     </div>

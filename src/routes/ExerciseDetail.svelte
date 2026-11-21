@@ -225,21 +225,21 @@
 <div class="page">
   <header class="page-header ed-header">
     <button class="back-btn" on:click={() => window.history.length > 1 ? window.history.back() : push('/exercises')} aria-label={$_('common.back')}>
-      <span class="material-symbols-rounded">arrow_back</span>
+      <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
     </button>
     <h1>{exercise?.name || $_('routes.exercise_detail.title')}</h1>
     <div class="ed-actions">
     {#if exercise}
       <button class="header-btn" on:click={handleExport} disabled={exporting} title={$_('exercise_detail.share_json')} aria-label={$_('exercise_detail.share_json')}>
-        <span class="material-symbols-rounded">{exporting ? 'hourglass_top' : 'share'}</span>
+        <span class="material-symbols-rounded" aria-hidden="true">{exporting ? 'hourglass_top' : 'share'}</span>
       </button>
     {/if}
     {#if isCustom}
       <button class="header-btn" on:click={() => showEditor = true} title={$_('common.edit')} aria-label={$_('exercise_detail.edit_exercise')}>
-        <span class="material-symbols-rounded">edit</span>
+        <span class="material-symbols-rounded" aria-hidden="true">edit</span>
       </button>
       <button class="header-btn danger" on:click={removeExercise} title={$_('common.delete')} aria-label={$_('exercise_detail.delete_exercise')}>
-        <span class="material-symbols-rounded">delete</span>
+        <span class="material-symbols-rounded" aria-hidden="true">delete</span>
       </button>
     {/if}
     </div>
@@ -252,7 +252,7 @@
   {:else if exercise}
     <div class="content">
       <button class="log-today-btn" on:click={logToday}>
-        <span class="material-symbols-rounded">add_circle</span>
+        <span class="material-symbols-rounded" aria-hidden="true">add_circle</span>
         {$_('exercise_detail.log_today')}
       </button>
 
@@ -315,7 +315,7 @@
                 {#if workingMedia($failedMedia, s.gif_url, s.img_url)}
                   <img class="similar-img" src={resolveAssetUrl(workingMedia($failedMedia, s.gif_url, s.img_url))} alt="" loading="lazy" data-media={workingMedia($failedMedia, s.gif_url, s.img_url)} on:error={(e) => mediaFailed(e.currentTarget.dataset.media)} />
                 {:else}
-                  <span class="similar-img-fallback material-symbols-rounded">fitness_center</span>
+                  <span class="similar-img-fallback material-symbols-rounded" aria-hidden="true">fitness_center</span>
                 {/if}
                 <div class="similar-info">
                   <span class="similar-name">{s.name}</span>
@@ -331,7 +331,7 @@
     </div>
   {:else}
     <div class="load-error">
-      <span class="material-symbols-rounded">error_outline</span>
+      <span class="material-symbols-rounded" aria-hidden="true">error_outline</span>
       <p>{$_('exercise_detail.load_failed')}</p>
       {#if loadError}<p class="err-detail">{loadError}</p>{/if}
       <div class="err-actions">

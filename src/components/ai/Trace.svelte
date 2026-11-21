@@ -886,9 +886,9 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
         </svg>
       {/if}
       {#if recordingMode}
-        <span class="material-symbols-rounded" style="font-size:30px;color:#fff;position:relative;z-index:1">mic</span>
+        <span class="material-symbols-rounded" style="font-size:30px;color:#fff;position:relative;z-index:1" aria-hidden="true">mic</span>
       {:else if panelOpen}
-        <span class="material-symbols-rounded" style="font-size:26px;position:relative;z-index:1">close</span>
+        <span class="material-symbols-rounded" style="font-size:26px;position:relative;z-index:1" aria-hidden="true">close</span>
       {:else}
         <div class="fab-robot-wrap"><TraceFaceMusic size={38} playing={_headphonesOn} /></div>
       {/if}
@@ -925,10 +925,10 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
           </div>
           <div class="lb-header-actions">
             <button class="lb-hdr-btn" on:click={clearHistory} title={$_('trace.clear_conversation')}>
-              <span class="material-symbols-rounded">delete_sweep</span>
+              <span class="material-symbols-rounded" aria-hidden="true">delete_sweep</span>
             </button>
             <button class="lb-hdr-btn" on:click={() => panelOpen = false} title={$_('common.close')}>
-              <span class="material-symbols-rounded">close</span>
+              <span class="material-symbols-rounded" aria-hidden="true">close</span>
             </button>
           </div>
         </div>
@@ -953,7 +953,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
             {@const plan = msg.role === 'assistant' ? _extractPlan(msg.content) : null}
             {#if msg.role === 'note'}
               <div class="lb-note" role="status">
-                <span class="material-symbols-rounded">info</span>
+                <span class="material-symbols-rounded" aria-hidden="true">info</span>
                 <span>{msg.content}</span>
                 {#if msg.kind === 'error' && msg === lastErrorNote && msg.retryMsg}
                   <button class="lb-note-retry" disabled={sending} on:click={() => retry(msg)}>{$_('trace.retry')}</button>
@@ -981,7 +981,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
                 </div>
                 {#if plan}
                   <button class="lb-plan-apply" on:click={() => useGeneratedPlan(plan)}>
-                    <span class="material-symbols-rounded">fitness_center</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">fitness_center</span>
                     Use This Workout
                   </button>
                 {/if}
@@ -1015,7 +1015,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
               <div class="lb-preview-thumb">
                 <img src={img.dataUrl} alt="" />
                 <button class="lb-img-remove" on:click={() => removeImage(i)} title={$_('coaching.chat.remove_photo')} aria-label={$_('coaching.chat.remove_photo')}>
-                  <span class="material-symbols-rounded" style="font-size:14px">close</span>
+                  <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">close</span>
                 </button>
               </div>
             {/each}
@@ -1041,7 +1041,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
               on:click={stopSending}
               title={$_('trace.stop')} aria-label={$_('trace.stop')}
             >
-              <span class="material-symbols-rounded" style="font-size:20px">stop</span>
+              <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">stop</span>
             </button>
           {:else}
             <button
@@ -1050,7 +1050,7 @@ Follow the PLAN line with a SHORT rationale (1-3 sentences) explaining the choic
               title={$_('trace.send')} aria-label={$_('trace.send')}
               disabled={!input.trim() && pendingImages.length === 0}
             >
-              <span class="material-symbols-rounded" style="font-size:20px">send</span>
+              <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">send</span>
             </button>
           {/if}
         </div>

@@ -174,7 +174,7 @@
   <div class="picker-header">
     <h3>Add Exercise</h3>
     <div class="search-wrap">
-      <span class="material-symbols-rounded search-icon">search</span>
+      <span class="material-symbols-rounded search-icon" aria-hidden="true">search</span>
       <input
         class="search-input"
         type="text"
@@ -223,7 +223,7 @@
           <p>No exercises matched{search.trim() ? ` "${search.trim()}"` : ''}.</p>
           {#if search.trim()}
             <button class="btn btn-primary" on:click={() => { creatorPrefill = search.trim(); creatorOpen = true; }}>
-              <span class="material-symbols-rounded" style="font-size:16px">add</span>
+              <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">add</span>
               Create "{search.trim()}"
             </button>
           {/if}
@@ -231,7 +231,7 @@
       {:else}
         {#if search.trim() && !filtered.some(ex => ex.name.toLowerCase() === search.trim().toLowerCase())}
           <button class="create-from-search" on:click={() => { creatorPrefill = search.trim(); creatorOpen = true; }}>
-            <span class="material-symbols-rounded">add_circle</span>
+            <span class="material-symbols-rounded" aria-hidden="true">add_circle</span>
             <div class="cfs-info">
               <span class="cfs-title">Create "{search.trim()}"</span>
               <span class="cfs-sub">Not finding it? Add as a custom exercise.</span>
@@ -254,7 +254,7 @@
                 {#if workingMedia($failedMedia, ex.gif_url, ex.img_url)}
                   <img src={resolveAssetUrl(workingMedia($failedMedia, ex.gif_url, ex.img_url))} alt="" loading="lazy" data-media={workingMedia($failedMedia, ex.gif_url, ex.img_url)} on:error={(e) => mediaFailed(e.currentTarget.dataset.media)} />
                 {:else}
-                  <span class="material-symbols-rounded">fitness_center</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">fitness_center</span>
                 {/if}
               </div>
               <div class="ex-info">
@@ -266,17 +266,17 @@
               </div>
               {#if justAdded}
                 <span class="added-badge">
-                  <span class="material-symbols-rounded">check_circle</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
                   Added
                 </span>
               {:else if alreadyAdded}
-                <span class="material-symbols-rounded already-added-icon" title={$_('exercise_picker.already_added')}>check_circle</span>
+                <span class="material-symbols-rounded already-added-icon" title={$_('exercise_picker.already_added')} aria-hidden="true">check_circle</span>
               {:else}
-                <span class="material-symbols-rounded add-icon">add_circle</span>
+                <span class="material-symbols-rounded add-icon" aria-hidden="true">add_circle</span>
               {/if}
             </button>
             <button class="info-btn" on:click|stopPropagation={() => openInfo(ex)} title={$_('exercise_picker.view_details')} aria-label={$_('exercise_picker.view_details')}>
-              <span class="material-symbols-rounded">info</span>
+              <span class="material-symbols-rounded" aria-hidden="true">info</span>
             </button>
           </div>
         {/each}
@@ -293,7 +293,7 @@
           <h3 class="pip-title">{_infoSelected.name}</h3>
           <button class="pip-close" on:click={() => { _infoSelected = null; _infoHistory = []; }}
                   aria-label={$_('exercises_page.close_preview')} title={$_('exercises_page.close_preview')}>
-            <span class="material-symbols-rounded">close</span>
+            <span class="material-symbols-rounded" aria-hidden="true">close</span>
           </button>
         </div>
         {#if _infoLoading}
@@ -305,13 +305,13 @@
             <ExerciseInfo exercise={_infoSelected} pr={_infoPr} history={_infoHistory} />
           </div>
           <button class="btn btn-primary pip-add-btn" on:click={() => select(_infoSelected)}>
-            <span class="material-symbols-rounded">add_circle</span>
+            <span class="material-symbols-rounded" aria-hidden="true">add_circle</span>
             Add to workout
           </button>
         {/if}
       {:else}
         <div class="pip-empty">
-          <span class="material-symbols-rounded pip-empty-icon">info</span>
+          <span class="material-symbols-rounded pip-empty-icon" aria-hidden="true">info</span>
           <p class="pip-empty-title">Preview any exercise</p>
           <p class="pip-empty-desc">Tap the info icon on any row to see its details, history, and PRs here without closing the picker.</p>
         </div>

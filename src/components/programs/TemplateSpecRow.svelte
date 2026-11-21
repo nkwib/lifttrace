@@ -224,7 +224,7 @@
       title={isSplit ? 'Merge L/R reps' : 'Split L/R reps'}
       aria-label={isSplit ? 'Merge L/R reps' : 'Split L/R reps'}
     >
-      <span class="material-symbols-rounded">{isSplit ? 'link_off' : 'add_link'}</span>
+      <span class="material-symbols-rounded" aria-hidden="true">{isSplit ? 'link_off' : 'add_link'}</span>
     </button>
   {/if}
 
@@ -254,13 +254,13 @@
     title={spec?.warmup ? 'Unmark as warmup' : 'Mark as warmup'}
     aria-label={spec?.warmup ? 'Unmark as warmup' : 'Mark as warmup'}
   >
-    <span class="material-symbols-rounded">local_fire_department</span>
+    <span class="material-symbols-rounded" aria-hidden="true">local_fire_department</span>
   </button>
 
   <button type="button" class="spec-icon-btn" on:click={onRemove}
     title="Remove set" aria-label="Remove set"
   >
-    <span class="material-symbols-rounded">close</span>
+    <span class="material-symbols-rounded" aria-hidden="true">close</span>
   </button>
 </div>
 

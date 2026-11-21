@@ -15,14 +15,14 @@
 
 {#if block}
   <div class="spinner-block" role="status" aria-live="polite">
-    <span class="material-symbols-rounded spinner-icon size-{size}">progress_activity</span>
+    <span class="material-symbols-rounded spinner-icon size-{size}" aria-hidden="true">progress_activity</span>
     {#if label}<span class="spinner-label">{label}</span>{/if}
   </div>
 {:else if inline}
-  <span class="material-symbols-rounded spinner-icon size-{size} inline" role="status" aria-live="polite">progress_activity</span>
+  <span class="material-symbols-rounded spinner-icon size-{size} inline" role="status" aria-live="polite" aria-hidden="true">progress_activity</span>
 {:else}
   <span class="spinner-row" role="status" aria-live="polite">
-    <span class="material-symbols-rounded spinner-icon size-{size}">progress_activity</span>
+    <span class="material-symbols-rounded spinner-icon size-{size}" aria-hidden="true">progress_activity</span>
     {#if label}<span class="spinner-label">{label}</span>{/if}
   </span>
 {/if}

@@ -142,12 +142,12 @@
           <img class="fp-art" src={coverSrc} alt="" on:error={() => coverSrc = resolveAssetUrl($currentTrack?.coverUrl || '')} />
         {:else}
           <div class="fp-art fp-art-placeholder">
-            <span class="material-symbols-rounded" style="font-size:64px;color:var(--text-3)">music_note</span>
+            <span class="material-symbols-rounded" style="font-size:64px;color:var(--text-3)" aria-hidden="true">music_note</span>
           </div>
         {/if}
         {#if $isBuffering}
           <div class="fp-loading">
-            <span class="material-symbols-rounded fp-loading-icon">progress_activity</span>
+            <span class="material-symbols-rounded fp-loading-icon" aria-hidden="true">progress_activity</span>
             <span class="fp-loading-text">Loading…</span>
           </div>
         {/if}
@@ -178,19 +178,19 @@
       <!-- Controls -->
       <div class="fp-controls">
         <button class="fp-ctrl" class:active={$shuffle} on:click={toggleShuffle} aria-pressed={$shuffle} title={$_('radio.shuffle')} aria-label={$_('radio.shuffle')}>
-          <span class="material-symbols-rounded">shuffle</span>
+          <span class="material-symbols-rounded" aria-hidden="true">shuffle</span>
         </button>
         <button class="fp-ctrl" on:click={prev} title={$_('radio.prev')} aria-label={$_('radio.prev')}>
-          <span class="material-symbols-rounded" style="font-size:32px">skip_previous</span>
+          <span class="material-symbols-rounded" style="font-size:32px" aria-hidden="true">skip_previous</span>
         </button>
         <button class="fp-play" on:click={togglePlay} aria-label={$isPlaying ? $_('radio.pause') : $_('radio.play')}>
-          <span class="material-symbols-rounded">{$isPlaying ? 'pause' : 'play_arrow'}</span>
+          <span class="material-symbols-rounded" aria-hidden="true">{$isPlaying ? 'pause' : 'play_arrow'}</span>
         </button>
         <button class="fp-ctrl" on:click={next} title={$_('radio.next')} aria-label={$_('radio.next')}>
-          <span class="material-symbols-rounded" style="font-size:32px">skip_next</span>
+          <span class="material-symbols-rounded" style="font-size:32px" aria-hidden="true">skip_next</span>
         </button>
         <button class="fp-ctrl" class:active={repeatActive} on:click={cycleRepeat} aria-pressed={repeatActive} aria-label={$repeat === 'one' ? $_('radio.repeat_one') : repeatActive ? $_('radio.repeat_all') : $_('radio.repeat_off')}>
-          <span class="material-symbols-rounded">{repeatIcon}</span>
+          <span class="material-symbols-rounded" aria-hidden="true">{repeatIcon}</span>
         </button>
       </div>
 
@@ -199,7 +199,7 @@
         aria-label={$_('radio.volume')} aria-valuemin="0" aria-valuemax="100"
         aria-valuenow={Math.round($volume * 100)}
         on:click={onVolume} on:keydown={onVolumeKey}>
-        <span class="material-symbols-rounded" style="font-size:18px;color:var(--text-3)">volume_up</span>
+        <span class="material-symbols-rounded" style="font-size:18px;color:var(--text-3)" aria-hidden="true">volume_up</span>
         <div class="fp-vol-track">
           <div class="fp-vol-fill" style="width:{$volume * 100}%"></div>
         </div>
@@ -208,9 +208,9 @@
       <!-- Queue toggle -->
       {#if $queue.length > 1}
         <button class="fp-queue-toggle" on:click={() => $showQueue = !$showQueue}>
-          <span class="material-symbols-rounded" style="font-size:18px">queue_music</span>
+          <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">queue_music</span>
           Queue · {$queueIndex + 1} of {$queue.length}
-          <span class="material-symbols-rounded" style="font-size:16px">{$showQueue ? 'expand_less' : 'expand_more'}</span>
+          <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">{$showQueue ? 'expand_less' : 'expand_more'}</span>
         </button>
       {/if}
 
@@ -223,7 +223,7 @@
               on:keydown={e => activateOnKey(e, () => { queueIndex.set(i); playTrack(track); })} role="button" tabindex="0">
               <span class="fp-queue-play">
                 {#if i === $queueIndex}
-                  <span class="material-symbols-rounded" style="font-size:16px;color:var(--accent-ink)">equalizer</span>
+                  <span class="material-symbols-rounded" style="font-size:16px;color:var(--accent-ink)" aria-hidden="true">equalizer</span>
                 {:else}
                   <span class="fp-queue-num">{i + 1}</span>
                 {/if}
@@ -233,7 +233,7 @@
                 <span class="fp-queue-artist">{track.artist}</span>
               </div>
               <button class="fp-queue-remove" on:click|stopPropagation={() => removeFromQueue(i)} title="Remove">
-                <span class="material-symbols-rounded" style="font-size:18px">close</span>
+                <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">close</span>
               </button>
             </div>
           {/each}

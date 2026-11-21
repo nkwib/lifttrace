@@ -65,7 +65,7 @@
         {#if title}<h3 class="sheet-title">{title}</h3>{/if}
         <button class="btn-icon sheet-close" on:click={close}
                 aria-label={$_('common.close')} title={$_('common.close')}>
-          <span class="material-symbols-rounded">close</span>
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
         </button>
       </div>
 

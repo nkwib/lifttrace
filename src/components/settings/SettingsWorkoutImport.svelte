@@ -119,9 +119,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">download</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">download</span></span>
     <span class="section-name">{$_('settings.workout_import.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -140,7 +140,7 @@
 
           {#if !importFile}
             <button class="btn btn-primary import-btn" on:click={() => importFileInput.click()} disabled={importBusy}>
-              <span class="material-symbols-rounded">upload_file</span>
+              <span class="material-symbols-rounded" aria-hidden="true">upload_file</span>
               {importBusy ? $_('settings_workout_import.reading') : $_('settings_workout_import.choose_file', { values: { source: sourceLabel, kind: sourceFileKind } })}
             </button>
             <input bind:this={importFileInput} type="file" accept={sourceAccept} style="display:none" on:change={onPickFile} />
@@ -153,7 +153,7 @@
             </ol>
           {:else if importResult}
             <div class="result-card ok">
-              <span class="material-symbols-rounded" style="font-size:28px;color:var(--success-text)">check_circle</span>
+              <span class="material-symbols-rounded" style="font-size:28px;color:var(--success-text)" aria-hidden="true">check_circle</span>
               <div>
                 <div class="result-title">{$_('settings_workout_import.imported', { values: { count: importResult.imported } })}</div>
                 <div class="result-sub">
@@ -168,7 +168,7 @@
               <div class="preview-head">
                 <div class="preview-title">{$_('settings_workout_import.ready_to_import')}</div>
                 <button class="preview-reset" on:click={resetImport} title={$_('settings_workout_import.start_over')}>
-                  <span class="material-symbols-rounded">close</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">close</span>
                 </button>
               </div>
               <div class="stats">
@@ -179,7 +179,7 @@
               <div class="preview-range">{importPreview.dateRange.from} → {importPreview.dateRange.to}</div>
               {#if importPreview.duplicateDates > 0}
                 <div class="warn-inline">
-                  <span class="material-symbols-rounded">error_outline</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">error_outline</span>
                   <span>{$_('settings_workout_import.duplicate_dates', { values: { count: importPreview.duplicateDates } })}</span>
                 </div>
               {/if}

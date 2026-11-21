@@ -183,16 +183,16 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">mail</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">mail</span></span>
     <span class="section-name">{$_('settings.email.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
       <p class="sub-label" style="padding-bottom:4px">{$_('settings_email.hint')}</p>
       {#if smtpLocked}
         <div class="env-lock-banner">
-          <span class="material-symbols-rounded" style="font-size:16px">lock</span>
+          <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">lock</span>
           {$_('settings_email.env_lock_banner')}
         </div>
       {/if}
@@ -253,7 +253,7 @@
                 on:click={() => smtpShowPass = !smtpShowPass}
                 title={smtpShowPass ? $_('common.hide') : $_('settings_email.show')}
                 aria-label={smtpShowPass ? $_('settings_email.hide_password') : $_('settings_email.show_password')}>
-                <span class="material-symbols-rounded">{smtpShowPass ? 'visibility_off' : 'visibility'}</span>
+                <span class="material-symbols-rounded" aria-hidden="true">{smtpShowPass ? 'visibility_off' : 'visibility'}</span>
               </button>
             {/if}
           </div>
@@ -270,7 +270,7 @@
           <button class="btn btn-primary" style="height:36px;font-size:13px"
             on:click={saveSmtp} disabled={smtpSaving || smtpLocked}>
             {#if smtpSaved}
-              <span class="material-symbols-rounded" style="font-size:16px">check</span> {$_('settings_email.saved')}
+              <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">check</span> {$_('settings_email.saved')}
             {:else}
               {smtpSaving ? $_('common.saving') : $_('common.save')}
             {/if}

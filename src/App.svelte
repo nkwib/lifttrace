@@ -904,14 +904,14 @@
       on:click={() => sidebarOpen = !sidebarOpen}
       aria-label={$_('app.open_menu')}
     >
-      <span class="material-symbols-rounded">menu</span>
+      <span class="material-symbols-rounded" aria-hidden="true">menu</span>
       {#if (_syncModeActive && !_serverReachable) || _webOffline || _webFailing}
         <!-- Amber while simply offline (nothing lost, it just hasn't gone yet),
              red when the server is reachable but the sync is failing. -->
         {@const failing = _syncFailing || _webFailing}
         <span class="conn-badge" class:conn-failing={failing} class:conn-offline={!failing}
           aria-label={failing ? $_('sync.sync_failing') : (_webOffline ? $_('sync.pending_web', { values: { count: $offlineState.pending } }) : $_('sync.sync_offline'))}>
-          <span class="material-symbols-rounded" style="font-size:10px">{failing ? 'cloud_alert' : 'cloud_off'}</span>
+          <span class="material-symbols-rounded" style="font-size:10px" aria-hidden="true">{failing ? 'cloud_alert' : 'cloud_off'}</span>
         </span>
       {/if}
     </button>
@@ -927,7 +927,7 @@
   <div class="sync-connection-banner {_syncBannerCopy.tone || 'bad'}"
     use:portal
     transition:slide={{ duration: $disableAnimations ? 0 : 200 }}>
-    <span class="material-symbols-rounded sync-banner-icon">{_syncBannerCopy.icon}</span>
+    <span class="material-symbols-rounded sync-banner-icon" aria-hidden="true">{_syncBannerCopy.icon}</span>
     <div class="sync-banner-copy">
       <div class="sync-banner-title">{_syncBannerCopy.title}</div>
       <div class="sync-banner-detail">{_syncBannerCopy.detail}</div>
@@ -940,7 +940,7 @@
     <button class="sync-banner-btn sync-banner-dismiss"
       on:click={_dismissSyncBanner}
       aria-label={$_('sync.dismiss_message')}>
-      <span class="material-symbols-rounded">close</span>
+      <span class="material-symbols-rounded" aria-hidden="true">close</span>
     </button>
   </div>
 {/if}
@@ -953,7 +953,7 @@
     style:transform={`translate(-50%, ${Math.round(_pullDistance * 0.45)}px)`}
     aria-hidden="true"
   >
-    <span class="material-symbols-rounded" class:pull-sync-spin={_pullRefreshing}>
+    <span class="material-symbols-rounded" class:pull-sync-spin={_pullRefreshing} aria-hidden="true">
       {_pullRefreshing ? 'autorenew' : 'arrow_downward'}
     </span>
   </div>

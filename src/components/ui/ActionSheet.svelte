@@ -50,7 +50,7 @@
           on:click={() => pick(action)}
         >
           {#if action.icon}
-            <span class="material-symbols-rounded as-icon">{action.icon}</span>
+            <span class="material-symbols-rounded as-icon" aria-hidden="true">{action.icon}</span>
           {/if}
           {action.label}
         </button>

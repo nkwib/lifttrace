@@ -942,61 +942,61 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
        and gets a matching hero card in the desktop welcome pane. From
        any deep sub-page users can jump straight here via the rail. -->
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'profile')} class:active={currentSection === 'profile'} aria-current={currentSection === 'profile' ? 'page' : undefined} on:click={() => toggleSection('profile')}>
-    <span class="material-symbols-rounded si">person</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">person</span>
     <span>{$_('profile.title')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
 
   <p class="settings-group-label">{$_('settings_main.group_display')}</p>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'appearance')} class:active={currentSection === 'appearance'} aria-current={currentSection === 'appearance' ? 'page' : undefined} on:click={() => toggleSection('appearance')}>
-    <span class="material-symbols-rounded si">contrast</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">contrast</span>
     <span>{$_('settings.appearance.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'units')} class:active={currentSection === 'units'} aria-current={currentSection === 'units' ? 'page' : undefined} on:click={() => toggleSection('units')}>
-    <span class="material-symbols-rounded si">language</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">language</span>
     <span>{$_('settings.units.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
 
   <p class="settings-group-label">{$_('settings_main.group_data')}</p>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'workout')} class:active={currentSection === 'workout'} aria-current={currentSection === 'workout' ? 'page' : undefined} on:click={() => toggleSection('workout')}>
-    <span class="material-symbols-rounded si">fitness_center</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">fitness_center</span>
     <span>{$_('settings.workout.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'statistics')} class:active={currentSection === 'statistics'} aria-current={currentSection === 'statistics' ? 'page' : undefined} on:click={() => toggleSection('statistics')}>
-    <span class="material-symbols-rounded si">bar_chart</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">bar_chart</span>
     <span>{$_('settings.statistics.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'catalog')} class:active={currentSection === 'catalog'} aria-current={currentSection === 'catalog' ? 'page' : undefined} on:click={() => toggleSection('catalog')}>
-    <span class="material-symbols-rounded si">library_books</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">library_books</span>
     <span>{$_('settings.catalog.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'workoutImport')} class:active={currentSection === 'workoutImport'} aria-current={currentSection === 'workoutImport' ? 'page' : undefined} on:click={() => toggleSection('workoutImport')}>
-    <span class="material-symbols-rounded si">upload</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">upload</span>
     <span>{$_('settings.workout_import.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
 
   <p class="settings-group-label">{$_('settings_main.group_integrations')}</p>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'trace')} class:active={currentSection === 'trace'} aria-current={currentSection === 'trace' ? 'page' : undefined} on:click={() => toggleSection('trace')}>
-    <span class="material-symbols-rounded si">smart_toy</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">smart_toy</span>
     <span>{$_('settings.trace.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'radio')} class:active={currentSection === 'radio'} aria-current={currentSection === 'radio' ? 'page' : undefined} on:click={() => toggleSection('radio')}>
-    <span class="material-symbols-rounded si">radio</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">radio</span>
     <span>{$_('settings.radio.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   {#if sectionAvailable.federation}
     <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'federation')} class:active={currentSection === 'federation'} aria-current={currentSection === 'federation' ? 'page' : undefined} on:click={() => toggleSection('federation')}>
-      <span class="material-symbols-rounded si">link</span>
+      <span class="material-symbols-rounded si" aria-hidden="true">link</span>
       <span>{$_('settings.federation.section')}</span>
-      <span class="material-symbols-rounded chevron">chevron_right</span>
+      <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
     </button>
 {/if}
   <!-- API Tokens (issue #78: MCP server): any signed-in user's own tokens
@@ -1004,68 +1004,68 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
        real user_id to own it. See server/routes/api-tokens.js. -->
   {#if sectionAvailable.apiTokens}
     <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'apiTokens')} class:active={currentSection === 'apiTokens'} aria-current={currentSection === 'apiTokens' ? 'page' : undefined} on:click={() => toggleSection('apiTokens')}>
-      <span class="material-symbols-rounded si">key</span>
+      <span class="material-symbols-rounded si" aria-hidden="true">key</span>
       <span>{$_('settings.api_tokens.section')}</span>
-      <span class="material-symbols-rounded chevron">chevron_right</span>
+      <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
     </button>
   {/if}
 
   <p class="settings-group-label">{$_('settings_main.group_app')}</p>
   {#if sectionAvailable.serverConnection}
     <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'serverConnection')} class:active={currentSection === 'serverConnection'} aria-current={currentSection === 'serverConnection' ? 'page' : undefined} on:click={() => toggleSection('serverConnection')}>
-      <span class="material-symbols-rounded si">cloud</span>
+      <span class="material-symbols-rounded si" aria-hidden="true">cloud</span>
       <span>{$_('settings.server.section')}</span>
-      <span class="material-symbols-rounded chevron">chevron_right</span>
+      <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
     </button>
   {/if}
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'notifications')} class:active={currentSection === 'notifications'} aria-current={currentSection === 'notifications' ? 'page' : undefined} on:click={() => toggleSection('notifications')}>
-    <span class="material-symbols-rounded si">notifications</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">notifications</span>
     <span>{$_('settings.notifications.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'data')} class:active={currentSection === 'data'} aria-current={currentSection === 'data' ? 'page' : undefined} on:click={() => toggleSection('data')}>
-    <span class="material-symbols-rounded si">archive</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">archive</span>
     <span>{$_('settings.backup.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'updates')} class:active={currentSection === 'updates'} aria-current={currentSection === 'updates' ? 'page' : undefined} on:click={() => toggleSection('updates')}>
-    <span class="material-symbols-rounded si">system_update</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">system_update</span>
     <span>{$_('settings.updates.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'helpImprove')} class:active={currentSection === 'helpImprove'} aria-current={currentSection === 'helpImprove' ? 'page' : undefined} on:click={() => toggleSection('helpImprove')}>
-    <span class="material-symbols-rounded si">troubleshoot</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">troubleshoot</span>
     <span>{$_('settings.diagnostics.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
 
   {#if sectionAvailable.users}
     <p class="settings-group-label">{$_('settings_main.group_admin')}</p>
     <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'users')} class:active={currentSection === 'users'} aria-current={currentSection === 'users' ? 'page' : undefined} on:click={() => toggleSection('users')}>
-      <span class="material-symbols-rounded si">group</span>
+      <span class="material-symbols-rounded si" aria-hidden="true">group</span>
       <span>{$_('settings.users.section')}</span>
-      <span class="material-symbols-rounded chevron">chevron_right</span>
+      <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
     </button>
     {#if sectionAvailable.authentication}
     <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'authentication')} class:active={currentSection === 'authentication'} aria-current={currentSection === 'authentication' ? 'page' : undefined} on:click={() => toggleSection('authentication')}>
-      <span class="material-symbols-rounded si">shield_person</span>
+      <span class="material-symbols-rounded si" aria-hidden="true">shield_person</span>
       <span>{$_('settings.authentication.section')}</span>
-      <span class="material-symbols-rounded chevron">chevron_right</span>
+      <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
     </button>
     <!-- Webhooks (issue #79). Real multi-user mode plus admin: a
          webhook needs a real user_id to own it. See server/routes/webhooks.js for the
          matching server-side guard. -->
     <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'webhooks')} class:active={currentSection === 'webhooks'} aria-current={currentSection === 'webhooks' ? 'page' : undefined} on:click={() => toggleSection('webhooks')}>
-      <span class="material-symbols-rounded si">webhook</span>
+      <span class="material-symbols-rounded si" aria-hidden="true">webhook</span>
       <span>{$_('settings.webhooks.section')}</span>
-      <span class="material-symbols-rounded chevron">chevron_right</span>
+      <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
     </button>
     {/if}
     {#if sectionAvailable.email}
     <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'email')} class:active={currentSection === 'email'} aria-current={currentSection === 'email' ? 'page' : undefined} on:click={() => toggleSection('email')}>
-      <span class="material-symbols-rounded si">mail</span>
+      <span class="material-symbols-rounded si" aria-hidden="true">mail</span>
       <span>{$_('settings.email.section')}</span>
-      <span class="material-symbols-rounded chevron">chevron_right</span>
+      <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
     </button>
     {/if}
   {/if}
@@ -1074,14 +1074,14 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
        members of the Admin group above them. -->
   <p class="settings-group-label">LiftTrace</p>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'support')} class:active={currentSection === 'support'} aria-current={currentSection === 'support' ? 'page' : undefined} on:click={() => toggleSection('support')}>
-    <span class="material-symbols-rounded si">volunteer_activism</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">volunteer_activism</span>
     <span>{$_('settings.support.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
   <button class="section-toggle rail-btn" class:hidden={!sectionVisible(settingsQuery, 'about')} class:active={currentSection === 'about'} aria-current={currentSection === 'about' ? 'page' : undefined} on:click={() => toggleSection('about')}>
-    <span class="material-symbols-rounded si">info</span>
+    <span class="material-symbols-rounded si" aria-hidden="true">info</span>
     <span>{$_('settings.about.section')}</span>
-    <span class="material-symbols-rounded chevron">chevron_right</span>
+    <span class="material-symbols-rounded chevron" aria-hidden="true">chevron_right</span>
   </button>
 {/snippet}
 
@@ -1101,7 +1101,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                 class:back-peel-out={_leaving}
                 on:click={backToIndex}
                 aria-label={$_('common.back')}>
-          <span class="material-symbols-rounded">arrow_back</span>
+          <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
         </button>
         <h1 class:title-slide-in={!_leaving}
             class:title-slide-out={_leaving}>
@@ -1117,7 +1117,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
          again). On desktop it stays visible so the rail on the left can
          be filtered while inside any section. -->
     <div class="settings-search-bar" class:mobile-hide-on-subpage={!!currentSection}>
-      <span class="material-symbols-rounded settings-search-icon">search</span>
+      <span class="material-symbols-rounded settings-search-icon" aria-hidden="true">search</span>
       <input
         class="settings-search-input"
         type="search"
@@ -1126,7 +1126,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
       />
       {#if settingsSearch}
         <button class="settings-search-clear" on:click={() => settingsSearch = ''} title={$_('settings_main.clear_search')}>
-          <span class="material-symbols-rounded" style="font-size:18px">close</span>
+          <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">close</span>
         </button>
       {/if}
     </div>
@@ -1154,7 +1154,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
         {@render sectionButtons()}
         {#if _noMatches}
           <div class="settings-nav-empty">
-            <span class="material-symbols-rounded">search_off</span>
+            <span class="material-symbols-rounded" aria-hidden="true">search_off</span>
             <p>{$_('settings_main.no_sections_match', { values: { query: settingsSearch } })}</p>
             <button type="button" class="settings-nav-clear"
               on:click={() => settingsSearch = ''}>
@@ -1188,7 +1188,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
             {:else if _hasName}
               <span class="profile-hero-initial">{_initial}</span>
             {:else}
-              <span class="material-symbols-rounded">person</span>
+              <span class="material-symbols-rounded" aria-hidden="true">person</span>
             {/if}
           </div>
           <div class="profile-hero-info">
@@ -1200,7 +1200,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
             {/if}
           </div>
           <span class="material-symbols-rounded profile-hero-chev profile-hero-chev-toggle"
-            class:profile-hero-chev-open={_profileHeroExpanded}>expand_more</span>
+            class:profile-hero-chev-open={_profileHeroExpanded} aria-hidden="true">expand_more</span>
         </button>
         {#if _profileHeroExpanded}
           <!-- Profile editor rendered inline inside the welcome pane.
@@ -1225,7 +1225,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                 <div class="settings-onboarding-card-wrap">
                   <button type="button" class="settings-onboarding-card"
                     on:click={() => card.route ? push(card.route) : toggleSection(card.key)}>
-                    <span class="material-symbols-rounded">{card.icon}</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">{card.icon}</span>
                     <div class="settings-onboarding-copy">
                       <span class="settings-onboarding-label">{$_(card.labelKey)}</span>
                       <span class="settings-onboarding-desc">{$_(card.descKey)}</span>
@@ -1235,7 +1235,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                     on:click|stopPropagation={() => _dismissOnboarding(card.key)}
                     aria-label={$_('settings_main.onboarding.dismiss_named', { values: { name: $_(card.labelKey) } })}
                     title={$_('settings_main.onboarding.dismiss')}>
-                    <span class="material-symbols-rounded">close</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">close</span>
                   </button>
                 </div>
               {/each}
@@ -1281,7 +1281,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
         {:else if _hasName}
           <span class="profile-hero-initial">{_initial}</span>
         {:else}
-          <span class="material-symbols-rounded">person</span>
+          <span class="material-symbols-rounded" aria-hidden="true">person</span>
         {/if}
       </div>
       <div class="profile-hero-info">
@@ -1292,7 +1292,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
           <span class="profile-hero-sub">{$_('settings_main.profile_hero_sub')}</span>
         {/if}
       </div>
-      <span class="material-symbols-rounded profile-hero-chev">chevron_right</span>
+      <span class="material-symbols-rounded profile-hero-chev" aria-hidden="true">chevron_right</span>
     </button>
     {/if}
 
@@ -1347,9 +1347,9 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                  use — same reason SettingsUpdates below needs its own
                  explicit header wrapper. -->
             <button class="section-toggle" on:click={backToIndex}>
-              <span class="material-symbols-rounded si">key</span>
+              <span class="material-symbols-rounded si" aria-hidden="true">key</span>
               <span class="section-name">{$_('settings.api_tokens.section')}</span>
-              <span class="material-symbols-rounded chevron rotated">expand_more</span>
+              <span class="material-symbols-rounded chevron rotated" aria-hidden="true">expand_more</span>
             </button>
             <div class="section-body">
               <SettingsApiTokens expanded={true} />
@@ -1358,9 +1358,9 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
             <!-- SettingsWebhooks is body-only, same shape as
                  SettingsApiTokens just above. -->
             <button class="section-toggle" on:click={backToIndex}>
-              <span class="material-symbols-rounded si">webhook</span>
+              <span class="material-symbols-rounded si" aria-hidden="true">webhook</span>
               <span class="section-name">{$_('settings.webhooks.section')}</span>
-              <span class="material-symbols-rounded chevron rotated">expand_more</span>
+              <span class="material-symbols-rounded chevron rotated" aria-hidden="true">expand_more</span>
             </button>
             <div class="section-body">
               <SettingsWebhooks expanded={true} />
@@ -1377,9 +1377,9 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                  same header + body wrapper the mobile-index inline
                  rendering uses so it looks identical. -->
             <button class="section-toggle" on:click={backToIndex}>
-              <span class="material-symbols-rounded si">system_update</span>
+              <span class="material-symbols-rounded si" aria-hidden="true">system_update</span>
               <span class="section-name">{$_('settings.updates.section')}</span>
-              <span class="material-symbols-rounded chevron rotated">expand_more</span>
+              <span class="material-symbols-rounded chevron rotated" aria-hidden="true">expand_more</span>
             </button>
             <div class="section-body">
               <SettingsUpdates />
@@ -1483,9 +1483,9 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
     {#if sectionAvailable.apiTokens}
       {#if sectionVisible(settingsQuery, 'apiTokens')}
         <button class="section-toggle" on:click={() => toggleSection('apiTokens')}>
-          <span class="material-symbols-rounded si">key</span>
+          <span class="material-symbols-rounded si" aria-hidden="true">key</span>
           <span class="section-name">{$_('settings.api_tokens.section')}</span>
-          <span class="material-symbols-rounded chevron" class:rotated={openSections.apiTokens}>expand_more</span>
+          <span class="material-symbols-rounded chevron" class:rotated={openSections.apiTokens} aria-hidden="true">expand_more</span>
         </button>
         {#if expanded.apiTokens}
           <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -1503,9 +1503,9 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
          their Log Out lives in My Profile. -->
     {#if sectionAvailable.serverConnection}
     <button class="section-toggle" class:hidden={!sectionVisible(settingsQuery, 'serverConnection')} on:click={() => toggleSection('serverConnection')}>
-      <span class="material-symbols-rounded si">cloud_sync</span>
+      <span class="material-symbols-rounded si" aria-hidden="true">cloud_sync</span>
       <span class="section-name">{$_('settings.server.section')}</span>
-      <span class="material-symbols-rounded chevron" class:rotated={openSections.serverConnection}>expand_more</span>
+      <span class="material-symbols-rounded chevron" class:rotated={openSections.serverConnection} aria-hidden="true">expand_more</span>
     </button>
     {#if expanded.serverConnection && sectionVisible(settingsQuery, 'serverConnection')}
       <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -1519,7 +1519,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                   <div class="not-encrypted"><span class="material-symbols-rounded" aria-hidden="true">lock_open</span>{$_('plain_http.not_encrypted')}</div>
                 {/if}
               </div>
-              <span class="material-symbols-rounded" style="color:var(--success-text, #00704A);font-size:22px">cloud_done</span>
+              <span class="material-symbols-rounded" style="color:var(--success-text, #00704A);font-size:22px" aria-hidden="true">cloud_done</span>
             </div>
             <div class="setting-divider"></div>
             <div class="setting-row">
@@ -1530,18 +1530,18 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                 </div>
               </div>
               <button class="btn btn-secondary" style="height:32px;font-size:12px;padding:0 12px;display:flex;align-items:center;gap:6px" on:click={manualSync} disabled={_syncing}>
-                <span class="material-symbols-rounded" class:spin={_syncing} style="font-size:16px">{_syncing ? 'autorenew' : 'sync'}</span>
+                <span class="material-symbols-rounded" class:spin={_syncing} style="font-size:16px" aria-hidden="true">{_syncing ? 'autorenew' : 'sync'}</span>
                 {_syncing ? $_('sync.syncing') : $_('settings_main.server.sync_now')}
               </button>
             </div>
             <div class="setting-divider"></div>
             <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
               <button class="btn btn-ghost w-full" on:click={logoutServer}>
-                <span class="material-symbols-rounded" style="font-size:18px">logout</span>
+                <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">logout</span>
                 {$_('common.log_out')}
               </button>
               <button class="btn btn-ghost w-full" style="color:var(--danger)" on:click={disconnectServer} disabled={disconnecting}>
-                <span class="material-symbols-rounded" style="font-size:18px">{disconnecting ? 'progress_activity' : 'link_off'}</span>
+                <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">{disconnecting ? 'progress_activity' : 'link_off'}</span>
                 {#if disconnecting}{$_('sync.disconnecting')}{:else}{$_('settings_main.server.disconnect')}{/if}
               </button>
             </div>
@@ -1551,7 +1551,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                 <span class="setting-label">{$_('settings_main.server.local_mode')}</span>
                 <div class="setting-desc">{$_('settings_main.server.local_mode_desc')}</div>
               </div>
-              <span class="material-symbols-rounded" style="color:var(--text-3);font-size:22px">smartphone</span>
+              <span class="material-symbols-rounded" style="color:var(--text-3);font-size:22px" aria-hidden="true">smartphone</span>
             </div>
             <div class="setting-divider"></div>
             <div style="padding:12px 16px;display:flex;flex-direction:column;gap:10px">
@@ -1566,7 +1566,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                 <div class="signin-checking">{$_('server_signin.checking')}</div>
               {:else if signinState === 'failed'}
                 <div class="signin-note" role="alert">
-                  <span class="material-symbols-rounded">warning</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">warning</span>
                   <div class="signin-note-text">{signinError}</div>
                   <button class="btn btn-secondary" on:click={() => signinOptions.retry()} disabled={serverConnecting}>{$_('server_signin.retry')}</button>
                 </div>
@@ -1577,7 +1577,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                     {#if p.logo_url}
                       <img src={providerLogo(signinFor, p.logo_url)} alt="" class="sso-logo" on:error={e => e.target.style.display = 'none'} />
                     {:else}
-                      <span class="material-symbols-rounded" style="font-size:20px">login</span>
+                      <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">login</span>
                     {/if}
                     {$_('server_signin.sign_in_with', { values: { provider: p.display_name || p.name || p.id } })}
                   </button>
@@ -1600,7 +1600,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
                     <input class="form-input" type="password" placeholder={$_('settings_main.server.password_ph')} bind:value={serverPassword} style="padding-right:40px" />
                   {/if}
                   <button type="button" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-3);padding:4px" on:click={() => serverShowPw = !serverShowPw}>
-                    <span class="material-symbols-rounded" style="font-size:20px">{serverShowPw ? 'visibility_off' : 'visibility'}</span>
+                    <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">{serverShowPw ? 'visibility_off' : 'visibility'}</span>
                   </button>
                 </div>
               </div>
@@ -1650,9 +1650,9 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
          NT/CT/LT: right before Diagnostics in the App group. -->
     {#if sectionVisible(settingsQuery, 'updates')}
       <button class="section-toggle" on:click={() => toggleSection('updates')}>
-        <span class="material-symbols-rounded si">system_update</span>
+        <span class="material-symbols-rounded si" aria-hidden="true">system_update</span>
         <span class="section-name">{$_('settings.updates.section')}</span>
-        <span class="material-symbols-rounded chevron" class:rotated={openSections.updates}>expand_more</span>
+        <span class="material-symbols-rounded chevron" class:rotated={openSections.updates} aria-hidden="true">expand_more</span>
       </button>
       {#if expanded.updates}
         <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -1693,9 +1693,9 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
              mode plus admin: a webhook needs a real user_id to own it. -->
         {#if sectionVisible(settingsQuery, 'webhooks')}
           <button class="section-toggle" on:click={() => toggleSection('webhooks')}>
-            <span class="material-symbols-rounded si">webhook</span>
+            <span class="material-symbols-rounded si" aria-hidden="true">webhook</span>
             <span class="section-name">{$_('settings.webhooks.section')}</span>
-            <span class="material-symbols-rounded chevron" class:rotated={openSections.webhooks}>expand_more</span>
+            <span class="material-symbols-rounded chevron" class:rotated={openSections.webhooks} aria-hidden="true">expand_more</span>
           </button>
           {#if expanded.webhooks}
             <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -1773,21 +1773,21 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
       {/if}
       <div style="display:flex;flex-direction:column;gap:8px">
         <button class="merge-option" on:click={() => _mergeAndConnect('upload')}>
-          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent-ink)">cloud_upload</span>
+          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent-ink)" aria-hidden="true">cloud_upload</span>
           <div>
             <div class="merge-option-title">{$_('settings_main.merge.upload')}</div>
             <div class="merge-option-desc">{$_('settings_main.merge.upload_desc')}</div>
           </div>
         </button>
         <button class="merge-option" on:click={() => _mergeAndConnect('download')}>
-          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent-ink)">cloud_download</span>
+          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent-ink)" aria-hidden="true">cloud_download</span>
           <div>
             <div class="merge-option-title">{$_('settings_main.merge.download')}</div>
             <div class="merge-option-desc">{$_('settings_main.merge.download_desc')}</div>
           </div>
         </button>
         <button class="merge-option" on:click={() => _mergeAndConnect('merge')}>
-          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent-ink)">sync</span>
+          <span class="material-symbols-rounded" style="font-size:22px;color:var(--accent-ink)" aria-hidden="true">sync</span>
           <div>
             <div class="merge-option-title">{$_('settings_main.merge.merge')}</div>
             <div class="merge-option-desc">{$_('settings_main.merge.merge_desc')}</div>
@@ -1800,7 +1800,7 @@ import { SECTION_KEYWORDS, buildHaystack, matchesHaystack } from '../lib/setting
 {:else if mergeStep === 'syncing'}
   <div class="merge-overlay" use:portal use:closeOnBack={() => {}} transition:fade={{ duration: 150 }}>
     <div class="merge-dialog" style="text-align:center">
-      <span class="material-symbols-rounded" style="font-size:36px;color:var(--accent-ink);animation:settings-spin 1.2s linear infinite">sync</span>
+      <span class="material-symbols-rounded" style="font-size:36px;color:var(--accent-ink);animation:settings-spin 1.2s linear infinite" aria-hidden="true">sync</span>
       <p style="font-size:15px;color:var(--text-1);margin:12px 0 4px;font-weight:600">{$_('sync.syncing')}</p>
       <p style="font-size:13px;color:var(--text-3);margin:0">{mergeProgress || $_('settings_main.merge.preparing')}</p>
       {#if mergeProgressPct > 0}

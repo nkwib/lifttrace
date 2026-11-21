@@ -635,7 +635,7 @@
       {#if !needsServer}
         <div class="header-actions">
           <button class="btn-primary-sm" on:click={() => showAddClient = true} title={$_('coaching.add_client')}>
-            <span class="material-symbols-rounded">person_add</span>
+            <span class="material-symbols-rounded" aria-hidden="true">person_add</span>
             {$_('coaching.add')}
           </button>
         </div>
@@ -675,7 +675,7 @@
                 push(`/coaching/${a.member_id}`);
               }}>
               <span class="material-symbols-rounded row-icon"
-                    style:color={activityColor(a)}>{activityIcon(a)}</span>
+                    style:color={activityColor(a)} aria-hidden="true">{activityIcon(a)}</span>
               <div class="row-body">
                 <span class="row-title">
                   {a.member_full_name || a.member_username || $_('coaching.client_number', { values: { id: a.member_id } })}
@@ -698,7 +698,7 @@
           {#each requests as r (r.id)}
             <div class="list-row request-row">
               <span class="material-symbols-rounded row-icon"
-                    style:color={r.status === 'pending' ? 'var(--accent)' : 'var(--text-3)'}>
+                    style:color={r.status === 'pending' ? 'var(--accent)' : 'var(--text-3)'} aria-hidden="true">
                 {r.status === 'pending' ? 'schedule' : r.status === 'declined' ? 'block' : 'logout'}
               </span>
               <div class="row-body">
@@ -723,7 +723,7 @@
         <Spinner block label={$_('coaching.loading_clients')} />
       {:else if members.length === 0}
         <div class="empty">
-          <span class="material-symbols-rounded empty-icon">groups</span>
+          <span class="material-symbols-rounded empty-icon" aria-hidden="true">groups</span>
           <p class="empty-title">{$_('coaching.no_clients')}</p>
           <p class="empty-hint">{$coachingSupported ? $_('coaching.no_clients_hint') : $_('coaching.no_clients_hint_old')}</p>
         </div>
@@ -750,7 +750,7 @@
                 <span class="muted">{$_('coaching.this_week', { values: { n: m.week_count } })}</span>
               </span>
             </div>
-            <span class="material-symbols-rounded chev">chevron_right</span>
+            <span class="material-symbols-rounded chev" aria-hidden="true">chevron_right</span>
           </button>
         {/each}
       {/if}
@@ -762,13 +762,13 @@
   <div class="page">
     <header class="page-header">
       <button class="back-btn" on:click={() => push('/coaching')} aria-label={$_('common.back')}>
-        <span class="material-symbols-rounded">arrow_back</span>
+        <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
       </button>
       <h1>{overview ? memberLabel(overview.user) : $_('coaching.client_fallback')}</h1>
       {#if overview}
         <button class="btn-icon danger header-action" on:click={removeCoachee}
                 title={$_('coaching.end_coaching')} aria-label={$_('coaching.end_coaching')}>
-          <span class="material-symbols-rounded">person_remove</span>
+          <span class="material-symbols-rounded" aria-hidden="true">person_remove</span>
         </button>
       {/if}
     </header>
@@ -815,7 +815,7 @@
           <div class="block-head">
             <h3 class="block-title">{$_('coaching.programs')}</h3>
             <button class="btn btn-primary sm" on:click={openAssignProgram}>
-              <span class="material-symbols-rounded" style="font-size:14px">add</span>
+              <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">add</span>
               Assign program
             </button>
           </div>
@@ -824,7 +824,7 @@
           {:else}
             {#each overview.assigned_programs as p (p.id)}
               <div class="list-row">
-                <span class="material-symbols-rounded row-icon">calendar_month</span>
+                <span class="material-symbols-rounded row-icon" aria-hidden="true">calendar_month</span>
                 <div class="row-body">
                   <span class="row-title">{p.name}</span>
                   <span class="row-sub">{goalLabel(p.goal || 'general', $_)}{#if p.active && overview.active_program?.id === p.id && overview.active_program.duration_weeks > 1 && overview.active_program.current_week}{' · '}{$_('programs.week_of', { values: { week: overview.active_program.current_week, total: overview.active_program.duration_weeks } })}{/if}</span>
@@ -840,11 +840,11 @@
                   <span class="badge active-badge">{$_('coaching.active')}</span>
                 {:else}
                   <button class="btn-icon-sm" on:click={() => setActiveProgramForMember(p.id, p.name)} title="Make active" aria-label="Make active">
-                    <span class="material-symbols-rounded">play_arrow</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">play_arrow</span>
                   </button>
                 {/if}
                 <button class="btn-icon-sm danger" on:click={() => unassignProgram(p.id, p.name)} title="Remove program" aria-label="Remove program">
-                  <span class="material-symbols-rounded">close</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">close</span>
                 </button>
               </div>
             {/each}
@@ -856,7 +856,7 @@
           <div class="block-head">
             <h3 class="block-title">{$_('coaching.prescribed')}</h3>
             <button class="btn btn-primary sm" on:click={openPrescribe}>
-              <span class="material-symbols-rounded" style="font-size:14px">add</span>
+              <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">add</span>
               Prescribe
             </button>
           </div>
@@ -866,7 +866,7 @@
             {#each prescriptions as p (p.id)}
               <div class="list-row" class:px-done={p.completed === 1}>
                 <span class="material-symbols-rounded row-icon"
-                      style:color={p.completed === 1 ? 'var(--success)' : 'var(--accent)'}>
+                      style:color={p.completed === 1 ? 'var(--success)' : 'var(--accent)'} aria-hidden="true">
                   {p.completed === 1 ? 'check_circle' : 'assignment'}
                 </span>
                 <div class="row-body">
@@ -888,10 +888,10 @@
                   </span>
                 </div>
                 <button class="btn-icon-sm" on:click={() => openEditPrescription(p)} title="Edit" aria-label="Edit prescription">
-                  <span class="material-symbols-rounded">edit</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">edit</span>
                 </button>
                 <button class="btn-icon-sm danger" on:click={() => deletePrescription(p.id)} title="Remove">
-                  <span class="material-symbols-rounded">close</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">close</span>
                 </button>
               </div>
             {/each}
@@ -929,7 +929,7 @@
           {:else}
             {#each overview.recent_workouts as w (w.id)}
               <button class="list-row workout-row" on:click={() => openWorkoutDetail(w)}>
-                <span class="material-symbols-rounded row-icon" style:color="var(--success)">check_circle</span>
+                <span class="material-symbols-rounded row-icon" style:color="var(--success)" aria-hidden="true">check_circle</span>
                 <div class="row-body">
                   <span class="row-title">{w.name || 'Workout'}</span>
                   <span class="row-sub">
@@ -946,17 +946,17 @@
                 {#if w.my_feedback_count > 0}
                   <span class="workout-feedback-marker" class:has-reply={w.my_reply_count > 0}
                         title={w.my_reply_count > 0 ? $_('coaching.note_replied') : $_('coaching.note_left')}>
-                    <span class="material-symbols-rounded">{w.my_reply_count > 0 ? 'mark_unread_chat_alt' : 'comment'}</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">{w.my_reply_count > 0 ? 'mark_unread_chat_alt' : 'comment'}</span>
                   </span>
                 {:else if w.feedback_count > 0}
                   <span class="workout-feedback-marker faint" title={$_('coaching.note_other_coach')}>
-                    <span class="material-symbols-rounded">comment</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">comment</span>
                   </span>
                 {/if}
                 {#if w.volume > 0}
                   <span class="workout-volume">{w.volume.toLocaleString()} {overview?.weight_unit || 'lbs'}</span>
                 {/if}
-                <span class="material-symbols-rounded chev">chevron_right</span>
+                <span class="material-symbols-rounded chev" aria-hidden="true">chevron_right</span>
               </button>
             {/each}
           {/if}
@@ -1052,7 +1052,7 @@
 
       {#if workoutDetail.notes}
         <div class="wd-notes">
-          <span class="material-symbols-rounded" style="font-size:16px;color:var(--text-3)">sticky_note_2</span>
+          <span class="material-symbols-rounded" style="font-size:16px;color:var(--text-3)" aria-hidden="true">sticky_note_2</span>
           <span>{workoutDetail.notes}</span>
         </div>
       {/if}
@@ -1063,12 +1063,12 @@
       <div class="wd-feedback">
         {#if !workoutEditorOpen}
           <button class="wd-add-workout-note" on:click={() => workoutEditorOpen = true}>
-            <span class="material-symbols-rounded" style="font-size:16px">add_comment</span>
+            <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">add_comment</span>
             Add a note on this workout
           </button>
         {:else}
           <div class="wd-feedback-head">
-            <span class="material-symbols-rounded" style="font-size:16px;color:var(--accent-ink)">comment</span>
+            <span class="material-symbols-rounded" style="font-size:16px;color:var(--accent-ink)" aria-hidden="true">comment</span>
             <span>Note for {memberLabel(overview?.user)}</span>
           </div>
           <textarea class="wd-feedback-input" rows="2"
@@ -1090,7 +1090,7 @@
             <button class="btn btn-primary wd-feedback-save" class:flashed={savedFlash === 'workout'}
                     on:click={saveWorkoutFeedback}
                     disabled={savingFeedback === 'workout' || !workoutNote?.trim()}>
-              {#if savedFlash === 'workout'}<span class="material-symbols-rounded" style="font-size:16px">check</span>{:else}{savingFeedback === 'workout' ? 'Saving…' : 'Save note'}{/if}
+              {#if savedFlash === 'workout'}<span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">check</span>{:else}{savingFeedback === 'workout' ? 'Saving…' : 'Save note'}{/if}
             </button>
           </div>
         {/if}
@@ -1100,7 +1100,7 @@
         {#each workoutLevelFeedback().filter(f => f.trainer_id === $currentUser?.id) as f}
           {#if f.seen_by_member_at && !f.member_reply}
             <div class="wd-receipt">
-              <span class="material-symbols-rounded" style="font-size:13px">done_all</span>
+              <span class="material-symbols-rounded" style="font-size:13px" aria-hidden="true">done_all</span>
               Seen by {memberLabel(overview?.user)} · {relTime(f.seen_by_member_at)}
             </div>
           {/if}
@@ -1150,7 +1150,7 @@
                 {@const setNo = clipSetNumber(ex, clip)}
                 <button type="button" class="wd-ex-clip"
                   on:click={() => openClip(clip, idx)}>
-                  <span class="material-symbols-rounded">play_circle</span>{
+                  <span class="material-symbols-rounded" aria-hidden="true">play_circle</span>{
                     (clipsByExercise.get(ex.uuid) || []).length > 1 && setNo
                       ? $_('set_video.watch_set', { values: { n: setNo } })
                       : $_('set_video.watch')}
@@ -1192,25 +1192,25 @@
                   <button class="btn btn-primary" class:flashed={savedFlash === idx}
                           on:click={() => saveExerciseFeedback(idx)}
                           disabled={savingFeedback === idx || !(exerciseNotes[idx] || '').trim()}>
-                    {#if savedFlash === idx}<span class="material-symbols-rounded" style="font-size:16px">check</span>{:else}{savingFeedback === idx ? 'Saving…' : 'Save'}{/if}
+                    {#if savedFlash === idx}<span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">check</span>{:else}{savingFeedback === idx ? 'Saving…' : 'Save'}{/if}
                   </button>
                 </div>
               </div>
             {:else if myFb}
               <button class="wd-ex-feedback-mine" on:click={() => editingExerciseIdx = idx}>
-                <span class="material-symbols-rounded" style="font-size:14px;color:var(--accent-ink)">comment</span>
+                <span class="material-symbols-rounded" style="font-size:14px;color:var(--accent-ink)" aria-hidden="true">comment</span>
                 <span class="wd-ex-feedback-text">{myFb.note}</span>
-                <span class="material-symbols-rounded wd-edit-icon">edit</span>
+                <span class="material-symbols-rounded wd-edit-icon" aria-hidden="true">edit</span>
               </button>
             {:else}
               <button class="wd-ex-feedback-add" on:click={() => editingExerciseIdx = idx}>
-                <span class="material-symbols-rounded" style="font-size:14px">add_comment</span>
+                <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">add_comment</span>
                 Add a note on this exercise
               </button>
             {/if}
             {#if myFb?.seen_by_member_at && !myFb?.member_reply}
               <div class="wd-receipt">
-                <span class="material-symbols-rounded" style="font-size:13px">done_all</span>
+                <span class="material-symbols-rounded" style="font-size:13px" aria-hidden="true">done_all</span>
                 Seen by {memberLabel(overview?.user)} · {relTime(myFb.seen_by_member_at)}
               </div>
             {/if}

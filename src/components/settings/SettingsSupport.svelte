@@ -23,23 +23,23 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">volunteer_activism</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">volunteer_activism</span></span>
     <span class="section-name">{$_('settings.support.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
       <div class="card">
         <div class="support-hero">
-          <span class="material-symbols-rounded support-hero-icon">volunteer_activism</span>
+          <span class="material-symbols-rounded support-hero-icon" aria-hidden="true">volunteer_activism</span>
           <p class="support-lead">{$_('settings_support.lead')}</p>
         </div>
         <div class="support-actions">
           <a href="https://ko-fi.com/traceapps" target="_blank" rel="noopener" class="btn btn-secondary support-btn">
-            <span class="material-symbols-rounded">coffee</span> {$_('settings_support.kofi')}
+            <span class="material-symbols-rounded" aria-hidden="true">coffee</span> {$_('settings_support.kofi')}
           </a>
           <a href="https://github.com/sponsors/TraceApps?metadata_app=lifttrace&metadata_from=app" target="_blank" rel="noopener" class="btn btn-secondary support-btn">
-            <span class="material-symbols-rounded">favorite</span> {$_('settings_support.github_sponsors')}
+            <span class="material-symbols-rounded" aria-hidden="true">favorite</span> {$_('settings_support.github_sponsors')}
           </a>
         </div>
       </div>
@@ -49,12 +49,12 @@
         {#each HELP as h, i}
           {#if i > 0}<div class="setting-divider"></div>{/if}
           <a class="support-row" href={h.href} target="_blank" rel="noopener">
-            <span class="material-symbols-rounded support-row-icon">{h.icon}</span>
+            <span class="material-symbols-rounded support-row-icon" aria-hidden="true">{h.icon}</span>
             <span class="support-row-text">
               <span class="support-row-title">{$_(h.titleKey)}</span>
               <span class="support-row-desc">{$_(h.descKey)}</span>
             </span>
-            <span class="material-symbols-rounded support-row-go">open_in_new</span>
+            <span class="material-symbols-rounded support-row-go" aria-hidden="true">open_in_new</span>
           </a>
         {/each}
       </div>

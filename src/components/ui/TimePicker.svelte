@@ -89,7 +89,7 @@
 <button class="tp-trigger" {disabled} on:click={() => { _parse(value); open = true; }}>
   {#if label}<span class="tp-label">{label}</span>{/if}
   <span class="tp-value" class:tp-placeholder={!value && placeholder}>{_display(value)}</span>
-  <span class="material-symbols-rounded" style="font-size:18px;color:var(--text-3)">schedule</span>
+  <span class="material-symbols-rounded" style="font-size:18px;color:var(--text-3)" aria-hidden="true">schedule</span>
 </button>
 
 {#if open}

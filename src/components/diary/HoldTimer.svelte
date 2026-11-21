@@ -131,11 +131,11 @@
           {#if side === 'L' && leadIn === 0}
             <!-- The left side is done: on to the right, after a countdown. -->
             <button type="button" class="hold-btn primary" on:click={switchHoldSide}>
-              <span class="material-symbols-rounded">swap_horiz</span>{$_('hold_timer.switch_sides')}
+              <span class="material-symbols-rounded" aria-hidden="true">swap_horiz</span>{$_('hold_timer.switch_sides')}
             </button>
           {:else}
             <button type="button" class="hold-btn primary" on:click={stop}>
-              <span class="material-symbols-rounded">stop_circle</span>{$_('hold_timer.stop')}
+              <span class="material-symbols-rounded" aria-hidden="true">stop_circle</span>{$_('hold_timer.stop')}
             </button>
           {/if}
         </div>

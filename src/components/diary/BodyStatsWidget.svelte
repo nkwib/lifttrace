@@ -123,10 +123,10 @@
 
 <section class="bs-widget">
   <header class="bs-header">
-    <span class="material-symbols-rounded bs-icon">monitor_weight</span>
+    <span class="material-symbols-rounded bs-icon" aria-hidden="true">monitor_weight</span>
     <span class="bs-title">Body Stats</span>
     <button class="bs-open" on:click={onOpen} title="Open Body Stats sheet" aria-label="Open Body Stats sheet">
-      <span class="material-symbols-rounded">open_in_full</span>
+      <span class="material-symbols-rounded" aria-hidden="true">open_in_full</span>
     </button>
   </header>
 
@@ -138,7 +138,7 @@
           <span class="bs-w-unit">{$weightUnit}</span>
         </div>
         <button class="bs-edit-inline" on:click={startEditWeight} title="Edit today's weight" aria-label="Edit today's weight">
-          <span class="material-symbols-rounded">edit</span>
+          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
         </button>
       {:else}
         <span class="bs-weight-empty">Weight not logged</span>

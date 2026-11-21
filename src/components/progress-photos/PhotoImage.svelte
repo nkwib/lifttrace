@@ -95,7 +95,7 @@
   {:else if resolved}
     <img src={resolved} {alt} draggable="false" on:error={onImgError} />
   {:else if failed}
-    <span class="pi-fail material-symbols-rounded" title={alt}>broken_image</span>
+    <span class="pi-fail material-symbols-rounded" title={alt} aria-hidden="true">broken_image</span>
   {:else}
     <span class="pi-skel" aria-hidden="true"></span>
   {/if}

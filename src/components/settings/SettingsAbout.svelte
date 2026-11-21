@@ -16,9 +16,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">info</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">info</span></span>
     <span class="section-name">{$_('settings.about.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -39,27 +39,27 @@
         </div>
         <div class="setting-divider"></div>
         <div class="about-row">
-          <span class="material-symbols-rounded about-feat-icon">database</span>
+          <span class="material-symbols-rounded about-feat-icon" aria-hidden="true">database</span>
           <span>{$_('settings_about.feature_self_hosted')}</span>
         </div>
         <div class="setting-divider"></div>
         <div class="about-row">
-          <span class="material-symbols-rounded about-feat-icon">install_mobile</span>
+          <span class="material-symbols-rounded about-feat-icon" aria-hidden="true">install_mobile</span>
           <span>{$_('settings_about.feature_pwa')}</span>
         </div>
         <div class="setting-divider"></div>
         <div class="about-row">
-          <span class="material-symbols-rounded about-feat-icon">lock</span>
+          <span class="material-symbols-rounded about-feat-icon" aria-hidden="true">lock</span>
           <span>{$_('settings_about.feature_privacy')}</span>
         </div>
         <div class="setting-divider"></div>
         <div class="about-row">
-          <span class="material-symbols-rounded about-feat-icon">code</span>
+          <span class="material-symbols-rounded about-feat-icon" aria-hidden="true">code</span>
           <span><a href="https://github.com/TraceApps/lifttrace" target="_blank" rel="noopener" class="about-link">{$_('settings_about.open_source')}</a> (AGPL-3.0)</span>
         </div>
         <div class="setting-divider"></div>
         <div class="about-row">
-          <span class="material-symbols-rounded about-feat-icon">apps</span>
+          <span class="material-symbols-rounded about-feat-icon" aria-hidden="true">apps</span>
           <span>{$_('settings_about.family_line_prefix')}<a href="https://traceapps.github.io/docs/" target="_blank" rel="noopener" class="about-link">TraceApps</a>{$_('settings_about.family_line_suffix')}</span>
         </div>
         <div class="setting-divider"></div>

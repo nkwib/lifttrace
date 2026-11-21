@@ -427,9 +427,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">backup</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">backup</span></span>
     <span class="section-name">{$_('settings.backup.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>
@@ -485,25 +485,25 @@
                 <div class="auto-bk-status">
                   {#if _cfg.lastAutoError}
                     <div class="auto-bk-status-row error">
-                      <span class="material-symbols-rounded" style="font-size:16px">error</span>
+                      <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">error</span>
                       <span>{$_('settings_backup.auto.last_failed', { values: { error: _cfg.lastAutoError } })}</span>
                     </div>
                   {/if}
                   {#if _cfg.lastAutoRun}
                     <div class="auto-bk-status-row">
-                      <span class="material-symbols-rounded" style="font-size:16px">check_circle</span>
+                      <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">check_circle</span>
                       <span>{$_('settings_backup.auto.last_success', { values: { when: _formatRelative(_cfg.lastAutoRun) } })}</span>
                     </div>
                   {/if}
                   {#if _nextDueLabel(_cfg)}
                     <div class="auto-bk-status-row">
-                      <span class="material-symbols-rounded" style="font-size:16px">schedule</span>
+                      <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">schedule</span>
                       <span>{_isLocal ? $_('settings_backup.auto.next_when_open', { values: { when: _nextDueLabel(_cfg) } }) : $_('settings_backup.auto.next', { values: { when: _nextDueLabel(_cfg) } })}</span>
                     </div>
                   {/if}
                   {#if !_isLocal && zoneDiffers}
                     <div class="auto-bk-status-row zone-differs">
-                      <span class="material-symbols-rounded" style="font-size:16px">public</span>
+                      <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">public</span>
                       <span>{$_('settings_backup.auto.zone_differs', { values: { time: _clock(_cfg.time), zone: _cfg.runsIn, local: _hereFor(_cfg) } })}</span>
                       <button class="btn btn-secondary btn-sm" disabled={scheduleBusy}
                         on:click={() => saveSchedule({ timeZone: browserZone })}>{$_('settings_backup.auto.use_my_zone')}</button>
@@ -528,7 +528,7 @@
       <p class="sub-label">{$_('settings_backup.sections.export')}</p>
       <div class="card">
         <button class="setting-row setting-action" on:click={exportAllCsv} disabled={exportingCsv}>
-          <span class="material-symbols-rounded">csv</span>
+          <span class="material-symbols-rounded" aria-hidden="true">csv</span>
           <div class="setting-label-group">
             <span class="setting-label">{$_('settings_backup.export.all_csv')}</span>
             <div class="setting-desc">{$_('settings_backup.export.all_csv_desc')}</div>
@@ -536,7 +536,7 @@
           {#if exportingCsv}
             <Spinner size="sm" inline />
           {:else}
-            <span class="material-symbols-rounded" style="font-size:18px;flex-shrink:0">download</span>
+            <span class="material-symbols-rounded" style="font-size:18px;flex-shrink:0" aria-hidden="true">download</span>
           {/if}
         </button>
       </div>
@@ -550,20 +550,20 @@
             <button class="btn btn-primary" style="height:36px;font-size:13px"
               on:click={createFullBackup} disabled={fullBackupBusy}>
               {#if fullBackupBusy}
-                <span class="material-symbols-rounded spin" style="font-size:16px">autorenew</span> {$_('settings_backup.full.working')}
+                <span class="material-symbols-rounded spin" style="font-size:16px" aria-hidden="true">autorenew</span> {$_('settings_backup.full.working')}
               {:else}
-                <span class="material-symbols-rounded" style="font-size:16px">add_circle</span> {$_('settings_backup.full.create')}
+                <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">add_circle</span> {$_('settings_backup.full.create')}
               {/if}
             </button>
             <button class="btn btn-secondary" style="height:36px;font-size:13px"
               on:click={pickUploadRestore} disabled={fullBackupBusy}>
-              <span class="material-symbols-rounded" style="font-size:16px">upload</span> {$_('settings_backup.full.upload_restore')}
+              <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">upload</span> {$_('settings_backup.full.upload_restore')}
             </button>
           </div>
           {#if restoreStatus}
             <div class="restore-progress" bind:this={restoreProgressEl}>
               <div class="restore-progress-label">
-                <span class="material-symbols-rounded spin" style="font-size:15px;flex-shrink:0">autorenew</span>
+                <span class="material-symbols-rounded spin" style="font-size:15px;flex-shrink:0" aria-hidden="true">autorenew</span>
                 {restoreStatus.label}
               </div>
               <div class="restore-progress-track">
@@ -591,15 +591,15 @@
               <div class="backup-actions">
                 <button class="btn btn-secondary backup-action-btn"
                   on:click={() => downloadBackup(bk.filename || bk.name)}>
-                  <span class="material-symbols-rounded" style="font-size:15px">download</span> {$_('settings_backup.full.download')}
+                  <span class="material-symbols-rounded" style="font-size:15px" aria-hidden="true">download</span> {$_('settings_backup.full.download')}
                 </button>
                 <button class="btn btn-secondary backup-action-btn"
                   on:click={() => { restoreTarget = bk.filename || bk.name; showRestoreDialog = true; }} disabled={fullBackupBusy}>
-                  <span class="material-symbols-rounded" style="font-size:15px">restore</span> {$_('settings_backup.full.restore')}
+                  <span class="material-symbols-rounded" style="font-size:15px" aria-hidden="true">restore</span> {$_('settings_backup.full.restore')}
                 </button>
                 <button class="btn-icon-danger"
                   on:click={() => { deleteTarget = bk.filename || bk.name; showDeleteBkDialog = true; }} title={$_('settings_backup.full.delete_title')}>
-                  <span class="material-symbols-rounded" style="font-size:20px">delete</span>
+                  <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">delete</span>
                 </button>
               </div>
             </div>
@@ -620,14 +620,14 @@
             <button class="btn btn-primary" style="height:36px;font-size:13px"
               on:click={backUpNow} disabled={localBusy}>
               {#if localBusy}
-                <span class="material-symbols-rounded spin" style="font-size:16px">autorenew</span> {$_('settings_backup.local.working')}
+                <span class="material-symbols-rounded spin" style="font-size:16px" aria-hidden="true">autorenew</span> {$_('settings_backup.local.working')}
               {:else}
-                <span class="material-symbols-rounded" style="font-size:16px">add_circle</span> {$_('settings_backup.local.backup_now')}
+                <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">add_circle</span> {$_('settings_backup.local.backup_now')}
               {/if}
             </button>
             <button class="btn btn-secondary" style="height:36px;font-size:13px"
               on:click={pickLocalRestoreFile} disabled={localBusy}>
-              <span class="material-symbols-rounded" style="font-size:16px">upload</span> {$_('settings_backup.local.restore_file')}
+              <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">upload</span> {$_('settings_backup.local.restore_file')}
             </button>
           </div>
         </div>
@@ -642,15 +642,15 @@
               <div class="backup-actions">
                 <button class="btn btn-secondary backup-action-btn" disabled={localBusy}
                   on:click={() => shareLocal(bk.name)}>
-                  <span class="material-symbols-rounded" style="font-size:15px">share</span> {$_('settings_backup.local.share')}
+                  <span class="material-symbols-rounded" style="font-size:15px" aria-hidden="true">share</span> {$_('settings_backup.local.share')}
                 </button>
                 <button class="btn btn-secondary backup-action-btn" disabled={localBusy}
                   on:click={() => { localRestoreFile = null; localRestoreName = bk.name; showLocalRestoreDialog = true; }}>
-                  <span class="material-symbols-rounded" style="font-size:15px">restore</span> {$_('settings_backup.local.restore')}
+                  <span class="material-symbols-rounded" style="font-size:15px" aria-hidden="true">restore</span> {$_('settings_backup.local.restore')}
                 </button>
                 <button class="btn-icon-danger" disabled={localBusy} title={$_('settings_backup.local.delete_title')}
                   on:click={() => { localDeleteName = bk.name; showLocalDeleteDialog = true; }}>
-                  <span class="material-symbols-rounded" style="font-size:20px">delete</span>
+                  <span class="material-symbols-rounded" style="font-size:20px" aria-hidden="true">delete</span>
                 </button>
               </div>
             </div>
@@ -664,21 +664,21 @@
       <p class="sub-label danger-zone-label">{$_('settings_backup.sections.danger_zone')}</p>
       <div class="card danger-zone-card">
         <button class="setting-row setting-action danger" on:click={() => showClearSettingsDialog = true}>
-          <span class="material-symbols-rounded si-danger">manage_history</span>
+          <span class="material-symbols-rounded si-danger" aria-hidden="true">manage_history</span>
           <div class="setting-label-group">
             <span class="setting-label" style="color:var(--danger)">{$_('settings_backup.danger.clear_settings')}</span>
             <div class="setting-desc">{$_('settings_backup.danger.clear_settings_desc')}</div>
           </div>
-          <span class="material-symbols-rounded" style="font-size:18px;color:var(--danger);flex-shrink:0">chevron_right</span>
+          <span class="material-symbols-rounded" style="font-size:18px;color:var(--danger);flex-shrink:0" aria-hidden="true">chevron_right</span>
         </button>
         <div class="setting-divider"></div>
         <button class="setting-row setting-action danger" on:click={() => showClearDataDialog = true}>
-          <span class="material-symbols-rounded si-danger">delete_forever</span>
+          <span class="material-symbols-rounded si-danger" aria-hidden="true">delete_forever</span>
           <div class="setting-label-group">
             <span class="setting-label" style="color:var(--danger)">{$_('settings_backup.danger.clear_data')}</span>
             <div class="setting-desc">{$_('settings_backup.danger.clear_data_desc')}</div>
           </div>
-          <span class="material-symbols-rounded" style="font-size:18px;color:var(--danger);flex-shrink:0">chevron_right</span>
+          <span class="material-symbols-rounded" style="font-size:18px;color:var(--danger);flex-shrink:0" aria-hidden="true">chevron_right</span>
         </button>
         <!-- Delete my account lives in Profile → Danger zone (single source of truth). -->
       </div>

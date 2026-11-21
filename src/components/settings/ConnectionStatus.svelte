@@ -58,7 +58,7 @@
 {#if status === 'ok'}
   <div class="status-pill ok">
     <div class="status-main">
-      <span class="material-symbols-rounded">check_circle</span>
+      <span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
       <span>{_okLabel}</span>
       {#if connectedAs}
         <span class="status-badge">{connectedAs}</span>
@@ -80,7 +80,7 @@
 {:else if status === 'warn'}
   <div class="status-pill warn">
     <div class="status-main">
-      <span class="material-symbols-rounded">warning</span>
+      <span class="material-symbols-rounded" aria-hidden="true">warning</span>
       <span>{_okLabel}</span>
       {#if connectedAs}
         <span class="status-badge">{connectedAs}</span>
@@ -102,7 +102,7 @@
 {:else if status === 'fail'}
   <div class="status-pill fail">
     <div class="status-main">
-      <span class="material-symbols-rounded">error</span>
+      <span class="material-symbols-rounded" aria-hidden="true">error</span>
       <span>{error ? $_('connection_status.not_connected_error', { values: { error } }) : $_('connection_status.not_connected')}</span>
       <div class="status-actions">
         <slot name="action">
@@ -121,7 +121,7 @@
 {:else if status === 'testing'}
   <div class="status-pill testing">
     <div class="status-main">
-      <span class="material-symbols-rounded spin">progress_activity</span>
+      <span class="material-symbols-rounded spin" aria-hidden="true">progress_activity</span>
       <span>{_testingLabel}</span>
       <div class="status-actions">
         <slot name="action">

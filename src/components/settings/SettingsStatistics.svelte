@@ -11,9 +11,9 @@
 
 {#if visible}
   <button class="section-toggle" on:click={onToggle}>
-    <span class="si"><span class="material-symbols-rounded">bar_chart</span></span>
+    <span class="si"><span class="material-symbols-rounded" aria-hidden="true">bar_chart</span></span>
     <span class="section-name">{$_('settings.statistics.section')}</span>
-    <span class="material-symbols-rounded chevron" class:rotated={expanded}>expand_more</span>
+    <span class="material-symbols-rounded chevron" class:rotated={expanded} aria-hidden="true">expand_more</span>
   </button>
   {#if expanded}
     <div class="section-body" transition:slide={{ duration: 180 }}>

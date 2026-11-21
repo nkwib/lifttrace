@@ -64,6 +64,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Assisted lifts drop the e1RM line on the PR card.** The exercise page showed an estimated 1RM under the weight PR, which is meaningless when the weight is assistance.
 - **Diary counts all cardio days.** The streak, week strip and calendar only saw the newest 500 cardio sessions, so older cardio days showed as rest days.
 - **Track Cardio flip refreshes Statistics days.** On 1Y and All, turning Track Cardio on or off kept the old trained days until the reload finished.
+- **Screen readers no longer read icon names.** Icon ligature text ("dashboard", "close", "arrow_back") inside buttons, links and tabs is now hidden from assistive tech, so controls are announced by their label only.
 - **Empty Diary day refreshes its recent workouts after a sync.** Workouts synced for other dates now appear in the list without reopening the page.
 - **Statistics trained days count all cardio.** On 1Y and All, and in the year heatmap, only the newest 500 cardio sessions were counted, so older cardio days showed as rest days.
 - **Statistics after midnight loads the new day.** A page left open past midnight reloaded yesterday's range on sync or when the tab came back.

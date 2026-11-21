@@ -164,10 +164,10 @@
       <div class="sl-handle"></div>
 
       <div class="sl-header">
-        <span class="material-symbols-rounded sl-header-icon">auto_awesome</span>
+        <span class="material-symbols-rounded sl-header-icon" aria-hidden="true">auto_awesome</span>
         <h3 class="sl-title">{$_('smart_log.title')}</h3>
         <button class="sl-close" on:click={closeAndReset} title={$_('common.close')} aria-label={$_('common.close')}>
-          <span class="material-symbols-rounded">close</span>
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
         </button>
       </div>
 
@@ -186,7 +186,7 @@
             {#if voiceAvailable}
               <button class="sl-mic" class:listening on:click={toggleMic}
                 title={listening ? 'Stop' : 'Speak'}>
-                <span class="material-symbols-rounded">{listening ? 'stop_circle' : 'mic'}</span>
+                <span class="material-symbols-rounded" aria-hidden="true">{listening ? 'stop_circle' : 'mic'}</span>
               </button>
             {/if}
           </div>
@@ -196,7 +196,7 @@
           <div class="sl-actions">
             <button class="btn btn-secondary" on:click={closeAndReset}>{$_('smart_log.cancel')}</button>
             <button class="btn btn-primary" on:click={runParse} disabled={!inputText.trim()}>
-              <span class="material-symbols-rounded" style="font-size:18px">arrow_forward</span>
+              <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">arrow_forward</span>
               Parse
             </button>
           </div>
@@ -204,7 +204,7 @@
 
       {:else if phase === 'parsing'}
         <div class="sl-body sl-center">
-          <span class="material-symbols-rounded sl-spin">autorenew</span>
+          <span class="material-symbols-rounded sl-spin" aria-hidden="true">autorenew</span>
           <p class="sl-center-msg">Reading your workout…</p>
         </div>
 
@@ -224,7 +224,7 @@
                   <span class="sl-unmatched-badge">not in library</span>
                 {/if}
                 <button class="sl-item-remove" on:click={() => removeItem(i)} title={$_('diary.remove_item')} aria-label={$_('diary.remove_item')}>
-                  <span class="material-symbols-rounded">close</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">close</span>
                 </button>
               </div>
               {#if item.candidates.length > 1}
@@ -258,13 +258,13 @@
                     {#if set.rpe != null}<span class="sl-tag">RPE {set.rpe}</span>{/if}
                     {#if item.sets.length > 1}
                       <button class="sl-set-remove" on:click={() => removeSetFrom(i, si)} title={$_('diary.remove_set')} aria-label={$_('diary.remove_set')}>
-                        <span class="material-symbols-rounded" style="font-size:16px">close</span>
+                        <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">close</span>
                       </button>
                     {/if}
                   </div>
                 {/each}
                 <button class="sl-add-set" on:click={() => addSetTo(i)}>
-                  <span class="material-symbols-rounded" style="font-size:16px">add</span>
+                  <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">add</span>
                   Add set
                 </button>
               </div>
@@ -279,7 +279,7 @@
           <div class="sl-actions">
             <button class="btn btn-secondary" on:click={() => phase = 'input'}>{$_('smart_log.back')}</button>
             <button class="btn btn-primary" on:click={runSave} disabled={matched.length === 0}>
-              <span class="material-symbols-rounded" style="font-size:18px">check</span>
+              <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">check</span>
               Add to workout
             </button>
           </div>
@@ -287,7 +287,7 @@
 
       {:else if phase === 'saving'}
         <div class="sl-body sl-center">
-          <span class="material-symbols-rounded sl-spin">autorenew</span>
+          <span class="material-symbols-rounded sl-spin" aria-hidden="true">autorenew</span>
           <p class="sl-center-msg">Saving…</p>
         </div>
       {/if}

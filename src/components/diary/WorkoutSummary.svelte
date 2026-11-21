@@ -161,7 +161,7 @@
       <div class="sheet-handle"></div>
       <button class="ws-close-btn" on:click={() => open = false}
               aria-label={$_('common.close')} title={$_('common.close')}>
-        <span class="material-symbols-rounded">close</span>
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
 
       <div class="ws-hero">
@@ -170,7 +170,7 @@
         <div class="confetti" aria-hidden="true">
           {#each Array(14) as _, i}<span class="conf c{i % 7}" style:--i={i}></span>{/each}
         </div>
-        <span class="material-symbols-rounded ws-hero-icon">emoji_events</span>
+        <span class="material-symbols-rounded ws-hero-icon" aria-hidden="true">emoji_events</span>
         <h3 class="ws-title">Workout Complete!</h3>
         {#if workout.name}
           <span class="ws-name">{workout.name}</span>
@@ -209,7 +209,7 @@
             <span class="ws-stat-val ws-stat-placeholder">Add</span>
             <span class="ws-stat-label">{$_('workout_summary.duration')}</span>
           {/if}
-          <span class="material-symbols-rounded ws-stat-edit-icon">edit</span>
+          <span class="material-symbols-rounded ws-stat-edit-icon" aria-hidden="true">edit</span>
         </button>
       </div>
 
@@ -243,7 +243,7 @@
 
       {#if calorieEstimate != null}
         <div class="ws-calorie-row" title={effectiveDurationMin > 0 ? $_('workout_summary.calories_tip_met') : $_('workout_summary.calories_tip_rough')}>
-          <span class="material-symbols-rounded ws-calorie-icon">local_fire_department</span>
+          <span class="material-symbols-rounded ws-calorie-icon" aria-hidden="true">local_fire_department</span>
           <span class="ws-calorie-val">~{calorieEstimate} kcal</span>
           <span class="ws-calorie-badge" class:rough={effectiveDurationMin <= 0}>
             {effectiveDurationMin > 0 ? 'est' : 'rough'}
@@ -256,7 +256,7 @@
           {#if group.type === 'superset'}
             <div class="ws-superset">
               <div class="ws-superset-label">
-                <span class="material-symbols-rounded ss-icon">link</span>
+                <span class="material-symbols-rounded ss-icon" aria-hidden="true">link</span>
                 Superset
               </div>
               {#each group.members as ex}
@@ -283,10 +283,10 @@
 
       <div class="ws-footer">
         <button class="btn btn-secondary ws-icon-btn" on:click={handleExportCsv} disabled={exportingCsv} title={$_('workout_summary.export_csv')} aria-label={$_('workout_summary.export_csv_aria')}>
-          <span class="material-symbols-rounded">{exportingCsv ? 'hourglass_top' : 'download'}</span>
+          <span class="material-symbols-rounded" aria-hidden="true">{exportingCsv ? 'hourglass_top' : 'download'}</span>
         </button>
         <button class="btn btn-secondary ws-share-btn" on:click={handleShare} disabled={sharing}>
-          <span class="material-symbols-rounded" style="font-size:18px">share</span>
+          <span class="material-symbols-rounded" style="font-size:18px" aria-hidden="true">share</span>
           {sharing ? 'Preparing…' : 'Share'}
         </button>
         <button class="btn btn-primary ws-done-btn" on:click={() => open = false}>{$_('workout_summary.done')}</button>

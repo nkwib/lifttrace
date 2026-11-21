@@ -37,20 +37,20 @@
       <button class="wm-toggle" class:paused on:click={toggle}
         title={paused ? $_('workout_mode_bar.resume_timer') : $_('workout_mode_bar.pause_timer')}
         aria-label={paused ? $_('workout_mode_bar.resume_timer') : $_('workout_mode_bar.pause_timer')}>
-        <span class="material-symbols-rounded">{paused ? 'play_arrow' : 'pause'}</span>
+        <span class="material-symbols-rounded" aria-hidden="true">{paused ? 'play_arrow' : 'pause'}</span>
       </button>
       <button class="wm-timer" class:paused on:click={goToDiary} title={$_('workout_mode_bar.open_diary')}>
         {#if running}<span class="wm-dot"></span>{/if}
         <span class="wm-time">{display}</span>
       </button>
       <button class="wm-reset" on:click={dismiss} title={$_('workout_mode_bar.dismiss_title')} aria-label={$_('workout_mode_bar.dismiss')}>
-        <span class="material-symbols-rounded">close</span>
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
     {/if}
     <button class="wm-wake" class:on={$screenOn} on:click={toggleWakeLock}
       title={$screenOn ? $_('workout_mode_bar.wake_on') : $_('workout_mode_bar.wake_off')}
       aria-label={$_('workout_mode_bar.wake_toggle')}>
-      <span class="material-symbols-rounded">
+      <span class="material-symbols-rounded" aria-hidden="true">
         {$screenOn ? 'stay_current_portrait' : 'screen_lock_portrait'}
       </span>
     </button>

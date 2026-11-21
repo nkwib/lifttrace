@@ -253,7 +253,7 @@
         aria-label={playing ? $_('progress.scrub.pause') : $_('progress.scrub.play')}
         on:click={togglePlay}
       >
-        <span class="material-symbols-rounded">{playing ? 'pause' : 'play_arrow'}</span>
+        <span class="material-symbols-rounded" aria-hidden="true">{playing ? 'pause' : 'play_arrow'}</span>
       </button>
 
       <!-- svelte-ignore a11y-no-static-element-interactions -->

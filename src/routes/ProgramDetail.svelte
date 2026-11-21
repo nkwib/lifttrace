@@ -347,7 +347,7 @@
 <div class="page">
   <header class="page-header">
     <button class="back-btn" on:click={() => push('/programs')} aria-label={$_('common.back')}>
-      <span class="material-symbols-rounded">arrow_back</span>
+      <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
     </button>
     {#if editingName}
       <input
@@ -367,7 +367,7 @@
     <div class="header-actions">
       {#if programMenuActions.length}
         <button class="btn-icon" on:click={() => programMenuOpen = true} title={$_('program_detail.program_actions')} aria-label={$_('program_detail.program_actions')} aria-haspopup="menu">
-          <span class="material-symbols-rounded">more_vert</span>
+          <span class="material-symbols-rounded" aria-hidden="true">more_vert</span>
         </button>
       {/if}
     </div>
@@ -384,7 +384,7 @@
     <Spinner block label="Loading program…" />
   {:else if loadError && !program}
     <div class="load-error" role="alert">
-      <span class="material-symbols-rounded">error_outline</span>
+      <span class="material-symbols-rounded" aria-hidden="true">error_outline</span>
       <p>{$_('program_detail.load_failed')}</p>
       <button class="btn btn-primary" on:click={() => load()}>{$_('sync.retry')}</button>
     </div>
@@ -401,12 +401,12 @@
         {/if}
         {#if program.is_active}
           <button class="active-badge" on:click={deactivate} title={$_('program_detail.tap_to_deactivate')}>
-            <span class="material-symbols-rounded" style="font-size:14px">check_circle</span>
+            <span class="material-symbols-rounded" style="font-size:14px" aria-hidden="true">check_circle</span>
             {$_('programs.active')}
           </button>
         {:else}
           <button class="activate-btn" on:click={activate}>
-            <span class="material-symbols-rounded" style="font-size:16px">play_arrow</span>
+            <span class="material-symbols-rounded" style="font-size:16px" aria-hidden="true">play_arrow</span>
             {$_('programs.set_active')}
           </button>
         {/if}
@@ -429,7 +429,7 @@
           <h3 class="section-title">{$_('program_detail.workouts')}</h3>
           {#if !othersProgram}
           <button class="btn-primary-sm" on:click={() => showAddTemplate = true}>
-            <span class="material-symbols-rounded">add</span>
+            <span class="material-symbols-rounded" aria-hidden="true">add</span>
             Add
           </button>
           {/if}
@@ -457,7 +457,7 @@
                      class:selected-for-preview={_wideMode && _previewTemplateId === t.id}
                      use:pointerClick={() => _tapTemplate(t)}>
                   <div class="tpl-left">
-                    {#if !othersProgram}<span class="material-symbols-rounded tpl-drag-handle" title={$_('program_detail.drag_to_reorder')}>drag_indicator</span>{/if}
+                    {#if !othersProgram}<span class="material-symbols-rounded tpl-drag-handle" title={$_('program_detail.drag_to_reorder')} aria-hidden="true">drag_indicator</span>{/if}
                     <span class="tpl-num">{idx + 1}</span>
                     <button type="button" class="tpl-info" on:click|stopPropagation={() => _tapTemplate(t)}>
                       <span class="tpl-name">{t.name}</span>
@@ -469,21 +469,21 @@
                     <button type="button" class="btn-icon-sm tpl-move" data-tpl-move="{t.id}-up" disabled={reordering || idx === 0}
                             aria-label={$_('program_detail.move_day_up', { values: { name: t.name } })} title={$_('program_detail.move_up')}
                             on:click={e => moveTplBy(e, idx, -1, 'up')} on:keydown|stopPropagation>
-                      <span class="material-symbols-rounded">keyboard_arrow_up</span>
+                      <span class="material-symbols-rounded" aria-hidden="true">keyboard_arrow_up</span>
                     </button>
                     <button type="button" class="btn-icon-sm tpl-move" data-tpl-move="{t.id}-down" disabled={reordering || idx === program.templates.length - 1}
                             aria-label={$_('program_detail.move_day_down', { values: { name: t.name } })} title={$_('program_detail.move_down')}
                             on:click={e => moveTplBy(e, idx, 1, 'down')} on:keydown|stopPropagation>
-                      <span class="material-symbols-rounded">keyboard_arrow_down</span>
+                      <span class="material-symbols-rounded" aria-hidden="true">keyboard_arrow_down</span>
                     </button>
                     <button class="btn-icon-sm btn-icon-copy" on:click={e => copyTemplate(e, t)} title={$_('program_detail.duplicate_workout')} aria-label={$_('program_detail.duplicate_workout')}>
-                      <span class="material-symbols-rounded">content_copy</span>
+                      <span class="material-symbols-rounded" aria-hidden="true">content_copy</span>
                     </button>
                     <button class="btn-icon-sm" on:click={e => deleteTemplate(e, t.id)} title={$_('common.delete')}>
-                      <span class="material-symbols-rounded">close</span>
+                      <span class="material-symbols-rounded" aria-hidden="true">close</span>
                     </button>
                     {/if}
-                    <span class="material-symbols-rounded tpl-arrow">chevron_right</span>
+                    <span class="material-symbols-rounded tpl-arrow" aria-hidden="true">chevron_right</span>
                   </div>
                 </div>
               </div>
@@ -491,7 +491,7 @@
           </div>
         {:else}
           <div class="empty-templates">
-            <span class="material-symbols-rounded">playlist_add</span>
+            <span class="material-symbols-rounded" aria-hidden="true">playlist_add</span>
             <p>No workouts in this program yet.</p>
             {#if !othersProgram}<button class="btn-primary-sm" on:click={() => showAddTemplate = true}>{$_('program_detail.add_workout')}</button>{/if}
           </div>
@@ -531,12 +531,12 @@
               </ol>
             {/if}
             <button class="btn btn-primary ptp-edit-btn" on:click={() => openTemplate(t.id)}>
-              <span class="material-symbols-rounded">edit</span>
+              <span class="material-symbols-rounded" aria-hidden="true">edit</span>
               Edit Workout
             </button>
           {:else}
             <div class="ptp-empty">
-              <span class="material-symbols-rounded ptp-empty-icon">list_alt</span>
+              <span class="material-symbols-rounded ptp-empty-icon" aria-hidden="true">list_alt</span>
               <p class="ptp-empty-title">{$_('program_detail.select_workout')}</p>
               <p class="ptp-empty-desc">{$_('program_detail.select_workout_hint')}</p>
             </div>
@@ -566,7 +566,7 @@
             <span class="name">{m.full_name || m.username}</span>
             <span class="sub">{m.active_program ? `Current: ${m.active_program}` : 'No active program'}</span>
           </div>
-          <span class="material-symbols-rounded chev">chevron_right</span>
+          <span class="material-symbols-rounded chev" aria-hidden="true">chevron_right</span>
         </button>
       {/each}
     {/if}
