@@ -27,3 +27,12 @@ export function weekStart(date, startsOn = 'monday') {
 export function weekdayOrder(startsOn = 'monday') {
   return normalizeWeekStart(startsOn) === 'sunday' ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
 }
+
+/** i18n key suffixes under statistics.days, indexed like Date#getDay (0 = Sunday). */
+export const WEEKDAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+/** Empty cells before day 1 in a month grid. month is 0-indexed. */
+export function monthLeadingBlanks(year, month, startsOn = 'monday') {
+  const dow = new Date(Date.UTC(year, month, 1)).getUTCDay();
+  return (dow - weekdayOrder(startsOn)[0] + 7) % 7;
+}

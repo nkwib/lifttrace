@@ -73,6 +73,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Changing your password rate-limits wrong current passwords.** 5 wrong tries in 15 minutes per account, then 429, so a stolen session can't brute-force it.
 - **Statistics 1Y/All follows Track Cardio and no longer blinks on sync.** Toggling Track Cardio refreshes the trained days, and a sync keeps the current calories and deltas until the new data arrives.
 - **Trace weigh-ins update your profile weight.** A weight logged for today through Trace now feeds the calorie estimate, like the Diary weigh-in does.
+- **Calendars follow the week start setting.** The Diary month picker and the shared date picker start on Monday or Sunday per Settings > Units, with translated weekday headers (they were Sunday-first English).
 - **Workout pill no longer shows a frozen ".00".** The floating timer pill now shows m:ss without the centisecond suffix.
 - **Fast day switching in the Diary.** Coach feedback and set videos from a day you already left no longer show up on the day you land on.
 - **Diary progression chip uses the exercise's equipment.** Cable and machine lifts now suggest +5 kg / +10 lb and dumbbells +2 kg, read from the library (it was always the flat 2.5 kg / 5 lb). Assisted exercises no longer get a "Try more weight" chip.

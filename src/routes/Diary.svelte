@@ -31,7 +31,8 @@
   import { confirmDialog } from '../stores/confirmDialog.js';
   import { currentUser } from '../stores/auth.js';
   import { resolveAssetUrl } from '../lib/platform.js';
-  import { dateFormat } from '../stores/settings.js';
+  import { dateFormat, weekStartsOn } from '../stores/settings.js';
+  import { monthLeadingBlanks, weekdayOrder, WEEKDAY_KEYS } from '../lib/week-start.js';
   import { fmtWeight, fmtDuration, countCompletedSets, exerciseVolume, setVolume } from '../lib/workout.js';
   import ExerciseCard from '../components/diary/ExerciseCard.svelte';
   import HoldTimer from '../components/diary/HoldTimer.svelte';
@@ -160,11 +161,11 @@
   let calMonth = new Date().getMonth();
   let showYearPicker = false;
   let showMonthPicker = false;
-  $: calFirstDay    = new Date(calYear, calMonth, 1).getDay();
+  $: calFirstDay    = monthLeadingBlanks(calYear, calMonth, $weekStartsOn);
   $: calDaysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
   $: calMonthName   = new Date(calYear, calMonth, 1).toLocaleDateString(undefined, { month: 'long' });
   $: yearRange      = Array.from({ length: 22 }, (_, i) => (new Date().getFullYear() - 10) + i);
-  const DAY_LABELS  = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  $: dayLabels = weekdayOrder($weekStartsOn).map(i => $_(`statistics.days.${WEEKDAY_KEYS[i]}`).slice(0, 2));
 
   // PR badges (src/lib/pr-sets.js is the one rule): each exercise's history
   // is fetched once and kept as it came; the badges are worked out from it,
@@ -3720,7 +3721,7 @@
           </div>
         {:else}
           <div class="dp-grid">
-            {#each DAY_LABELS as d}<div class="dp-dh">{d}</div>{/each}
+            {#each dayLabels as d}<div class="dp-dh">{d}</div>{/each}
             {#each Array(calFirstDay) as _}<div></div>{/each}
             {#each Array(calDaysInMonth) as _, i}
               {@const day = i + 1}
