@@ -2,6 +2,7 @@
   import { resolveAssetUrl } from '../../lib/platform.js';
   import { failedMedia, mediaFailed, workingMedia } from '../../lib/media-fallback.js';
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+  import { _ } from 'svelte-i18n';
   import { wideContent } from '../../lib/wide.js';
   import { LtApi } from '../../lib/api.js';
   import { weightUnit } from '../../stores/settings.js';
