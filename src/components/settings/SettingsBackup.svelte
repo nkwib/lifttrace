@@ -262,7 +262,7 @@
       try {
         text = localRestoreFile ? await localRestoreFile.text() : await lb.readBackupFile(localRestoreName);
       } catch {
-        throw new Error($_('settings_backup.local.read_failed'));
+        throw Object.assign(new Error('read failed'), { translated: $_('settings_backup.local.read_failed') });
       }
       lb.parseBackupText(text);
       await lb.exportBackup({ share: false, prefix: lb.SAFETY_PREFIX });
@@ -272,8 +272,9 @@
       setTimeout(() => location.reload(), 1200);
       return;
     } catch (e) {
-      const msg = e?.message || '';
-      showError(msg ? `${$_('settings_backup.local.restore_failed')}: ${msg}` : $_('settings_backup.local.restore_failed'));
+      // Parser messages are English: log them, show only translated text.
+      console.warn('[local-backup] restore failed:', e);
+      showError(e?.translated || $_('settings_backup.local.restore_failed'));
     }
     localBusy = false;
   }
