@@ -190,6 +190,92 @@
 
   $: if (expanded && serverEnabled) loadFullBackups();
   $: if (expanded && serverEnabled) loadSchedule();
+  $: if (expanded && _isNativeLocal) loadLocalBackups();
+
+  // Android Local mode: on-device backups (local-backup.js stays a lazy chunk).
+  let localBackups = [];
+  let localBusy = false;
+  let localRestoreName = null;   // list row to restore
+  let localRestoreFile = null;   // picked file to restore
+  let localDeleteName = null;
+  let showLocalRestoreDialog = false;
+  let showLocalDeleteDialog = false;
+
+  async function loadLocalBackups() {
+    try {
+      const { listLocalBackups } = await import('../../lib/local-backup.js');
+      localBackups = await listLocalBackups();
+    } catch {}
+  }
+
+  async function backUpNow() {
+    if (localBusy) return;
+    localBusy = true;
+    try {
+      const { runLocalBackupNow } = await import('../../lib/local-backup-scheduler.js');
+      const r = await runLocalBackupNow();
+      if (r?.busy) showError($_('settings_backup.local.backup_busy'));
+      else if (!r?.ok) showError(r?.error || $_('settings_backup.local.backup_failed'));
+      else showSuccess($_('settings_backup.local.backed_up'));
+    } catch (e) {
+      showError(e?.message || $_('settings_backup.local.backup_failed'));
+    }
+    await loadLocalBackups();
+    localBusy = false;
+  }
+
+  async function shareLocal(name) {
+    const { shareLocalBackup } = await import('../../lib/local-backup.js');
+    if (!(await shareLocalBackup(name))) showError($_('settings_backup.local.share_failed'));
+  }
+
+  async function confirmLocalDelete() {
+    showLocalDeleteDialog = false;
+    const { deleteLocalBackup } = await import('../../lib/local-backup.js');
+    await deleteLocalBackup(localDeleteName);
+    await loadLocalBackups();
+  }
+
+  function pickLocalRestoreFile() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.onchange = () => {
+      const f = input.files?.[0];
+      if (!f) return;
+      localRestoreName = null;
+      localRestoreFile = f;
+      showLocalRestoreDialog = true;
+    };
+    input.click();
+  }
+
+  // Read and validate first (nothing touched on a bad file), then a safety
+  // snapshot, then the single-transaction import, then a full reload since
+  // stores and the db cache are stale.
+  async function confirmLocalRestore() {
+    showLocalRestoreDialog = false;
+    localBusy = true;
+    try {
+      const lb = await import('../../lib/local-backup.js');
+      let text;
+      try {
+        text = localRestoreFile ? await localRestoreFile.text() : await lb.readBackupFile(localRestoreName);
+      } catch {
+        throw new Error($_('settings_backup.local.read_failed'));
+      }
+      lb.parseBackupText(text);
+      await lb.exportBackup({ share: false, includeUploads: false });
+      await lb.importBackup(text);
+      showSuccess($_('settings_backup.local.restored'));
+      setTimeout(() => location.reload(), 1200);
+      return;
+    } catch (e) {
+      const msg = e?.message || '';
+      showError(msg ? `${$_('settings_backup.local.restore_failed')}: ${msg}` : $_('settings_backup.local.restore_failed'));
+    }
+    localBusy = false;
+  }
 
   async function loadFullBackups() {
     try {
@@ -523,6 +609,56 @@
       </div>
       {/if}
 
+      {#if _isNativeLocal}
+      <p class="sub-label">{$_('settings_backup.local.title')}</p>
+      <div class="card">
+        <div style="padding:12px 16px 4px">
+          <p class="setting-desc" style="margin:0 0 12px">{$_('settings_backup.local.desc')}</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+            <button class="btn btn-primary" style="height:36px;font-size:13px"
+              on:click={backUpNow} disabled={localBusy}>
+              {#if localBusy}
+                <span class="material-symbols-rounded spin" style="font-size:16px">autorenew</span> {$_('settings_backup.local.working')}
+              {:else}
+                <span class="material-symbols-rounded" style="font-size:16px">add_circle</span> {$_('settings_backup.local.backup_now')}
+              {/if}
+            </button>
+            <button class="btn btn-secondary" style="height:36px;font-size:13px"
+              on:click={pickLocalRestoreFile} disabled={localBusy}>
+              <span class="material-symbols-rounded" style="font-size:16px">upload</span> {$_('settings_backup.local.restore_file')}
+            </button>
+          </div>
+        </div>
+        <div class="setting-divider"></div>
+        {#if localBackups.length > 0}
+          {#each localBackups as bk, i}
+            {#if i > 0}<div class="setting-divider"></div>{/if}
+            <div class="backup-row">
+              <span class="backup-name">{bk.name}</span>
+              <span class="backup-col-date">{bk.mtime ? new Date(bk.mtime).toLocaleDateString() : ''}</span>
+              <span class="backup-col-size">{bk.size ? fmtBytes(bk.size) : ''}</span>
+              <div class="backup-actions">
+                <button class="btn btn-secondary backup-action-btn" disabled={localBusy}
+                  on:click={() => shareLocal(bk.name)}>
+                  <span class="material-symbols-rounded" style="font-size:15px">share</span> {$_('settings_backup.local.share')}
+                </button>
+                <button class="btn btn-secondary backup-action-btn" disabled={localBusy}
+                  on:click={() => { localRestoreFile = null; localRestoreName = bk.name; showLocalRestoreDialog = true; }}>
+                  <span class="material-symbols-rounded" style="font-size:15px">restore</span> {$_('settings_backup.local.restore')}
+                </button>
+                <button class="btn-icon-danger" disabled={localBusy} title={$_('settings_backup.local.delete_title')}
+                  on:click={() => { localDeleteName = bk.name; showLocalDeleteDialog = true; }}>
+                  <span class="material-symbols-rounded" style="font-size:20px">delete</span>
+                </button>
+              </div>
+            </div>
+          {/each}
+        {:else}
+          <p style="padding:12px 16px;font-size:13px;color:var(--text-3);margin:0">{$_('settings_backup.local.empty')}</p>
+        {/if}
+      </div>
+      {/if}
+
       <p class="sub-label danger-zone-label">{$_('settings_backup.sections.danger_zone')}</p>
       <div class="card danger-zone-card">
         <button class="setting-row setting-action danger" on:click={() => showClearSettingsDialog = true}>
@@ -573,6 +709,24 @@
   cancelText={$_('settings_backup.dialogs.cancel')}
   dangerous
   on:confirm={confirmDeleteBackup}
+/>
+
+<Dialog bind:open={showLocalRestoreDialog}
+  title={$_('settings_backup.local.restore_title')}
+  message={$_('settings_backup.local.restore_msg')}
+  confirmText={$_('settings_backup.local.restore_confirm')}
+  cancelText={$_('settings_backup.dialogs.cancel')}
+  dangerous
+  on:confirm={confirmLocalRestore}
+/>
+
+<Dialog bind:open={showLocalDeleteDialog}
+  title={$_('settings_backup.local.delete_title')}
+  message={$_('settings_backup.local.delete_msg')}
+  confirmText={$_('settings_backup.dialogs.delete_backup_confirm')}
+  cancelText={$_('settings_backup.dialogs.cancel')}
+  dangerous
+  on:confirm={confirmLocalDelete}
 />
 
 <Dialog bind:open={showClearDataDialog}

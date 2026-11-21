@@ -10,6 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - **`TRUST_PROXY` for reverse proxies.** Opt-in (hop count, subnet list or `true`); off by default. Without it every client behind Traefik, Caddy or nginx shares the proxy's address for sign-in limits. When on, the client address also changes for the two-step and recovery limits, AI limits, and `req.secure`/`req.protocol`.
+- **Android Local backups can be restored.** Settings > Backup lists the backups on the device, with Back up now, Share, Delete and Restore, plus Restore from file for a backup copied from elsewhere. Restore saves a safety copy first.
 - **Reorder program days on phones.** Each day in a program has up/down buttons, since drag-and-drop only worked with a mouse.
 - **Workout editor asks before discarding edits.** Back arrow and Android back confirm when there are unsaved changes. Closing the tab warns on the web; other web navigation is not intercepted.
 - **Duplicate a workout day.** A copy button on each day card in a program makes "Day (Copy)" with the same exercises, placed right after the original.

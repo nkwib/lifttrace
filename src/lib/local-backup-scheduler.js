@@ -70,7 +70,7 @@ async function _tick() {
 }
 
 async function _runAutoBackup() {
-  if (_running) return;
+  if (_running) return { ok: false, busy: true };
   _running = true;
   try {
     const { buildBackup } = await import('./local-backup.js');
@@ -83,10 +83,12 @@ async function _runAutoBackup() {
     localBackupLastRun.set(new Date().toISOString());
     localBackupLastError.set('');
     console.log(`[local-backup] auto-backup saved: ${filename}`);
+    return { ok: true, filename };
   } catch (e) {
     const msg = e?.message || String(e);
     localBackupLastError.set(msg);
     console.warn(`[local-backup] auto-backup failed: ${msg}`);
+    return { ok: false, error: msg };
   } finally {
     _running = false;
   }
@@ -127,5 +129,5 @@ async function _pruneAutoBackups(retention) {
 
 export async function runLocalBackupNow() {
   if (!_isLocalMode()) throw new Error('Not in local mode');
-  await _runAutoBackup();
+  return _runAutoBackup();
 }

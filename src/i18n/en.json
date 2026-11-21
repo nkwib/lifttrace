@@ -2325,6 +2325,28 @@
       "clear_data":             "Clear All Data",
       "clear_data_desc":        "Deletes all workouts, programs, body stats, and chat history. Cannot be undone."
     },
+    "local": {
+      "title":          "Backups on this device",
+      "desc":           "Backups are saved in Documents/lifttrace-backups. Share one to keep a copy off this phone.",
+      "backup_now":     "Back up now",
+      "working":        "Working...",
+      "restore_file":   "Restore from file",
+      "empty":          "No backups on this device yet.",
+      "share":          "Share",
+      "restore":        "Restore",
+      "delete_title":   "Delete backup",
+      "backed_up":      "Backup saved",
+      "backup_busy":    "A backup is already running",
+      "backup_failed":  "Backup failed",
+      "share_failed":   "Couldn't share the backup",
+      "read_failed":    "Couldn't read the backup",
+      "restored":       "Restored",
+      "restore_failed": "Restore failed, nothing was changed",
+      "restore_title":  "Restore this backup?",
+      "restore_msg":    "All current data on this device will be replaced by the backup. A safety copy of your current data is saved first.",
+      "restore_confirm": "Restore",
+      "delete_msg":     "Delete this backup file from the device?"
+    },
     "dialogs": {
       "restore_title":          "Restore Backup?",
       "restore_msg":            "This will replace all current data with the contents of this backup. This cannot be undone.",

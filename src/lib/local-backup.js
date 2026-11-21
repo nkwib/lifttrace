@@ -28,7 +28,10 @@ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { isNative } from './platform.js';
 import { dbQuery, dbExec } from './db-native.js';
+import { newestFirst } from '../../server/lib/backup-schedule.js';
 
+// Same dir the scheduler writes (Directory.Documents); list/read/delete/share
+// and exportBackup all use it so every backup is in one place.
 const BACKUP_DIR  = 'lifttrace-backups';
 const UPLOADS_DIR = 'lifttrace-uploads';
 const SCHEMA_VERSION = 2;
@@ -51,8 +54,8 @@ const TABLES = [
   'coach_prescriptions',
 ];
 
-async function _ensureDir(path) {
-  try { await Filesystem.mkdir({ path, directory: Directory.Data, recursive: true }); } catch {}
+async function _ensureDir(path, directory = Directory.Data) {
+  try { await Filesystem.mkdir({ path, directory, recursive: true }); } catch {}
 }
 
 /** Read every file in Directory.Data/lifttrace-uploads and return them
@@ -121,7 +124,7 @@ export async function buildBackup(opts = {}) {
  */
 export async function exportBackup({ share = true, includeUploads = true } = {}) {
   if (!isNative) throw new Error('Local backup is Capacitor-only');
-  await _ensureDir(BACKUP_DIR);
+  await _ensureDir(BACKUP_DIR, Directory.Documents);
   const data = await buildBackup({ includeUploads });
   const json = JSON.stringify(data);
   // Named in this device's own time (TraceApps/notetrace#44).
@@ -130,7 +133,7 @@ export async function exportBackup({ share = true, includeUploads = true } = {})
   const writeRes = await Filesystem.writeFile({
     path: name,
     data: json,
-    directory: Directory.Data,
+    directory: Directory.Documents,
     encoding: Encoding.UTF8,
   });
   if (share) {
@@ -218,25 +221,25 @@ export async function importBackup(jsonOrText) {
 
 export async function listLocalBackups() {
   if (!isNative) return [];
-  await _ensureDir(BACKUP_DIR);
+  await _ensureDir(BACKUP_DIR, Directory.Documents);
   try {
-    const r = await Filesystem.readdir({ path: BACKUP_DIR, directory: Directory.Data });
-    return (r?.files || [])
-      .filter(f => (f.name || f).endsWith('.json'))
+    const r = await Filesystem.readdir({ path: BACKUP_DIR, directory: Directory.Documents });
+    // Entries are strings on old plugin versions, objects on new ones;
+    // size/mtime may be missing, so order by the stamp in the name.
+    return newestFirst((r?.files || [])
       .map(f => ({
-        name: f.name || f,
-        size: f.size || 0,
-        ctime: f.ctime || null,
-        mtime: f.mtime || null,
+        name: (typeof f === 'string' ? f : f?.name) || '',
+        size: Number(f?.size) || 0,
+        mtime: Number(f?.mtime) || 0,
       }))
-      .sort((a, b) => (b.mtime || 0) - (a.mtime || 0));
+      .filter(f => f.name.endsWith('.json')));
   } catch { return []; }
 }
 
 export async function readBackupFile(name) {
   const r = await Filesystem.readFile({
     path: `${BACKUP_DIR}/${name}`,
-    directory: Directory.Data,
+    directory: Directory.Documents,
     encoding: Encoding.UTF8,
   });
   return typeof r.data === 'string' ? r.data : '';
@@ -246,7 +249,28 @@ export async function deleteLocalBackup(name) {
   try {
     await Filesystem.deleteFile({
       path: `${BACKUP_DIR}/${name}`,
-      directory: Directory.Data,
+      directory: Directory.Documents,
     });
   } catch {}
+}
+
+/** Open the Share sheet for an existing backup file. Returns false if the
+ *  user cancelled or sharing failed. */
+export async function shareLocalBackup(name) {
+  try {
+    const { uri } = await Filesystem.getUri({ path: `${BACKUP_DIR}/${name}`, directory: Directory.Documents });
+    await Share.share({ title: 'LiftTrace backup', url: uri, dialogTitle: 'Save LiftTrace backup' });
+    return true;
+  } catch { return false; }
+}
+
+/** Parse and sanity-check backup text without touching the DB. Throws
+ *  'Not a LiftTrace backup file' (or a JSON error) on bad input. */
+export function parseBackupText(text) {
+  const data = JSON.parse(text);
+  if (!data || data.app !== 'lifttrace' || !data.tables
+      || typeof data.tables !== 'object' || Array.isArray(data.tables)) {
+    throw new Error('Not a LiftTrace backup file');
+  }
+  return data;
 }
