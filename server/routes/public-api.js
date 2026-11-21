@@ -140,7 +140,7 @@ router.get('/workouts', requireScope('mcp:read'), core(req =>
 ));
 
 router.get('/workouts/:date', requireScope('mcp:read'), core(req =>
-  getWorkoutCore(req.apiUser.id, { date: req.params.date })
+  getWorkoutCore(req.apiUser.id, { date: req.params.date, session_seq: req.query.session_seq })
 ));
 
 router.get('/records', requireScope('mcp:read'), core(req =>

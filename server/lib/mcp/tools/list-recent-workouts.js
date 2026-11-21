@@ -41,6 +41,7 @@ export function listRecentWorkoutsCore(userId, { limit, start, end } = {}) {
     const exercises = JSON.parse(r.exercises || '[]');
     const totalVolume = exercises.reduce((sum, ex) => sum + exerciseVolume(ex), 0);
     return {
+      workout_id: r.id,
       date: r.date,
       session_seq: r.session_seq || 0,
       name: r.name || null,
@@ -59,7 +60,7 @@ export function registerListRecentWorkouts(server, { userId }) {
       title: 'List Recent Workouts',
       description:
         'List the most recent logged workouts (most recent first), each with ' +
-        'its date, session_seq (0 for the first or only session of a day, higher ' +
+        'its workout_id (what log_set takes), date, session_seq (0 for the first or only session of a day, higher ' +
         'for later same-day sessions), name, exercise count, and total volume. Use get_workout ' +
         'for the full per-set detail of one specific day. Optional inclusive ' +
         'start/end YYYY-MM-DD bounds filter the history; omitted bounds are open.',

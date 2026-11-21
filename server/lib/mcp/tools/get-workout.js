@@ -5,10 +5,10 @@
  * GET /api/workout/:date. Filters out soft-deleted rows the same way
  * that route does (deleted_at IS NULL, see LT v1.2.0 CHANGELOG).
  *
- * A date can have more than one session (issue #76); this tool doesn't
- * expose session selection yet (unchanged contract for phase 1), so it
- * returns the same default session GET /:date would — session 0, or the
- * lowest surviving session_seq/id.
+ * A date can have more than one session (issue #76). By default this
+ * returns the lowest surviving session_seq/id, as GET /:date does; pass
+ * session_seq to read another one. Every answer carries workout_id (what
+ * log_set takes), session_seq and, for a logged day, session_count.
  */
 import { z } from 'zod';
 import db from '../../../db.js';
@@ -30,16 +30,30 @@ const repSidesOf = (s) => (sideReps(s.reps_l, s.reps_r) != null
  * input so callers on either side can decide how to surface it: the MCP
  * wrapper maps it to toolError, the REST route maps it to a 400.
  */
-export function getWorkoutCore(userId, { date } = {}) {
+export function getWorkoutCore(userId, { date, session_seq } = {}) {
   const day = date || todayFor(userId);
   assertDate(day);
 
-  const row = db.prepare(
-    'SELECT * FROM workout_log WHERE date = ? AND user_id = ? AND deleted_at IS NULL ORDER BY session_seq ASC, id ASC LIMIT 1'
-  ).get(day, userId);
-  if (!row) return { date: day, logged: false, exercises: [] };
+  const picked = session_seq != null && session_seq !== '';
+  let seq = null;
+  if (picked) {
+    seq = typeof session_seq === 'string' && /^\d+$/.test(session_seq) ? Number(session_seq) : session_seq;
+    if (!Number.isSafeInteger(seq) || seq < 0) throw new Error('session_seq must be a whole number, 0 or more.');
+  }
 
-  return formatWorkoutRow(row);
+  const row = picked
+    ? db.prepare(
+      'SELECT * FROM workout_log WHERE date = ? AND user_id = ? AND deleted_at IS NULL AND session_seq = ? ORDER BY id ASC LIMIT 1'
+    ).get(day, userId, seq)
+    : db.prepare(
+      'SELECT * FROM workout_log WHERE date = ? AND user_id = ? AND deleted_at IS NULL ORDER BY session_seq ASC, id ASC LIMIT 1'
+    ).get(day, userId);
+  if (!row) return { date: day, logged: false, session_count: 0, exercises: [] };
+
+  const session_count = db.prepare(
+    'SELECT COUNT(*) AS c FROM workout_log WHERE date = ? AND user_id = ? AND deleted_at IS NULL'
+  ).get(day, userId).c;
+  return { ...formatWorkoutRow(row), session_count };
 }
 
 /**
@@ -51,6 +65,8 @@ export function getWorkoutCore(userId, { date } = {}) {
 export function formatWorkoutRow(row) {
   const exercises = JSON.parse(row.exercises || '[]');
   return {
+    workout_id: row.id,
+    session_seq: row.session_seq ?? 0,
     date: row.date,
     logged: true,
     name: row.name || null,
@@ -87,14 +103,17 @@ export function registerGetWorkout(server, { userId }) {
         "Read a day's workout — every exercise and its sets (reps, with reps_l and reps_r for reps split left/right and reps then the weaker side, weight, " +
         "completed, warmup, RPE, duration_sec for timed sets like planks (with duration_l_sec and duration_r_sec for a hold timed per side, duration_sec then the shorter side), distance_m in meters for distance sets like rows and sled pushes, calories for calorie sets like air bikes). Date defaults to today in the server's " +
         'timezone; pass an explicit YYYY-MM-DD for calendar accuracy from a ' +
-        'different TZ.',
+        'different TZ. Also returns workout_id (pass it to log_set), session_seq and session_count. ' +
+        'A day can hold several sessions: the default is the first, and session_seq (0, 1, ...) reads another; ' +
+        'a session_seq with no workout answers logged: false.',
       inputSchema: {
         date: z.string().regex(DATE_RE, 'YYYY-MM-DD').optional(),
+        session_seq: z.number().int().min(0).optional(),
       },
     },
-    async ({ date }) => {
+    async ({ date, session_seq }) => {
       try {
-        return toolResult(getWorkoutCore(userId, { date }));
+        return toolResult(getWorkoutCore(userId, { date, session_seq }));
       } catch (e) {
         return toolError(e.message);
       }

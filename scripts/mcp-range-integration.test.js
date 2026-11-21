@@ -200,10 +200,11 @@ test('full-detail reads are capped, and say when they stopped short', async () =
 test('a ranged session carries the same fields a single-day read gives', async () => {
   const ranged = json(await server.call('get_workouts', { start: '2020-01-02', end: '2020-01-02' }));
   const single = json(await server.call('get_workout', { date: '2020-01-02' }));
-  const strip = (w) => ({ ...w, session_seq: undefined });
-  assert.deepEqual(strip(ranged.workouts[0]), strip({ ...single, session_seq: undefined }),
+  const { session_count, ...singleRow } = single;
+  assert.equal(session_count, 1, 'the single-day read also says how many sessions the day has');
+  assert.deepEqual(ranged.workouts[0], singleRow,
     'one formatter, so set_type and duration_sec cannot go missing from one of them');
-  assert.equal(ranged.workouts[0].session_seq, 0, 'plus session_seq, which the single-day read has no need for');
+  assert.equal(ranged.workouts[0].session_seq, 0);
 });
 
 test('the records tool warns that a ranged best is not an all-time PR', () => {

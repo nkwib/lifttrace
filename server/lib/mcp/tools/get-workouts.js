@@ -58,7 +58,7 @@ export function getWorkoutsCore(userId, { start, end, limit } = {}) {
        ORDER BY date DESC, session_seq DESC, id DESC LIMIT ?`
   ).all(...params, n).reverse();
 
-  const workouts = rows.map(row => ({ ...formatWorkoutRow(row), session_seq: row.session_seq ?? 0 }));
+  const workouts = rows.map(formatWorkoutRow);
   return {
     start: rangeStart,
     end: rangeEnd,
@@ -80,7 +80,7 @@ export function registerGetWorkouts(server, { userId }) {
         'left/right and reps then the weaker side, weight, completed, warmup, RPE, and ' +
         'duration_sec for timed sets like planks, with duration_l_sec and ' +
         'duration_r_sec for a hold timed per side, distance_m for distance sets, ' +
-        'calories for calorie sets) plus session_seq for days with ' +
+        'calories for calorie sets) plus workout_id (for log_set) and session_seq for days with ' +
         'more than one session. Start and end are YYYY-MM-DD; when both are ' +
         "omitted the range is the last 90 days ending today in the server's " +
         'timezone, and a supplied bound leaves the other side open. Returns the ' +

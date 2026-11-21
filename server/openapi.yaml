@@ -266,6 +266,13 @@ paths:
           description: Date, YYYY-MM-DD.
           schema:
             type: string
+        - name: session_seq
+          in: query
+          required: false
+          description: Which session of the day, 0 or more. Default is the first. A session_seq with no workout answers logged false. The answer carries workout_id (for POST sets), session_seq and session_count.
+          schema:
+            type: integer
+            minimum: 0
       responses:
         '200':
           description: OK
@@ -275,7 +282,7 @@ paths:
                 type: object
                 additionalProperties: true
         '400':
-          description: Bad request (invalid date, unknown exercise, cardio_disabled).
+          description: Bad request (invalid date, invalid session_seq, unknown exercise, cardio_disabled).
           content:
             application/json:
               schema:

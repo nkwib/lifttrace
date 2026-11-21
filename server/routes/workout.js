@@ -388,7 +388,7 @@ router.put('/:date', wrap((req, res) => {
     if (!_historyUpload) {
       try {
         const saved = db.prepare('SELECT * FROM workout_log WHERE id = ? AND deleted_at IS NULL').get(targetId);
-        if (saved) dispatchWebhookEvent(userId, 'workout.completed', { ...formatWorkoutRow(saved), session_seq: saved.session_seq ?? 0 });
+        if (saved) dispatchWebhookEvent(userId, 'workout.completed', formatWorkoutRow(saved));
       }
       catch (e) { /* never let a webhook failure block the save */ }
     }

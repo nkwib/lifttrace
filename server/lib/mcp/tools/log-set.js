@@ -52,7 +52,7 @@ const _exercisesOf = (row) => { try { return JSON.parse(row.exercises || '[]') |
 export function pickSession(live, { exerciseId, done, warmup, workoutId = null, day }) {
   if (workoutId != null) {
     const row = live.find(r => Number(r.id) === workoutId);
-    if (!row) throw new Error(`No workout ${workoutId} on ${day}. start_program_workout returns the workout_id to use.`);
+    if (!row) throw new Error(`No workout ${workoutId} on ${day}. get_workout and start_program_workout return the workout_id to use.`);
     return row;
   }
   const open = live.filter(r => !r.completed);
