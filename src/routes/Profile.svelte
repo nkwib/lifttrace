@@ -116,6 +116,11 @@
   let heightCmInput = '';
   let heightFt = '';
   let heightIn = '';
+  // Baselines captured on load; an untouched height keeps the stored cm
+  // (ft/in is rounded to whole inches and would drift by up to 1 cm).
+  let initialHeightCm = '';
+  let initialHeightFt = '';
+  let initialHeightIn = '';
   // Unit switched while open: re-derive the field from kg and reset baseline.
   $: if (initialWeightUnit && $weightUnit !== initialWeightUnit) {
     initialWeightUnit = $weightUnit;
@@ -246,6 +251,9 @@
       heightFt = String(ft);
       heightIn = String(inches);
     }
+    initialHeightCm = heightCmInput;
+    initialHeightFt = heightFt;
+    initialHeightIn = heightIn;
     const kg = $currentWeightKg;
     if (kg) {
       weightInput = String(kgToDisplay(kg, $weightUnit));
@@ -281,9 +289,14 @@
     saving = true;
     try {
       // Height — applies to both modes since it's settings-backed.
-      const finalCm = _isMetricHeight
-        ? (heightCmInput ? Number(heightCmInput) : null)
-        : ((heightFt || heightIn) ? ftInToCm(heightFt, heightIn) : null);
+      const heightUntouched = _isMetricHeight
+        ? heightCmInput === initialHeightCm
+        : heightFt === initialHeightFt && heightIn === initialHeightIn;
+      const finalCm = (heightUntouched && $heightCmStore)
+        ? $heightCmStore
+        : _isMetricHeight
+          ? (heightCmInput ? Number(heightCmInput) : null)
+          : ((heightFt || heightIn) ? ftInToCm(heightFt, heightIn) : null);
       // Current weight: converted to kg. Skipped when untouched so a
       // 0.1-rounded display never overwrites kg (or blocks on legacy values).
       let newWeightKg = null;
